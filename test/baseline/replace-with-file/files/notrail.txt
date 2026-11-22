@@ -1,0 +1,2 @@
+line one foo
+line two

@@ -1,0 +1,8 @@
+./.hidden:1:needle hidden
+./ignored.log:1:needle ignored
+./ignored_dir/sub.txt:1:needle subdir
+./keep.log:1:needle keep
+./normal.txt:1:needle normal
+./note1.txt:1:needle note1
+./note2.txt:1:needle note2
+./sub/visible.txt:1:needle visible

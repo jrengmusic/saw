@@ -1,0 +1,4 @@
+FROM_STDIN one FROM_STDIN
+key1=10 alpha=20
+aaa
+keep line

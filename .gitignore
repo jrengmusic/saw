@@ -27,8 +27,11 @@ Desktop.ini
 *.dylib
 *.exe
 *.dll
+Builds/
 
 # Logs
 *.log
 .claude/agents/
 .claude/commands/
+AGENTS.md
+.cache/

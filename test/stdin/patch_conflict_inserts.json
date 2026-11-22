@@ -1,0 +1,4 @@
+[
+  { "file": "alpha.txt", "insertBefore": 2, "text": "a" },
+  { "file": "alpha.txt", "insertAfter": 2, "text": "b" }
+]

@@ -1,0 +1,8 @@
+--- lf.txt
++++ lf.txt (planned)
+@@ -1,4 +1,4 @@
+-foo one foo
++bar one bar
+ key1=10 alpha=20
+ aaa
+ keep line

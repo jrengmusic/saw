@@ -72,12 +72,12 @@ Every design decision in this specification rests on ARCHITECT's verbatim ruling
 - **Linked JAM modules (closure of `jam_tui`):** `jam_core`, `jam_document`, `jam_markdown`, `jam_freetype`, `jam_graphics`, `jam_data_structures`, `jam_animation`, `jam_web`, `jam_style`, `jam_gui`, `jam_mermaid_diagram`, `jam_markdown_graphics`, `jam_terminal`, `jam_tui`.
 - **Platforms:** macOS (ARM64 and x86_64) and Windows (x64, MSVC / clang-cl).
 - **Primary Dependencies (OOTB):**
-  - `juce::MemoryMappedFile` (`readOnly`) for zero-copy file reads (`"i think juce already have ootb for mmap, swap, etc"`).
+  - `juce::MemoryMappedFile` (`readOnly`) for zero-copy file reads (`"i think juce already have ootb for mmap, swap, etc"`), with a POSIX `open`/`fstat`/thread-local buffered `read` + `mmap` fast path in `Find` for small files.
   - `juce::TemporaryFile` (`useHiddenFile`) and `overwriteTargetFileWithTemporary()` for atomic file swaps (`"i think juce already have ootb for mmap, swap, etc"`). `juce::FileOutputStream::flush()` returns `void`, so SAW reads `getStatus()` after `flush()`.
-  - `juce::RangedDirectoryIterator` for directory walks. The iterator runs non-recursive, one directory at a time, because a recursive iterator descends into every directory and cannot skip `.git`.
-  - `juce::ThreadPool` for parallel per-file work: one job per collected file, each job writing only its own result slot (pattern of `~/Documents/Poems/dev/cast/Source/Jobs.h`).
+  - Parallel directory walks via POSIX `opendir`/`readdir` (`d_type`) on macOS/Linux and non-recursive `juce::RangedDirectoryIterator` on Windows, skipping `.git` and ignored directories without descending.
+  - Lock-free `Jobs::run` (`std::atomic<int>` + `std::thread` workers, direct calling-thread execution for `count == 1`) for parallel per-file work and fused walk+search in `Find`.
   - `juce::SHA256` for content and transaction hashes.
-  - `juce::ArgumentList` for the command line.
+  - Raw UTF-8 `jam::Strings` parsed by `Arguments` for the command line (avoiding `juce::ArgumentList` whitespace trimming, empty-argument removal, and short-option matching defects).
   - `jam::simd::findByte` for SIMD byte scanning.
   - `jam::RegExp` (extended in `jam_core` with offset-based `findNext` returning match spans and captures: `"Literal default + -r regex (extend jam::RegExp with findNext/spans) + recursive dir walk skipping .git/.gitignore"`).
   - `jam::JsonDocument` and `jam::JsonWriter` for `patch` inputs and undo metadata.
@@ -160,7 +160,7 @@ Decisions:
 
 Rules:
 - **Explicit file paths:** Resolve relative paths against the current working directory. Resolve symbolic links to their target with `juce::File::getLinkedTarget()`. Ignore rules (§4.4.1) never skip an explicit file path.
-- **Explicit directory paths:** Walk recursively, one directory at a time, with a non-recursive `juce::RangedDirectoryIterator`. After the walk, process the collected files in parallel via `juce::ThreadPool`, one job per file.
+- **Explicit directory paths:** Walk recursively in parallel across top-level subdirectories (`Paths::applyToDirectory`, using POSIX `opendir`/`readdir` on macOS/Linux and non-recursive `juce::RangedDirectoryIterator` on Windows), and process files in parallel via `Jobs::run` (fused single-pass walk+search in `Find`).
   - Skip `.git` entries always.
   - Skip files and directories that the ignore rules (§4.4.1) exclude, unless `--no-ignore` is set. Never descend into an excluded directory.
   - Skip dot-prefixed entries (hidden files and folders) unless `--hidden` is set.

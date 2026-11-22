@@ -1,0 +1,4 @@
+[
+  { "file": "alpha.txt", "line": 2, "startCol": 7, "endCol": 12, "text": "x" },
+  { "file": "alpha.txt", "line": 2, "startCol": 10, "endCol": 14, "text": "y" }
+]

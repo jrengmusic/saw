@@ -1,0 +1,4 @@
+REPLACED_FROM_FILE one REPLACED_FROM_FILE
+key1=10 alpha=20
+aaa
+keep line

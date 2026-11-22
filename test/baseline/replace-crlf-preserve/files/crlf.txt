@@ -1,0 +1,3 @@
+first bar
+second bar
+third bar

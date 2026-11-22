@@ -1,0 +1,8 @@
+--- notrail.txt
++++ notrail.txt (planned)
+@@ -1,2 +1,2 @@
+-line one foo
++line one bar
+ line two
+\ No newline at end of file
+saw: dry-run — 1 edit(s) in 1 file(s); nothing written. Pass --apply --expect 1 to write.

@@ -1,0 +1,13 @@
+--- <root>/doc.txt
++++ <root>/doc.txt (planned)
+@@ -1,2 +1,2 @@
+-HI world
++hello world
+ second line
+--- <root>/script.sh
++++ <root>/script.sh (planned)
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-echo HI
++echo hello
+saw: dry-run undo (<tx-id>) — 2 file(s); nothing written. Pass --apply to restore.

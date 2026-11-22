@@ -1,0 +1,7 @@
+[
+  { "file": "alpha.txt", "line": 2, "startCol": 7, "endCol": 10, "text": "FOO", "hash": "8f84" },
+  { "file": "alpha.txt", "line": 2, "startCol": 11, "endCol": 14, "text": "BAR" },
+  { "file": "alpha.txt", "line": 4, "delete": true, "hash": "f7cd" },
+  { "file": "beta.txt", "startLine": 1, "endLine": 2, "text": "BETA ONE\nBETA TWO", "hash": "0b46" },
+  { "file": "beta.txt", "insertAfter": 3, "text": "beta four", "hash": "7e25" }
+]

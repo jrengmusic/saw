@@ -1,0 +1,9 @@
+--- lf.txt
++++ lf.txt (planned)
+@@ -1,4 +1,4 @@
+-foo one foo
++bar one bar
+ key1=10 alpha=20
+ aaa
+ keep line
+saw: dry-run — 2 edit(s) in 1 file(s); nothing written. Pass --apply --expect 2 to write.

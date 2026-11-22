@@ -1,0 +1,3 @@
+stdin alpha
+stdin needle line 2
+stdin omega

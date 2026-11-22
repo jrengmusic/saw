@@ -1,0 +1,6 @@
+[
+  { "file": "beta.txt", "insertAfter": 0, "text": "beta zero" },
+  { "file": "alpha.txt", "startLine": 5, "endLine": 6, "text": "FIVE\nSIX" },
+  { "file": "alpha.txt", "line": 1, "delete": true },
+  { "file": "alpha.txt", "insertAfter": 2, "text": "after two" }
+]

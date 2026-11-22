@@ -1,0 +1,3 @@
+alice:100:admin
+bob:200:user
+carol:300:guest

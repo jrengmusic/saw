@@ -1,0 +1,4 @@
+[
+  { "file": "alpha.txt", "startLine": 2, "endLine": 4, "delete": true },
+  { "file": "alpha.txt", "startLine": 3, "endLine": 5, "text": "z" }
+]

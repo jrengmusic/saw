@@ -114,6 +114,51 @@
 <!-- The entry format is in /log (commands/log.md). It is the only source. -->
 <!-- Sprint entries go here, written by PRIMARY agents -->
 
+## Sprint 1: SAW v0.0.1 Implementation, Optimization, Audit, and Doxygen ✅
+
+**Date:** 2026-11-23
+**Duration:** 10:50
+
+### Agents Participated
+- Primary: COUNSELOR — planned and orchestrated Parts 1–9, validated all Engineer diffs, filtered Auditor findings, synced `SPEC.md`, and logged Sprint 1.
+- Discovery & Profiling & Doxygen: Pathfinder — inspected JAM/JUCE owner APIs, ran all 16 sequential `scout` benchmarks, diagnosed hot-path bottlenecks, and completed the post-audit Doxygen pass (0 warnings).
+- Implementation: Engineer — extended `jam::RegExp::findNext`, built the SAW skeleton and all 6 verbs (`find`, `replace`, `lines`, `fields`, `patch`, `undo`), authored the 91-case Lua test suite and 16 `scout` benchmarks, implemented the SIMD/parallel/fused-walk optimizations, and resolved all accepted Auditor findings.
+- QA/QC: Auditor — ran a wholesale audit across Parts 1–9 against `MANIFESTO.md`, `CODING.md`, `NAMES.md`, and `SPEC.md`.
+
+### Files Modified (42+ files across `saw` and `jam`)
+- `/Users/jreng/Documents/Poems/dev/jam/jam_core/text/jam_RegExp.h:60-69`, `jam_RegExp.cpp:15-40` — added offset-based `findNext` returning capture views and delegated `getCaptures` to `findNext (text, 0)`.
+- `Source/Main.cpp`, `Source/Stdio.h/.cpp`, `Source/Arguments.h/.cpp`, `Source/Jobs.h` — CLI entrypoint, UTF-8 `Stdio::getFormatted`, raw UTF-8 `jam::Strings` argument parser with `getLineRangeFilter`, and lock-free `Jobs::run`.
+- `Source/TextDocument.h/.cpp`, `Source/Pattern.h/.cpp`, `Source/IgnoreRules.h/.cpp`, `Source/Paths.h/.cpp` — single-scan `TextDocument` with `fromTextFile`, zero-alloc SIMD `Pattern` with required-literal regex prefilter and anchored exact regex, zero-alloc `IgnoreRules`, and parallel `Paths::applyToDirectory`.
+- `Source/Find.h/.cpp`, `Source/Fields.h/.cpp`, `Source/Lines.h/.cpp` — fused single-pass parallel walk+search with POSIX buffered read and deferred NUL check in `Find`, zero-alloc streaming `Fields`, and early-stopping streaming `Lines`.
+- `Source/LineDiff.h/.cpp`, `Source/Writer.h/.cpp`, `Source/UndoCache.h/.cpp`, `Source/Transaction.h/.cpp`, `Source/Replace.h/.cpp`, `Source/PatchValidator.h/.cpp`, `Source/Patch.h/.cpp`, `Source/Undo.h/.cpp` — GNU-exact unified diff with shared `getLinesPreservingEmpty`, atomic `juce::TemporaryFile` writes, 32-entry rolling undo cache, two-phase `Transaction`, and full `replace`, `lines` mutate, `patch`, and `undo` verbs.
+- `project-info.md`, `cast/{identifiers,text,files,banner}.md`, `cast/source.cast`, `Source/HELP.md`, `Source/help/*.md`, `SPEC.md` — `cast` vocabulary/codegen, help pages, and `SPEC.md` §2/§4.4 sync; deleted all 10 completed `PLAN-saw-*.md` files.
+- `test/run.lua`, `test/cases.md`, `test/{fixture,stdin,baseline}/`, `benchmark/*.sh`, `benchmark/*.md` — 91-case Neovim Lua comparison/baseline test suite and 16 `scout` benchmark manifests + reports.
+
+### Alignment Check
+- [x] BLESSED principles followed
+- [x] NAMES.md adhered
+- [x] MANIFESTO.md principles applied
+
+### Problems Solved
+- Replaced `juce::ArgumentList` with raw UTF-8 `jam::Strings` after verifying JUCE trims/drops empty arguments and mis-matches `-1` against `-h` (`juce_ConsoleApplication.cpp:122-127,152-156`).
+- Added `Stdio::getFormatted` (two-pass `vsnprintf` + `fromUTF8`) after verifying `juce::String::formattedRaw` double/triple-encoded UTF-8 em-dash (`juce_String.cpp:1848`).
+- Escaped `\|` in GFM help tables (`Source/help/{find,lines}.md`) to fix `jam::MarkdownDocument::parse` null dereference.
+- Closed `saw` benchmark gaps via lock-free `Jobs::run`, zero-alloc SIMD `Pattern` + regex literal prefilter, streaming `Lines`/`Fields`, POSIX buffered read + deferred NUL check, and fused single-pass parallel walk+search: beats `sed` (-19.7% to -86.0%), `awk` (-74.0% to -76.4%), and `grep` (-79.9% to -88.4%), and reaches statistical parity with `rg` (+2.4%, `p = 0.082`) at 19–24% lower user CPU and 23–24% lower kernel CPU.
+- Resolved Auditor Findings 1–3, 5–10 (anchored `-r -x` regex, `.at()` indexing, structured bindings, `.compare()` on `string_view`, `cast/text.md` error constants, `try*` verb removal, fused-walk error propagation, shared `LineDiff`/`Arguments`/`TextDocument`/`Paths` helpers, descriptive binding names); rejected Finding 4 rollback and synced `SPEC.md` to ratified fast paths.
+- Completed post-audit comprehensive Doxygen pass across `jam_RegExp.h` and all 18 `saw/Source/*.h` headers (0 warnings).
+
+### State for Continuation
+- Release build (`cast cast/spell.md --no-sign`) passes with 0 warnings, 0 errors (`cast: Fine.`), installed at `~/.local/bin/saw`.
+- Functional suite (`nvim --headless -l test/run.lua ~/.local/bin/saw`) passes 91/91 cases (exit `0`).
+- All 16 `scout` benchmark reports are up to date under `benchmark/*-report.md`.
+- None — sprint fully closed, nothing open.
+
+### Debts Paid
+- None
+
+### Debts Deferred
+- None
+
 ---
 
 **End of SPRINT-LOG.md Template**

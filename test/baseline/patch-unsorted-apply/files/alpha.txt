@@ -1,0 +1,6 @@
+second foo bar
+after two
+third line
+fourth line
+FIVE
+SIX

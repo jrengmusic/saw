@@ -1,0 +1,4 @@
+*.log
+!keep.log
+note[!1].txt
+ignored_dir/
