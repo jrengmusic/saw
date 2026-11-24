@@ -27,7 +27,7 @@ saw lines <range> [path...] [options]
 | `--replace <text>` | Mutate | Replace lines in `<range>` with `<text>`. |
 | `--insert-before <text>` | Mutate | Insert `<text>` before line `A` (requires single line `A`). |
 | `--insert-after <text>` | Mutate | Insert `<text>` after line `A` (single line `A`, or `0` to prepend at top). |
-| `--stdin` | Mutate | Read replacement or inserted text verbatim from stdin (omit inline `<text>`). |
+| `--stdin` | Mutate | Read replacement or inserted text verbatim from stdin. A text option directly followed by `--stdin`, or placed after `--stdin`, takes no `<text>`. |
 | `--verify-hash <hhhh>` | Mutate | Require line `A` to have content hash `<hhhh>` before mutating. |
 | `--apply` | Mutate | Write planned edits to disk. Requires `--expect N`. |
 | `--expect <N>` | Mutate | Exact count of line operations applied. |
@@ -37,6 +37,7 @@ Specify at most one mutating flag: `--delete`, `--replace`, `--insert-before`, o
 ## Behavior and Edge Cases
 
 - **Read mode:** SAW emits the selected lines from named files or piped stdin and exits `0`.
+- **Text values:** SAW takes each text value verbatim.
 - **Range out of bounds on read:** When `A > lineCount`, SAW emits nothing and exits `0`. When `B > lineCount`, SAW clamps `B` to `lineCount`.
 - **Range out of bounds on mutate:** SAW fails before any write with exit `2`.
 - **Mutate dry-run (default):** SAW prints unified diff hunks and `saw: dry-run — <E> edit(s) in <F> file(s); nothing written. Pass --apply --expect <E> to write.`.

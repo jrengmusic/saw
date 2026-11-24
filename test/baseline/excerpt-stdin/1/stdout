@@ -1,0 +1,9 @@
+# 2 targets, 2 found, 0 missing
+## 1 a.txt:2-4 of 10 sha256:a5f5ba96dccb5267
+2	bravo
+3	needle one
+4	charlie
+## 2 crlf.txt:1-3 of 3 sha256:9fc4c6bdc7e5374b
+1	one
+2	two
+3	three

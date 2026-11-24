@@ -1,0 +1,11 @@
+# 1 targets, 1 found, 0 missing
+## 1 a.txt:2-6 of 10 sha256:7ddf0db5420a7491
+2	bravo
+3	needle one
+4	charlie
+5	needle two
+6	delta
+## 1 a.txt:8-10 of 10 sha256:fdd6812bf307ca4b
+8	foxtrot
+9	needle three
+10	golf

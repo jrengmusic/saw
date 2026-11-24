@@ -1,23 +1,37 @@
 #include "Pattern.h"
+#include "Stdio.h"
 #include "generated/Generated.h"
-
-static bool isCaptureGroupStart (std::string_view patternText, size_t index) noexcept
-{
-    if (index + 1 >= patternText.size() or patternText.at (index + 1) != static_cast<char> (Chars::question))
-        return true;
-
-    return index + 3 < patternText.size()
-           and patternText.at (index + 1) == static_cast<char> (Chars::question)
-           and patternText.at (index + 2) == static_cast<char> (Chars::lessThan)
-           and patternText.at (index + 3) != static_cast<char> (Chars::equals)
-           and patternText.at (index + 3) != static_cast<char> (Chars::exclamation);
-}
 
 static char getLowerCaseAscii (char byte) noexcept
 {
     if (byte >= static_cast<char> (Chars::upperA) and byte <= static_cast<char> (Chars::upperZ)) return static_cast<char> (byte + (Chars::lowerA - Chars::upperA));
 
     return byte;
+}
+
+static char getUpperCaseAscii (char byte) noexcept
+{
+    if (byte >= static_cast<char> (Chars::lowerA) and byte <= static_cast<char> (Chars::lowerZ)) return static_cast<char> (byte - (Chars::lowerA - Chars::upperA));
+
+    return byte;
+}
+
+static bool isAsciiLetter (char byte) noexcept
+{
+    const char lowerByte { getLowerCaseAscii (byte) };
+    return lowerByte >= static_cast<char> (Chars::lowerA) and lowerByte <= static_cast<char> (Chars::lowerZ);
+}
+
+static bool isWordByte (char byte) noexcept
+{
+    return isAsciiLetter (byte) or (byte >= static_cast<char> (Chars::zero) and byte <= static_cast<char> (Chars::nine)) or byte == static_cast<char> (Chars::underscore);
+}
+
+static std::string getFoldedText (std::string_view sourceText, bool isIgnoreCase)
+{
+    std::string folded { sourceText };
+    if (isIgnoreCase) std::transform (folded.begin(), folded.end(), folded.begin(), getLowerCaseAscii);
+    return folded;
 }
 
 static size_t getDelimitedEnd (std::string_view pattern, size_t start, char terminator) noexcept
@@ -111,11 +125,11 @@ static bool isOptionalNext (std::string_view pattern, size_t nextIndex) noexcept
     return next == static_cast<char> (Chars::openBrace) and nextIndex + 1 < pattern.size() and pattern.at (nextIndex + 1) == static_cast<char> (Chars::zero);
 }
 
-static void flushLiteral (std::string& current, std::string& best)
+static std::string getLongerLiteral (std::string current, std::string best)
 {
-    if (current.size() > best.size()) best = std::move (current);
+    if (current.size() > best.size()) return current;
 
-    current.clear();
+    return best;
 }
 
 static size_t getConstructEnd (std::string_view pattern, size_t index) noexcept
@@ -137,226 +151,372 @@ static size_t getConstructEnd (std::string_view pattern, size_t index) noexcept
     return index;
 }
 
-static std::string getRequiredLiteral (std::string_view pattern)
+static bool isCaseFoldBreak (char byte) noexcept
+{
+    const char foldedByte { getLowerCaseAscii (byte) };
+    return foldedByte == static_cast<char> (Chars::lowerK) or foldedByte == static_cast<char> (Chars::lowerS) or static_cast<unsigned char> (byte) >= Chars::nonAsciiStart;
+}
+
+static std::vector<std::string> getRequiredLiterals (std::string_view pattern, bool isIgnoreCase)
 {
     static constexpr size_t minPrefilterLength { 2 };
     static constexpr std::string_view metaChars { "()[]{}.^$*+?\\" };
+    std::vector<std::string> branches;
     std::string current;
     std::string best;
 
     for (size_t i { 0 }; i < pattern.size(); ++i)
     {
-        if (pattern.at (i) == static_cast<char> (Chars::pipe)) return {};
-
-        if (metaChars.find (pattern.at (i)) != std::string_view::npos)
+        if (pattern.at (i) == static_cast<char> (Chars::pipe))
         {
-            flushLiteral (current, best);
+            best = getLongerLiteral (std::move (current), std::move (best));
+            current.clear();
+            branches.push_back (std::move (best));
+            best.clear();
+        }
+        else if (metaChars.find (pattern.at (i)) != std::string_view::npos)
+        {
+            best = getLongerLiteral (std::move (current), std::move (best));
+            current.clear();
             i = getConstructEnd (pattern, i);
-            continue;
         }
-
-        const size_t codepointEnd { getCodepointEnd (pattern, i) };
-
-        if (isOptionalNext (pattern, codepointEnd)) flushLiteral (current, best);
-        else current.append (pattern.substr (i, codepointEnd - i));
-
-        i = codepointEnd - 1;
-    }
-
-    flushLiteral (current, best);
-    return best.size() >= minPrefilterLength ? best : std::string {};
-}
-
-static size_t findBytes (std::string_view haystack, size_t offset, std::string_view needle) noexcept
-{
-    assert (offset <= haystack.size());
-    assert (not needle.empty());
-
-    if (needle.size() > haystack.size() or offset > haystack.size() - needle.size()) return haystack.size();
-
-    const char* haystackData { haystack.data() };
-    const char* needleData { needle.data() };
-    const size_t needleSize { needle.size() };
-    const size_t searchEnd { haystack.size() - needleSize + 1 };
-    const char firstByte { needle.at (0) };
-    size_t cursor { offset };
-
-    while (cursor < searchEnd)
-    {
-        const size_t pos { jam::simd::findByte (haystackData, searchEnd, cursor, firstByte) };
-
-        if (pos >= searchEnd) return haystack.size();
-
-        if (needleSize == 1 or std::memcmp (haystackData + pos + 1, needleData + 1, needleSize - 1) == 0) return pos;
-
-        cursor = pos + 1;
-    }
-
-    return haystack.size();
-}
-
-static size_t findIgnoreCaseBytes (std::string_view haystack, size_t offset, std::string_view needle) noexcept
-{
-    assert (offset <= haystack.size() and not needle.empty());
-
-    if (needle.size() > haystack.size() or offset > haystack.size() - needle.size()) return haystack.size();
-
-    const size_t searchEnd { haystack.size() - needle.size() + 1 };
-    const char firstLower { needle.at (0) };
-    const bool hasUpper { firstLower >= static_cast<char> (Chars::lowerA) and firstLower <= static_cast<char> (Chars::lowerZ) };
-    const char firstUpper { hasUpper ? static_cast<char> (firstLower - (Chars::lowerA - Chars::upperA)) : firstLower };
-    size_t cursor { offset };
-    size_t lowerPos { jam::simd::findByte (haystack.data(), searchEnd, cursor, firstLower) };
-    size_t upperPos { hasUpper ? jam::simd::findByte (haystack.data(), searchEnd, cursor, firstUpper) : searchEnd };
-
-    while (cursor < searchEnd)
-    {
-        if (lowerPos < cursor) lowerPos = jam::simd::findByte (haystack.data(), searchEnd, cursor, firstLower);
-        if (upperPos < cursor) upperPos = jam::simd::findByte (haystack.data(), searchEnd, cursor, firstUpper);
-
-        const size_t pos { std::min (lowerPos, upperPos) };
-
-        if (pos >= searchEnd) return haystack.size();
-
-        if (std::equal (needle.data() + 1, needle.data() + needle.size(), haystack.data() + pos + 1, [] (char expected, char actual) noexcept { return getLowerCaseAscii (actual) == expected; })) return pos;
-
-        cursor = pos + 1;
-    }
-
-    return haystack.size();
-}
-
-Pattern::Pattern (Access,
-                  std::unique_ptr<jam::RegExp> newRegExp,
-                  std::string newLiteral,
-                  std::string newPrefilterLiteral,
-                  int newNumCaptureGroups,
-                  bool newIsIgnoreCase,
-                  bool newIsExactLine)
-    : regExp (std::move (newRegExp)),
-      literal (std::move (newLiteral)),
-      prefilterLiteral (std::move (newPrefilterLiteral)),
-      numCaptureGroups (newNumCaptureGroups),
-      isIgnoreCase (newIsIgnoreCase),
-      isExactLine (newIsExactLine)
-{
-}
-
-static std::string getCompiledRegexPattern (const std::string& rawPattern,
-                                            bool isIgnoreCase,
-                                            bool isExactLine)
-{
-    if (isExactLine)
-    {
-        const auto& prefix { isIgnoreCase ? Id::exactIgnoreCaseRegexPrefix : Id::exactRegexPrefix };
-        return prefix.toStdString() + rawPattern + Id::exactRegexSuffix.toStdString();
-    }
-
-    if (isIgnoreCase)
-        return Id::ignoreCaseRegexPrefix.toStdString() + rawPattern + Id::ignoreCaseRegexSuffix.toStdString();
-
-    return rawPattern;
-}
-
-std::pair<juce::Result, std::unique_ptr<Pattern>> Pattern::create (const juce::String& patternText,
-                                                                   bool isRegex,
-                                                                   bool isIgnoreCase,
-                                                                   bool isExactLine)
-{
-    if (patternText.isEmpty()) return { juce::Result::fail (text::Diagnostics::failPatternEmpty), nullptr };
-
-    const std::string rawPattern { patternText.toStdString() };
-
-    if (isRegex)
-    {
-        const std::string compiledPattern { getCompiledRegexPattern (rawPattern, isIgnoreCase, isExactLine) };
-        try
+        else
         {
-            auto compiled { std::make_unique<jam::RegExp> (compiledPattern) };
-            std::string prefilter { isIgnoreCase ? std::string {} : getRequiredLiteral (rawPattern) };
-            return { juce::Result::ok(), std::make_unique<Pattern> (Access {}, std::move (compiled), std::string {}, std::move (prefilter), getCaptureGroupCount (rawPattern), isIgnoreCase, isExactLine) };
-        }
-        catch (const std::invalid_argument& error)
-        {
-            return { juce::Result::fail (juce::String::formatted (text::Diagnostics::failRegexInvalid, error.what())), nullptr };
+            const size_t codepointEnd { getCodepointEnd (pattern, i) };
+
+            if (isOptionalNext (pattern, codepointEnd) or (isIgnoreCase and isCaseFoldBreak (pattern.at (i))))
+            {
+                best = getLongerLiteral (std::move (current), std::move (best));
+                current.clear();
+            }
+            else
+            {
+                current.append (getFoldedText (pattern.substr (i, codepointEnd - i), isIgnoreCase));
+            }
+
+            i = codepointEnd - 1;
         }
     }
 
-    std::string folded { rawPattern };
+    best = getLongerLiteral (std::move (current), std::move (best));
+    current.clear();
+    branches.push_back (std::move (best));
 
-    if (isIgnoreCase) std::transform (folded.begin(), folded.end(), folded.begin(), getLowerCaseAscii);
+    const bool isEveryBranchLong { std::all_of (branches.begin(), branches.end(), [] (const std::string& branch) noexcept { return branch.size() >= minPrefilterLength; }) };
 
-    return { juce::Result::ok(), std::make_unique<Pattern> (Access {}, nullptr, std::move (folded), isIgnoreCase ? std::string {} : rawPattern, 0, isIgnoreCase, isExactLine) };
-}
-
-jam::Array<std::optional<std::string_view>> Pattern::findNext (std::string_view line, size_t offset) const
-{
-    if (regExp != nullptr) return regExp->findNext (line, offset);
-
-    const size_t pos { findLiteralOffset (line, offset) };
-
-    if (pos < line.size())
-    {
-        jam::Array<std::optional<std::string_view>> captures;
-        captures.add (line.substr (pos, literal.size()));
-        return captures;
-    }
+    if (isEveryBranchLong) return branches;
 
     return {};
 }
 
-bool Pattern::hasMatch (std::string_view line) const
+static std::string getEscapedLiteralRegex (std::string_view literal, bool isIgnoreCase)
 {
-    if (regExp == nullptr)
-    {
-        if (isExactLine) return line.size() == literal.size() and findLiteralOffset (line, 0) == 0;
+    static constexpr std::string_view regexMetacharacters { "\\^$.*+?()[]{}|/" };
+    std::string regex;
 
-        return findLiteralOffset (line, 0) < line.size();
+    for (const char byte : literal)
+    {
+        if (isIgnoreCase and isAsciiLetter (byte))
+        {
+            const char lowerByte { getLowerCaseAscii (byte) };
+            regex.push_back (static_cast<char> (Chars::openBracket));
+            regex.push_back (lowerByte);
+            regex.push_back (getUpperCaseAscii (lowerByte));
+            regex.push_back (static_cast<char> (Chars::closeBracket));
+        }
+        else
+        {
+            if (regexMetacharacters.find (byte) != std::string_view::npos) regex.push_back (static_cast<char> (Chars::backslash));
+
+            regex.push_back (byte);
+        }
     }
 
-    if (not prefilterLiteral.empty() and findBytes (line, 0, prefilterLiteral) >= line.size()) return false;
+    return regex;
+}
 
-    return regExp->hasMatch (line);
+static size_t getMatchOffset (std::string_view line, std::string_view match) noexcept
+{
+    return static_cast<size_t> (match.data() - line.data());
+}
+
+static bool isWordAdjacent (std::string_view line, std::string_view match) noexcept
+{
+    const size_t start { getMatchOffset (line, match) };
+    const size_t end { start + match.size() };
+    return (start > 0 and isWordByte (line.at (start - 1))) or (end < line.size() and isWordByte (line.at (end)));
+}
+
+static juce::Result getTextsValidity (const jam::Strings& patternTexts)
+{
+    for (int index { 0 }; index < patternTexts.size(); ++index)
+    {
+        const std::string_view patternText { patternTexts.getView (index) };
+
+        if (patternText.empty()) return juce::Result::fail (text::Diagnostics::failPatternEmpty);
+
+        if (patternText.find (static_cast<char> (Chars::newline)) != std::string_view::npos) return juce::Result::fail (text::Diagnostics::failPatternNewline);
+    }
+
+    return juce::Result::ok();
+}
+
+static std::string getRegexSource (const jam::Strings& patternTexts, bool isRegex, bool isIgnoreCase)
+{
+    if (patternTexts.size() == 1) return std::string { patternTexts.getView (0) };
+
+    std::string source;
+
+    for (int index { 0 }; index < patternTexts.size(); ++index)
+    {
+        const std::string_view patternText { patternTexts.getView (index) };
+
+        if (index > 0) source.push_back (static_cast<char> (Chars::pipe));
+
+        source.append ("(?:");
+        source.append (isRegex ? std::string { patternText } : getEscapedLiteralRegex (patternText, isIgnoreCase));
+        source.push_back (static_cast<char> (Chars::closeParen));
+    }
+
+    return source;
+}
+
+static std::string getJoinedTexts (const jam::Strings& patternTexts)
+{
+    std::string joined;
+
+    for (int index { 0 }; index < patternTexts.size(); ++index)
+    {
+        if (index > 0) joined.push_back (static_cast<char> (Chars::pipe));
+
+        joined.append (patternTexts.getView (index));
+    }
+
+    return joined;
+}
+
+static std::vector<std::string> getPrefilterLiterals (const jam::Strings& patternTexts, bool isRegex, bool isIgnoreCase)
+{
+    std::vector<std::string> literals;
+
+    for (int index { 0 }; index < patternTexts.size(); ++index)
+    {
+        const std::string_view patternText { patternTexts.getView (index) };
+
+        if (isRegex)
+        {
+            const auto required { getRequiredLiterals (patternText, isIgnoreCase) };
+
+            if (required.empty()) return {};
+
+            literals.insert (literals.end(), required.begin(), required.end());
+        }
+        else
+        {
+            literals.push_back (getFoldedText (patternText, isIgnoreCase));
+        }
+    }
+
+    return literals;
+}
+
+static std::unique_ptr<jam::LiteralSet> getLiteralSet (const jam::Strings& patternTexts, bool isRegex, bool isIgnoreCase)
+{
+    auto literals (getPrefilterLiterals (patternTexts, isRegex, isIgnoreCase));
+
+    if (literals.empty()) return nullptr;
+
+    return jam::LiteralSet::create (std::move (literals), isIgnoreCase);
+}
+
+static std::string getCompiledRegexPattern (const std::string& rawPattern,
+                                            bool isIgnoreCase,
+                                            bool isExactLine,
+                                            bool isWord)
+{
+    std::string compiled;
+
+    if (isExactLine)
+    {
+        compiled.append (isIgnoreCase ? Id::exactIgnoreCaseRegexPrefix : Id::exactRegexPrefix);
+        compiled.append (rawPattern);
+        compiled.append (Id::exactRegexSuffix);
+    }
+    else if (isIgnoreCase)
+    {
+        compiled.append (Id::ignoreCaseRegexPrefix);
+        compiled.append (rawPattern);
+        compiled.append (Id::ignoreCaseRegexSuffix);
+    }
+    else
+    {
+        compiled.append (rawPattern);
+    }
+
+    if (not isWord)
+        return compiled;
+
+    std::string wordCompiled;
+    wordCompiled.append (Id::wordRegexPrefix);
+    wordCompiled.append (compiled);
+    wordCompiled.append (Id::wordRegexSuffix);
+    return wordCompiled;
+}
+
+Pattern::Pattern (Access,
+                  std::unique_ptr<jam::RegExp> newRegExp,
+                  std::unique_ptr<jam::RegExpProgram> newProgram,
+                  std::string newLiteral,
+                  std::unique_ptr<jam::LiteralSet> newLiteralSet,
+                  std::string newPatternText,
+                  bool newIsLiteral,
+                  bool newIsIgnoreCase,
+                  bool newIsExactLine,
+                  bool newIsWord)
+    : regExp (std::move (newRegExp)),
+      program (std::move (newProgram)),
+      literal (std::move (newLiteral)),
+      literalSet (std::move (newLiteralSet)),
+      patternText (std::move (newPatternText)),
+      isLiteral (newIsLiteral),
+      isIgnoreCase (newIsIgnoreCase),
+      isExactLine (newIsExactLine),
+      isWord (newIsWord)
+{
+}
+
+size_t Pattern::findCandidate (std::string_view bytes, size_t offset, jam::RegExpAutomaton& automaton) const
+{
+    assert (offset <= bytes.size());
+
+    if (literalSet != nullptr)
+        return literalSet->findNext (bytes, offset);
+
+    if (program != nullptr)
+        return automaton.findMatchingLine (*regExp, *program, bytes, offset);
+
+    return offset;
+}
+
+bool Pattern::isConfirmed() const noexcept
+{
+    if (literalSet != nullptr)
+        return isLiteral and not isExactLine and not isWord;
+
+    return program != nullptr;
+}
+
+std::pair<juce::Result, std::unique_ptr<Pattern>> Pattern::create (const jam::Strings& patternTexts,
+                                                                   bool isRegex,
+                                                                   bool isIgnoreCase,
+                                                                   bool isExactLine,
+                                                                   bool isWord)
+{
+    assert (patternTexts.size() > 0);
+    const juce::Result validity { getTextsValidity (patternTexts) };
+
+    if (validity.failed()) return { validity, nullptr };
+
+    const std::string patternText { getJoinedTexts (patternTexts) };
+    const bool hasCarriageReturn { patternText.find (static_cast<char> (Chars::carriageReturn)) != std::string::npos };
+
+    if (patternTexts.size() == 1 and not isRegex)
+    {
+        const std::string literal { getFoldedText (patternTexts.getView (0), isIgnoreCase) };
+        return { juce::Result::ok(), std::make_unique<Pattern> (Access {}, nullptr, nullptr, literal, getLiteralSet (patternTexts, isRegex, isIgnoreCase), patternText, not hasCarriageReturn, isIgnoreCase, isExactLine, isWord) };
+    }
+
+    const std::string rawPattern { getRegexSource (patternTexts, isRegex, isIgnoreCase) };
+    const std::string compiledPattern { getCompiledRegexPattern (rawPattern, isIgnoreCase and isRegex, isExactLine, isWord) };
+
+    try
+    {
+        auto compiled { std::make_unique<jam::RegExp> (compiledPattern) };
+        auto program { jam::RegExpProgram::create (*compiled) };
+        return { juce::Result::ok(), std::make_unique<Pattern> (Access {}, std::move (compiled), std::move (program), std::string {}, getLiteralSet (patternTexts, isRegex, isIgnoreCase), patternText, not isRegex and not hasCarriageReturn, isIgnoreCase, isExactLine, isWord) };
+    }
+    catch (const std::invalid_argument& error)
+    {
+        return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failRegexInvalid, error.what())), nullptr };
+    }
+}
+
+std::pair<juce::Result, Pattern::Captures> Pattern::findNext (std::string_view line, size_t offset) const
+{
+    if (regExp != nullptr)
+        return findSpan (line, offset);
+
+    size_t searchOffset { offset };
+
+    while (true)
+    {
+        auto [result, captures] { findSpan (line, searchOffset) };
+
+        if (result.failed() or not isWord or captures.isEmpty() or not isWordAdjacent (line, *captures.at (0)))
+            return { std::move (result), std::move (captures) };
+
+        searchOffset = getMatchOffset (line, *captures.at (0)) + 1;
+    }
+}
+
+std::pair<juce::Result, Pattern::Captures> Pattern::findSpan (std::string_view line, size_t offset) const
+{
+    if (offset > line.size()) return { juce::Result::ok(), Captures {} };
+
+    if (regExp == nullptr)
+    {
+        const size_t pos { literalSet->findNext (line, offset) };
+        const bool isExactMatch { not isExactLine or (offset == 0 and line.size() == literal.size()) };
+        Captures captures {};
+
+        if (pos < line.size() and isExactMatch) captures.add (line.substr (pos, literal.size()));
+
+        return { juce::Result::ok(), std::move (captures) };
+    }
+
+    if (program != nullptr and not program->hasEmptyRepetition())
+        return { juce::Result::ok(), program->findNext (*regExp, line, offset) };
+
+    return findBacktracked (line, offset);
+}
+
+std::pair<juce::Result, Pattern::Captures> Pattern::findBacktracked (std::string_view line, size_t offset) const
+{
+    try
+    {
+        return { juce::Result::ok(), regExp->findNext (line, offset) };
+    }
+    catch (const std::overflow_error&)
+    {
+        return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failRegexSteps, patternText.c_str())), Captures {} };
+    }
+}
+
+std::pair<juce::Result, bool> Pattern::hasMatch (std::string_view line, jam::RegExpAutomaton& automaton) const
+{
+    if (program != nullptr)
+        return { juce::Result::ok(), automaton.hasMatch (*regExp, *program, line) };
+
+    if (regExp == nullptr)
+    {
+        const auto [result, captures] { findNext (line, 0) };
+        return { result, result.wasOk() and captures.size() > 0 };
+    }
+
+    const bool isPossible { literalSet == nullptr or literalSet->findNext (line, 0) < line.size() };
+
+    if (isPossible)
+    {
+        const auto [result, captures] { findBacktracked (line, 0) };
+        return { result, result.wasOk() and captures.size() > 0 };
+    }
+
+    return { juce::Result::ok(), false };
 }
 
 int Pattern::getNumCaptureGroups() const noexcept
 {
-    return numCaptureGroups;
-}
+    if (regExp == nullptr) return 0;
 
-std::string_view Pattern::getPrefilterLiteral() const noexcept
-{
-    return prefilterLiteral;
-}
-
-int Pattern::getCaptureGroupCount (std::string_view patternText) noexcept
-{
-    int count { 0 };
-    bool inCharClass { false };
-
-    for (size_t index { 0 }; index < patternText.size(); ++index)
-    {
-        const char currentByte { patternText.at (index) };
-
-        if (currentByte == static_cast<char> (Chars::backslash))
-        {
-            ++index;
-            continue;
-        }
-
-        if (not inCharClass and currentByte == static_cast<char> (Chars::openParen) and isCaptureGroupStart (patternText, index))
-            ++count;
-
-        inCharClass = (inCharClass and currentByte != static_cast<char> (Chars::closeBracket))
-                      or (not inCharClass and currentByte == static_cast<char> (Chars::openBracket));
-    }
-
-    return count;
-}
-
-size_t Pattern::findLiteralOffset (std::string_view line, size_t offset) const noexcept
-{
-    if (isIgnoreCase) return findIgnoreCaseBytes (line, offset, literal);
-
-    return findBytes (line, offset, literal);
+    return regExp->getNumCaptures() - 1;
 }

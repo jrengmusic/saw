@@ -1,0 +1,10 @@
+--- <root>/notrail.txt
++++ <root>/notrail.txt (planned)
+@@ -1,3 +1,2 @@
+ alpha
+-beta
+-gamma
+\ No newline at end of file
++beta
+\ No newline at end of file
+saw: dry-run undo (<tx-id>) — 1 file(s); nothing written. Pass --apply to restore.

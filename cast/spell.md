@@ -29,7 +29,7 @@
 | @HashMaps        | ../Source/generated/HashMaps.h    |
 | @GeneratedSource | ../Source/generated/Generated.cpp |
 | @Generated       | ../Source/generated/Generated.h   |
-| @string          | juce::String                      |
+| @bannerRows      | std::array<std::string_view, 8>   |
 +------------------+-----------------------------------+
 
 ## headers
@@ -86,12 +86,15 @@
 | - [list]: @project-info:release:stage=linker  | - [list]: @semicolon      | - [list]: @cmake:win                          |                  |
 | - [list]: @project-info:debug:stage=          | - [list]: @semicolon      | - [list]: @cmake:mac                          |                  |
 | - [list]: @project-info:user module           |                           | - [list]: @cmake:module                       |                  |
+| - [list]: @project-info:server user module    |                           | - [list]: @cmake:module                       |                  |
 | - [list]: @project-info:source glob           |                           | - [list]: @cmake:glob-pattern                 |                  |
 | - [list]: @project-info:macro                 |                           | - [list]: @cmake:value                        |                  |
 | - [list]: @project-info:include               |                           | - [list]: @cmake:value                        |                  |
 | - [list]: @project-info:juce module           |                           | - [list]: @cmake:value                        |                  |
 | - [list]: @project-info:user module           |                           | - [list]: @cmake:link                         |                  |
 | - [list]: @project-info:library               |                           | - [list]: @cmake:value                        |                  |
+| - [list]: @project-info:program module        |                           | - [list]: @cmake:value                        |                  |
+| - [list]: @project-info:server module         |                           | - [list]: @cmake:value                        |                  |
 | - [list]: @project-info:binary                |                           | - [list]: @cmake:value                        |                  |
 | - [list]: @project-info:pack                  |                           | - [list]: @cmake:pack-value                   |                  |
 |                                               |                           | - strip: @cmake:strip                         |                  |
@@ -137,32 +140,15 @@
 | - [list]: @project-info:cmake                 |                           | @installer:[no-banner]release                 | @Release         |
 | - [list]: @project-info:release notes         |                           | - [list]: @installer:note                     |                  |
 +-----------------------------------------------+---------------------------+-----------------------------------------------+------------------+
-| - [list]: @identifiers:identifiers            |                           | @code:namespace                               | @Identifiers     |
-|                                               |                           | - macro: #pragma once                         |                  |
-|                                               |                           | - generated:                                  |                  |
-|                                               |                           | - name: Id                                    |                  |
-|                                               |                           | - [description]: @headers:brief               |                  |
-|                                               |                           | - [list]: @code:identifier                    |                  |
 +-----------------------------------------------+---------------------------+-----------------------------------------------+------------------+
-| > - [list]: @identifiers:identifiers          |                           | @source:source                                | @GeneratedSource |
+| > - [list]: @identifiers:constants            |                           | @code:namespace                               | @Identifiers     |
+|                                               |                           | - name: Id                                    |                  |
+|                                               |                           | > - [list]: @code:constant                    |                  |
++-----------------------------------------------+---------------------------+-----------------------------------------------+------------------+
+|                                               |                           | @source:source                                | @GeneratedSource |
 |                                               |                           | - file: Generated.h                           |                  |
-|                                               |                           |                                               |                  |
-|                                               |                           | @code:namespace                               |                  |
-|                                               |                           | - name: Id                                    |                  |
-|                                               |                           | > - [list]: @code:identifier-definition       |                  |
 +-----------------------------------------------+---------------------------+-----------------------------------------------+------------------+
-| - [list]: @binaryFiles:files                  |                           | @code:namespace                               | @GeneratedSource |
-|                                               |                           | - name: files                                 |                  |
-|                                               |                           | - [list]: @code:identifier-definition         |                  |
 +-----------------------------------------------+---------------------------+-----------------------------------------------+------------------+
-| > - [list]: @banner:banner                    | - [list]: @code:linebreak | @code:namespace                               | @GeneratedSource |
-|                                               |                           | - name: map                                   |                  |
-|                                               |                           |                                               |                  |
-|                                               |                           | @code:hash-map-definition                     |                  |
-|                                               |                           | - name: banner                                |                  |
-|                                               |                           | - keyType: @string                            |                  |
-|                                               |                           | - valueType: @string                          |                  |
-|                                               |                           | > - [list]: @code:utf8-entry                  |                  |
 +-----------------------------------------------+---------------------------+-----------------------------------------------+------------------+
 | > - [list]: @text:diagnostics                 |                           | @code:namespace                               | @Text            |
 |                                               |                           | - macro: #pragma once                         |                  |
@@ -177,17 +163,17 @@
 |                                               |                           | - macro: #pragma once                         |                  |
 |                                               |                           | - name: files                                 |                  |
 |                                               |                           | - [description]: @headers:brief               |                  |
-|                                               |                           | - [list]: @code:identifier                    |                  |
+|                                               |                           | - [list]: @code:constant                      |                  |
 +-----------------------------------------------+---------------------------+-----------------------------------------------+------------------+
-|                                               | - [list]: @code:linebreak | @code:namespace                               | @HashMaps        |
+| > - [list]: @banner:banner                    | - [list]: @code:linebreak | @code:namespace                               | @HashMaps        |
 |                                               |                           | - macro: #pragma once                         |                  |
 |                                               |                           | - name: map                                   |                  |
 |                                               |                           | - [description]: @headers:brief               |                  |
 |                                               |                           |                                               |                  |
-|                                               |                           | @code:hash-map                                |                  |
+|                                               |                           | @code:lookup-table                            |                  |
+|                                               |                           | - type: @bannerRows                           |                  |
 |                                               |                           | - name: banner                                |                  |
-|                                               |                           | - keyType: @string                            |                  |
-|                                               |                           | - valueType: @string                          |                  |
+|                                               |                           | > - [list]: @code:value-entry                 |                  |
 +-----------------------------------------------+---------------------------+-----------------------------------------------+------------------+
 
 ## output index

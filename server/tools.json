@@ -1,0 +1,31 @@
+{
+  "tools": [
+    {
+      "name": "run",
+      "title": "Run a saw command",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "arguments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "directory": {
+            "type": "string"
+          },
+          "stdin": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "arguments",
+          "directory"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

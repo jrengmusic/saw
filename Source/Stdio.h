@@ -17,17 +17,12 @@ struct Stdio
      */
     static constexpr int exitError { 2 };
 
-    /** @brief Switches standard output to binary mode on Windows.
+    /** @brief Result of a command: exit code, standard output bytes, and standard error bytes.
      *
-     *  Prevents newline translation from altering LF or CRLF byte streams.
+     *  A verb returns an Output, so that no verb writes to a process stream. The caller
+     *  decides where the bytes go.
      */
-    static void setBinaryOutput() noexcept;
-
-    /** @brief Checks whether standard input is connected to an interactive terminal.
-     *
-     *  @return True when stdin is a TTY.
-     */
-    static bool isTerminalInput() noexcept;
+    using Output = std::tuple<int, std::string, std::string>;
 
     /** @brief Checks whether standard output is connected to an interactive terminal.
      *
@@ -35,29 +30,58 @@ struct Stdio
      */
     static bool isTerminalOutput() noexcept;
 
-    /** @brief Prints one UTF-8 line to standard output in binary mode.
+    /** @brief Checks whether the input of a command is an interactive terminal.
      *
-     *  @param message Line text without a trailing newline.
+     *  Supplied input is never a terminal. Only the process standard input can be one.
+     *
+     *  @param input The supplied input, or nullopt when the process standard input is read.
+     *
+     *  @return True when no input is supplied and standard input is a TTY.
      */
-    static void print (const juce::String& message);
+    static bool isTerminalInput (const std::optional<std::string>& input);
 
-    /** @brief Prints a prefixed summary line to standard output.
+    /** @brief Appends a newline to a message.
      *
-     *  @param message Summary text appended after the tool name prefix.
+     *  @param message The text of the line, without a newline.
+     *
+     *  @return The message bytes followed by one newline.
      */
-    static void printSummary (const juce::String& message);
+    static std::string getLine (const juce::String& message);
 
-    /** @brief Prints a prefixed error line to standard error.
+    /** @brief Formats a diagnostic line with the program name as its prefix.
      *
-     *  @param message Diagnostic text appended after the tool name prefix.
+     *  @param message The text of the diagnostic, without a newline.
+     *
+     *  @return The program name, the diagnostic separator, the message, and one newline.
      */
-    static void printError (const juce::String& message);
+    static std::string getDiagnostic (const juce::String& message);
 
-    /** @brief Writes exact raw bytes to standard output in binary mode.
+    /** @brief Builds the output of a failed command.
      *
-     *  @param text Byte sequence to write without adding a newline.
+     *  @param message The text of the diagnostic.
+     *
+     *  @return Exit code exitError, empty standard output, and the diagnostic on standard error.
      */
-    static void write (std::string_view text);
+    static Output getFailure (const juce::String& message);
+
+    /** @brief Writes both streams of an Output and returns the exit code.
+     *
+     *  A failed write of the standard output gives exitError, and the failure is reported on
+     *  standard error. A closed pipe is not a failure.
+     *
+     *  @param output The command result to write.
+     *
+     *  @return The exit code of the command, or exitError when the standard output write fails.
+     */
+    static int write (const Output& output);
+
+    /** @brief Writes text to standard error. A failed write is ignored.
+     *
+     *  The diagnostic channel does not change the exit code of the command.
+     *
+     *  @param text The bytes to write.
+     */
+    static void writeError (std::string_view text);
 
     /** @brief Formats a printf-style UTF-8 string using two-pass sizing.
      *
@@ -67,9 +91,22 @@ struct Stdio
      */
     static juce::String getFormatted (const char* format, ...);
 
-    /** @brief Reads all bytes from standard input in binary mode until EOF.
+    /** @brief Joins several output parts into one string.
      *
-     *  @return Status result paired with the bytes read from stdin.
+     *  The result is sized once, so the join makes one allocation.
+     *
+     *  @param outputs The parts, in the order they are joined.
+     *
+     *  @return The concatenation of all parts.
      */
-    static std::pair<juce::Result, std::string> getInput();
+    static std::string getJoinedOutput (const jam::Array<std::string>& outputs);
+
+private:
+    /** @brief Writes exact raw bytes to standard output.
+     *
+     *  @param bytes Byte sequence to write without adding a newline.
+     *
+     *  @return Ok when every byte is written or the pipe is closed, otherwise a failure.
+     */
+    static juce::Result write (std::string_view bytes);
 };

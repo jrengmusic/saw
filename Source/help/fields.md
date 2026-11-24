@@ -14,7 +14,7 @@ saw fields <spec> [path...] [options]
 
 | Option | Effect |
 | :--- | :--- |
-| `-d <delim>`, `--delimiter <delim>` | Split lines on literal `<delim>`. Without `-d`, split on runs of ASCII space or tab and trim line ends. |
+| `-d <delim>`, `--delimiter <delim>` | Split lines on literal `<delim>`. Without `-d`, split on runs of ASCII space or tab and trim leading and trailing whitespace. |
 | `-o <out>`, `--output-delimiter <out>` | Join fields with `<out>`. Defaults to space without `-d`, or `<delim>` with `-d`. |
 | `--match <pattern>` | Process only lines matching `<pattern>` (literal default; `-r` for regex). |
 | `-r`, `--regex` | Interpret `--match <pattern>` as `jam::RegExp`. |

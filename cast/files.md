@@ -1,31 +1,37 @@
 ## index
 
-+---------+--------------+
-| alias   | symbol       |
-+=========+==============+
-| @string | juce::String |
-+---------+--------------+
++-------+------------------+
+| alias | symbol           |
++=======+==================+
+| @view | std::string_view |
++-------+------------------+
 
 ## files
 
 ```
-@brief File names saw reads: help texts.
+@brief File names saw reads: rendered help frames.
 ```
 
-+---------+-------------+--------------+----------------------------------+
-| type    | name        | value        | description                      |
-+=========+=============+==============+==================================+
-| @string | sawHelp     | `HELP.md`    | Rendered top-level help text.    |
-+---------+-------------+--------------+----------------------------------+
-| @string | findHelp    | `find.md`    | Rendered find verb help text.    |
-+---------+-------------+--------------+----------------------------------+
-| @string | replaceHelp | `replace.md` | Rendered replace verb help text. |
-+---------+-------------+--------------+----------------------------------+
-| @string | linesHelp   | `lines.md`   | Rendered lines verb help text.   |
-+---------+-------------+--------------+----------------------------------+
-| @string | fieldsHelp  | `fields.md`  | Rendered fields verb help text.  |
-+---------+-------------+--------------+----------------------------------+
-| @string | patchHelp   | `patch.md`   | Rendered patch verb help text.   |
-+---------+-------------+--------------+----------------------------------+
-| @string | undoHelp    | `undo.md`    | Rendered undo verb help text.    |
-+---------+-------------+--------------+----------------------------------+
++-------+-------------+-----------------+----------------------------------+
+| type  | name        | value           | description                      |
++=======+=============+=================+==================================+
+| @view | sawHelp     | `HELP.frame`    | Rendered top-level help text.    |
++-------+-------------+-----------------+----------------------------------+
+| @view | findHelp    | `find.frame`    | Rendered find verb help text.    |
++-------+-------------+-----------------+----------------------------------+
+| @view | replaceHelp | `replace.frame` | Rendered replace verb help text. |
++-------+-------------+-----------------+----------------------------------+
+| @view | linesHelp   | `lines.frame`   | Rendered lines verb help text.   |
++-------+-------------+-----------------+----------------------------------+
+| @view | fieldsHelp  | `fields.frame`  | Rendered fields verb help text.  |
++-------+-------------+-----------------+----------------------------------+
+| @view | patchHelp   | `patch.frame`   | Rendered patch verb help text.   |
++-------+-------------+-----------------+----------------------------------+
+| @view | undoHelp    | `undo.frame`    | Rendered undo verb help text.    |
++-------+-------------+-----------------+----------------------------------+
+| @view | excerptHelp | `excerpt.frame` | Rendered excerpt verb help text. |
++-------+-------------+-----------------+----------------------------------+
+| @view | screenErase | `erase.frame`   | Screen erase sequence.           |
++-------+-------------+-----------------+----------------------------------+
+| @view | serverTools | `tools.json`    | MCP tool definitions.            |
++-------+-------------+-----------------+----------------------------------+

@@ -3,12 +3,15 @@ set -euo pipefail
 
 corpusDir="/tmp/saw-bench-corpus"
 expectFile="/tmp/saw-bench-corpus.expect"
+smallFile="/tmp/saw-bench-small.txt"
+smallSourceFile="$corpusDir/juce_core/juce_core.h"
+smallLineCount=200
 
-if [ -d "$corpusDir" ] && [ -s "$expectFile" ]; then
+if [ -d "$corpusDir" ] && [ -s "$expectFile" ] && [ -s "$smallFile" ]; then
     exit 0
 fi
 
-rm -rf "$corpusDir" "$expectFile"
+rm -rf "$corpusDir" "$expectFile" "$smallFile"
 
 sourceDir="$(cd "$(dirname "$0")/../../../JUCE/modules" && pwd)"
 cp -R "$sourceDir" "$corpusDir"
@@ -36,3 +39,5 @@ case "$expectCount" in
 esac
 
 printf '%s\n' "$expectCount" > "$expectFile"
+
+head -n "$smallLineCount" "$smallSourceFile" > "$smallFile"

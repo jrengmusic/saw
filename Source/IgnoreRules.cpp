@@ -1,4 +1,5 @@
 #include "IgnoreRules.h"
+#include "Paths.h"
 #include "TextDocument.h"
 #include "generated/Generated.h"
 
@@ -49,7 +50,7 @@ static void appendConfigQuotedEscape (std::string& decoded, char escaped)
     decoded.push_back (configEscapes.contains (escaped) ? configEscapes.at (escaped) : escaped);
 }
 
-static void readQuotedConfigSegment (std::string_view raw, size_t& index, std::string& decoded)
+static size_t readQuotedConfigSegment (std::string_view raw, size_t index, std::string& decoded)
 {
     ++index;
 
@@ -71,6 +72,8 @@ static void readQuotedConfigSegment (std::string_view raw, size_t& index, std::s
 
     if (index < raw.size())
         ++index;
+
+    return index;
 }
 
 static std::string parseConfigValue (std::string_view raw)
@@ -92,7 +95,7 @@ static std::string parseConfigValue (std::string_view raw)
 
         if (current == static_cast<char> (Chars::doubleQuote))
         {
-            readQuotedConfigSegment (raw, index, decoded);
+            index = readQuotedConfigSegment (raw, index, decoded);
             lastNonSpaceSize = decoded.size();
         }
         else
@@ -122,7 +125,7 @@ static bool isCoreSectionHeader (std::string_view trimmed)
     {
         const auto sectionName { getTrimmedAscii (trimmed.substr (1, closePos - 1)) };
         return juce::String::fromUTF8 (sectionName.data(), static_cast<int> (sectionName.size()))
-                   .compareIgnoreCase (Id::coreSection) == 0;
+                   .compareIgnoreCase (Id::coreSection.data()) == 0;
     }
 
     return false;
@@ -137,7 +140,7 @@ static std::optional<juce::String> getExcludesFileValueFromLine (std::string_vie
         const auto key { getTrimmedAscii (trimmed.substr (0, equalsPos)) };
         const auto keyText { juce::String::fromUTF8 (key.data(), static_cast<int> (key.size())) };
 
-        if (keyText.compareIgnoreCase (Id::excludesFileKey) == 0)
+        if (keyText.compareIgnoreCase (Id::excludesFileKey.data()) == 0)
         {
             const auto value { parseConfigValue (trimmed.substr (equalsPos + 1)) };
             return juce::String::fromUTF8 (value.data(), static_cast<int> (value.size()));
@@ -265,7 +268,7 @@ static void appendEscapedRegexLiteral (std::string& regex, char character)
     regex.push_back (character);
 }
 
-static void appendClassToken (std::string& regex, std::string_view pattern, size_t& index)
+static size_t appendClassToken (std::string& regex, std::string_view pattern, size_t index)
 {
     static constexpr std::string_view classMetacharacters { "\\]-^[" };
 
@@ -284,9 +287,11 @@ static void appendClassToken (std::string& regex, std::string_view pattern, size
         regex.push_back (pattern.at (index));
         ++index;
     }
+
+    return index;
 }
 
-static void appendCharacterClass (std::string& regex, std::string_view pattern, size_t& index)
+static size_t appendCharacterClass (std::string& regex, std::string_view pattern, size_t index)
 {
     ++index;
     regex.append ("(?!/)");
@@ -307,13 +312,15 @@ static void appendCharacterClass (std::string& regex, std::string_view pattern, 
     }
 
     while (index < pattern.size() and pattern.at (index) != static_cast<char> (Chars::closeBracket))
-        appendClassToken (regex, pattern, index);
+        index = appendClassToken (regex, pattern, index);
 
     if (index < pattern.size() and pattern.at (index) == static_cast<char> (Chars::closeBracket))
     {
         regex.push_back (static_cast<char> (Chars::closeBracket));
         ++index;
     }
+
+    return index;
 }
 
 static bool isDoubleStarToken (std::string_view pattern, size_t index) noexcept
@@ -322,7 +329,7 @@ static bool isDoubleStarToken (std::string_view pattern, size_t index) noexcept
            or (index + 3 == pattern.size() and pattern.substr (index, 3).compare ("/**") == 0);
 }
 
-static void appendDoubleStar (std::string& regex, std::string_view pattern, size_t& index)
+static size_t appendDoubleStar (std::string& regex, std::string_view pattern, size_t index)
 {
     assert (isDoubleStarToken (pattern, index));
 
@@ -339,6 +346,8 @@ static void appendDoubleStar (std::string& regex, std::string_view pattern, size
         regex.append ("/.*");
         index += 3;
     }
+
+    return index;
 }
 
 static bool isSpecialGlobToken (std::string_view pattern, size_t index) noexcept
@@ -349,7 +358,7 @@ static bool isSpecialGlobToken (std::string_view pattern, size_t index) noexcept
            or current == static_cast<char> (Chars::asterisk);
 }
 
-static void appendSpecialGlob (std::string& regex, std::string_view pattern, size_t& index)
+static size_t appendSpecialGlob (std::string& regex, std::string_view pattern, size_t index)
 {
     assert (isSpecialGlobToken (pattern, index));
     const auto current { pattern.at (index) };
@@ -361,7 +370,7 @@ static void appendSpecialGlob (std::string& regex, std::string_view pattern, siz
     }
     else if (current == static_cast<char> (Chars::openBracket))
     {
-        appendCharacterClass (regex, pattern, index);
+        index = appendCharacterClass (regex, pattern, index);
     }
     else
     {
@@ -370,9 +379,11 @@ static void appendSpecialGlob (std::string& regex, std::string_view pattern, siz
 
         regex.append ("[^/]*");
     }
+
+    return index;
 }
 
-static void appendGlobStep (std::string& regex, std::string_view pattern, size_t& index)
+static size_t appendGlobStep (std::string& regex, std::string_view pattern, size_t index)
 {
     static const jam::HashMap<char, std::string_view> globTokens
     {
@@ -383,23 +394,22 @@ static void appendGlobStep (std::string& regex, std::string_view pattern, size_t
 
     if (isDoubleStarToken (pattern, index))
     {
-        appendDoubleStar (regex, pattern, index);
+        return appendDoubleStar (regex, pattern, index);
     }
-    else if (isSpecialGlobToken (pattern, index))
+
+    if (isSpecialGlobToken (pattern, index))
     {
-        appendSpecialGlob (regex, pattern, index);
+        return appendSpecialGlob (regex, pattern, index);
     }
+
+    const auto current { pattern.at (index) };
+
+    if (globTokens.contains (current))
+        regex.append (globTokens.at (current));
     else
-    {
-        const auto current { pattern.at (index) };
+        regex.push_back (current);
 
-        if (globTokens.contains (current))
-            regex.append (globTokens.at (current));
-        else
-            regex.push_back (current);
-
-        ++index;
-    }
+    return index + 1;
 }
 
 static std::string getPrefixWithSlash (std::string_view basePrefix)
@@ -417,11 +427,33 @@ static std::string getPrefixWithSlash (std::string_view basePrefix)
     return {};
 }
 
-IgnoreRules::IgnoreRules (const juce::File& walkRoot)
-    : topLevel (getTopLevelDirectory (walkRoot))
+static bool isRuleMatch (const jam::RegExp& regExp, const jam::RegExpProgram* program, std::string_view candidate)
 {
-    addRulesFromFile (getGlobalExcludesFile(), {});
-    addRulesFromFile (topLevel.getChildFile (Id::gitExcludePath), {});
+    try
+    {
+        return regExp.hasMatch (candidate);
+    }
+    catch (const std::overflow_error&)
+    {
+        return program != nullptr and program->findNext (regExp, candidate, 0).size() > 0;
+    }
+}
+
+IgnoreRules::IgnoreRules (Access, std::shared_ptr<const IgnoreRules> newParent, const juce::File& newTopLevel, std::string newBasePrefix)
+    : topLevel (newTopLevel)
+    , basePrefix (std::move (newBasePrefix))
+    , parent (std::move (newParent))
+{
+}
+
+std::shared_ptr<const IgnoreRules> IgnoreRules::create (const juce::File& walkRoot)
+{
+    const auto topLevel { getTopLevelDirectory (walkRoot) };
+    auto chain { getLinkedRules (nullptr, getGlobalExcludesFile(), topLevel, {}) };
+    const auto excludeFile { topLevel.getChildFile (Id::gitExcludePath.data()) };
+
+    if (excludeFile.existsAsFile())
+        chain = getLinkedRules (chain, excludeFile, topLevel, {});
 
     jam::Array<juce::File> ancestors;
     auto currentDirectory { walkRoot };
@@ -440,27 +472,32 @@ IgnoreRules::IgnoreRules (const juce::File& walkRoot)
     for (int index { ancestors.size() - 1 }; index >= 0; --index)
     {
         const auto& directory { ancestors.at (index) };
-        addRulesFromFile (directory.getChildFile (Id::gitignoreFile), getRelativePath (directory));
+
+        if (directory.getChildFile (Id::gitignoreFile.data()).existsAsFile())
+            chain = getChildRules (chain, directory, chain->getRelativePath (directory));
     }
+
+    return chain;
 }
 
-IgnoreRules::IgnoreRules (const juce::File& newTopLevel, jam::Array<Rule> newRules)
-    : topLevel (newTopLevel)
-    , rules (std::move (newRules))
+std::shared_ptr<const IgnoreRules> IgnoreRules::getChildRules (const std::shared_ptr<const IgnoreRules>& parentRules,
+                                                               const juce::File& directory,
+                                                               std::string_view relativePrefix)
 {
+    return getLinkedRules (parentRules,
+                           directory.getChildFile (Id::gitignoreFile.data()),
+                           parentRules->topLevel,
+                           getPrefixWithSlash (relativePrefix));
 }
 
-IgnoreRules IgnoreRules::getChildRules (const juce::File& directory, std::string_view relativePrefix) const
+std::shared_ptr<const IgnoreRules> IgnoreRules::getLinkedRules (const std::shared_ptr<const IgnoreRules>& parentRules,
+                                                                const juce::File& file,
+                                                                const juce::File& newTopLevel,
+                                                                std::string newBasePrefix)
 {
-    jam::Array<Rule> childRules;
-    childRules.ensureStorageAllocated (rules.size());
-
-    for (const auto& rule : rules)
-        childRules.add (rule);
-
-    IgnoreRules child { topLevel, std::move (childRules) };
-    child.addRulesFromFile (directory.getChildFile (Id::gitignoreFile), relativePrefix);
-    return child;
+    auto link { std::make_shared<IgnoreRules> (Access {}, parentRules, newTopLevel, std::move (newBasePrefix)) };
+    link->addRulesFromFile (file);
+    return link;
 }
 
 std::string IgnoreRules::getRootRelativePrefix (const juce::File& rootDirectory) const
@@ -470,33 +507,74 @@ std::string IgnoreRules::getRootRelativePrefix (const juce::File& rootDirectory)
 
 bool IgnoreRules::isIgnored (std::string_view relativePath, bool isDirectory) const
 {
-    if (not relativePath.empty())
+    for (const IgnoreRules* link { this }; link != nullptr; link = link->parent.get())
     {
-        for (int index { rules.size() - 1 }; index >= 0; --index)
-        {
-            const auto& rule { rules.at (index) };
-            const auto isMatchingBase { relativePath.size() > rule.basePrefix.size()
-                                        and relativePath.compare (0, rule.basePrefix.size(), rule.basePrefix) == 0 };
-            const auto isTypeMatch { not rule.isDirectoryOnly or isDirectory };
+        const auto winningIndex { link->getLastMatch (relativePath, isDirectory) };
 
-            if (isMatchingBase and isTypeMatch)
-            {
-                const std::string_view candidate { relativePath.substr (rule.basePrefix.size()) };
-
-                if (rule.regExp->hasMatch (candidate))
-                    return not rule.isNegated;
-            }
-        }
+        if (winningIndex >= 0)
+            return not link->rules.at (winningIndex).isNegated;
     }
 
     return false;
+}
+
+int IgnoreRules::getLastMatch (std::string_view relativePath, bool isDirectory) const
+{
+    if (relativePath.size() > basePrefix.size() and relativePath.compare (0, basePrefix.size(), basePrefix) == 0)
+    {
+        const std::string_view candidate { relativePath.substr (basePrefix.size()) };
+        const auto lastComponent { candidate.substr (candidate.rfind (static_cast<char> (Chars::slash)) + 1) };
+        const auto dotPosition { lastComponent.rfind (static_cast<char> (Chars::dot)) };
+        auto winningIndex { std::max (getLastIndex (basenames, lastComponent, isDirectory),
+                                      getLastIndex (relativePaths, candidate, isDirectory)) };
+
+        if (dotPosition != std::string_view::npos)
+            winningIndex = std::max (winningIndex, getLastIndex (extensions, lastComponent.substr (dotPosition + 1), isDirectory));
+
+        for (auto position { others.size() }; position > 0 and others.at (position - 1) > winningIndex; --position)
+        {
+            const auto index { others.at (position - 1) };
+            const auto& rule { rules.at (index) };
+
+            if ((not rule.isDirectoryOnly or isDirectory) and isRuleMatch (*rule.regExp, rule.program.get(), candidate))
+            {
+                winningIndex = index;
+                break;
+            }
+        }
+
+        return winningIndex;
+    }
+
+    return -1;
+}
+
+int IgnoreRules::getLastIndex (const RuleIndexes& indexes, std::string_view key, bool isDirectory) const
+{
+    const auto entry { indexes.find (key) };
+
+    if (entry != indexes.end())
+    {
+        const auto& [entryKey, candidates] { *entry };
+        juce::ignoreUnused (entryKey);
+
+        for (auto position { candidates.size() }; position > 0; --position)
+        {
+            const auto index { candidates.at (position - 1) };
+
+            if (not rules.at (index).isDirectoryOnly or isDirectory)
+                return index;
+        }
+    }
+
+    return -1;
 }
 
 juce::File IgnoreRules::getTopLevelDirectory (const juce::File& walkRoot)
 {
     auto directory { walkRoot };
 
-    while (not directory.getChildFile (Id::gitDirectory).exists())
+    while (not directory.getChildFile (Id::gitDirectory.data()).exists())
     {
         const auto parent { directory.getParentDirectory() };
 
@@ -512,23 +590,26 @@ juce::File IgnoreRules::getTopLevelDirectory (const juce::File& walkRoot)
 juce::File IgnoreRules::getGlobalExcludesFile()
 {
     const juce::File homeDir { juce::File::getSpecialLocation (juce::File::userHomeDirectory) };
-    const auto xdgHome { juce::SystemStats::getEnvironmentVariable (Id::xdgConfigHomeVariable, {}) };
+    const auto xdgHome { juce::SystemStats::getEnvironmentVariable (jam::Strings::fromView (Id::xdgConfigHomeVariable), {}) };
     auto configured { getExcludesFileFromConfig (getXdgFile (xdgHome,
                                                              homeDir,
-                                                             Id::gitConfigRelativePath,
-                                                             Id::defaultGitConfigRelativePath)) };
-    const auto userConfigured { getExcludesFileFromConfig (homeDir.getChildFile (Id::userGitConfigFile)) };
+                                                             jam::Strings::fromView (Id::gitConfigRelativePath),
+                                                             jam::Strings::fromView (Id::defaultGitConfigRelativePath))) };
+    const auto userConfigured { getExcludesFileFromConfig (homeDir.getChildFile (Id::userGitConfigFile.data())) };
 
     if (userConfigured.isNotEmpty())
         configured = userConfigured;
 
-    if (configured.startsWith (Id::homePrefix))
-        return homeDir.getChildFile (configured.substring (Id::homePrefix.length()));
+    if (configured.startsWith (Id::homePrefix.data()))
+        return homeDir.getChildFile (configured.substring (static_cast<int> (Id::homePrefix.length())));
 
     if (configured.isNotEmpty())
         return juce::File::getCurrentWorkingDirectory().getChildFile (configured);
 
-    return getXdgFile (xdgHome, homeDir, Id::gitIgnoreRelativePath, Id::defaultGitIgnoreRelativePath);
+    return getXdgFile (xdgHome,
+                       homeDir,
+                       jam::Strings::fromView (Id::gitIgnoreRelativePath),
+                       jam::Strings::fromView (Id::defaultGitIgnoreRelativePath));
 }
 
 juce::String IgnoreRules::getExcludesFileFromConfig (const juce::File& configFile)
@@ -546,9 +627,10 @@ juce::String IgnoreRules::getExcludesFileFromConfig (const juce::File& configFil
     return foundValue;
 }
 
-std::optional<IgnoreRules::Rule> IgnoreRules::getParsedRule (std::string_view rawLine,
-                                                             const std::string& basePrefixWithSlash)
+void IgnoreRules::addRule (std::string_view rawLine)
 {
+    static constexpr std::string_view globMetacharacters { "*?[\\" };
+    static constexpr std::string_view extensionPrefix { "*." };
     const auto trimmed { getTrimmedPattern (rawLine) };
 
     if (trimmed.has_value())
@@ -559,19 +641,39 @@ std::optional<IgnoreRules::Rule> IgnoreRules::getParsedRule (std::string_view ra
 
         if (not finalPattern.empty())
         {
-            try
+            const auto ruleIndex { rules.size() };
+            const auto isLiteral { finalPattern.find_first_of (globMetacharacters) == std::string_view::npos };
+            const auto hasExtensionPrefix { finalPattern.compare (0, extensionPrefix.size(), extensionPrefix) == 0 };
+            const auto extensionText { hasExtensionPrefix ? finalPattern.substr (extensionPrefix.size()) : std::string_view {} };
+            const auto isExtension { hasExtensionPrefix and not isAnchored
+                                     and extensionText.find_first_of (globMetacharacters) == std::string_view::npos
+                                     and extensionText.find (static_cast<char> (Chars::dot)) == std::string_view::npos };
+
+            if (isLiteral or isExtension)
             {
-                auto compiled { std::make_shared<jam::RegExp> (getTranslatedGlobRegex (finalPattern, isAnchored)) };
-                return Rule { std::move (compiled), basePrefixWithSlash, isNegated, isDirectoryOnly };
+                auto& indexes { isExtension ? extensions : (isAnchored ? relativePaths : basenames) };
+                const auto key { isExtension ? extensionText : finalPattern };
+                const auto [indexEntry, wasInserted] { indexes.try_emplace (std::string { key }) };
+                auto& [indexKey, ruleIndexes] { *indexEntry };
+                juce::ignoreUnused (indexKey, wasInserted);
+                ruleIndexes.push_back (ruleIndex);
+                rules.add (Rule { nullptr, nullptr, isNegated, isDirectoryOnly });
             }
-            catch (const std::invalid_argument&)
+            else
             {
-                return std::nullopt;
+                try
+                {
+                    auto compiled { std::make_shared<jam::RegExp> (getTranslatedGlobRegex (finalPattern, isAnchored)) };
+                    auto program { jam::RegExpProgram::create (*compiled) };
+                    others.push_back (ruleIndex);
+                    rules.add (Rule { std::move (compiled), std::move (program), isNegated, isDirectoryOnly });
+                }
+                catch (const std::invalid_argument&)
+                {
+                }
             }
         }
     }
-
-    return std::nullopt;
 }
 
 std::string IgnoreRules::getTranslatedGlobRegex (std::string_view pattern, bool isAnchored)
@@ -588,13 +690,13 @@ std::string IgnoreRules::getTranslatedGlobRegex (std::string_view pattern, bool 
     }
 
     while (index < pattern.size())
-        appendGlobStep (regex, pattern, index);
+        index = appendGlobStep (regex, pattern, index);
 
     regex.push_back (static_cast<char> (Chars::dollarSign));
     return regex;
 }
 
-void IgnoreRules::addRulesFromFile (const juce::File& file, std::string_view basePrefix)
+void IgnoreRules::addRulesFromFile (const juce::File& file)
 {
     if (file.existsAsFile())
     {
@@ -602,16 +704,10 @@ void IgnoreRules::addRulesFromFile (const juce::File& file, std::string_view bas
 
         if (result.wasOk() and not document->isBinary())
         {
-            const auto basePrefixWithSlash { getPrefixWithSlash (basePrefix) };
             const auto numLines { document->getNumLines() };
 
             for (int lineNumber { 1 }; lineNumber <= numLines; ++lineNumber)
-            {
-                auto rule { getParsedRule (document->getLine (lineNumber), basePrefixWithSlash) };
-
-                if (rule.has_value())
-                    rules.add (std::move (*rule));
-            }
+                addRule (document->getLine (lineNumber));
         }
     }
 }
@@ -621,5 +717,5 @@ std::string IgnoreRules::getRelativePath (const juce::File& entry) const
     if (entry == topLevel)
         return {};
 
-    return entry.getRelativePathFrom (topLevel).replaceCharacter (Chars::backslash, Chars::slash).toStdString();
+    return Paths::getDisplayPath (jam::Strings::getView (entry.getRelativePathFrom (topLevel)));
 }

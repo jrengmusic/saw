@@ -1,32 +1,13 @@
 #include "Paths.h"
 #include "IgnoreRules.h"
 #include "Jobs.h"
+#include "TextDocument.h"
+#include "TransparentStringHash.h"
 #include "generated/Generated.h"
-
-#ifndef _WIN32
-#include <dirent.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#endif
-
-struct TransparentStringHash
-{
-    using is_transparent = void;
-    using is_avalanching = void;
-
-    std::uint64_t operator() (std::string_view key) const noexcept
-    {
-        return jam::Hash<std::string_view> {}(key);
-    }
-};
 
 static std::string getNormalizedPath (std::string_view rawPath)
 {
-    std::string normalized { rawPath };
-    std::replace (normalized.begin(),
-                  normalized.end(),
-                  static_cast<char> (Chars::backslash),
-                  static_cast<char> (Chars::slash));
+    std::string normalized { Paths::getDisplayPath (rawPath) };
 
     while (normalized.size() > 1 and normalized.back() == static_cast<char> (Chars::slash))
         normalized.pop_back();
@@ -86,6 +67,7 @@ static bool matchesWildcard (std::string_view wildcard, std::string_view text) n
 }
 
 static bool matchesAnyGlob (std::string_view fileName,
+                            std::string_view displayPath,
                             std::string_view relativePath,
                             const jam::Strings& globs)
 {
@@ -93,7 +75,7 @@ static bool matchesAnyGlob (std::string_view fileName,
     {
         const auto glob { globs.getView (index) };
 
-        if (matchesWildcard (glob, fileName) or matchesWildcard (glob, relativePath))
+        if (matchesWildcard (glob, fileName) or matchesWildcard (glob, displayPath) or matchesWildcard (glob, relativePath))
             return true;
     }
 
@@ -101,20 +83,19 @@ static bool matchesAnyGlob (std::string_view fileName,
 }
 
 static bool shouldIncludeFile (std::string_view fileName,
+                               std::string_view displayPath,
                                std::string_view relativePath,
                                const jam::Strings& includeGlobs,
                                const jam::Strings& excludeGlobs)
 {
-    if (includeGlobs.size() > 0 and not matchesAnyGlob (fileName, relativePath, includeGlobs))
+    if (includeGlobs.size() > 0 and not matchesAnyGlob (fileName, displayPath, relativePath, includeGlobs))
         return false;
 
-    if (excludeGlobs.size() > 0 and matchesAnyGlob (fileName, relativePath, excludeGlobs))
+    if (excludeGlobs.size() > 0 and matchesAnyGlob (fileName, displayPath, relativePath, excludeGlobs))
         return false;
 
     return true;
 }
-
-#ifndef _WIN32
 
 static void appendPathSegment (std::string& path, std::string_view segment)
 {
@@ -128,555 +109,410 @@ static bool shouldVisitEntry (std::string_view name,
                               std::string_view gitDirectoryName,
                               bool isIncludingHidden) noexcept
 {
-    if ((name.size() == 1 and name.at (0) == static_cast<char> (Chars::dot))
-        or name.compare (Chars::doubleDot) == 0
-        or name.compare (gitDirectoryName) == 0)
+    if (name.compare (gitDirectoryName) == 0)
         return false;
 
-    if (not isIncludingHidden and not name.empty() and name.at (0) == static_cast<char> (Chars::dot))
+    if (not isIncludingHidden and name.at (0) == static_cast<char> (Chars::dot))
         return false;
 
     return true;
 }
 
-static std::pair<bool, bool> getEntryFlags (unsigned char entryType,
-                                            std::string& fullPath,
-                                            std::string_view name)
+static constexpr int filesPerItem { 64 };
+
+using Folder = std::tuple<std::string, std::string, std::string, size_t, std::shared_ptr<const IgnoreRules>, std::vector<std::string>>;
+
+template <typename OnFile>
+static void applyToFileNames (int workerIndex,
+                              std::string& fullPath,
+                              std::string& displayBuffer,
+                              const std::vector<std::string>& fileNames,
+                              const std::atomic<bool>& shouldStop,
+                              const OnFile& onFile)
 {
-    if (entryType == DT_DIR)
-        return { true, false };
-
-    if (entryType == DT_REG)
-        return { false, true };
-
-    if (entryType == DT_UNKNOWN)
+    for (const auto& fileName : fileNames)
     {
-        const auto savedSize { fullPath.size() };
-        appendPathSegment (fullPath, name);
-        struct stat entryStat {};
-        const auto statResult { ::lstat (fullPath.c_str(), &entryStat) };
-        fullPath.resize (savedSize);
+        if (shouldStop.load (std::memory_order_relaxed))
+            break;
 
-        if (statResult == 0)
-            return { S_ISDIR (entryStat.st_mode), S_ISREG (entryStat.st_mode) };
+        const auto savedFullSize { fullPath.size() };
+        const auto savedDisplaySize { displayBuffer.size() };
+        appendPathSegment (fullPath, fileName);
+        displayBuffer.append (fileName);
+        onFile (workerIndex, fullPath, displayBuffer);
+        fullPath.resize (savedFullSize);
+        displayBuffer.resize (savedDisplaySize);
     }
-
-    return { false, false };
 }
 
-static bool hasGitignoreFile (std::string& directoryPath, std::string_view gitignoreName)
+static std::optional<std::string> getEntryName (const std::filesystem::directory_entry& entry)
 {
-    const auto savedSize { directoryPath.size() };
-    appendPathSegment (directoryPath, gitignoreName);
-    const bool exists { ::access (directoryPath.c_str(), F_OK) == 0 };
-    directoryPath.resize (savedSize);
-    return exists;
-}
-
-template <typename OnDirectory, typename OnFile>
-static void applyToDirectoryEntries (std::string& fullPath,
-                                     std::string& displayBuffer,
-                                     std::string& relBuffer,
-                                     const IgnoreRules* ignoreRules,
-                                     const jam::Strings& includeGlobs,
-                                     const jam::Strings& excludeGlobs,
-                                     std::string_view gitDirectoryName,
-                                     bool isIncludingHidden,
-                                     const OnDirectory& onDirectory,
-                                     const OnFile& onFile,
-                                     const std::atomic<bool>& shouldStop)
-{
-    if (not shouldStop.load (std::memory_order_relaxed))
+    try
     {
-        std::unique_ptr<DIR, int (*) (DIR*)> directoryStream { ::opendir (fullPath.c_str()), &::closedir };
+        return entry.path().filename().u8string();
+    }
+    catch (const std::system_error&)
+    {
+        return std::nullopt;
+    }
+}
 
-        if (directoryStream != nullptr)
+static std::optional<std::tuple<std::string, std::vector<std::tuple<size_t, size_t, bool>>, bool>> getDirectoryListing (const std::string& fullPath,
+                                                                                                                        std::string_view gitDirectoryName,
+                                                                                                                        std::string_view gitignoreName,
+                                                                                                                        bool isIncludingHidden,
+                                                                                                                        const std::atomic<bool>& shouldStop)
+{
+    std::error_code listingError;
+    std::filesystem::directory_iterator entry { std::filesystem::u8path (fullPath), listingError };
+    std::string names;
+    std::vector<std::tuple<size_t, size_t, bool>> entries;
+    bool hasGitignore { false };
+
+    for (; listingError.value() == 0 and entry != std::filesystem::directory_iterator {} and not shouldStop.load (std::memory_order_relaxed); entry.increment (listingError))
+    {
+        std::error_code entryError;
+        const bool isSymbolicLink { entry->is_symlink (entryError) };
+        const bool isDirectory { not isSymbolicLink and entry->is_directory (entryError) and std::filesystem::is_directory (entry->symlink_status (entryError)) };
+        const bool isRegularFile { not isSymbolicLink and entry->is_regular_file (entryError) };
+        const auto name { getEntryName (*entry) };
+
+        if (not name.has_value())
+            return std::nullopt;
+
+        hasGitignore = hasGitignore or (isRegularFile and name->compare (gitignoreName) == 0);
+
+        if ((isDirectory or isRegularFile) and shouldVisitEntry (*name, gitDirectoryName, isIncludingHidden))
         {
-            for (const auto* entry { ::readdir (directoryStream.get()) };
-                 entry != nullptr and not shouldStop.load (std::memory_order_relaxed);
-                 entry = ::readdir (directoryStream.get()))
-            {
-                const std::string_view name { entry->d_name };
-
-                if (shouldVisitEntry (name, gitDirectoryName, isIncludingHidden))
-                {
-                    const auto [isDirectory, isRegularFile] { getEntryFlags (entry->d_type, fullPath, name) };
-
-                    if (isDirectory or isRegularFile)
-                    {
-                        const auto savedDisplaySize { displayBuffer.size() };
-                        const auto savedRelSize { relBuffer.size() };
-                        displayBuffer.append (name);
-
-                        if (ignoreRules != nullptr)
-                            relBuffer.append (name);
-
-                        if (ignoreRules == nullptr or not ignoreRules->isIgnored (relBuffer, isDirectory))
-                        {
-                            const auto savedFullSize { fullPath.size() };
-                            appendPathSegment (fullPath, name);
-
-                            if (isDirectory)
-                            {
-                                displayBuffer.push_back (static_cast<char> (Chars::slash));
-                                onDirectory();
-                            }
-                            else if (shouldIncludeFile (name, displayBuffer, includeGlobs, excludeGlobs))
-                            {
-                                onFile (fullPath, displayBuffer);
-                            }
-
-                            fullPath.resize (savedFullSize);
-                        }
-
-                        displayBuffer.resize (savedDisplaySize);
-
-                        if (ignoreRules != nullptr)
-                            relBuffer.resize (savedRelSize);
-                    }
-                }
-            }
+            entries.emplace_back (names.size(), name->size(), isDirectory);
+            names.append (*name);
         }
     }
+
+    if (listingError.value() != 0)
+        return std::nullopt;
+
+    return std::tuple<std::string, std::vector<std::tuple<size_t, size_t, bool>>, bool> { std::move (names), std::move (entries), hasGitignore };
 }
 
-template <typename OnFile>
-static void walkDirectory (std::string& fullPath,
-                           std::string& displayBuffer,
-                           std::string& relBuffer,
-                           const IgnoreRules* ignoreRules,
-                           const jam::Strings& includeGlobs,
-                           const jam::Strings& excludeGlobs,
-                           std::string_view gitDirectoryName,
-                           std::string_view gitignoreName,
-                           bool isIncludingHidden,
-                           const OnFile& onFile,
-                           const std::atomic<bool>& shouldStop)
+template <typename AddItem, typename OnFile>
+static void applyToListing (int workerIndex,
+                            const std::string& names,
+                            const std::vector<std::tuple<size_t, size_t, bool>>& entries,
+                            const std::shared_ptr<const IgnoreRules>& childRules,
+                            std::string& fullPath,
+                            std::string& displayBuffer,
+                            std::string& relBuffer,
+                            size_t displayPrefixSize,
+                            const jam::Strings& includeGlobs,
+                            const jam::Strings& excludeGlobs,
+                            const std::atomic<bool>& shouldStop,
+                            const AddItem& addItem,
+                            const OnFile& onFile)
 {
-    applyToDirectoryEntries (fullPath,
-                             displayBuffer,
-                             relBuffer,
-                             ignoreRules,
-                             includeGlobs,
-                             excludeGlobs,
-                             gitDirectoryName,
-                             isIncludingHidden,
-                             [&fullPath, &displayBuffer, &relBuffer,
-                              ignoreRules, &includeGlobs, &excludeGlobs,
-                              gitDirectoryName, gitignoreName, isIncludingHidden, &onFile, &shouldStop]
-                             {
-                                 const bool hasChildRules { ignoreRules != nullptr and hasGitignoreFile (fullPath, gitignoreName) };
-                                 const auto childRules { hasChildRules
-                                     ? std::optional<IgnoreRules> { ignoreRules->getChildRules (
-                                         juce::File (juce::String::fromUTF8 (fullPath.data(), static_cast<int> (fullPath.size()))),
-                                         relBuffer) }
-                                     : std::nullopt };
+    std::vector<std::string> pendingNames;
 
-                                 if (ignoreRules != nullptr)
-                                     relBuffer.push_back (static_cast<char> (Chars::slash));
-
-                                 walkDirectory (fullPath,
-                                                displayBuffer,
-                                                relBuffer,
-                                                childRules.has_value() ? &(*childRules) : ignoreRules,
-                                                includeGlobs,
-                                                excludeGlobs,
-                                                gitDirectoryName,
-                                                gitignoreName,
-                                                isIncludingHidden,
-                                                onFile,
-                                                shouldStop);
-                             },
-                             onFile,
-                             shouldStop);
-}
-
-template <typename OnFile>
-static void walkDirectoryBranch (std::string localFull,
-                                 std::string localDisplay,
-                                 std::string localRel,
-                                 const IgnoreRules* ignoreRules,
-                                 const jam::Strings& includeGlobs,
-                                 const jam::Strings& excludeGlobs,
-                                 std::string_view gitDirectoryName,
-                                 std::string_view gitignoreName,
-                                 bool isIncludingHidden,
-                                 const OnFile& onFile,
-                                 const std::atomic<bool>& shouldStop)
-{
-    const bool hasChildRules { ignoreRules != nullptr and hasGitignoreFile (localFull, gitignoreName) };
-    const std::string_view relWithoutTrailingSlash {
-        not localRel.empty() and localRel.back() == static_cast<char> (Chars::slash)
-            ? std::string_view (localRel.data(), localRel.size() - 1)
-            : std::string_view (localRel)
-    };
-    const auto childRules { hasChildRules
-        ? std::optional<IgnoreRules> { ignoreRules->getChildRules (
-            juce::File (juce::String::fromUTF8 (localFull.data(), static_cast<int> (localFull.size()))),
-            relWithoutTrailingSlash) }
-        : std::nullopt };
-
-    walkDirectory (localFull,
-                   localDisplay,
-                   localRel,
-                   childRules.has_value() ? &(*childRules) : ignoreRules,
-                   includeGlobs,
-                   excludeGlobs,
-                   gitDirectoryName,
-                   gitignoreName,
-                   isIncludingHidden,
-                   onFile,
-                   shouldStop);
-}
-
-static std::tuple<std::vector<std::string>,
-                  std::vector<std::string>,
-                  std::vector<std::string>,
-                  std::vector<std::string>,
-                  std::vector<std::string>>
-    collectRootEntries (std::string& fullPath,
-                        std::string& displayBuffer,
-                        std::string& relBuffer,
-                        const IgnoreRules* ignoreRules,
-                        const jam::Strings& includeGlobs,
-                        const jam::Strings& excludeGlobs,
-                        std::string_view gitDirectoryName,
-                        bool isIncludingHidden,
-                        const std::atomic<bool>& shouldStop)
-{
-    std::vector<std::string> rootFileFullPaths;
-    std::vector<std::string> rootFileDisplayPaths;
-    std::vector<std::string> subdirFullPaths;
-    std::vector<std::string> subdirDisplayPrefixes;
-    std::vector<std::string> subdirRelPrefixes;
-
-    applyToDirectoryEntries (fullPath,
-                             displayBuffer,
-                             relBuffer,
-                             ignoreRules,
-                             includeGlobs,
-                             excludeGlobs,
-                             gitDirectoryName,
-                             isIncludingHidden,
-                             [&fullPath, &displayBuffer, &relBuffer, ignoreRules,
-                              &subdirFullPaths, &subdirDisplayPrefixes, &subdirRelPrefixes]
-                             {
-                                 subdirFullPaths.emplace_back (fullPath);
-                                 subdirDisplayPrefixes.emplace_back (displayBuffer);
-
-                                 if (ignoreRules != nullptr)
-                                 {
-                                     relBuffer.push_back (static_cast<char> (Chars::slash));
-                                     subdirRelPrefixes.emplace_back (relBuffer);
-                                 }
-                                 else
-                                 {
-                                     subdirRelPrefixes.emplace_back();
-                                 }
-                             },
-                             [&rootFileFullPaths, &rootFileDisplayPaths] (const std::string& fileFullPath,
-                                                                          std::string_view fileDisplayPath)
-                             {
-                                 rootFileFullPaths.emplace_back (fileFullPath);
-                                 rootFileDisplayPaths.emplace_back (fileDisplayPath);
-                             },
-                             shouldStop);
-
-    return { std::move (rootFileFullPaths),
-             std::move (rootFileDisplayPaths),
-             std::move (subdirFullPaths),
-             std::move (subdirDisplayPrefixes),
-             std::move (subdirRelPrefixes) };
-}
-
-#else
-
-template <typename OnFile>
-static void walkDirectory (const juce::File& directory,
-                           std::string& displayBuffer,
-                           std::string& relBuffer,
-                           const IgnoreRules* ignoreRules,
-                           const jam::Strings& includeGlobs,
-                           const jam::Strings& excludeGlobs,
-                           std::string_view gitDirectoryName,
-                           bool isIncludingHidden,
-                           const OnFile& onFile,
-                           const std::atomic<bool>& shouldStop)
-{
-    if (not shouldStop.load (std::memory_order_relaxed))
+    for (const auto& [start, length, isDirectory] : entries)
     {
-        for (const auto& dirEntry : juce::RangedDirectoryIterator (directory, false,
-                                                                    juce::String::charToString (Chars::asterisk),
-                                                                    juce::File::findFilesAndDirectories,
-                                                                    juce::File::FollowSymlinks::no))
+        if (shouldStop.load (std::memory_order_relaxed))
+            break;
+
+        const std::string_view name { std::string_view { names }.substr (start, length) };
+        const auto savedDisplaySize { displayBuffer.size() };
+        const auto savedRelSize { relBuffer.size() };
+        displayBuffer.append (name);
+
+        if (childRules != nullptr)
+            relBuffer.append (name);
+
+        const bool isIncluded { childRules == nullptr or not childRules->isIgnored (relBuffer, isDirectory) };
+
+        if (isIncluded and isDirectory)
         {
-            if (shouldStop.load (std::memory_order_relaxed))
-                break;
+            const auto savedFullSize { fullPath.size() };
+            appendPathSegment (fullPath, name);
+            displayBuffer.push_back (static_cast<char> (Chars::slash));
 
-            const auto file { dirEntry.getFile() };
-            const auto nameString { file.getFileName() };
-            const auto name { jam::Strings::getView (nameString) };
-            const auto isDirectory { dirEntry.isDirectory() };
+            if (childRules != nullptr)
+                relBuffer.push_back (static_cast<char> (Chars::slash));
 
-            if (name.compare (gitDirectoryName) != 0
-                and (isIncludingHidden or (not name.empty() and name.at (0) != static_cast<char> (Chars::dot))))
-            {
-                const auto savedDisplaySize { displayBuffer.size() };
-                const auto savedRelSize { relBuffer.size() };
-                displayBuffer.append (name);
+            addItem (Folder { fullPath, displayBuffer, relBuffer, displayPrefixSize, childRules, {} });
+            fullPath.resize (savedFullSize);
+        }
+        else if (isIncluded and shouldIncludeFile (name, displayBuffer, std::string_view { displayBuffer }.substr (displayPrefixSize), includeGlobs, excludeGlobs))
+        {
+            pendingNames.emplace_back (name);
+        }
 
-                if (ignoreRules != nullptr)
-                    relBuffer.append (name);
+        displayBuffer.resize (savedDisplaySize);
+        relBuffer.resize (savedRelSize);
 
-                if (ignoreRules == nullptr or not ignoreRules->isIgnored (relBuffer, isDirectory))
-                {
-                    if (isDirectory)
-                    {
-                        displayBuffer.push_back (static_cast<char> (Chars::slash));
-                        const bool hasChildRules { ignoreRules != nullptr and file.getChildFile (Id::gitignoreFile).existsAsFile() };
-                        const auto childRules { hasChildRules
-                            ? std::optional<IgnoreRules> { ignoreRules->getChildRules (file, relBuffer) }
-                            : std::nullopt };
-
-                        if (ignoreRules != nullptr)
-                            relBuffer.push_back (static_cast<char> (Chars::slash));
-
-                        walkDirectory (file,
-                                       displayBuffer,
-                                       relBuffer,
-                                       childRules.has_value() ? &(*childRules) : ignoreRules,
-                                       includeGlobs,
-                                       excludeGlobs,
-                                       gitDirectoryName,
-                                       isIncludingHidden,
-                                       onFile,
-                                       shouldStop);
-                    }
-                    else if (shouldIncludeFile (name, displayBuffer, includeGlobs, excludeGlobs))
-                    {
-                        const auto fileFullPath { file.getFullPathName().toStdString() };
-                        onFile (fileFullPath, displayBuffer);
-                    }
-                }
-
-                displayBuffer.resize (savedDisplaySize);
-
-                if (ignoreRules != nullptr)
-                    relBuffer.resize (savedRelSize);
-            }
+        if (pendingNames.size() >= static_cast<size_t> (filesPerItem))
+        {
+            addItem (Folder { fullPath, displayBuffer, relBuffer, displayPrefixSize, childRules, std::move (pendingNames) });
+            pendingNames.clear();
         }
     }
+
+    applyToFileNames (workerIndex, fullPath, displayBuffer, pendingNames, shouldStop, onFile);
 }
 
-#endif
-
-static jam::Array<bool> getExplicitFlags (const std::vector<std::string>& collectedPaths,
+static jam::Array<bool> getExplicitFlags (const std::vector<std::pair<std::string, juce::File>>& collectedFiles,
                                           const jam::HashSet<std::string, TransparentStringHash, std::equal_to<>>& explicitSet)
 {
     jam::Array<bool> flags;
-    flags.ensureStorageAllocated (static_cast<int> (collectedPaths.size()));
+    flags.ensureStorageAllocated (static_cast<int> (collectedFiles.size()));
 
     if (explicitSet.empty())
     {
-        flags.insertMultiple (0, false, static_cast<int> (collectedPaths.size()));
+        flags.insertMultiple (0, false, static_cast<int> (collectedFiles.size()));
     }
     else
     {
-        for (const auto& path : collectedPaths)
+        for (const auto& [path, file] : collectedFiles)
+        {
+            juce::ignoreUnused (file);
             flags.add (explicitSet.contains (path));
+        }
     }
 
     return flags;
 }
 
-bool Paths::hasMultipleOrDirectoryInputs (const jam::Strings& rawPaths)
+static std::string_view getDirectoryDisplayPath (std::string_view displayPrefix)
 {
-    if (rawPaths.size() > 1)
-        return true;
-
-    if (rawPaths.size() == 1)
-    {
-        const auto resolved { juce::File::getCurrentWorkingDirectory()
-                                  .getChildFile (jam::Strings::fromView (rawPaths.getView (0)))
-                                  .getLinkedTarget() };
-        return resolved.isDirectory();
-    }
-
-    return false;
+    const bool isTrailingSlash { displayPrefix.size() > 1 and displayPrefix.back() == static_cast<char> (Chars::slash) };
+    return isTrailingSlash ? displayPrefix.substr (0, displayPrefix.size() - 1) : displayPrefix;
 }
 
-void Paths::applyToDirectory (const juce::File& rootDirectory,
-                              std::string_view rawPathView,
-                              const jam::Strings& includeGlobs,
-                              const jam::Strings& excludeGlobs,
-                              bool isIncludingHidden,
-                              bool isIgnoringRules,
-                              const std::function<void (int)>& onBranchCount,
-                              const std::function<void (int, const std::string&, std::string_view)>& onFile,
-                              const std::atomic<bool>& shouldStop)
+std::string Paths::getDisplayPath (std::string_view rawPath)
 {
-    const auto gitDirectoryName { jam::Strings::getView (Id::gitDirectory) };
-    std::optional<IgnoreRules> rules;
+    std::string displayPath { rawPath };
+#ifdef _WIN32
+    std::replace (displayPath.begin(),
+                  displayPath.end(),
+                  static_cast<char> (Chars::backslash),
+                  static_cast<char> (Chars::slash));
+#endif
+    return displayPath;
+}
+
+juce::File Paths::getLinkedTarget (std::string_view rawPath)
+{
+    std::error_code targetError;
+    const auto target { std::filesystem::canonical (std::filesystem::u8path (rawPath), targetError) };
+
+    if (targetError.value() == 0)
+        return juce::File { jam::Strings::fromView (target.u8string()) };
+
+    return juce::File::getCurrentWorkingDirectory().getChildFile (jam::Strings::fromView (rawPath));
+}
+
+jam::Strings Paths::getFileNames (const juce::File& directory)
+{
+    const std::atomic<bool> shouldStop { false };
+    auto fullPath { directory.getFullPathName().toStdString() };
+    jam::Strings fileNames;
+
+    if (const auto listing { getDirectoryListing (fullPath, {}, {}, false, shouldStop) })
+    {
+        const auto& [names, entries, hasGitignore] { *listing };
+        juce::ignoreUnused (hasGitignore);
+
+        for (const auto& [start, length, isDirectory] : entries)
+        {
+            if (not isDirectory)
+                fileNames.add (std::string_view { names }.substr (start, length));
+        }
+    }
+
+    return fileNames;
+}
+
+static Folder getRootFolder (std::string_view rawPathView, const juce::File& rootDirectory, bool isIgnoringRules)
+{
+    std::shared_ptr<const IgnoreRules> rules;
     std::string relBuffer;
 
     if (not isIgnoringRules)
     {
-        rules.emplace (rootDirectory);
+        rules = IgnoreRules::create (rootDirectory);
         relBuffer = rules->getRootRelativePrefix (rootDirectory);
     }
 
-    const IgnoreRules* ignoreRules { rules.has_value() ? &(*rules) : nullptr };
     auto displayBuffer { getNormalizedDisplayPrefix (rawPathView) };
-#ifndef _WIN32
-    const auto gitignoreName { jam::Strings::getView (Id::gitignoreFile) };
-    auto fullPath { rootDirectory.getFullPathName().toStdString() };
-    auto [rootFileFullPaths, rootFileDisplayPaths, subdirFullPaths, subdirDisplayPrefixes, subdirRelPrefixes] {
-        collectRootEntries (fullPath,
-                            displayBuffer,
-                            relBuffer,
-                            ignoreRules,
-                            includeGlobs,
-                            excludeGlobs,
-                            gitDirectoryName,
-                            isIncludingHidden,
-                            shouldStop)
-    };
-    const int subdirCount { static_cast<int> (subdirFullPaths.size()) };
-    const int totalBranches { subdirCount + 1 };
-    onBranchCount (totalBranches);
-
-    const auto& rootFiles { rootFileFullPaths };
-    const auto& rootDisplays { rootFileDisplayPaths };
-    const auto& fullPaths { subdirFullPaths };
-    const auto& displayPrefixes { subdirDisplayPrefixes };
-    const auto& relPrefixes { subdirRelPrefixes };
-
-    Jobs::run (totalBranches,
-               [&rootFiles, &rootDisplays, &fullPaths, &displayPrefixes, &relPrefixes,
-                ignoreRules, &includeGlobs, &excludeGlobs,
-                gitDirectoryName, gitignoreName, isIncludingHidden, &onFile, &shouldStop] (int idx)
-    {
-        if (idx == 0)
-        {
-            for (size_t fileIndex { 0 };
-                 fileIndex < rootFiles.size() and not shouldStop.load (std::memory_order_relaxed);
-                 ++fileIndex)
-            {
-                onFile (0, rootFiles.at (fileIndex), rootDisplays.at (fileIndex));
-            }
-        }
-        else
-        {
-            const auto subdirIndex { static_cast<size_t> (idx - 1) };
-            walkDirectoryBranch (fullPaths.at (subdirIndex),
-                                 displayPrefixes.at (subdirIndex),
-                                 relPrefixes.at (subdirIndex),
-                                 ignoreRules,
-                                 includeGlobs,
-                                 excludeGlobs,
-                                 gitDirectoryName,
-                                 gitignoreName,
-                                 isIncludingHidden,
-                                 [&onFile, idx] (const std::string& fileFullPath, std::string_view fileDisplayPath)
-                                 {
-                                     onFile (idx, fileFullPath, fileDisplayPath);
-                                 },
-                                 shouldStop);
-        }
-    });
-#else
-    onBranchCount (1);
-    walkDirectory (rootDirectory,
-                   displayBuffer,
-                   relBuffer,
-                   ignoreRules,
-                   includeGlobs,
-                   excludeGlobs,
-                   gitDirectoryName,
-                   isIncludingHidden,
-                   [&onFile] (const std::string& fileFullPath, std::string_view fileDisplayPath)
-                   {
-                       onFile (0, fileFullPath, fileDisplayPath);
-                   },
-                   shouldStop);
-#endif
+    const auto displayPrefixSize { displayBuffer.size() };
+    return { rootDirectory.getFullPathName().toStdString(), std::move (displayBuffer), std::move (relBuffer), displayPrefixSize, std::move (rules), std::vector<std::string> {} };
 }
 
-std::tuple<juce::Result, std::vector<std::string>, jam::Array<bool>> Paths::getFiles (const jam::Strings& rawPaths,
-                                                                                      const jam::Strings& includeGlobs,
-                                                                                      const jam::Strings& excludeGlobs,
-                                                                                      bool isIncludingHidden,
-                                                                                      bool isIgnoringRules)
+void Paths::applyToDirectories (const std::vector<std::pair<std::string, juce::File>>& roots,
+                                const jam::Strings& includeGlobs,
+                                const jam::Strings& excludeGlobs,
+                                bool isIncludingHidden,
+                                bool isIgnoringRules,
+                                const std::function<void (int)>& onWorkerCount,
+                                const std::function<void (int, const std::string&, std::string_view)>& onFile,
+                                const std::function<void (int, std::string_view)>& onUnreadable,
+                                const std::atomic<bool>& shouldStop)
 {
-    std::vector<std::string> collectedPaths;
+    const std::string_view gitDirectoryName { Id::gitDirectory };
+    const std::string_view gitignoreName { Id::gitignoreFile };
+
+    const int workerCount { juce::SystemStats::getNumCpus() };
+    onWorkerCount (workerCount);
+
+    const auto walkFolder = [&includeGlobs, &excludeGlobs, gitDirectoryName, gitignoreName, isIncludingHidden, isIgnoringRules, &roots, &onFile, &onUnreadable, &shouldStop]
+                            (int workerIndex, Folder& folder, auto& addItem)
+    {
+        auto& [folderFull, folderDisplay, folderRel, displayPrefixSize, folderRules, fileNames] { folder };
+
+        if (folderFull.empty())
+        {
+            for (const auto& [rawPath, rootDirectory] : roots)
+                addItem (getRootFolder (rawPath, rootDirectory, isIgnoringRules));
+        }
+        else if (not fileNames.empty())
+        {
+            applyToFileNames (workerIndex, folderFull, folderDisplay, fileNames, shouldStop, onFile);
+        }
+        else if (not shouldStop.load (std::memory_order_relaxed))
+        {
+            const auto listing { getDirectoryListing (folderFull, gitDirectoryName, gitignoreName, isIncludingHidden, shouldStop) };
+
+            if (listing.has_value())
+            {
+                const auto& [names, entries, hasGitignore] { *listing };
+                const bool isWalkRoot { folderDisplay.size() == displayPrefixSize };
+                auto childRules { folderRules };
+
+                if (folderRules != nullptr and hasGitignore and not isWalkRoot)
+                    childRules = IgnoreRules::getChildRules (folderRules,
+                                                             juce::File (juce::String::fromUTF8 (folderFull.data(), static_cast<int> (folderFull.size()))),
+                                                             folderRel);
+
+                applyToListing (workerIndex, names, entries, childRules, folderFull, folderDisplay, folderRel, displayPrefixSize, includeGlobs, excludeGlobs, shouldStop, addItem, onFile);
+            }
+            else
+            {
+                onUnreadable (workerIndex, getDirectoryDisplayPath (folderDisplay));
+            }
+        }
+    };
+
+    Jobs::runRecursive (workerCount, Folder {}, walkFolder);
+}
+
+std::tuple<std::vector<std::pair<std::string, juce::Result>>, std::vector<std::pair<std::string, juce::File>>, jam::Array<bool>> Paths::getFiles (const jam::Strings& rawPaths,
+                                                                                                                                                  const jam::Strings& includeGlobs,
+                                                                                                                                                  const jam::Strings& excludeGlobs,
+                                                                                                                                                  bool isIncludingHidden,
+                                                                                                                                                  bool isIgnoringRules)
+{
+    std::vector<std::pair<std::string, juce::Result>> failures;
+    std::vector<std::pair<std::string, juce::File>> collectedFiles;
+    std::vector<std::pair<std::string, juce::File>> roots;
     jam::HashSet<std::string, TransparentStringHash, std::equal_to<>> explicitSet;
-    const auto workingDirectory { juce::File::getCurrentWorkingDirectory() };
 
     for (int index { 0 }; index < rawPaths.size(); ++index)
     {
         const auto rawPathView { rawPaths.getView (index) };
-        const auto resolved { workingDirectory.getChildFile (jam::Strings::fromView (rawPathView)).getLinkedTarget() };
+        auto targetFile { Paths::getLinkedTarget (rawPathView) };
 
-        if (not resolved.exists())
+        if (not targetFile.exists())
         {
-            const auto rawPathString { jam::Strings::fromView (rawPathView) };
-            return { juce::Result::fail (
-                         juce::String::formatted (text::Diagnostics::failNotFound, rawPathString.toRawUTF8())),
-                     std::vector<std::string> {},
-                     jam::Array<bool> {} };
+            failures.emplace_back (std::string { rawPathView }, TextDocument::getReadFailure (targetFile, jam::Strings::fromView (rawPathView)));
         }
-
-        if (resolved.isDirectory())
+        else if (targetFile.isDirectory())
         {
-            std::vector<std::vector<std::string>> branchPaths;
-            const std::atomic<bool> shouldStop { false };
-            applyToDirectory (resolved,
-                              rawPathView,
-                              includeGlobs,
-                              excludeGlobs,
-                              isIncludingHidden,
-                              isIgnoringRules,
-                              [&branchPaths] (int branchCount)
-                              {
-                                  branchPaths.resize (static_cast<size_t> (branchCount));
-                              },
-                              [&branchPaths] (int branchIndex, const std::string& fileFullPath, std::string_view fileDisplayPath)
-                              {
-                                  juce::ignoreUnused (fileFullPath);
-                                  branchPaths.at (static_cast<size_t> (branchIndex)).emplace_back (fileDisplayPath);
-                              },
-                              shouldStop);
-
-            size_t totalBranchCount { 0 };
-
-            for (const auto& branch : branchPaths)
-                totalBranchCount += branch.size();
-
-            collectedPaths.reserve (collectedPaths.size() + totalBranchCount);
-
-            for (auto& branch : branchPaths)
-            {
-                for (auto& path : branch)
-                    collectedPaths.emplace_back (std::move (path));
-            }
+            roots.emplace_back (std::string { rawPathView }, std::move (targetFile));
         }
         else
         {
-            std::string normalized { rawPathView };
-            std::replace (normalized.begin(),
-                          normalized.end(),
-                          static_cast<char> (Chars::backslash),
-                          static_cast<char> (Chars::slash));
-            collectedPaths.push_back (normalized);
-            explicitSet.emplace (std::move (normalized));
+            std::string normalized { Paths::getDisplayPath (rawPathView) };
+            explicitSet.emplace (normalized);
+            collectedFiles.emplace_back (std::move (normalized), std::move (targetFile));
         }
     }
 
-    std::sort (collectedPaths.begin(), collectedPaths.end());
+    if (not roots.empty())
+    {
+        std::vector<std::vector<std::pair<std::string, juce::File>>> workerFiles;
+        std::vector<std::vector<std::pair<std::string, juce::Result>>> workerFailures;
+        const std::atomic<bool> shouldStop { false };
+        const auto workingDirectory { juce::File::getCurrentWorkingDirectory() };
+        applyToDirectories (roots,
+                            includeGlobs,
+                            excludeGlobs,
+                            isIncludingHidden,
+                            isIgnoringRules,
+                            [&workerFiles, &workerFailures] (int workerCount)
+                            {
+                                workerFiles.resize (static_cast<size_t> (workerCount));
+                                workerFailures.resize (static_cast<size_t> (workerCount));
+                            },
+                            [&workerFiles] (int workerIndex, const std::string& fileFullPath, std::string_view fileDisplayPath)
+                            {
+                                workerFiles.at (static_cast<size_t> (workerIndex)).emplace_back (std::string { fileDisplayPath }, juce::File { jam::Strings::fromView (fileFullPath) });
+                            },
+                            [&workerFailures, &workingDirectory] (int workerIndex, std::string_view unreadableDisplayPath)
+                            {
+                                const auto displayString { jam::Strings::fromView (unreadableDisplayPath) };
+                                workerFailures.at (static_cast<size_t> (workerIndex))
+                                    .emplace_back (std::string { unreadableDisplayPath },
+                                                   TextDocument::getReadFailure (workingDirectory.getChildFile (displayString), displayString));
+                            },
+                            shouldStop);
+
+        size_t totalCount { 0 };
+
+        for (const auto& worker : workerFiles)
+            totalCount += worker.size();
+
+        collectedFiles.reserve (collectedFiles.size() + totalCount);
+
+        for (auto& worker : workerFiles)
+        {
+            for (auto& path : worker)
+                collectedFiles.emplace_back (std::move (path));
+        }
+
+        for (auto& worker : workerFailures)
+        {
+            for (auto& failure : worker)
+                failures.push_back (std::move (failure));
+        }
+    }
+
+    std::sort (failures.begin(), failures.end(), &Paths::isPathEarlier<juce::Result>);
+    std::sort (collectedFiles.begin(), collectedFiles.end(), &Paths::isPathEarlier<juce::File>);
 
     if (rawPaths.size() > 1)
-        collectedPaths.erase (std::unique (collectedPaths.begin(), collectedPaths.end()), collectedPaths.end());
+        collectedFiles.erase (std::unique (collectedFiles.begin(),
+                                           collectedFiles.end(),
+                                           [] (const auto& firstEntry, const auto& secondEntry)
+                                           {
+                                               return not Paths::isPathEarlier (firstEntry, secondEntry) and not Paths::isPathEarlier (secondEntry, firstEntry);
+                                           }),
+                              collectedFiles.end());
 
-    auto isExplicitFlags (getExplicitFlags (collectedPaths, explicitSet));
-    return { juce::Result::ok(), std::move (collectedPaths), std::move (isExplicitFlags) };
+    auto isExplicitFlags (getExplicitFlags (collectedFiles, explicitSet));
+    return { std::move (failures), std::move (collectedFiles), std::move (isExplicitFlags) };
+}
+
+std::tuple<juce::Result, std::vector<std::pair<std::string, juce::File>>, jam::Array<bool>> Paths::getReadableFiles (const jam::Strings& rawPaths,
+                                                                                                                     const jam::Strings& includeGlobs,
+                                                                                                                     const jam::Strings& excludeGlobs,
+                                                                                                                     bool isIncludingHidden,
+                                                                                                                     bool isIgnoringRules)
+{
+    auto [pathFailures, files, isExplicitFlags] { getFiles (rawPaths, includeGlobs, excludeGlobs, isIncludingHidden, isIgnoringRules) };
+
+    if (not pathFailures.empty())
+    {
+        const auto& [failurePath, failureResult] { pathFailures.front() };
+        juce::ignoreUnused (failurePath);
+        return { failureResult, std::vector<std::pair<std::string, juce::File>> {}, jam::Array<bool> {} };
+    }
+
+    return { juce::Result::ok(), std::move (files), std::move (isExplicitFlags) };
 }

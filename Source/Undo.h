@@ -1,15 +1,29 @@
 #pragma once
 #include <JuceHeader.h>
+#include "Arguments.h"
+#include "Stdio.h"
 
 /** @brief Implements the `saw undo` subcommand for listing, previewing, and restoring transactions.
  */
 struct Undo
 {
-    /** @brief Executes `saw undo` to list transactions, preview a revert diff, or restore backup blobs.
+    /** @brief Parses the argument list of undo, with its flags.
      *
-     *  @param argumentList Command arguments starting with `undo` at index 0.
+     *  @param argumentList The argument list, with the verb name at index 0.
      *
-     *  @return `Stdio::exitSuccess` on success, or `Stdio::exitError` on drift or I/O failure.
+     *  @return The parsed arguments. Their status holds any parse failure.
      */
-    static int run (const jam::Strings& argumentList);
+    static Arguments getArguments (const jam::Strings& argumentList);
+
+    /** @brief Runs undo on parsed arguments.
+     *
+     *  A failed parse is returned as a failure. With `--list`, the transactions are listed.
+     *  Otherwise one transaction is previewed, or restored with `--apply`. The input is not read.
+     *
+     *  @param arguments The parsed arguments from getArguments.
+     *  @param input     The supplied input text. Undo does not read it.
+     *
+     *  @return The exit code, the output bytes, and the diagnostics.
+     */
+    static Stdio::Output run (const Arguments& arguments, const std::optional<std::string>& input);
 };

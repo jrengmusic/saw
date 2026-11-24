@@ -25,15 +25,18 @@ namespace files
 {
 /*_____________________________________________________________________________*/
 
-/** @brief File names saw reads: help texts. */
+/** @brief File names saw reads: rendered help frames. */
 
-extern const juce::String sawHelp;    ///< Rendered top-level help text.
-extern const juce::String findHelp;   ///< Rendered find verb help text.
-extern const juce::String replaceHelp;///< Rendered replace verb help text.
-extern const juce::String linesHelp;  ///< Rendered lines verb help text.
-extern const juce::String fieldsHelp; ///< Rendered fields verb help text.
-extern const juce::String patchHelp;  ///< Rendered patch verb help text.
-extern const juce::String undoHelp;   ///< Rendered undo verb help text.
+static constexpr std::string_view sawHelp     { "HELP.frame"    };///< Rendered top-level help text.
+static constexpr std::string_view findHelp    { "find.frame"    };///< Rendered find verb help text.
+static constexpr std::string_view replaceHelp { "replace.frame" };///< Rendered replace verb help text.
+static constexpr std::string_view linesHelp   { "lines.frame"   };///< Rendered lines verb help text.
+static constexpr std::string_view fieldsHelp  { "fields.frame"  };///< Rendered fields verb help text.
+static constexpr std::string_view patchHelp   { "patch.frame"   };///< Rendered patch verb help text.
+static constexpr std::string_view undoHelp    { "undo.frame"    };///< Rendered undo verb help text.
+static constexpr std::string_view excerptHelp { "excerpt.frame" };///< Rendered excerpt verb help text.
+static constexpr std::string_view screenErase { "erase.frame"   };///< Screen erase sequence.
+static constexpr std::string_view serverTools { "tools.json"    };///< MCP tool definitions.
 
 /**______________________________END OF NAMESPACE______________________________*/
 }// namespace files

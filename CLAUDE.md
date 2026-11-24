@@ -7,16 +7,22 @@
 
 ## Purpose
 
-SAW is a planned command-line tool, written in C++17 with JUCE and JAM. It replaces `sed`, `grep`, and file-oriented `awk`.
+SAW is a command-line tool, written in C++17 with JUCE and JAM. It replaces `sed`, `grep`, and file-oriented `awk`. It runs on macOS and Windows.
 
-Every mutating command previews its changes by default. A write needs `--apply --expect N`. `saw undo` reverses an applied transaction.
+Every mutating command previews its changes by default. A write needs `--apply --expect N`. `saw undo <tx-id>` reverses an applied transaction.
 
-`SPEC.md` holds the behavior. This folder holds no source code yet. It holds the specification, the implementation plans, and the CAROL configuration.
+`SPEC.md` holds the behavior. `Source/` holds the program.
 
 ## Contents
 
 - `SPEC.md`: the specification of saw v0.0.1.
-- `PLAN-saw-0-tracker.md` to `PLAN-saw-9-benchmark.md`: the tracker and the nine implementation parts. Every part shows status `pending`.
+- `RFC-live-to-premise.md`, `PLAN-live-to-premise.md`: the defects against the premise, and the plan that fixes them.
+- `Source/`: the program, its help documents, and the generated headers (`Source/generated/`, written by cast).
+- `server/`: the `saw_ToolServer` target, an MCP server on stdio that runs saw command lines (SPEC.md §5.8).
+- `help/HelpFrames.cpp`: the `saw_HelpFrames` target, which renders the help frames at build time.
+- `cast/`, `project-info.md`: the vocabulary, texts, and build tables that cast reads.
+- `test/`: the runner `run.lua`, the case table `cases.md`, fixtures, and baselines.
+- `benchmark/`: the scout manifests, scripts, and reports.
 - `carol/`: the CAROL contract files and the sprint log.
 - `.claude/`: agents, commands, and settings for Claude Code.
 
@@ -25,9 +31,8 @@ Every mutating command previews its changes by default. A write needs `--apply -
 | Document | Purpose |
 |---|---|
 | `SPEC.md` | Behavior, commands, exit codes, and undo model of saw. |
-| `PLAN-saw-0-tracker.md` | Nine-part tracker, source layout, and framework inventory. |
-| `PLAN-saw-1-regexp.md` to `PLAN-saw-9-benchmark.md` | Execution plan for each part. |
+| `PLAN-live-to-premise.md` | Execution plan of the premise sprint, with its framework inventory. |
 | `AGENTS.md` | CAROL project instructions. |
-| `carol/SPRINT-LOG.md` | Sprint log. It holds no sprint entry yet. |
+| `carol/SPRINT-LOG.md` | Sprint log. |
 | `carol/config.yml` | CAROL configuration. |
 | `carol/CODING.md`, `carol/MANIFESTO.md`, `carol/NAMES.md` | Contract for C++ code. |

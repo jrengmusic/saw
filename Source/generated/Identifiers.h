@@ -14,95 +14,103 @@
                          FOR YOUR EYES ONLY, DO NOT EDIT
 ********************************************************************************/
 
-/**
- * @file Identifiers.h
- * @brief SAW CLI vocabulary.
- */
-
-#pragma once
-
 namespace Id
 {
 /*_____________________________________________________________________________*/
 
 /** @brief SAW vocabulary — identifiers, CLI option flags, and path, config, and undo constants. */
 
-extern const juce::Identifier find;                        ///< Find command verb.
-extern const juce::Identifier replace;                     ///< Replace command verb.
-extern const juce::Identifier lines;                       ///< Lines command verb.
-extern const juce::Identifier fields;                      ///< Fields command verb.
-extern const juce::Identifier patch;                       ///< Patch command verb.
-extern const juce::Identifier startCol;                    ///< Match start column key.
-extern const juce::Identifier endCol;                      ///< Match end column key.
-extern const juce::Identifier startLine;                   ///< Operation start line key.
-extern const juce::Identifier deletion;                    ///< Patch delete operation key.
-extern const juce::Identifier hash;                        ///< Line or file hash key.
-extern const juce::Identifier timestamp;                   ///< Undo transaction timestamp key.
-extern const juce::Identifier files;                       ///< Undo transaction files array key.
-extern const juce::Identifier blob;                        ///< Undo backup blob file key.
-extern const juce::Identifier preHash;                     ///< File hash before apply.
-extern const juce::Identifier postHash;                    ///< File hash after apply.
-extern const juce::Identifier executable;                  ///< Executable bit flag key.
-extern const juce::String     helpOption;                  ///< Show help text.
-extern const juce::String     versionOption;               ///< Show tool version.
-extern const juce::String     regexOption;                 ///< Treat pattern as a regular expression.
-extern const juce::String     ignoreCaseOption;            ///< Match without case sensitivity.
-extern const juce::String     exactOption;                 ///< Match entire line text.
-extern const juce::String     invertOption;                ///< Select lines that do not match.
-extern const juce::String     countOption;                 ///< Output match counts per file.
-extern const juce::String     quietOption;                 ///< Suppress standard output lines.
-extern const juce::String     lineNumberOption;            ///< Include line numbers in output.
-extern const juce::String     noLineNumberOption;          ///< Omit line numbers from output.
-extern const juce::String     hashOption;                  ///< Include per-line hashes in output.
-extern const juce::String     contextOption;               ///< Show leading and trailing context lines.
-extern const juce::String     afterOption;                 ///< Limit search to lines after a start line.
-extern const juce::String     linesOption;                 ///< Limit scope to a line range.
-extern const juce::String     firstOption;                 ///< Stop after the first match per file.
-extern const juce::String     includeOption;               ///< Include paths matching glob pattern.
-extern const juce::String     excludeOption;               ///< Exclude paths matching glob pattern.
-extern const juce::String     hiddenOption;                ///< Include hidden files and directories.
-extern const juce::String     noIgnoreOption;              ///< Disable ignore file filtering.
-extern const juce::String     withStdinOption;             ///< Read replacement text from stdin.
-extern const juce::String     withFileOption;              ///< Read replacement text from a file.
-extern const juce::String     applyOption;                 ///< Write planned changes to disk.
-extern const juce::String     expectOption;                ///< Expected edit count guard for apply.
-extern const juce::String     deleteOption;                ///< Delete selected lines.
-extern const juce::String     replaceOption;               ///< Replace selected lines with text.
-extern const juce::String     insertBeforeOption;          ///< Insert text before selected line.
-extern const juce::String     insertAfterOption;           ///< Insert text after selected line.
-extern const juce::String     stdinOption;                 ///< Read text payload from stdin.
-extern const juce::String     verifyHashOption;            ///< Verify line hash before edit.
-extern const juce::String     delimiterOption;             ///< Input field delimiter string.
-extern const juce::String     outputDelimiterOption;       ///< Output field delimiter string.
-extern const juce::String     matchOption;                 ///< Filter lines by pattern before field split.
-extern const juce::String     strictOption;                ///< Fail when a field index is out of range.
-extern const juce::String     fileOption;                  ///< Read JSON patch input from a file.
-extern const juce::String     listOption;                  ///< List recorded undo transactions.
-extern const juce::String     forceOption;                 ///< Overwrite drifted files during undo.
-extern const juce::String     stdinPath;                   ///< Standard input label in diagnostics and output.
-extern const juce::String     currentDirectory;            ///< Current working directory path.
-extern const juce::String     gitDirectory;                ///< Git repository metadata directory name.
-extern const juce::String     gitignoreFile;               ///< Per-directory ignore file name.
-extern const juce::String     gitExcludePath;              ///< Repository-local exclude file relative path.
-extern const juce::String     xdgConfigHomeVariable;       ///< XDG config home environment variable name.
-extern const juce::String     gitConfigRelativePath;       ///< Relative path to git config under XDG config home.
-extern const juce::String     defaultGitConfigRelativePath;///< Default relative path to git config under user home.
-extern const juce::String     userGitConfigFile;           ///< User-level git config file name.
-extern const juce::String     gitIgnoreRelativePath;       ///< Relative path to global gitignore under XDG config home.
-extern const juce::String     defaultGitIgnoreRelativePath;///< Default relative path to global gitignore under home.
-extern const juce::String     coreSection;                 ///< Git config core section name.
-extern const juce::String     excludesFileKey;             ///< Git config excludesfile key name.
-extern const juce::String     homePrefix;                  ///< Tilde home directory path prefix.
-extern const juce::String     ignoreCaseRegexPrefix;       ///< Case-insensitive inline regex group prefix.
-extern const juce::String     ignoreCaseRegexSuffix;       ///< Case-insensitive inline regex group suffix.
-extern const juce::String     exactRegexPrefix;            ///< Exact-line regex group prefix.
-extern const juce::String     exactIgnoreCaseRegexPrefix;  ///< Case-insensitive exact-line regex group prefix.
-extern const juce::String     exactRegexSuffix;            ///< Exact-line regex group suffix.
-extern const juce::String     undoFolder;                  ///< Undo storage directory name.
-extern const juce::String     metaFile;                    ///< Undo transaction metadata file name.
-extern const juce::String     blobSuffix;                  ///< Undo backup blob file suffix.
-extern const juce::String     utcCompactFormat;            ///< Compact UTC timestamp format for transaction ids.
-extern const juce::String     utcIsoFormat;                ///< ISO-8601 UTC timestamp format for metadata.
+    static constexpr std::string_view helpOption                   { "--help|-h"               };///< Show help text.
+    static constexpr std::string_view versionOption                { "--version|-V"            };///< Show tool version.
+    static constexpr std::string_view regexOption                  { "--regex|-r"              };///< Treat pattern as a regular expression.
+    static constexpr std::string_view ignoreCaseOption             { "--ignore-case|-i"        };///< Match without case sensitivity.
+    static constexpr std::string_view exactOption                  { "--exact|-x"              };///< Match entire line text.
+    static constexpr std::string_view invertOption                 { "--invert|-v"             };///< Select lines that do not match.
+    static constexpr std::string_view countOption                  { "--count|-c"              };///< Output match counts per file.
+    static constexpr std::string_view filesWithMatchesOption       { "--files-with-matches|-l" };///< List only the paths of files with a match.
+    static constexpr std::string_view onlyMatchingOption           { "--only-matching|-o"      };///< Output only the matched text.
+    static constexpr std::string_view wordOption                   { "--word|-w"               };///< Match whole words only.
+    static constexpr std::string_view quietOption                  { "--quiet|-q"              };///< Suppress standard output lines.
+    static constexpr std::string_view lineNumberOption             { "--line-number|-n"        };///< Include line numbers in output.
+    static constexpr std::string_view noLineNumberOption           { "--no-line-number"        };///< Omit line numbers from output.
+    static constexpr std::string_view hashOption                   { "--hash"                  };///< Include per-line hashes in output.
+    static constexpr std::string_view contextOption                { "--context|-C"            };///< Show leading and trailing context lines.
+    static constexpr std::string_view afterContextOption           { "--after-context|-A"      };///< Show trailing context lines.
+    static constexpr std::string_view beforeContextOption          { "--before-context|-B"     };///< Show leading context lines.
+    static constexpr std::string_view afterOption                  { "--after"                 };///< Limit search to lines after a start line.
+    static constexpr std::string_view linesOption                  { "--lines"                 };///< Limit scope to a line range.
+    static constexpr std::string_view patternOption                { "--pattern|-e"            };///< Add a search pattern.
+    static constexpr std::string_view firstOption                  { "--first"                 };///< Stop after the first match per file.
+    static constexpr std::string_view includeOption                { "--include"               };///< Include paths matching glob pattern.
+    static constexpr std::string_view excludeOption                { "--exclude"               };///< Exclude paths matching glob pattern.
+    static constexpr std::string_view hiddenOption                 { "--hidden"                };///< Include hidden files and directories.
+    static constexpr std::string_view noIgnoreOption               { "--no-ignore"             };///< Disable ignore file filtering.
+    static constexpr std::string_view filesOption                  { "--files"                 };///< List the files that a search reads.
+    static constexpr std::string_view withStdinOption              { "--with-stdin"            };///< Read replacement text from stdin.
+    static constexpr std::string_view withFileOption               { "--with-file"             };///< Read replacement text from a file.
+    static constexpr std::string_view applyOption                  { "--apply"                 };///< Write planned changes to disk.
+    static constexpr std::string_view expectOption                 { "--expect"                };///< Expected edit count guard for apply.
+    static constexpr std::string_view deleteOption                 { "--delete"                };///< Delete selected lines.
+    static constexpr std::string_view replaceOption                { "--replace"               };///< Replace selected lines with text.
+    static constexpr std::string_view insertBeforeOption           { "--insert-before"         };///< Insert text before selected line.
+    static constexpr std::string_view insertAfterOption            { "--insert-after"          };///< Insert text after selected line.
+    static constexpr std::string_view stdinOption                  { "--stdin"                 };///< Read text payload from stdin.
+    static constexpr std::string_view verifyHashOption             { "--verify-hash"           };///< Verify line hash before edit.
+    static constexpr std::string_view delimiterOption              { "--delimiter|-d"          };///< Input field delimiter string.
+    static constexpr std::string_view outputDelimiterOption        { "--output-delimiter|-o"   };///< Output field delimiter string.
+    static constexpr std::string_view matchOption                  { "--match"                 };///< Filter lines by pattern before field split.
+    static constexpr std::string_view strictOption                 { "--strict"                };///< Fail when a field index is out of range.
+    static constexpr std::string_view fileOption                   { "--file"                  };///< Read JSON patch input from a file.
+    static constexpr std::string_view listOption                   { "--list"                  };///< List recorded undo transactions.
+    static constexpr std::string_view forceOption                  { "--force"                 };///< Overwrite drifted files during undo.
+    static constexpr std::string_view stdinPath                    { "<stdin>"                 };///< Standard input label in diagnostics and output.
+    static constexpr std::string_view currentDirectory             { "."                       };///< Current working directory path.
+    static constexpr std::string_view nullDevice                   { "/dev/null"               };///< Device that gives no byte.
+    static constexpr std::string_view gitDirectory                 { ".git"                    };///< Git repository metadata directory name.
+    static constexpr std::string_view gitignoreFile                { ".gitignore"              };///< Per-directory ignore file name.
+    static constexpr std::string_view gitExcludePath               { ".git/info/exclude"       };///< Repository-local exclude file relative path.
+    static constexpr std::string_view xdgConfigHomeVariable        { "XDG_CONFIG_HOME"         };///< XDG config home environment variable name.
+    static constexpr std::string_view gitConfigRelativePath        { "git/config"              };///< Relative path to git config under XDG config home.
+    static constexpr std::string_view defaultGitConfigRelativePath { ".config/git/config"      };///< Default relative path to git config under user home.
+    static constexpr std::string_view userGitConfigFile            { ".gitconfig"              };///< User-level git config file name.
+    static constexpr std::string_view gitIgnoreRelativePath        { "git/ignore"              };///< Relative path to global gitignore under XDG config home.
+    static constexpr std::string_view defaultGitIgnoreRelativePath { ".config/git/ignore"      };///< Default relative path to global gitignore under home.
+    static constexpr std::string_view coreSection                  { "core"                    };///< Git config core section name.
+    static constexpr std::string_view excludesFileKey              { "excludesfile"            };///< Git config excludesfile key name.
+    static constexpr std::string_view homePrefix                   { "~/"                      };///< Tilde home directory path prefix.
+    static constexpr std::string_view ignoreCaseRegexPrefix        { "(\?i:"                   };///< Case-insensitive inline regex group prefix.
+    static constexpr std::string_view ignoreCaseRegexSuffix        { ")"                       };///< Case-insensitive inline regex group suffix.
+    static constexpr std::string_view exactRegexPrefix             { "^(\?:"                   };///< Exact-line regex group prefix.
+    static constexpr std::string_view exactIgnoreCaseRegexPrefix   { "^(\?i:"                  };///< Case-insensitive exact-line regex group prefix.
+    static constexpr std::string_view exactRegexSuffix             { ")$"                      };///< Exact-line regex group suffix.
+    static constexpr std::string_view wordRegexPrefix              { "(\?<![A-Za-z0-9_])(\?:"  };///< Word-match regex group prefix.
+    static constexpr std::string_view wordRegexSuffix              { ")(\?![A-Za-z0-9_])"      };///< Word-match regex group suffix.
+    static constexpr std::string_view undoFolder                   { "undo"                    };///< Undo storage directory name.
+    static constexpr std::string_view pendingFolder                { "pending"                 };///< Folder of transactions that are not published.
+    static constexpr std::string_view blobFolder                   { "blobs"                   };///< Folder of undo backup blob files.
+    static constexpr std::string_view recordSuffix                 { ".json"                   };///< Undo transaction record file suffix.
+    static constexpr std::string_view blobSuffix                   { ".blob"                   };///< Undo backup blob file suffix.
+    static constexpr std::string_view find                         { "find"                    };///< Find command verb.
+    static constexpr std::string_view replace                      { "replace"                 };///< Replace command verb.
+    static constexpr std::string_view lines                        { "lines"                   };///< Lines command verb.
+    static constexpr std::string_view fields                       { "fields"                  };///< Fields command verb.
+    static constexpr std::string_view patch                        { "patch"                   };///< Patch command verb.
+    static constexpr std::string_view undo                         { "undo"                    };///< Undo command verb.
+    static constexpr std::string_view excerpt                      { "excerpt"                 };///< Excerpt command verb.
+    static constexpr std::string_view startCol                     { "startCol"                };///< Match start column key.
+    static constexpr std::string_view endCol                       { "endCol"                  };///< Match end column key.
+    static constexpr std::string_view startLine                    { "startLine"               };///< Operation start line key.
+    static constexpr std::string_view lastLine                     { "endLine"                 };///< Operation end line key.
+    static constexpr std::string_view deletion                     { "delete"                  };///< Patch delete operation key.
+    static constexpr std::string_view insertBefore                 { "insertBefore"            };///< Patch insert-before operation key.
+    static constexpr std::string_view insertAfter                  { "insertAfter"             };///< Patch insert-after operation key.
+    static constexpr std::string_view hash                         { "hash"                    };///< Line or file hash key.
+    static constexpr std::string_view timestamp                    { "timestamp"               };///< Undo transaction timestamp key.
+    static constexpr std::string_view transactionCommand           { "command"                 };///< Undo transaction command key.
+    static constexpr std::string_view files                        { "files"                   };///< Undo transaction files array key.
+    static constexpr std::string_view preHash                      { "preHash"                 };///< File hash before apply.
+    static constexpr std::string_view postHash                     { "postHash"                };///< File hash after apply.
+    static constexpr std::string_view executable                   { "executable"              };///< Executable bit flag key.
 
 /**______________________________END OF NAMESPACE______________________________*/
 }// namespace Id

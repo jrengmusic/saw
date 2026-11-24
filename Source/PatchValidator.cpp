@@ -1,36 +1,23 @@
 #include "PatchValidator.h"
+#include "Stdio.h"
 #include "generated/Generated.h"
 
-static bool hasMember (const jam::JsonDocument& document,
-                       const jam::Document::Element& object,
-                       const juce::Identifier& key) noexcept
+int PatchValidator::getIntMember (const jam::JsonDocument& document,
+                                  const jam::Document::Element& object,
+                                  std::string_view key)
 {
-    return document.contains (object, jam::Strings::getView (key.toString()));
-}
-
-static const jam::Document::Token& getMember (const jam::JsonDocument& document,
-                                              const jam::Document::Element& object,
-                                              const juce::Identifier& key)
-{
-    return document.get (object, jam::Strings::getView (key.toString()));
-}
-
-static int getIntMember (const jam::JsonDocument& document,
-                         const jam::Document::Element& object,
-                         const juce::Identifier& key)
-{
-    return jam::Format::getNumber<int> (document.getView (getMember (document, object, key)));
+    return jam::Format::getNumber<int> (document.getView (document.get (object, key)));
 }
 
 static std::optional<int> getIntValue (const jam::JsonDocument& document,
                                        const jam::Document::Element& object,
-                                       const juce::Identifier& key,
+                                       std::string_view key,
                                        int minimumValue)
 {
-    if (not hasMember (document, object, key))
+    if (not document.contains (object, key))
         return std::nullopt;
 
-    const auto& token { getMember (document, object, key) };
+    const auto& token { document.get (object, key) };
 
     if (token.type != map::JsonTokenType::number)
         return std::nullopt;
@@ -50,13 +37,13 @@ static std::optional<int> getIntValue (const jam::JsonDocument& document,
 
 static bool hasValidString (const jam::JsonDocument& document,
                             const jam::Document::Element& object,
-                            const juce::Identifier& key,
+                            std::string_view key,
                             bool allowEmpty)
 {
-    if (not hasMember (document, object, key))
+    if (not document.contains (object, key))
         return false;
 
-    const auto& token { getMember (document, object, key) };
+    const auto& token { document.get (object, key) };
 
     if (token.type != map::JsonTokenType::string)
         return false;
@@ -94,10 +81,10 @@ static bool hasOnlyAllowedKeys (const jam::JsonDocument& document,
 static bool hasValidOptionalHash (const jam::JsonDocument& document,
                                   const jam::Document::Element& object)
 {
-    if (not hasMember (document, object, Id::hash))
+    if (not document.contains (object, Id::hash))
         return true;
 
-    const auto& token { getMember (document, object, Id::hash) };
+    const auto& token { document.get (object, Id::hash) };
 
     if (token.type != map::JsonTokenType::string)
         return false;
@@ -113,7 +100,7 @@ static bool hasValidBaseFields (const jam::JsonDocument& document,
                                 const jam::Strings& allowedKeys)
 {
     return hasOnlyAllowedKeys (document, object, allowedKeys)
-           and hasValidString (document, object, Id::file, false)
+           and hasValidString (document, object, jam::Strings::getView (Id::file.toString()), false)
            and hasValidOptionalHash (document, object);
 }
 
@@ -121,7 +108,7 @@ static bool hasValidStartEndLines (const jam::JsonDocument& document,
                                    const jam::Document::Element& object)
 {
     const auto startLine { getIntValue (document, object, Id::startLine, 1) };
-    const auto endLine { startLine.has_value() ? getIntValue (document, object, Id::endLine, *startLine) : std::nullopt };
+    const auto endLine { startLine.has_value() ? getIntValue (document, object, Id::lastLine, *startLine) : std::nullopt };
     return startLine.has_value() and endLine.has_value();
 }
 
@@ -129,30 +116,30 @@ static bool isValidColumnSpanEntry (const juce::Identifier&,
                                     const jam::JsonDocument& document,
                                     const jam::Document::Element& object)
 {
-    const jam::Strings allowedKeys { Id::file.toString(), Id::line.toString(), Id::startCol.toString(),
-                                     Id::endCol.toString(), Id::text.toString(), Id::hash.toString() };
-    const auto lineNumber { getIntValue (document, object, Id::line, 1) };
+    const jam::Strings allowedKeys { Id::file.toString(), Id::line.toString(), jam::Strings::fromView (Id::startCol),
+                                     jam::Strings::fromView (Id::endCol), Id::text.toString(), jam::Strings::fromView (Id::hash) };
+    const auto lineNumber { getIntValue (document, object, jam::Strings::getView (Id::line.toString()), 1) };
     const auto startColumn { getIntValue (document, object, Id::startCol, 0) };
     const auto endColumn { startColumn.has_value() ? getIntValue (document, object, Id::endCol, *startColumn) : std::nullopt };
     return hasValidBaseFields (document, object, allowedKeys)
            and lineNumber.has_value()
            and startColumn.has_value()
            and endColumn.has_value()
-           and hasValidString (document, object, Id::text, true);
+           and hasValidString (document, object, jam::Strings::getView (Id::text.toString()), true);
 }
 
 static bool isValidDeleteEntry (const juce::Identifier&,
                                 const jam::JsonDocument& document,
                                 const jam::Document::Element& object)
 {
-    const jam::Strings allowedKeys { Id::file.toString(), Id::line.toString(), Id::startLine.toString(),
-                                     Id::endLine.toString(), Id::deletion.toString(), Id::hash.toString() };
-    const auto& deleteToken { getMember (document, object, Id::deletion) };
+    const jam::Strings allowedKeys { Id::file.toString(), Id::line.toString(), jam::Strings::fromView (Id::startLine),
+                                     jam::Strings::fromView (Id::lastLine), jam::Strings::fromView (Id::deletion), jam::Strings::fromView (Id::hash) };
+    const auto& deleteToken { document.get (object, Id::deletion) };
     const bool isDeleteTrue { deleteToken.type == map::JsonTokenType::boolean and document.getBoolean (deleteToken) };
-    const bool hasSingleLine { getIntValue (document, object, Id::line, 1).has_value()
-                               and not hasMember (document, object, Id::startLine)
-                               and not hasMember (document, object, Id::endLine) };
-    const bool hasLineRange { hasValidStartEndLines (document, object) and not hasMember (document, object, Id::line) };
+    const bool hasSingleLine { getIntValue (document, object, jam::Strings::getView (Id::line.toString()), 1).has_value()
+                               and not document.contains (object, Id::startLine)
+                               and not document.contains (object, Id::lastLine) };
+    const bool hasLineRange { hasValidStartEndLines (document, object) and not document.contains (object, jam::Strings::getView (Id::line.toString())) };
     return hasValidBaseFields (document, object, allowedKeys)
            and isDeleteTrue
            and (hasSingleLine or hasLineRange);
@@ -162,23 +149,23 @@ static bool isValidRangeReplaceEntry (const juce::Identifier&,
                                       const jam::JsonDocument& document,
                                       const jam::Document::Element& object)
 {
-    const jam::Strings allowedKeys { Id::file.toString(), Id::startLine.toString(), Id::endLine.toString(),
-                                     Id::text.toString(), Id::hash.toString() };
+    const jam::Strings allowedKeys { Id::file.toString(), jam::Strings::fromView (Id::startLine), jam::Strings::fromView (Id::lastLine),
+                                     Id::text.toString(), jam::Strings::fromView (Id::hash) };
     return hasValidBaseFields (document, object, allowedKeys)
            and hasValidStartEndLines (document, object)
-           and hasValidString (document, object, Id::text, true);
+           and hasValidString (document, object, jam::Strings::getView (Id::text.toString()), true);
 }
 
 static bool isValidInsertEntry (const juce::Identifier& key,
                                 const jam::JsonDocument& document,
                                 const jam::Document::Element& object)
 {
-    const int minimumLine { key == Id::insertAfter ? 0 : 1 };
-    const jam::Strings allowedKeys { Id::file.toString(), key.toString(), Id::text.toString(), Id::hash.toString() };
-    const auto targetLine { getIntValue (document, object, key, minimumLine) };
+    const int minimumLine { key == juce::Identifier (jam::Strings::fromView (Id::insertAfter)) ? 0 : 1 };
+    const jam::Strings allowedKeys { Id::file.toString(), key.toString(), Id::text.toString(), jam::Strings::fromView (Id::hash) };
+    const auto targetLine { getIntValue (document, object, jam::Strings::getView (key.toString()), minimumLine) };
     return hasValidBaseFields (document, object, allowedKeys)
            and targetLine.has_value()
-           and hasValidString (document, object, Id::text, true);
+           and hasValidString (document, object, jam::Strings::getView (Id::text.toString()), true);
 }
 
 static const jam::Function::Map<juce::Identifier, jam::Function::pointerCapacity, bool (const jam::JsonDocument&, const jam::Document::Element&)>& getEntryValidators()
@@ -187,47 +174,47 @@ static const jam::Function::Map<juce::Identifier, jam::Function::pointerCapacity
         []
         {
             jam::Function::Map<juce::Identifier, jam::Function::pointerCapacity, bool (const jam::JsonDocument&, const jam::Document::Element&)> entryValidators;
-            entryValidators.add (Id::startCol, &isValidColumnSpanEntry);
-            entryValidators.add (Id::deletion, &isValidDeleteEntry);
-            entryValidators.add (Id::startLine, &isValidRangeReplaceEntry);
-            entryValidators.add (Id::insertAfter, &isValidInsertEntry);
-            entryValidators.add (Id::insertBefore, &isValidInsertEntry);
+            entryValidators.add (juce::Identifier (jam::Strings::fromView (Id::startCol)), &isValidColumnSpanEntry);
+            entryValidators.add (juce::Identifier (jam::Strings::fromView (Id::deletion)), &isValidDeleteEntry);
+            entryValidators.add (juce::Identifier (jam::Strings::fromView (Id::startLine)), &isValidRangeReplaceEntry);
+            entryValidators.add (juce::Identifier (jam::Strings::fromView (Id::insertAfter)), &isValidInsertEntry);
+            entryValidators.add (juce::Identifier (jam::Strings::fromView (Id::insertBefore)), &isValidInsertEntry);
             return entryValidators;
         }());
 
     return entryValidators;
 }
 
-static juce::Identifier getEntryShapeKey (const jam::JsonDocument& document,
-                                          const jam::Document::Element& object)
+juce::Identifier PatchValidator::getEntryShapeKey (const jam::JsonDocument& document,
+                                                   const jam::Document::Element& object)
 {
-    const bool hasDeletion { hasMember (document, object, Id::deletion) };
-    const bool hasColumnOrInsert { hasMember (document, object, Id::startCol)
-                                   or hasMember (document, object, Id::insertAfter)
-                                   or hasMember (document, object, Id::insertBefore) };
+    const bool hasDeletion { document.contains (object, Id::deletion) };
+    const bool hasColumnOrInsert { document.contains (object, Id::startCol)
+                                   or document.contains (object, Id::insertAfter)
+                                   or document.contains (object, Id::insertBefore) };
 
     if (hasDeletion)
-        return hasColumnOrInsert ? juce::Identifier {} : Id::deletion;
+        return hasColumnOrInsert ? juce::Identifier {} : juce::Identifier (jam::Strings::fromView (Id::deletion));
 
-    const jam::Array<juce::Identifier> shapeKeys { Id::startCol, Id::startLine, Id::insertAfter, Id::insertBefore };
-    juce::Identifier matchedKey;
+    const std::array shapeKeys { Id::startCol, Id::startLine, Id::insertAfter, Id::insertBefore };
+    std::string_view matchedKey;
     int matchCount { 0 };
 
-    for (int index { 0 }; index < shapeKeys.size(); ++index)
+    for (const auto shapeKey : shapeKeys)
     {
-        if (hasMember (document, object, shapeKeys.at (index)))
+        if (document.contains (object, shapeKey))
         {
-            matchedKey = shapeKeys.at (index);
+            matchedKey = shapeKey;
             ++matchCount;
         }
     }
 
-    return matchCount == 1 ? matchedKey : juce::Identifier {};
+    return matchCount == 1 ? juce::Identifier (jam::Strings::fromView (matchedKey)) : juce::Identifier {};
 }
 
 static juce::String getEntryError (int index, const char* reason)
 {
-    return juce::String::formatted (text::Diagnostics::failPatchEntryInvalid, index, reason);
+    return Stdio::getFormatted (text::Diagnostics::failPatchEntryInvalid, index, reason);
 }
 
 static juce::String getEntryFailure (const jam::JsonDocument& document,
@@ -242,7 +229,7 @@ static juce::String getEntryFailure (const jam::JsonDocument& document,
     if (entryElement == nullptr)
         return getEntryError (index, text::Diagnostics::failPatchEntryNotObject);
 
-    const auto shapeKey { getEntryShapeKey (document, *entryElement) };
+    const auto shapeKey { PatchValidator::getEntryShapeKey (document, *entryElement) };
 
     if (shapeKey.isNull())
         return getEntryError (index, text::Diagnostics::failPatchEntryShape);
@@ -262,8 +249,8 @@ static juce::Result isValidPatchSchema (const juce::String&, const jam::Document
                                    : nullptr };
 
     if (arrayElement == nullptr)
-        return juce::Result::fail (juce::String::formatted (text::Diagnostics::failPatchJsonInvalid,
-                                                            text::Diagnostics::failPatchRootNotArray));
+        return juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failPatchJsonInvalid,
+                                                        text::Diagnostics::failPatchRootNotArray));
 
     const auto& entryTokens { *arrayElement->get<jam::Document::Tokens> (Id::tokens) };
     jam::Strings failures;
@@ -279,17 +266,17 @@ static juce::Result isValidPatchSchema (const juce::String&, const jam::Document
     return jam::Document::Validator::getFailures (failures);
 }
 
-static juce::Range<int> getEntryLineRange (const jam::JsonDocument& document,
-                                           const jam::Document::Element& object)
+juce::Range<int> PatchValidator::getEntryLineRange (const jam::JsonDocument& document,
+                                                    const jam::Document::Element& object)
 {
-    if (hasMember (document, object, Id::line))
+    if (document.contains (object, jam::Strings::getView (Id::line.toString())))
     {
-        const int line { getIntMember (document, object, Id::line) };
+        const int line { getIntMember (document, object, jam::Strings::getView (Id::line.toString())) };
         return { line, line + 1 };
     }
 
     const int startLine { getIntMember (document, object, Id::startLine) };
-    const int endLine { getIntMember (document, object, Id::endLine) };
+    const int endLine { getIntMember (document, object, Id::lastLine) };
     return { startLine, endLine + 1 };
 }
 
@@ -298,9 +285,9 @@ static std::pair<bool, int> getColumnSpanBounds (const juce::Identifier&,
                                                  const jam::Document::Element& object,
                                                  const TextDocument& targetDocument)
 {
-    const int line { getIntMember (document, object, Id::line) };
-    const int startCol { getIntMember (document, object, Id::startCol) };
-    const int endCol { getIntMember (document, object, Id::endCol) };
+    const int line { PatchValidator::getIntMember (document, object, jam::Strings::getView (Id::line.toString())) };
+    const int startCol { PatchValidator::getIntMember (document, object, Id::startCol) };
+    const int endCol { PatchValidator::getIntMember (document, object, Id::endCol) };
 
     if (line < 1 or line > targetDocument.getNumLines())
         return { false, 0 };
@@ -314,7 +301,7 @@ static std::pair<bool, int> getLineRangeBounds (const juce::Identifier&,
                                                 const jam::Document::Element& object,
                                                 const TextDocument& targetDocument)
 {
-    const auto range { getEntryLineRange (document, object) };
+    const auto range { PatchValidator::getEntryLineRange (document, object) };
     const bool inBounds { not range.isEmpty()
                           and range.getStart() >= 1
                           and range.getEnd() <= targetDocument.getNumLines() + 1 };
@@ -326,8 +313,8 @@ static std::pair<bool, int> getInsertBounds (const juce::Identifier& key,
                                              const jam::Document::Element& object,
                                              const TextDocument& targetDocument)
 {
-    const int line { getIntMember (document, object, key) };
-    const int minimumLine { key == Id::insertAfter ? 0 : 1 };
+    const int line { PatchValidator::getIntMember (document, object, jam::Strings::getView (key.toString())) };
+    const int minimumLine { key == juce::Identifier (jam::Strings::fromView (Id::insertAfter)) ? 0 : 1 };
     return { line >= minimumLine and line <= targetDocument.getNumLines(), line };
 }
 
@@ -337,11 +324,11 @@ static const jam::Function::Map<juce::Identifier, jam::Function::pointerCapacity
         []
         {
             jam::Function::Map<juce::Identifier, jam::Function::pointerCapacity, std::pair<bool, int> (const jam::JsonDocument&, const jam::Document::Element&, const TextDocument&)> entryBounds;
-            entryBounds.add (Id::startCol, &getColumnSpanBounds);
-            entryBounds.add (Id::deletion, &getLineRangeBounds);
-            entryBounds.add (Id::startLine, &getLineRangeBounds);
-            entryBounds.add (Id::insertAfter, &getInsertBounds);
-            entryBounds.add (Id::insertBefore, &getInsertBounds);
+            entryBounds.add (juce::Identifier (jam::Strings::fromView (Id::startCol)), &getColumnSpanBounds);
+            entryBounds.add (juce::Identifier (jam::Strings::fromView (Id::deletion)), &getLineRangeBounds);
+            entryBounds.add (juce::Identifier (jam::Strings::fromView (Id::startLine)), &getLineRangeBounds);
+            entryBounds.add (juce::Identifier (jam::Strings::fromView (Id::insertAfter)), &getInsertBounds);
+            entryBounds.add (juce::Identifier (jam::Strings::fromView (Id::insertBefore)), &getInsertBounds);
             return entryBounds;
         }());
 
@@ -353,18 +340,18 @@ static juce::Result getHashCheckResult (const jam::JsonDocument& document,
                                         const TextDocument& targetDocument,
                                         int hashLine)
 {
-    if (not hasMember (document, object, Id::hash))
+    if (not document.contains (object, Id::hash))
         return juce::Result::ok();
 
-    const auto expectedHash { jam::Strings::fromView (document.getString (getMember (document, object, Id::hash))) };
+    const auto expectedHash { jam::Strings::fromView (document.getString (document.get (object, Id::hash))) };
     const auto actualHash { hashLine >= 1 ? targetDocument.getLineHash (hashLine) : juce::String {} };
 
     if (actualHash.compare (expectedHash) != 0)
-        return juce::Result::fail (juce::String::formatted (text::Diagnostics::failHashMismatch,
-                                                            targetDocument.getDisplayPath().toRawUTF8(),
-                                                            hashLine,
-                                                            expectedHash.toRawUTF8(),
-                                                            actualHash.toRawUTF8()));
+        return juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failHashMismatch,
+                                                        targetDocument.getDisplayPath().toRawUTF8(),
+                                                        hashLine,
+                                                        expectedHash.toRawUTF8(),
+                                                        actualHash.toRawUTF8()));
 
     return juce::Result::ok();
 }
@@ -380,14 +367,14 @@ static juce::Result getBoundsAndHashResult (const jam::JsonDocument& document,
         const int entryIndex { entryIndices.at (index) };
         const auto* entryElement { document.getChildByToken (arrayElement, entryTokens.at (entryIndex)) };
         jassert (entryElement != nullptr);
-        const auto shapeKey { getEntryShapeKey (document, *entryElement) };
+        const auto shapeKey { PatchValidator::getEntryShapeKey (document, *entryElement) };
         jassert (not shapeKey.isNull());
         const auto [inBounds, hashLine] { getEntryBounds().get (shapeKey, document, *entryElement, targetDocument) };
 
         if (not inBounds)
-            return juce::Result::fail (juce::String::formatted (text::Diagnostics::failPatchBounds,
-                                                                targetDocument.getDisplayPath().toRawUTF8(),
-                                                                entryIndex));
+            return juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failPatchBounds,
+                                                            targetDocument.getDisplayPath().toRawUTF8(),
+                                                            entryIndex));
 
         const auto hashResult { getHashCheckResult (document, *entryElement, targetDocument, hashLine) };
 
@@ -409,10 +396,10 @@ static jam::Array<std::tuple<int, int, int>> getColumnSpans (const jam::JsonDocu
     {
         const auto* entryElement { document.getChildByToken (arrayElement, entryTokens.at (entryIndices.at (index))) };
 
-        if (hasMember (document, *entryElement, Id::startCol))
-            spans.add ({ getIntMember (document, *entryElement, Id::line),
-                         getIntMember (document, *entryElement, Id::startCol),
-                         getIntMember (document, *entryElement, Id::endCol) });
+        if (document.contains (*entryElement, Id::startCol))
+            spans.add ({ PatchValidator::getIntMember (document, *entryElement, jam::Strings::getView (Id::line.toString())),
+                         PatchValidator::getIntMember (document, *entryElement, Id::startCol),
+                         PatchValidator::getIntMember (document, *entryElement, Id::endCol) });
     }
 
     spans.sort();
@@ -430,9 +417,15 @@ static jam::Array<juce::Range<int>> getLineRanges (const jam::JsonDocument& docu
     {
         const auto* entryElement { document.getChildByToken (arrayElement, entryTokens.at (entryIndices.at (index))) };
 
-        if (hasMember (document, *entryElement, Id::deletion) or hasMember (document, *entryElement, Id::startLine))
-            ranges.add (getEntryLineRange (document, *entryElement));
+        if (document.contains (*entryElement, Id::deletion) or document.contains (*entryElement, Id::startLine))
+            ranges.add (PatchValidator::getEntryLineRange (document, *entryElement));
     }
+
+    std::sort (ranges.begin(), ranges.end(),
+        [] (const juce::Range<int>& leftRange, const juce::Range<int>& rightRange)
+        {
+            return leftRange.getStart() < rightRange.getStart();
+        });
 
     return ranges;
 }
@@ -448,11 +441,11 @@ static jam::Array<int> getInsertLines (const jam::JsonDocument& document,
     {
         const auto* entryElement { document.getChildByToken (arrayElement, entryTokens.at (entryIndices.at (index))) };
 
-        if (hasMember (document, *entryElement, Id::insertAfter))
-            insertLines.add (getIntMember (document, *entryElement, Id::insertAfter));
+        if (document.contains (*entryElement, Id::insertAfter))
+            insertLines.add (PatchValidator::getIntMember (document, *entryElement, Id::insertAfter));
 
-        if (hasMember (document, *entryElement, Id::insertBefore))
-            insertLines.add (getIntMember (document, *entryElement, Id::insertBefore));
+        if (document.contains (*entryElement, Id::insertBefore))
+            insertLines.add (PatchValidator::getIntMember (document, *entryElement, Id::insertBefore));
     }
 
     insertLines.sort();
@@ -461,18 +454,20 @@ static jam::Array<int> getInsertLines (const jam::JsonDocument& document,
 
 static juce::Result getConflictFailure (const juce::String& displayPath, int conflictLine)
 {
-    return juce::Result::fail (juce::String::formatted (text::Diagnostics::failPatchConflict,
-                                                        displayPath.toRawUTF8(),
-                                                        conflictLine));
+    return juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failPatchConflict,
+                                                    displayPath.toRawUTF8(),
+                                                    conflictLine));
 }
 
 static bool isLineInRanges (const jam::Array<juce::Range<int>>& ranges, int line) noexcept
 {
-    for (int index { 0 }; index < ranges.size(); ++index)
-        if (ranges.at (index).contains (line))
-            return true;
+    const auto rangeEnd { std::upper_bound (ranges.begin(), ranges.end(), line,
+        [] (int value, const juce::Range<int>& range)
+        {
+            return value < range.getStart();
+        }) };
 
-    return false;
+    return rangeEnd != ranges.begin() and std::prev (rangeEnd)->contains (line);
 }
 
 static juce::Result getColumnSpanConflict (const jam::Array<std::tuple<int, int, int>>& columnSpans,
@@ -504,14 +499,10 @@ static juce::Result getColumnSpanConflict (const jam::Array<std::tuple<int, int,
 static juce::Result getLineRangeConflict (const jam::Array<juce::Range<int>>& lineRanges,
                                           const juce::String& displayPath)
 {
-    for (int firstIndex { 0 }; firstIndex < lineRanges.size(); ++firstIndex)
+    for (int index { 1 }; index < lineRanges.size(); ++index)
     {
-        for (int secondIndex { firstIndex + 1 }; secondIndex < lineRanges.size(); ++secondIndex)
-        {
-            if (lineRanges.at (firstIndex).intersects (lineRanges.at (secondIndex)))
-                return getConflictFailure (displayPath,
-                                           lineRanges.at (firstIndex).getIntersectionWith (lineRanges.at (secondIndex)).getStart());
-        }
+        if (lineRanges.at (index - 1).intersects (lineRanges.at (index)))
+            return getConflictFailure (displayPath, lineRanges.at (index).getStart());
     }
 
     return juce::Result::ok();
@@ -535,7 +526,7 @@ static juce::Result getInsertConflict (const jam::Array<int>& insertLines,
 void PatchValidator::addRules (Rules& rules)
 {
     jam::JsonValidator::addRules (rules);
-    rules.add (Id::patch.toString(), &isValidPatchSchema);
+    rules.add (jam::Strings::fromView (Id::patch), &isValidPatchSchema);
 }
 
 const PatchValidator::Rules& PatchValidator::getRules() const

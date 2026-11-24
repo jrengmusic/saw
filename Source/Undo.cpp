@@ -7,11 +7,11 @@
 #include "Writer.h"
 #include "generated/Generated.h"
 
-using VerifiedEntries = std::tuple<juce::Result, jam::Array<juce::File>, jam::Array<std::unique_ptr<TextDocument>>,
-                                   jam::Array<std::unique_ptr<TextDocument>>, jam::Strings, jam::Array<bool>,
+using VerifiedEntries = std::tuple<juce::Result, jam::Array<juce::File>, jam::Array<juce::File>,
+                                   jam::Array<std::unique_ptr<TextDocument>>, jam::Array<std::unique_ptr<TextDocument>>,
                                    jam::Array<bool>, jam::Array<bool>>;
-using VerifiedEntry = std::tuple<juce::Result, juce::File, std::unique_ptr<TextDocument>,
-                                 std::unique_ptr<TextDocument>, juce::String, bool, bool, bool>;
+using VerifiedEntry = std::tuple<juce::Result, juce::File, juce::File, std::unique_ptr<TextDocument>,
+                                 std::unique_ptr<TextDocument>, bool, bool>;
 
 static const jam::Document::Element& getRootObject (const jam::JsonDocument& document)
 {
@@ -22,20 +22,20 @@ static const jam::Document::Element& getRootObject (const jam::JsonDocument& doc
 
 static const jam::Document::Element& getFilesArray (const jam::JsonDocument& document, const jam::Document::Element& rootElement)
 {
-    const auto& filesToken { document.get (rootElement, jam::Strings::getView (Id::files.toString())) };
+    const auto& filesToken { document.get (rootElement, Id::files) };
     const auto* filesElement { document.getChildByToken (rootElement, filesToken) };
     assert (filesElement != nullptr);
     return *filesElement;
 }
 
-static juce::String getMemberString (const jam::JsonDocument& document, const jam::Document::Element& element, const juce::Identifier& key)
+static juce::String getMemberString (const jam::JsonDocument& document, const jam::Document::Element& element, std::string_view key)
 {
-    return jam::Strings::fromView (document.getString (document.get (element, jam::Strings::getView (key.toString()))));
+    return jam::Strings::fromView (document.getString (document.get (element, key)));
 }
 
-static bool getMemberBoolean (const jam::JsonDocument& document, const jam::Document::Element& element, const juce::Identifier& key)
+static bool getMemberBoolean (const jam::JsonDocument& document, const jam::Document::Element& element, std::string_view key)
 {
-    return document.getBoolean (document.get (element, jam::Strings::getView (key.toString())));
+    return document.getBoolean (document.get (element, key));
 }
 
 static juce::Result getListArgumentStatus (const Arguments& arguments)
@@ -43,44 +43,41 @@ static juce::Result getListArgumentStatus (const Arguments& arguments)
     const auto& positionals { arguments.getPositionals() };
 
     if (positionals.size() > 0)
-        return juce::Result::fail (juce::String::formatted (text::Diagnostics::failUnexpectedArgument, positionals.at (0).toRawUTF8()));
+        return juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failUnexpectedArgument, positionals.at (0).toRawUTF8()));
 
-    const jam::Strings disallowedOptions { Id::applyOption, Id::forceOption };
+    const std::vector<std::string_view> disallowedOptions { Id::applyOption, Id::forceOption };
 
-    for (int index { 0 }; index < disallowedOptions.size(); ++index)
+    for (const auto option : disallowedOptions)
     {
-        const auto option { disallowedOptions.at (index) };
-
         if (arguments.contains (option))
-            return juce::Result::fail (juce::String::formatted (text::Diagnostics::failFlagUnknown, option.toRawUTF8()));
+            return juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failFlagUnknown, Arguments::getOptionName (option).toRawUTF8()));
     }
 
     return juce::Result::ok();
 }
 
-static void printTransactionSummary (const jam::JsonDocument& metaDoc)
+static std::string getTransactionSummary (const juce::String& txId, const jam::JsonDocument& metaDoc)
 {
     const auto& rootObject { getRootObject (metaDoc) };
     const auto& filesArray { getFilesArray (metaDoc, rootObject) };
     const auto fileCount { filesArray.get<jam::Document::Tokens> (Id::tokens)->size() };
-    const auto id { getMemberString (metaDoc, rootObject, Id::id) };
     const auto timestamp { getMemberString (metaDoc, rootObject, Id::timestamp) };
-    const auto command { getMemberString (metaDoc, rootObject, Id::command) };
-    Stdio::print (juce::String::formatted (text::Diagnostics::undoListFormat,
-                                           id.toRawUTF8(), timestamp.toRawUTF8(), fileCount, command.toRawUTF8()));
+    const auto command { getMemberString (metaDoc, rootObject, Id::transactionCommand) };
+    return Stdio::getLine (Stdio::getFormatted (text::Diagnostics::undoListFormat,
+                                                txId.toRawUTF8(), timestamp.toRawUTF8(), fileCount, command.toRawUTF8()));
 }
 
-static int runList (const Arguments& arguments)
+static Stdio::Output runList (const Arguments& arguments)
 {
     const auto listStatus { getListArgumentStatus (arguments) };
 
     if (listStatus.failed())
-    {
-        Stdio::printError (listStatus.getErrorMessage());
-        return Stdio::exitError;
-    }
+        return Stdio::getFailure (listStatus.getErrorMessage());
 
     const auto transactionIds { UndoCache::getTransactionIds() };
+    int failureCount { 0 };
+    std::string printedOutput;
+    std::string diagnostics;
 
     for (int index { 0 }; index < transactionIds.size(); ++index)
     {
@@ -88,75 +85,74 @@ static int runList (const Arguments& arguments)
 
         if (docStatus.failed())
         {
-            Stdio::printError (docStatus.getErrorMessage());
-            return Stdio::exitError;
+            diagnostics += Stdio::getDiagnostic (docStatus.getErrorMessage());
+            ++failureCount;
         }
-
-        printTransactionSummary (*metaDoc);
+        else
+        {
+            printedOutput += getTransactionSummary (transactionIds.at (index), *metaDoc);
+        }
     }
 
-    return Stdio::exitSuccess;
+    return { failureCount == 0 ? Stdio::exitSuccess : Stdio::exitError, std::move (printedOutput), std::move (diagnostics) };
 }
 
 static std::pair<juce::Result, juce::String> getSelectedTransactionId (const jam::Strings& positionals)
 {
     if (positionals.size() > 1)
-        return { juce::Result::fail (juce::String::formatted (text::Diagnostics::failUnexpectedArgument, positionals.at (1).toRawUTF8())), {} };
+        return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failUnexpectedArgument, positionals.at (1).toRawUTF8())), {} };
 
     if (positionals.size() == 1)
-        return { juce::Result::ok(), positionals.at (0) };
+    {
+        const auto transactionId { positionals.at (0) };
 
-    const auto ids { UndoCache::getTransactionIds() };
+        if (transactionId.isEmpty() or juce::File::createLegalFileName (transactionId).compare (transactionId) != 0)
+            return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failUndoUnknown, transactionId.toRawUTF8())), {} };
 
-    if (ids.size() == 0)
-        return { juce::Result::fail (text::Diagnostics::failUndoEmpty), {} };
+        return { juce::Result::ok(), transactionId };
+    }
 
-    return { juce::Result::ok(), ids.at (0) };
-}
-
-static std::tuple<juce::Result, juce::String, std::unique_ptr<jam::JsonDocument>> getLoadedTransaction (const jam::Strings& positionals)
-{
-    const auto [selectStatus, txId] { getSelectedTransactionId (positionals) };
-
-    if (selectStatus.failed())
-        return { selectStatus, juce::String {}, std::unique_ptr<jam::JsonDocument> {} };
-
-    auto [docStatus, metaDoc] { UndoCache::getTransactionDocument (txId) };
-
-    if (docStatus.failed())
-        return { docStatus, juce::String {}, std::unique_ptr<jam::JsonDocument> {} };
-
-    return { juce::Result::ok(), txId, std::move (metaDoc) };
+    return { juce::Result::fail (text::Diagnostics::failUndoRequiresId), {} };
 }
 
 static std::pair<juce::Result, std::unique_ptr<TextDocument>> getVerifiedOriginalDocument (
-    const juce::File& txDir, const juce::String& txId, const juce::String& blobName,
-    const juce::String& canonicalPath, const juce::String& preHash)
+    const juce::File& blobFile, const juce::File& targetFile, const juce::String& txId,
+    const juce::String& canonicalPath, const juce::String& preHash, const juce::String& postHash)
 {
-    auto [originalStatus, originalDoc] { TextDocument::fromFile (txDir.getChildFile (blobName), canonicalPath) };
+    auto [originalStatus, originalDoc] { TextDocument::fromOwnedFile (blobFile, canonicalPath) };
 
-    if (originalStatus.failed() or originalDoc->getContentHash().compare (preHash) != 0)
-        return { juce::Result::fail (juce::String::formatted (text::Diagnostics::failUndoCorrupt, txId.toRawUTF8(), blobName.toRawUTF8())), nullptr };
+    if (originalStatus.wasOk())
+    {
+        const auto blobHash { originalDoc->getContentHash() };
 
-    return { juce::Result::ok(), std::move (originalDoc) };
+        if (blobHash.compare (preHash) == 0)
+            return { juce::Result::ok(), std::move (originalDoc) };
+
+        const auto [targetStatus, targetDoc] { TextDocument::fromFile (targetFile, canonicalPath) };
+
+        if (blobHash.compare (postHash) == 0 or (targetStatus.wasOk() and targetDoc->getContentHash().compare (preHash) == 0))
+            return { juce::Result::ok(), nullptr };
+    }
+
+    return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failUndoCorrupt, txId.toRawUTF8(), blobFile.getFileName().toRawUTF8())), nullptr };
 }
 
 static std::pair<juce::Result, std::unique_ptr<TextDocument>> getExistingCurrentDocument (
     const juce::File& targetFile, const juce::String& txId, const juce::String& canonicalPath,
     const juce::String& postHash, bool isForce)
 {
-    auto [currentStatus, currentDoc] { TextDocument::fromFile (targetFile, canonicalPath) };
+    auto [currentStatus, currentDoc] { TextDocument::fromOwnedFile (targetFile, canonicalPath) };
 
     if (currentStatus.failed())
         return { currentStatus, nullptr };
 
     if (not isForce and currentDoc->getContentHash().compare (postHash) != 0)
-        return { juce::Result::fail (juce::String::formatted (text::Diagnostics::failUndoDrift, txId.toRawUTF8(), canonicalPath.toRawUTF8())), nullptr };
+        return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failUndoDrift, txId.toRawUTF8(), canonicalPath.toRawUTF8())), nullptr };
 
     return { juce::Result::ok(), std::move (currentDoc) };
 }
 
-static std::tuple<juce::Result, std::unique_ptr<TextDocument>, bool, bool> getCurrentState (
+static std::tuple<juce::Result, std::unique_ptr<TextDocument>, bool> getCurrentState (
     const juce::File& targetFile, const juce::String& txId, const juce::String& canonicalPath,
     const juce::String& postHash, bool isForce)
 {
@@ -165,50 +161,64 @@ static std::tuple<juce::Result, std::unique_ptr<TextDocument>, bool, bool> getCu
         auto [status, currentDoc] { getExistingCurrentDocument (targetFile, txId, canonicalPath, postHash, isForce) };
 
         if (status.failed())
-            return { status, nullptr, false, false };
+            return { status, nullptr, false };
 
-        return { juce::Result::ok(), std::move (currentDoc), Writer::isExecutable (targetFile), true };
+        return { juce::Result::ok(), std::move (currentDoc), true };
     }
 
     if (not isForce)
-        return { juce::Result::fail (juce::String::formatted (text::Diagnostics::failUndoMissing, txId.toRawUTF8(), canonicalPath.toRawUTF8())), nullptr, false, false };
+        return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failUndoMissing, txId.toRawUTF8(), canonicalPath.toRawUTF8())), nullptr, false };
 
-    return { juce::Result::ok(), TextDocument::fromString ({}, canonicalPath), false, false };
+    return { juce::Result::ok(), TextDocument::fromString ({}, canonicalPath), false };
 }
 
 static VerifiedEntry getVerifiedEntry (const jam::JsonDocument& metaDoc, const jam::Document::Element& entryElement,
-                                       const juce::String& txId, const juce::File& txDir, bool isForce)
+                                       const juce::String& txId, int fileIndex, bool isForce)
 {
-    const auto canonicalPath { getMemberString (metaDoc, entryElement, Id::path) };
-    const auto blobName { getMemberString (metaDoc, entryElement, Id::blob) };
+    const auto canonicalPath { getMemberString (metaDoc, entryElement, jam::Strings::getView (Id::path.toString())) };
     const auto preHash { getMemberString (metaDoc, entryElement, Id::preHash) };
     const auto postHash { getMemberString (metaDoc, entryElement, Id::postHash) };
     const auto isExecutable { getMemberBoolean (metaDoc, entryElement, Id::executable) };
-    auto [originalStatus, originalDoc] { getVerifiedOriginalDocument (txDir, txId, blobName, canonicalPath, preHash) };
+    const auto targetFile { juce::File::getCurrentWorkingDirectory().getChildFile (canonicalPath) };
+    const auto blobFile { UndoCache::getBlobFile (txId, fileIndex) };
+    VerifiedEntry entry { juce::Result::ok(), juce::File {}, juce::File {}, std::unique_ptr<TextDocument> {}, std::unique_ptr<TextDocument> {}, false, false };
+    auto [originalStatus, originalDoc] { getVerifiedOriginalDocument (blobFile, targetFile, txId, canonicalPath, preHash, postHash) };
 
     if (originalStatus.failed())
-        return { originalStatus, juce::File {}, std::unique_ptr<TextDocument> {}, std::unique_ptr<TextDocument> {},
-                 juce::String {}, false, false, false };
+    {
+        std::get<0> (entry) = originalStatus;
+        return entry;
+    }
 
-    const auto targetFile { juce::File::getCurrentWorkingDirectory().getChildFile (canonicalPath) };
-    auto [currentStatus, currentDoc, wasExecutable, existed] { getCurrentState (targetFile, txId, canonicalPath, postHash, isForce) };
+    if (originalDoc == nullptr)
+        return entry;
+
+    const auto writeStatus { Writer::getWriteStatus (targetFile, canonicalPath) };
+
+    if (writeStatus.failed())
+    {
+        std::get<0> (entry) = writeStatus;
+        return entry;
+    }
+
+    auto [currentStatus, currentDoc, existed] { getCurrentState (targetFile, txId, canonicalPath, postHash, isForce) };
 
     if (currentStatus.failed())
-        return { currentStatus, juce::File {}, std::unique_ptr<TextDocument> {}, std::unique_ptr<TextDocument> {},
-                 juce::String {}, false, false, false };
+    {
+        std::get<0> (entry) = currentStatus;
+        return entry;
+    }
 
-    return { juce::Result::ok(), targetFile, std::move (currentDoc), std::move (originalDoc), preHash, isExecutable, wasExecutable, existed };
+    return { juce::Result::ok(), targetFile, blobFile, std::move (currentDoc), std::move (originalDoc), isExecutable, existed };
 }
 
-static VerifiedEntries getVerifiedEntries (const jam::JsonDocument& metaDoc, const juce::String& txId,
-                                           const juce::File& txDir, bool isForce)
+static VerifiedEntries getVerifiedEntries (const jam::JsonDocument& metaDoc, const juce::String& txId, bool isForce)
 {
     jam::Array<juce::File> targetFiles;
+    jam::Array<juce::File> blobFiles;
     jam::Array<std::unique_ptr<TextDocument>> currentDocuments;
     jam::Array<std::unique_ptr<TextDocument>> originalDocuments;
-    jam::Strings preHashes;
     jam::Array<bool> executableFlags;
-    jam::Array<bool> preUndoExecutableFlags;
     jam::Array<bool> existedBeforeUndo;
     const auto& filesArray { getFilesArray (metaDoc, getRootObject (metaDoc)) };
     const auto& entryTokens { *filesArray.get<jam::Document::Tokens> (Id::tokens) };
@@ -217,30 +227,31 @@ static VerifiedEntries getVerifiedEntries (const jam::JsonDocument& metaDoc, con
     {
         const auto* entryElement { metaDoc.getChildByToken (filesArray, entryTokens.at (index)) };
         assert (entryElement != nullptr);
-        auto [entryStatus, targetFile, currentDoc, originalDoc, preHash, isExecutable, wasExecutable, existed] {
-            getVerifiedEntry (metaDoc, *entryElement, txId, txDir, isForce) };
+        auto [entryStatus, targetFile, blobFile, currentDoc, originalDoc, isExecutable, existed] {
+            getVerifiedEntry (metaDoc, *entryElement, txId, index, isForce) };
 
         if (entryStatus.failed())
-            return { entryStatus, jam::Array<juce::File> {}, jam::Array<std::unique_ptr<TextDocument>> {},
-                     jam::Array<std::unique_ptr<TextDocument>> {}, jam::Strings {}, jam::Array<bool> {},
-                     jam::Array<bool> {}, jam::Array<bool> {} };
+            return { entryStatus, jam::Array<juce::File> {}, jam::Array<juce::File> {}, jam::Array<std::unique_ptr<TextDocument>> {},
+                     jam::Array<std::unique_ptr<TextDocument>> {}, jam::Array<bool> {}, jam::Array<bool> {} };
 
-        targetFiles.add (targetFile);
-        currentDocuments.add (std::move (currentDoc));
-        originalDocuments.add (std::move (originalDoc));
-        preHashes.add (preHash);
-        executableFlags.add (isExecutable);
-        preUndoExecutableFlags.add (wasExecutable);
-        existedBeforeUndo.add (existed);
+        if (originalDoc != nullptr)
+        {
+            targetFiles.add (targetFile);
+            blobFiles.add (blobFile);
+            currentDocuments.add (std::move (currentDoc));
+            originalDocuments.add (std::move (originalDoc));
+            executableFlags.add (isExecutable);
+            existedBeforeUndo.add (existed);
+        }
     }
 
-    return { juce::Result::ok(), std::move (targetFiles), std::move (currentDocuments), std::move (originalDocuments),
-             std::move (preHashes), std::move (executableFlags), std::move (preUndoExecutableFlags), std::move (existedBeforeUndo) };
+    return { juce::Result::ok(), std::move (targetFiles), std::move (blobFiles), std::move (currentDocuments),
+             std::move (originalDocuments), std::move (executableFlags), std::move (existedBeforeUndo) };
 }
 
-static int runDryRun (const juce::String& txId, const jam::Array<juce::File>& targetFiles,
-                      const jam::Array<std::unique_ptr<TextDocument>>& currentDocuments,
-                      const jam::Array<std::unique_ptr<TextDocument>>& originalDocuments)
+static Stdio::Output runDryRun (const juce::String& txId, const jam::Array<juce::File>& targetFiles,
+                                const jam::Array<std::unique_ptr<TextDocument>>& currentDocuments,
+                                const jam::Array<std::unique_ptr<TextDocument>>& originalDocuments)
 {
     std::string combinedDiff;
 
@@ -248,110 +259,190 @@ static int runDryRun (const juce::String& txId, const jam::Array<juce::File>& ta
     {
         const auto& currentDoc { *currentDocuments.at (index) };
         const auto& originalDoc { *originalDocuments.at (index) };
-        combinedDiff.append (LineDiff (currentDoc, originalDoc).getUnifiedDiff (currentDoc, originalDoc));
+        combinedDiff.append (LineDiff (currentDoc, originalDoc).getUnifiedDiff (currentDoc, originalDoc.getBytes()));
     }
 
-    if (not combinedDiff.empty())
-        Stdio::write (combinedDiff);
-
-    Stdio::printSummary (Stdio::getFormatted (text::Diagnostics::summaryDryRunUndo, txId.toRawUTF8(), targetFiles.size()));
-    return Stdio::exitSuccess;
+    combinedDiff += Stdio::getDiagnostic (Stdio::getFormatted (text::Diagnostics::summaryDryRunUndo, txId.toRawUTF8(), targetFiles.size()));
+    return { Stdio::exitSuccess, std::move (combinedDiff), {} };
 }
 
-static void rollbackFiles (int rollbackCount, const jam::Array<juce::File>& targetFiles,
-                           const jam::Array<std::unique_ptr<TextDocument>>& currentDocuments,
-                           const jam::Array<bool>& preUndoExecutableFlags, const jam::Array<bool>& existedBeforeUndo)
+static bool restoreFile (const juce::File& targetFile, const juce::File& blobFile,
+                         const TextDocument& currentDoc, const TextDocument& originalDoc, bool isExisting)
 {
+    if (not isExisting)
+        return targetFile.deleteFile();
+
+    const bool isWritten { TextDocument::getBytesStatus (blobFile, originalDoc.getDisplayPath(), originalDoc.getBytes(), Id::preHash).wasOk() };
+
+    if (isWritten)
+        return TextDocument::getBytesStatus (targetFile, originalDoc.getDisplayPath(), originalDoc.getBytes(), Id::preHash).wasOk()
+               and Writer::toFile (targetFile, currentDoc.getBytes()).wasOk();
+
+    if (jam::File::swapFiles (targetFile, blobFile))
+    {
+        if (TextDocument::getBytesStatus (blobFile, originalDoc.getDisplayPath(), originalDoc.getBytes(), Id::preHash).wasOk())
+            return true;
+
+        jam::File::swapFiles (targetFile, blobFile);
+    }
+
+    return false;
+}
+
+static jam::Strings rollbackFiles (int rollbackCount, const jam::Array<juce::File>& targetFiles,
+                                   const jam::Array<juce::File>& blobFiles,
+                                   const jam::Array<std::unique_ptr<TextDocument>>& currentDocuments,
+                                   const jam::Array<std::unique_ptr<TextDocument>>& originalDocuments,
+                                   const jam::Array<bool>& existedBeforeUndo)
+{
+    jam::Strings failedPaths;
+
     for (int index { 0 }; index < rollbackCount; ++index)
     {
-        if (existedBeforeUndo.at (index))
-            Writer::toFile (targetFiles.at (index), currentDocuments.at (index)->getBytes(), preUndoExecutableFlags.at (index));
-        else
-            targetFiles.at (index).deleteFile();
+        const auto& currentDoc { *currentDocuments.at (index) };
+        const bool isRestored { restoreFile (targetFiles.at (index), blobFiles.at (index), currentDoc,
+                                             *originalDocuments.at (index), existedBeforeUndo.at (index)) };
+
+        if (not isRestored)
+            failedPaths.add (currentDoc.getDisplayPath());
     }
+
+    return failedPaths;
 }
 
-static std::pair<juce::Result, int> restoreAndVerifyFile (const juce::File& targetFile, const TextDocument& originalDoc,
-                                                          bool isExecutable, const juce::String& preHash)
+static std::pair<juce::Result, int> restoreAndVerifyFile (const juce::File& targetFile, const juce::File& blobFile,
+                                                          const TextDocument& currentDoc, const TextDocument& originalDoc,
+                                                          bool isExecutable, bool isExisting)
 {
-    const auto writeResult { Writer::toFile (targetFile, originalDoc.getBytes(), isExecutable) };
+    const bool isSwapped { isExisting
+                           and jam::File::isSwappable (targetFile, blobFile)
+                           and jam::File::setMetadata (blobFile, targetFile)
+                           and blobFile.setLastModificationTime (juce::Time::getCurrentTime())
+                           and jam::File::swapFiles (targetFile, blobFile) };
 
-    if (writeResult.failed())
-        return { writeResult, 0 };
+    if (isSwapped)
+    {
+        const auto swapStatus { TextDocument::getBytesStatus (blobFile, currentDoc.getDisplayPath(), currentDoc.getBytes(), text::Diagnostics::failChecksumMismatch) };
 
-    const auto [readStatus, writtenDoc] { TextDocument::fromFile (targetFile, originalDoc.getDisplayPath()) };
+        if (swapStatus.failed())
+            return { swapStatus, 1 };
+    }
+    else
+    {
+        const auto writeResult { Writer::toFile (targetFile, originalDoc.getBytes()) };
 
-    if (readStatus.failed())
-        return { readStatus, 1 };
+        if (writeResult.failed())
+        {
+            const bool isUnchanged { isExisting
+                                     ? TextDocument::getBytesStatus (targetFile, currentDoc.getDisplayPath(), currentDoc.getBytes(), text::Diagnostics::failChecksumMismatch).wasOk()
+                                     : not targetFile.existsAsFile() };
+            return { writeResult, isUnchanged ? 0 : 1 };
+        }
+    }
 
-    if (writtenDoc->getContentHash().compare (preHash) != 0)
-        return { juce::Result::fail (text::Diagnostics::failChecksumMismatch), 1 };
+    if (not isExisting and Writer::isExecutable (targetFile) != isExecutable)
+    {
+        if (not targetFile.setExecutePermission (isExecutable))
+            return { juce::Result::fail (text::Diagnostics::failOverwriteFailed), 1 };
+    }
+
+    const auto restoreStatus { TextDocument::getBytesStatus (targetFile, originalDoc.getDisplayPath(), originalDoc.getBytes(), text::Diagnostics::failChecksumMismatch) };
+
+    if (restoreStatus.failed())
+        return { restoreStatus, 1 };
 
     return { juce::Result::ok(), 0 };
 }
 
-static int runApply (const juce::String& txId, const juce::File& txDir, const jam::Array<juce::File>& targetFiles,
-                     const jam::Array<std::unique_ptr<TextDocument>>& currentDocuments,
-                     const jam::Array<std::unique_ptr<TextDocument>>& originalDocuments, const jam::Strings& preHashes,
-                     const jam::Array<bool>& executableFlags, const jam::Array<bool>& preUndoExecutableFlags,
-                     const jam::Array<bool>& existedBeforeUndo)
+static Stdio::Output runApply (const juce::String& txId, bool isMovedFromUndo,
+                               const jam::Array<juce::File>& targetFiles,
+                               const jam::Array<juce::File>& blobFiles,
+                               const jam::Array<std::unique_ptr<TextDocument>>& currentDocuments,
+                               const jam::Array<std::unique_ptr<TextDocument>>& originalDocuments,
+                               const jam::Array<bool>& executableFlags, const jam::Array<bool>& existedBeforeUndo)
 {
     for (int index { 0 }; index < targetFiles.size(); ++index)
     {
         const auto& originalDoc { *originalDocuments.at (index) };
         const auto [restoreResult, rollbackOffset] { restoreAndVerifyFile (
-            targetFiles.at (index), originalDoc, executableFlags.at (index), preHashes.at (index)) };
+            targetFiles.at (index), blobFiles.at (index), *currentDocuments.at (index), originalDoc,
+            executableFlags.at (index), existedBeforeUndo.at (index)) };
 
         if (restoreResult.failed())
         {
-            rollbackFiles (index + rollbackOffset, targetFiles, currentDocuments, preUndoExecutableFlags, existedBeforeUndo);
-            Stdio::printError (juce::String::formatted (
-                text::Diagnostics::failUndoWrite, originalDoc.getDisplayPath().toRawUTF8(), restoreResult.getErrorMessage().toRawUTF8()));
-            return Stdio::exitError;
+            const auto failedPaths { rollbackFiles (index + rollbackOffset, targetFiles, blobFiles,
+                                                    currentDocuments, originalDocuments, existedBeforeUndo) };
+
+            if (isMovedFromUndo)
+                juce::ignoreUnused (UndoCache::publishTransaction (txId));
+
+            const auto backupDirectory { UndoCache::getBlobDirectory().getFullPathName() };
+
+            if (failedPaths.size() == 0)
+                return Stdio::getFailure (Stdio::getFormatted (
+                    text::Diagnostics::failUndoWrite, originalDoc.getDisplayPath().toRawUTF8(), restoreResult.getErrorMessage().toRawUTF8()));
+
+            return Stdio::getFailure (Stdio::getFormatted (
+                text::Diagnostics::failUndoRollback, originalDoc.getDisplayPath().toRawUTF8(), restoreResult.getErrorMessage().toRawUTF8(),
+                failedPaths.joinIntoString (", ").toRawUTF8(), backupDirectory.toRawUTF8()));
         }
     }
 
-    txDir.deleteRecursively (false);
-    Stdio::printSummary (Stdio::getFormatted (text::Diagnostics::summaryUndone, txId.toRawUTF8(), targetFiles.size()));
-    return Stdio::exitSuccess;
+    UndoCache::removeTransaction (txId);
+    return { Stdio::exitSuccess, Stdio::getDiagnostic (Stdio::getFormatted (text::Diagnostics::summaryUndone, txId.toRawUTF8(), targetFiles.size())), {} };
 }
 
-static int runTransaction (const Arguments& arguments)
+static Stdio::Output runTransaction (const Arguments& arguments)
 {
-    const auto [loadStatus, txId, metaDoc] { getLoadedTransaction (arguments.getPositionals()) };
+    const auto [selectStatus, txId] { getSelectedTransactionId (arguments.getPositionals()) };
+
+    if (selectStatus.failed())
+        return Stdio::getFailure (selectStatus.getErrorMessage());
+
+    const auto isApply { arguments.contains (Id::applyOption) };
+    const auto isForce { arguments.contains (Id::forceOption) };
+    const auto [claimStatus, isMovedFromUndo] { isApply ? UndoCache::claimTransaction (txId, isForce)
+                                                        : std::pair<juce::Result, bool> { juce::Result::ok(), false } };
+
+    if (claimStatus.failed())
+        return Stdio::getFailure (claimStatus.getErrorMessage());
+
+    const auto rejectTransaction { [] (const juce::Result& status, const juce::String& id, bool isPublishedBack) -> Stdio::Output
+    {
+        if (isPublishedBack)
+            juce::ignoreUnused (UndoCache::publishTransaction (id));
+
+        return Stdio::getFailure (status.getErrorMessage());
+    } };
+
+    const auto [loadStatus, metaDoc] { UndoCache::getTransactionDocument (txId) };
 
     if (loadStatus.failed())
-    {
-        Stdio::printError (loadStatus.getErrorMessage());
-        return Stdio::exitError;
-    }
+        return rejectTransaction (loadStatus, txId, isMovedFromUndo);
 
-    const auto txDir { UndoCache::getDirectory().getChildFile (txId) };
-    const auto isForce { arguments.contains (Id::forceOption) };
-    auto [verifyStatus, targetFiles, currentDocuments, originalDocuments, preHashes, executableFlags,
-          preUndoExecutableFlags, existedBeforeUndo] { getVerifiedEntries (*metaDoc, txId, txDir, isForce) };
+    auto [verifyStatus, targetFiles, blobFiles, currentDocuments, originalDocuments, executableFlags, existedBeforeUndo] {
+        getVerifiedEntries (*metaDoc, txId, isForce) };
 
     if (verifyStatus.failed())
-    {
-        Stdio::printError (verifyStatus.getErrorMessage());
-        return Stdio::exitError;
-    }
+        return rejectTransaction (verifyStatus, txId, isMovedFromUndo);
 
-    if (arguments.contains (Id::applyOption))
-        return runApply (txId, txDir, targetFiles, currentDocuments, originalDocuments, preHashes, executableFlags, preUndoExecutableFlags, existedBeforeUndo);
+    if (isApply)
+        return runApply (txId, isMovedFromUndo, targetFiles, blobFiles, currentDocuments, originalDocuments, executableFlags, existedBeforeUndo);
 
     return runDryRun (txId, targetFiles, currentDocuments, originalDocuments);
 }
 
-int Undo::run (const jam::Strings& argumentList)
+Arguments Undo::getArguments (const jam::Strings& argumentList)
 {
-    const Arguments arguments { argumentList, 1, jam::Strings { Id::listOption, Id::applyOption, Id::forceOption }, jam::Strings {} };
+    const std::vector<std::string_view> flagOptions { Id::listOption, Id::applyOption, Id::forceOption };
 
+    return Arguments { argumentList, flagOptions, {}, {} };
+}
+
+Stdio::Output Undo::run (const Arguments& arguments, const std::optional<std::string>&)
+{
     if (arguments.getStatus().failed())
-    {
-        Stdio::printError (arguments.getStatus().getErrorMessage());
-        return Stdio::exitError;
-    }
+        return Stdio::getFailure (arguments.getStatus().getErrorMessage());
 
     if (arguments.contains (Id::listOption))
         return runList (arguments);

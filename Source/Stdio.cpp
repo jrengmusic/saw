@@ -1,58 +1,77 @@
 #include "Stdio.h"
+#include "StandardStream.h"
 #include "generated/Generated.h"
+#include <cerrno>
 #include <cstdarg>
-#ifdef _WIN32
-#include <io.h>
-#include <fcntl.h>
-#else
-#include <unistd.h>
-#endif
 
-void Stdio::setBinaryOutput() noexcept
+static constexpr size_t maximumChunkSize { 64 * 1024 };
+
+static bool writeStream (int descriptor, std::string_view text)
 {
-#ifdef _WIN32
-    _setmode (_fileno (stdout), _O_BINARY);
-#endif
+    while (not text.empty())
+    {
+        const auto written { StandardStream::write (descriptor, text.data(), std::min (text.size(), maximumChunkSize)) };
+
+        if (written <= 0)
+            return written < 0 and errno == EPIPE;
+
+        text.remove_prefix (static_cast<size_t> (written));
+    }
+
+    return true;
 }
 
-bool Stdio::isTerminalInput() noexcept
+bool Stdio::isTerminalInput (const std::optional<std::string>& input)
 {
-#ifdef _WIN32
-    return _isatty (_fileno (stdin)) != 0;
-#else
-    return isatty (fileno (stdin)) != 0;
-#endif
+    return not input.has_value() and StandardStream::isTerminal (StandardStream::input);
 }
 
 bool Stdio::isTerminalOutput() noexcept
 {
-#ifdef _WIN32
-    return _isatty (_fileno (stdout)) != 0;
-#else
-    return isatty (fileno (stdout)) != 0;
-#endif
+    return StandardStream::isTerminal (StandardStream::output);
 }
 
-void Stdio::print (const juce::String& message)
+std::string Stdio::getLine (const juce::String& message)
 {
-    setBinaryOutput();
-    printf ("%s\n", message.toRawUTF8());
+    return message.toStdString() + static_cast<char> (Chars::newline);
 }
 
-void Stdio::printSummary (const juce::String& message)
+std::string Stdio::getDiagnostic (const juce::String& message)
 {
-    print (ProjectInfo::projectName + Id::diagnosticSeparator + message);
+    return getLine (ProjectInfo::projectName + Id::diagnosticSeparator + message);
 }
 
-void Stdio::printError (const juce::String& message)
+Stdio::Output Stdio::getFailure (const juce::String& message)
 {
-    fprintf (stderr, "%s\n", (ProjectInfo::projectName + Id::diagnosticSeparator + message).toRawUTF8());
+    return { exitError, {}, getDiagnostic (message) };
 }
 
-void Stdio::write (std::string_view text)
+juce::Result Stdio::write (std::string_view bytes)
 {
-    setBinaryOutput();
-    fwrite (text.data(), sizeof (char), text.size(), stdout);
+    if (writeStream (StandardStream::output, bytes))
+        return juce::Result::ok();
+
+    return juce::Result::fail (text::Diagnostics::failStandardOutput);
+}
+
+int Stdio::write (const Output& output)
+{
+    const auto& [exitCode, standardOutput, standardError] { output };
+    const auto writeResult { write (std::string_view { standardOutput }) };
+    writeError (standardError);
+
+    if (writeResult.failed())
+    {
+        writeError (getDiagnostic (writeResult.getErrorMessage()));
+        return exitError;
+    }
+
+    return exitCode;
+}
+
+void Stdio::writeError (std::string_view text)
+{
+    juce::ignoreUnused (writeStream (StandardStream::error, text));
 }
 
 juce::String Stdio::getFormatted (const char* format, ...)
@@ -78,24 +97,18 @@ juce::String Stdio::getFormatted (const char* format, ...)
     return formatted;
 }
 
-std::pair<juce::Result, std::string> Stdio::getInput()
+std::string Stdio::getJoinedOutput (const jam::Array<std::string>& outputs)
 {
-#ifdef _WIN32
-    _setmode (_fileno (stdin), _O_BINARY);
-#endif
+    size_t totalSize { 0 };
 
-    std::string content {};
-    std::array<char, BUFSIZ> buffer {};
-    auto bytesRead { fread (buffer.data(), 1, buffer.size(), stdin) };
+    for (int index { 0 }; index < outputs.size(); ++index)
+        totalSize += outputs.at (index).size();
 
-    while (bytesRead > 0)
-    {
-        content.append (buffer.data(), bytesRead);
-        bytesRead = fread (buffer.data(), 1, buffer.size(), stdin);
-    }
+    std::string joined;
+    joined.reserve (totalSize);
 
-    if (ferror (stdin) != 0)
-        return { juce::Result::fail (text::Diagnostics::failStandardInput), {} };
+    for (int index { 0 }; index < outputs.size(); ++index)
+        joined.append (outputs.at (index));
 
-    return { juce::Result::ok(), std::move (content) };
+    return joined;
 }

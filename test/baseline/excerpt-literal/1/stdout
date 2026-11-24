@@ -1,0 +1,7 @@
+# 1 targets, 1 found, 0 missing
+## 1 a.txt:3-3 of 10 sha256:d604e3700805ea1b
+3	needle one
+## 1 a.txt:5-5 of 10 sha256:0f3aee3981196acf
+5	needle two
+## 1 a.txt:9-9 of 10 sha256:ef5837e6c4dcd4b7
+9	needle three

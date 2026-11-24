@@ -1,5 +1,8 @@
 #include "LineDiff.h"
+#include "Stdio.h"
 #include "generated/Generated.h"
+
+static constexpr int contextLineCount { 3 };
 
 static std::string_view getLineWithoutCarriageReturn (std::string_view line)
 {
@@ -20,35 +23,45 @@ static std::string_view getTextWithoutSingleTrailingNewline (std::string_view te
     return text;
 }
 
-static int getMatchingLineRun (const TextDocument& original,
-                               int origEnd,
-                               const TextDocument& target,
-                               int targEnd,
-                               int origStart,
-                               int targStart)
+static bool isIncompleteLine (const TextDocument& document, int lineNumber)
 {
-    int count { 0 };
-
-    while (origStart + count < origEnd
-           and targStart + count < targEnd
-           and original.getLine (origStart + count + 1).compare (target.getLine (targStart + count + 1)) == 0)
-        ++count;
-
-    return count;
+    return lineNumber == document.getNumLines() and not document.hasTrailingNewline();
 }
 
-static int getCommonSuffixLength (const TextDocument& original, const TextDocument& target, int prefix)
+static bool isLineEqual (const TextDocument& original, int originalLine, const TextDocument& target, int targetLine)
 {
-    int suffix { 0 };
-    const int origCount { original.getNumLines() };
-    const int targCount { target.getNumLines() };
+    return original.getLine (originalLine).compare (target.getLine (targetLine)) == 0
+           and isIncompleteLine (original, originalLine) == isIncompleteLine (target, targetLine);
+}
 
-    while (suffix < origCount - prefix
-           and suffix < targCount - prefix
-           and original.getLine (origCount - suffix).compare (target.getLine (targCount - suffix)) == 0)
-        ++suffix;
+static int getMatchingPrefixLength (const TextDocument& original,
+                                    juce::Range<int> originalRange,
+                                    const TextDocument& target,
+                                    juce::Range<int> targetRange)
+{
+    const int maxLength { std::min (originalRange.getLength(), targetRange.getLength()) };
+    int length { 0 };
 
-    return suffix;
+    while (length < maxLength
+           and isLineEqual (original, originalRange.getStart() + length + 1, target, targetRange.getStart() + length + 1))
+        ++length;
+
+    return length;
+}
+
+static int getMatchingSuffixLength (const TextDocument& original,
+                                    juce::Range<int> originalRange,
+                                    const TextDocument& target,
+                                    juce::Range<int> targetRange)
+{
+    const int maxLength { std::min (originalRange.getLength(), targetRange.getLength()) };
+    int length { 0 };
+
+    while (length < maxLength
+           and isLineEqual (original, originalRange.getEnd() - length, target, targetRange.getEnd() - length))
+        ++length;
+
+    return length;
 }
 
 static bool isMyersInsertStep (const std::vector<int>& furthestX,
@@ -66,133 +79,143 @@ static bool isMyersInsertStep (const std::vector<int>& furthestX,
            < furthestX.at (static_cast<size_t> (diagonal + 1 + offset));
 }
 
-static std::vector<std::vector<int>> getMyersTrace (const TextDocument& original,
-                                                    const TextDocument& target,
-                                                    int prefix,
-                                                    int origMidLen,
-                                                    int targMidLen)
+static std::pair<int, int> getMiddlePoint (const TextDocument& original,
+                                           juce::Range<int> originalRange,
+                                           const TextDocument& target,
+                                           juce::Range<int> targetRange)
 {
-    const int maxEditDistance { origMidLen + targMidLen };
-    const int offset { maxEditDistance };
-    std::vector<int> furthestX (static_cast<size_t> (2 * maxEditDistance + 1), 0);
-    std::vector<std::vector<int>> trace;
-    trace.reserve (static_cast<size_t> (maxEditDistance + 1));
+    const int originalCount { originalRange.getLength() };
+    const int targetCount { targetRange.getLength() };
+    const int delta { originalCount - targetCount };
+    const bool isOdd { (originalCount + targetCount) % 2 != 0 };
+    const int maxDistance { (originalCount + targetCount + 1) / 2 };
+    const int offset { maxDistance + 1 };
+    std::vector<int> forwardX (static_cast<size_t> (2 * maxDistance + 3), 0);
+    std::vector<int> backwardX (static_cast<size_t> (2 * maxDistance + 3), 0);
 
-    for (int distance { 0 }; distance <= maxEditDistance; ++distance)
+    for (int distance { 0 }; distance <= maxDistance; ++distance)
     {
-        trace.push_back (furthestX);
+        const int lowest { -(distance - 2 * std::max (0, distance - targetCount)) };
+        const int highest { distance - 2 * std::max (0, distance - originalCount) };
 
-        for (int diagonal { -distance }; diagonal <= distance; diagonal += 2)
+        for (int diagonal { lowest }; diagonal <= highest; diagonal += 2)
         {
-            const bool shouldInsert { isMyersInsertStep (furthestX, distance, diagonal, offset) };
-            int x { shouldInsert
-                        ? furthestX.at (static_cast<size_t> (diagonal + 1 + offset))
-                        : furthestX.at (static_cast<size_t> (diagonal - 1 + offset)) + 1 };
+            int x { isMyersInsertStep (forwardX, distance, diagonal, offset)
+                        ? forwardX.at (static_cast<size_t> (diagonal + 1 + offset))
+                        : forwardX.at (static_cast<size_t> (diagonal - 1 + offset)) + 1 };
             int y { x - diagonal };
-            const int snake { getMatchingLineRun (original, prefix + origMidLen, target, prefix + targMidLen, prefix + x, prefix + y) };
+            const int snake { getMatchingPrefixLength (original,
+                                                       juce::Range<int> (originalRange.getStart() + x, originalRange.getEnd()),
+                                                       target,
+                                                       juce::Range<int> (targetRange.getStart() + y, targetRange.getEnd())) };
             x += snake;
             y += snake;
-            furthestX.at (static_cast<size_t> (diagonal + offset)) = x;
+            forwardX.at (static_cast<size_t> (diagonal + offset)) = x;
+            const int opposite { delta - diagonal };
 
-            if (x >= origMidLen and y >= targMidLen)
-                return trace;
+            if (isOdd and opposite >= -(distance - 1) and opposite <= distance - 1
+                and x + backwardX.at (static_cast<size_t> (opposite + offset)) >= originalCount)
+                return { originalRange.getStart() + x, targetRange.getStart() + y };
+        }
+
+        for (int diagonal { lowest }; diagonal <= highest; diagonal += 2)
+        {
+            int x { isMyersInsertStep (backwardX, distance, diagonal, offset)
+                        ? backwardX.at (static_cast<size_t> (diagonal + 1 + offset))
+                        : backwardX.at (static_cast<size_t> (diagonal - 1 + offset)) + 1 };
+            int y { x - diagonal };
+            const int snake { getMatchingSuffixLength (original,
+                                                       juce::Range<int> (originalRange.getStart(), originalRange.getEnd() - x),
+                                                       target,
+                                                       juce::Range<int> (targetRange.getStart(), targetRange.getEnd() - y)) };
+            x += snake;
+            y += snake;
+            backwardX.at (static_cast<size_t> (diagonal + offset)) = x;
+            const int opposite { delta - diagonal };
+
+            if (not isOdd and opposite >= -distance and opposite <= distance
+                and x + forwardX.at (static_cast<size_t> (opposite + offset)) >= originalCount)
+                return { originalRange.getEnd() - x, targetRange.getEnd() - y };
         }
     }
 
-    return trace;
-}
-
-static std::vector<std::tuple<bool, int, int>> getMyersOperations (const std::vector<std::vector<int>>& trace,
-                                                                   int origMidLen,
-                                                                   int targMidLen)
-{
-    const int offset { origMidLen + targMidLen };
-    std::vector<std::tuple<bool, int, int>> operations;
-    int x { origMidLen };
-    int y { targMidLen };
-
-    for (int distance { static_cast<int> (trace.size()) - 1 }; distance >= 1; --distance)
-    {
-        const auto& previousX { trace.at (static_cast<size_t> (distance)) };
-        const int diagonal { x - y };
-        const bool cameFromInsert { isMyersInsertStep (previousX, distance, diagonal, offset) };
-        const int previousDiagonal { cameFromInsert ? diagonal + 1 : diagonal - 1 };
-        const int prevX { previousX.at (static_cast<size_t> (previousDiagonal + offset)) };
-        const int prevY { prevX - previousDiagonal };
-        operations.emplace_back (cameFromInsert, prevX, prevY);
-        x = prevX;
-        y = prevY;
-    }
-
-    return operations;
+    assert (false);
+    return { originalRange.getEnd(), targetRange.getEnd() };
 }
 
 static void addCoalescedOperation (jam::Array<LineDiff::Change>& changes,
                                    const TextDocument& target,
-                                   int prefix,
                                    bool isInsert,
-                                   int origIndex,
-                                   int targIndex)
+                                   int originalIndex,
+                                   int targetIndex)
 {
-    const int origLineIndex { prefix + origIndex };
-
-    if (changes.isEmpty() or origLineIndex != changes.last().start + changes.last().length)
+    if (changes.isEmpty() or originalIndex != changes.last().start + changes.last().length)
     {
         LineDiff::Change change;
-        change.start = origLineIndex;
+        change.start = originalIndex;
         changes.add (std::move (change));
     }
 
     auto& currentChange { changes.last() };
 
     if (isInsert)
-        currentChange.insertedLines.add (target.getLine (prefix + targIndex + 1));
+        currentChange.insertedLines.emplace_back (target.getLine (targetIndex + 1));
     else
         ++currentChange.length;
 }
 
-static void appendOriginalLines (std::vector<std::string_view>& outputLines,
-                                 const TextDocument& original,
-                                 int startLine,
-                                 int endLine)
+static void addRangeChanges (jam::Array<LineDiff::Change>& changes,
+                             const TextDocument& original,
+                             juce::Range<int> originalRange,
+                             const TextDocument& target,
+                             juce::Range<int> targetRange)
 {
-    for (int lineIndex { startLine }; lineIndex < endLine; ++lineIndex)
-        outputLines.push_back (original.getLine (lineIndex + 1));
-}
+    const int prefix { getMatchingPrefixLength (original, originalRange, target, targetRange) };
+    const juce::Range<int> originalTail (originalRange.getStart() + prefix, originalRange.getEnd());
+    const juce::Range<int> targetTail (targetRange.getStart() + prefix, targetRange.getEnd());
+    const int suffix { getMatchingSuffixLength (original, originalTail, target, targetTail) };
+    const juce::Range<int> originalMiddle (originalTail.getStart(), originalTail.getEnd() - suffix);
+    const juce::Range<int> targetMiddle (targetTail.getStart(), targetTail.getEnd() - suffix);
 
-static std::vector<std::string_view> getPlannedLineViews (const TextDocument& original,
-                                                          const jam::Array<LineDiff::Change>& changes)
-{
-    for (int index { 1 }; index < changes.size(); ++index)
-        assert (changes.at (index - 1).start <= changes.at (index).start);
-
-    std::vector<std::string_view> outputLines;
-    int originalLine { 0 };
-
-    for (int changeIndex { 0 }; changeIndex < changes.size(); ++changeIndex)
+    if (originalMiddle.isEmpty() or targetMiddle.isEmpty())
     {
-        const auto& change { changes.at (changeIndex) };
-        appendOriginalLines (outputLines, original, originalLine, change.start);
+        for (int targetIndex { targetMiddle.getStart() }; targetIndex < targetMiddle.getEnd(); ++targetIndex)
+            addCoalescedOperation (changes, target, true, originalMiddle.getStart(), targetIndex);
 
-        for (int lineIndex { 0 }; lineIndex < change.insertedLines.size(); ++lineIndex)
-            outputLines.push_back (change.insertedLines.getView (lineIndex));
-
-        originalLine = change.start + change.length;
+        for (int originalIndex { originalMiddle.getStart() }; originalIndex < originalMiddle.getEnd(); ++originalIndex)
+            addCoalescedOperation (changes, target, false, originalIndex, targetMiddle.getStart());
     }
-
-    appendOriginalLines (outputLines, original, originalLine, original.getNumLines());
-    return outputLines;
+    else
+    {
+        const auto [middleOriginal, middleTarget] { getMiddlePoint (original, originalMiddle, target, targetMiddle) };
+        addRangeChanges (changes, original,
+                         juce::Range<int> (originalMiddle.getStart(), middleOriginal),
+                         target,
+                         juce::Range<int> (targetMiddle.getStart(), middleTarget));
+        addRangeChanges (changes, original,
+                         juce::Range<int> (middleOriginal, originalMiddle.getEnd()),
+                         target,
+                         juce::Range<int> (middleTarget, targetMiddle.getEnd()));
+    }
 }
 
-static jam::Array<LineDiff::Change> getTrailingNewlineChange (const TextDocument& original)
+static std::string_view getOriginalEnding (const TextDocument& original, int lineNumber)
 {
-    jam::Array<LineDiff::Change> trailingChanges;
-    LineDiff::Change finalLineChange;
-    finalLineChange.start = original.getNumLines() - 1;
-    finalLineChange.length = 1;
-    finalLineChange.insertedLines.add (original.getLine (original.getNumLines()));
-    trailingChanges.add (std::move (finalLineChange));
-    return trailingChanges;
+    return original.getLineBytes (juce::Range<int> (lineNumber, lineNumber + 1)).substr (original.getLine (lineNumber).size());
+}
+
+template <typename Function>
+static void appendOriginalRun (const TextDocument& original,
+                               int startLine,
+                               int endLine,
+                               const Function& appendWithEnding)
+{
+    if (startLine < endLine)
+    {
+        const auto runBytes { original.getLineBytes (juce::Range<int> (startLine + 1, endLine + 1)) };
+        const auto ending { getOriginalEnding (original, endLine) };
+        appendWithEnding (runBytes.substr (0, runBytes.size() - ending.size()), ending);
+    }
 }
 
 static jam::Array<juce::Range<int>> getHunkChangeRanges (const jam::Array<LineDiff::Change>& changes)
@@ -209,7 +232,7 @@ static jam::Array<juce::Range<int>> getHunkChangeRanges (const jam::Array<LineDi
             const auto& previous { changes.at (endIndex - 1) };
             const auto& next { changes.at (endIndex) };
 
-            if (next.start - (previous.start + previous.length) > 2 * LineDiff::contextLineCount)
+            if (next.start - (previous.start + previous.length) > 2 * contextLineCount)
                 break;
 
             ++endIndex;
@@ -229,7 +252,7 @@ static int getHunkDelta (const jam::Array<LineDiff::Change>& changes, juce::Rang
     for (int index { hunkRange.getStart() }; index < hunkRange.getEnd(); ++index)
     {
         const auto& change { changes.at (index) };
-        delta += change.insertedLines.size() - change.length;
+        delta += static_cast<int> (change.insertedLines.size()) - change.length;
     }
 
     return delta;
@@ -250,24 +273,29 @@ static void appendDiffLine (std::string& output,
 
 static void appendContextLines (std::string& output,
                                 const TextDocument& original,
-                                const TextDocument& planned,
                                 int originalLine,
-                                int plannedLine,
                                 int endOriginalLine)
 {
     while (originalLine < endOriginalLine)
     {
-        const bool missingNewline { (originalLine + 1 == original.getNumLines() and not original.hasTrailingNewline())
-                                    or (plannedLine + 1 == planned.getNumLines() and not planned.hasTrailingNewline()) };
-        appendDiffLine (output, static_cast<char> (Chars::space), original.getLine (originalLine + 1), missingNewline);
+        appendDiffLine (output, static_cast<char> (Chars::space), original.getLine (originalLine + 1), isIncompleteLine (original, originalLine + 1));
         ++originalLine;
-        ++plannedLine;
     }
+}
+
+static int getIncompleteLineNumber (std::string_view bytes)
+{
+    static constexpr char newline { static_cast<char> (Chars::newline) };
+
+    if (bytes.empty() or bytes.back() == newline)
+        return 0;
+
+    return static_cast<int> (jam::simd::countByte (bytes.data(), bytes.size(), newline)) + 1;
 }
 
 static void appendHunkChange (std::string& output,
                               const TextDocument& original,
-                              const TextDocument& planned,
+                              int incompletePlannedLine,
                               const LineDiff::Change& change,
                               int originalLine,
                               int plannedLine)
@@ -275,21 +303,19 @@ static void appendHunkChange (std::string& output,
     for (int index { 0 }; index < change.length; ++index)
     {
         const int lineIndex { originalLine + index };
-        const bool missingNewline { lineIndex + 1 == original.getNumLines() and not original.hasTrailingNewline() };
-        appendDiffLine (output, static_cast<char> (Chars::dash), original.getLine (lineIndex + 1), missingNewline);
+        appendDiffLine (output, static_cast<char> (Chars::dash), original.getLine (lineIndex + 1), isIncompleteLine (original, lineIndex + 1));
     }
 
-    for (int index { 0 }; index < change.insertedLines.size(); ++index)
+    for (int index { 0 }; index < static_cast<int> (change.insertedLines.size()); ++index)
     {
         const int lineIndex { plannedLine + index };
-        const bool missingNewline { lineIndex + 1 == planned.getNumLines() and not planned.hasTrailingNewline() };
-        appendDiffLine (output, static_cast<char> (Chars::plus), change.insertedLines.getView (index), missingNewline);
+        appendDiffLine (output, static_cast<char> (Chars::plus), change.insertedLines.at (static_cast<size_t> (index)), lineIndex + 1 == incompletePlannedLine);
     }
 }
 
 static void appendHunkBody (std::string& output,
                             const TextDocument& original,
-                            const TextDocument& planned,
+                            int incompletePlannedLine,
                             const jam::Array<LineDiff::Change>& changes,
                             juce::Range<int> hunkRange,
                             int oldStart,
@@ -302,15 +328,15 @@ static void appendHunkBody (std::string& output,
     for (int index { hunkRange.getStart() }; index < hunkRange.getEnd(); ++index)
     {
         const auto& change { changes.at (index) };
-        appendContextLines (output, original, planned, originalLine, plannedLine, change.start);
+        appendContextLines (output, original, originalLine, change.start);
         plannedLine += change.start - originalLine;
         originalLine = change.start;
-        appendHunkChange (output, original, planned, change, originalLine, plannedLine);
+        appendHunkChange (output, original, incompletePlannedLine, change, originalLine, plannedLine);
         originalLine += change.length;
-        plannedLine += change.insertedLines.size();
+        plannedLine += static_cast<int> (change.insertedLines.size());
     }
 
-    appendContextLines (output, original, planned, originalLine, plannedLine, oldEnd);
+    appendContextLines (output, original, originalLine, oldEnd);
 }
 
 LineDiff::LineDiff (jam::Array<Change> explicitChanges)
@@ -320,48 +346,22 @@ LineDiff::LineDiff (jam::Array<Change> explicitChanges)
 
 LineDiff::LineDiff (const TextDocument& original, const TextDocument& target)
 {
-    const int prefix { getMatchingLineRun (original, original.getNumLines(), target, target.getNumLines(), 0, 0) };
-    const int suffix { getCommonSuffixLength (original, target, prefix) };
-    const int origMidLen { original.getNumLines() - prefix - suffix };
-    const int targMidLen { target.getNumLines() - prefix - suffix };
-
-    if (origMidLen > 0 and targMidLen > 0)
-    {
-        const auto trace { getMyersTrace (original, target, prefix, origMidLen, targMidLen) };
-        const auto operations { getMyersOperations (trace, origMidLen, targMidLen) };
-
-        for (int index { static_cast<int> (operations.size()) - 1 }; index >= 0; --index)
-        {
-            const auto& [isInsert, origIndex, targIndex] { operations.at (static_cast<size_t> (index)) };
-            addCoalescedOperation (changes, target, prefix, isInsert, origIndex, targIndex);
-        }
-    }
-    else if (origMidLen > 0 or targMidLen > 0)
-    {
-        Change change;
-        change.start = prefix;
-        change.length = origMidLen;
-
-        for (int index { 0 }; index < targMidLen; ++index)
-            change.insertedLines.add (target.getLine (prefix + index + 1));
-
-        changes.add (std::move (change));
-    }
+    addRangeChanges (changes, original, juce::Range<int> (0, original.getNumLines()), target, juce::Range<int> (0, target.getNumLines()));
 }
 
-jam::Strings LineDiff::getLines (std::string_view text)
+std::vector<std::string> LineDiff::getLines (std::string_view text)
 {
     if (text.empty())
-        return jam::Strings { juce::String {} };
+        return std::vector<std::string> { std::string {} };
 
     const auto remaining { getTextWithoutSingleTrailingNewline (text) };
-    jam::Strings lines;
+    std::vector<std::string> lines;
     size_t cursor { 0 };
 
     while (true)
     {
         const auto newlineIndex { jam::simd::findByte (remaining.data(), remaining.size(), cursor, static_cast<char> (Chars::newline)) };
-        lines.add (getLineWithoutCarriageReturn (remaining.substr (cursor, newlineIndex - cursor)));
+        lines.emplace_back (getLineWithoutCarriageReturn (remaining.substr (cursor, newlineIndex - cursor)));
 
         if (newlineIndex == remaining.size())
             return lines;
@@ -370,9 +370,9 @@ jam::Strings LineDiff::getLines (std::string_view text)
     }
 }
 
-jam::Strings LineDiff::getLinesPreservingEmpty (std::string_view text)
+std::vector<std::string> LineDiff::getLinesPreservingEmpty (std::string_view text)
 {
-    jam::Strings lines;
+    std::vector<std::string> lines;
     size_t cursor { 0 };
 
     while (true)
@@ -383,7 +383,7 @@ jam::Strings LineDiff::getLinesPreservingEmpty (std::string_view text)
         if (newlineIndex < text.size())
             lineView = getLineWithoutCarriageReturn (lineView);
 
-        lines.add (lineView);
+        lines.emplace_back (lineView);
 
         if (newlineIndex == text.size())
             return lines;
@@ -394,27 +394,51 @@ jam::Strings LineDiff::getLinesPreservingEmpty (std::string_view text)
 
 std::string LineDiff::getPlannedText (const TextDocument& original) const
 {
-    const auto outputLines { getPlannedLineViews (original, changes) };
+    for (int index { 1 }; index < changes.size(); ++index)
+        assert (changes.at (index - 1).start <= changes.at (index).start);
 
-    if (outputLines.empty())
-        return {};
-
-    const auto lineEnding { original.getLineEnding() };
+    const auto dominantEnding { original.getLineEnding() };
     const bool deletedFinalLine { not changes.isEmpty()
                                   and changes.last().length > 0
-                                  and changes.last().insertedLines.size() == 0
+                                  and changes.last().insertedLines.empty()
                                   and changes.last().start + changes.last().length >= original.getNumLines() };
     const bool shouldEmitTrailingNewline { original.getNumLines() == 0
                                            or original.hasTrailingNewline()
                                            or deletedFinalLine };
     std::string plannedText;
-
-    for (size_t index { 0 }; index < outputLines.size(); ++index)
+    std::optional<std::string_view> lastEnding;
+    const auto appendWithEnding = [&plannedText, &lastEnding, dominantEnding] (std::string_view bytes, std::string_view ending)
     {
-        jam::Format::appendBytes (plannedText, outputLines.at (index));
+        if (lastEnding.has_value() and lastEnding->empty())
+            jam::Format::appendBytes (plannedText, dominantEnding);
 
-        if (index + 1 < outputLines.size() or shouldEmitTrailingNewline)
-            jam::Format::appendBytes (plannedText, lineEnding);
+        jam::Format::appendBytes (plannedText, bytes);
+        jam::Format::appendBytes (plannedText, ending);
+        lastEnding = ending;
+    };
+    int originalLine { 0 };
+
+    for (int changeIndex { 0 }; changeIndex < changes.size(); ++changeIndex)
+    {
+        const auto& change { changes.at (changeIndex) };
+        appendOriginalRun (original, originalLine, change.start, appendWithEnding);
+
+        for (int index { 0 }; index < static_cast<int> (change.insertedLines.size()); ++index)
+            appendWithEnding (change.insertedLines.at (static_cast<size_t> (index)),
+                              index < change.length ? getOriginalEnding (original, change.start + index + 1) : dominantEnding);
+
+        originalLine = change.start + change.length;
+    }
+
+    appendOriginalRun (original, originalLine, original.getNumLines(), appendWithEnding);
+
+    if (lastEnding.has_value())
+    {
+        if (shouldEmitTrailingNewline and lastEnding->empty())
+            jam::Format::appendBytes (plannedText, dominantEnding);
+
+        if (not shouldEmitTrailingNewline)
+            plannedText.resize (plannedText.size() - lastEnding->size());
     }
 
     return plannedText;
@@ -443,17 +467,50 @@ std::string LineDiff::getHunkRangeText (int zeroBasedStart, int lineCount)
     return text;
 }
 
-std::string LineDiff::getUnifiedDiff (const TextDocument& original, const TextDocument& planned) const
+jam::Array<LineDiff::Change> LineDiff::getDiffChanges (const TextDocument& original) const
 {
-    if (changes.isEmpty() and (original.hasTrailingNewline() == planned.hasTrailingNewline() or original.getNumLines() == 0))
+    jam::Array<Change> diffChanges;
+
+    for (int index { 0 }; index < changes.size(); ++index)
+        diffChanges.add (changes.at (index));
+
+    const int numLines { original.getNumLines() };
+    const int lastIndex { diffChanges.size() - 1 };
+    const bool isLastLineChanged { lastIndex > 0
+                                   and diffChanges.at (lastIndex - 1).length > 0
+                                   and diffChanges.at (lastIndex - 1).start + diffChanges.at (lastIndex - 1).length == numLines };
+
+    if (not isLastLineChanged)
+    {
+        auto& lastChange { diffChanges.last() };
+        std::vector<std::string> completedLines;
+        completedLines.emplace_back (original.getLine (numLines));
+        completedLines.insert (completedLines.end(), lastChange.insertedLines.begin(), lastChange.insertedLines.end());
+        lastChange.start = numLines - 1;
+        lastChange.length = 1;
+        lastChange.insertedLines = std::move (completedLines);
+    }
+
+    return diffChanges;
+}
+
+std::string LineDiff::getUnifiedDiff (const TextDocument& original, std::string_view plannedBytes) const
+{
+    if (changes.isEmpty())
         return {};
 
-    const auto newlineOnlyChanges (changes.isEmpty() ? getTrailingNewlineChange (original) : jam::Array<Change> {});
-    const auto& activeChanges { changes.isEmpty() ? newlineOnlyChanges : changes };
+    const bool isCompletingLastLine { changes.last().start == original.getNumLines()
+                                      and changes.last().length == 0
+                                      and not changes.last().insertedLines.empty()
+                                      and original.getNumLines() > 0
+                                      and isIncompleteLine (original, original.getNumLines()) };
+    const auto completingChanges (isCompletingLastLine ? getDiffChanges (original) : jam::Array<Change> {});
+    const auto& activeChanges { isCompletingLastLine ? completingChanges : changes };
+    const int incompletePlannedLine { getIncompleteLineNumber (plannedBytes) };
     const auto hunkRanges (getHunkChangeRanges (activeChanges));
     std::string output;
-    jam::Format::appendBytes (output, jam::Strings::getView (juce::String::formatted (text::Diagnostics::diffOldHeaderFormat, original.getDisplayPath().toRawUTF8())));
-    jam::Format::appendBytes (output, jam::Strings::getView (juce::String::formatted (text::Diagnostics::diffNewHeaderFormat, original.getDisplayPath().toRawUTF8())));
+    jam::Format::appendBytes (output, jam::Strings::getView (Stdio::getFormatted (text::Diagnostics::diffOldHeaderFormat, original.getDisplayPath().toRawUTF8())));
+    jam::Format::appendBytes (output, jam::Strings::getView (Stdio::getFormatted (text::Diagnostics::diffNewHeaderFormat, original.getDisplayPath().toRawUTF8())));
     int cumulativeDelta { 0 };
 
     for (int hunkIndex { 0 }; hunkIndex < hunkRanges.size(); ++hunkIndex)
@@ -465,7 +522,7 @@ std::string LineDiff::getUnifiedDiff (const TextDocument& original, const TextDo
         const int hunkDelta { getHunkDelta (activeChanges, hunkRange) };
         const int newStart { oldStart + cumulativeDelta };
         jam::Format::appendBytes (output, "@@ -" + getHunkRangeText (oldStart, oldEnd - oldStart) + " +" + getHunkRangeText (newStart, (oldEnd - oldStart) + hunkDelta) + " @@\n");
-        appendHunkBody (output, original, planned, activeChanges, hunkRange, oldStart, oldEnd, newStart);
+        appendHunkBody (output, original, incompletePlannedLine, activeChanges, hunkRange, oldStart, oldEnd, newStart);
         cumulativeDelta += hunkDelta;
     }
 

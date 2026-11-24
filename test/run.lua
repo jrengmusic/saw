@@ -1,6 +1,17 @@
 local sawBinary = arg[1]
-assert (sawBinary ~= nil and #sawBinary > 0, "usage: nvim --headless -l test/run.lua <saw-binary>")
+assert (sawBinary ~= nil and #sawBinary > 0, "usage: nvim --headless -l test/run.lua <saw-binary> [<server-binary>]")
 sawBinary = vim.fn.fnamemodify (sawBinary, ":p")
+
+local serverBinary = arg[2]
+
+if serverBinary ~= nil then
+    serverBinary = vim.fn.fnamemodify (serverBinary, ":p")
+end
+
+local mcpProtocolVersion = "2026-07-28"
+local mcpProtocolVersionMember = "io.modelcontextprotocol/protocolVersion"
+local mcpClientCapabilitiesMember = "io.modelcontextprotocol/clientCapabilities"
+local serverToolName = "run"
 
 local testDir = vim.fn.fnamemodify (arg[0], ":p:h")
 local casesPath = vim.fs.joinpath (testDir, "cases.md")
@@ -9,7 +20,16 @@ local stdinRoot = vim.fs.joinpath (testDir, "stdin")
 local baselineRoot = vim.fs.joinpath (testDir, "baseline")
 
 local directoryMode = 493
-local expectedHeaders = { "name", "fixture", "command", "stdin", "exit", "reference", "compare" }
+local permissionBits = 511
+local expectedHeaders = { "name", "fixture", "command", "stdin", "exit", "reference", "compare", "setup", "check", "parallel", "platform" }
+
+local appDataSaw = vim.fn.has ("win32") == 1
+    and vim.fs.joinpath (os.getenv ("APPDATA") or "", "saw")
+    or vim.fs.joinpath (os.getenv ("HOME") or "", "Library", "Application Support", "saw")
+local undoDir = vim.fs.joinpath (appDataSaw, "undo")
+local pendingDir = vim.fs.joinpath (appDataSaw, "pending")
+local blobDir = vim.fs.joinpath (appDataSaw, "blobs")
+local recordSuffix = ".json"
 
 local function readBinaryFile (path)
     local file = io.open (path, "rb")
@@ -207,6 +227,11 @@ local function addCaseStep (cases, cells)
     local exitCode = tonumber (cells[5])
     assert (exitCode ~= nil and cells[5]:match ("^%d+$") ~= nil, "invalid exit code for case " .. cells[1])
 
+    local parallelText = cells[10] == "" and "1" or cells[10]
+    assert (parallelText:match ("^[1-9]%d*$") ~= nil, "invalid parallel count for case " .. cells[1])
+    local parallelCount = tonumber (parallelText)
+    assert (parallelCount == 1 or cells[6] == "", "parallel case cannot compare a reference: " .. cells[1])
+
     local step = {
         fixture = cells[2],
         command = cells[3],
@@ -214,6 +239,10 @@ local function addCaseStep (cases, cells)
         exit = exitCode,
         reference = cells[6],
         compare = cells[7],
+        setup = cells[8],
+        check = cells[9],
+        parallel = parallelCount,
+        platform = cells[11],
     }
 
     if #cases > 0 and cases[#cases].name == cells[1] then
@@ -239,7 +268,7 @@ local function parseCases (markdownText)
     while start <= #lines and lines[start]:match ("^%+[%-%+]+$") == nil do start = start + 1 end
     assert (start <= #lines, "missing grid table border in cases.md")
     for pos in lines[start]:gmatch ("()%+") do offsets[#offsets + 1] = pos end
-    assert (#offsets == #expectedHeaders + 1, "expected 7 columns in cases table")
+    assert (#offsets == #expectedHeaders + 1, "expected " .. #expectedHeaders .. " columns in cases table")
 
     while start <= #lines and lines[start]:sub (1, 1) ~= "|" do start = start + 1 end
     assert (start <= #lines, "missing header row in cases.md")
@@ -263,6 +292,250 @@ local function normalizeOutput (bytes, tempRoot)
     return bytes
 end
 
+local function makeTreeReadable (rootDir)
+    if vim.fn.has ("win32") == 0 then
+        local result = vim.system ({ "chmod", "-R", "u+rwX", rootDir }):wait ()
+        assert (result.code == 0, "chmod failed: " .. rootDir)
+    end
+end
+
+local function countTransactions ()
+    if vim.uv.fs_stat (undoDir) == nil then return 0 end
+
+    local count = 0
+    local handle = assert (vim.uv.fs_scandir (undoDir))
+    local name, entryType = vim.uv.fs_scandir_next (handle)
+
+    while name ~= nil do
+        local itemType = entryType or assert (vim.uv.fs_lstat (vim.fs.joinpath (undoDir, name))).type
+
+        if itemType == "file" and vim.endswith (name, recordSuffix) then
+            count = count + 1
+        end
+
+        name, entryType = vim.uv.fs_scandir_next (handle)
+    end
+
+    return count
+end
+
+local function getNewestTransactionId ()
+    if vim.uv.fs_stat (undoDir) == nil then return "" end
+
+    local newestId = ""
+    local handle = assert (vim.uv.fs_scandir (undoDir))
+    local name, entryType = vim.uv.fs_scandir_next (handle)
+
+    while name ~= nil do
+        local itemType = entryType or assert (vim.uv.fs_lstat (vim.fs.joinpath (undoDir, name))).type
+
+        if itemType == "file" and vim.endswith (name, recordSuffix) and name > newestId then
+            newestId = name
+        end
+
+        name, entryType = vim.uv.fs_scandir_next (handle)
+    end
+
+    return newestId:sub (1, -#recordSuffix - 1)
+end
+
+local setupActions = {
+    mode = function (rootDir, fields)
+        assert (vim.uv.fs_chmod (vim.fs.joinpath (rootDir, fields[3]), tonumber (fields[2], 8)))
+    end,
+    link = function (rootDir, fields)
+        assert (vim.uv.fs_link (vim.fs.joinpath (rootDir, fields[2]), vim.fs.joinpath (rootDir, fields[3])))
+    end,
+    mkdir = function (rootDir, fields)
+        assert (vim.uv.fs_mkdir (vim.fs.joinpath (rootDir, fields[2]), directoryMode))
+    end,
+    xattr = function (rootDir, fields)
+        local targetPath = vim.fs.joinpath (rootDir, fields[4])
+        local result = vim.system ({ "xattr", "-w", fields[2], fields[3], targetPath }):wait ()
+        assert (result.code == 0, "xattr write failed: " .. targetPath)
+    end,
+    copy = function (rootDir, fields)
+        copyFile (vim.fs.joinpath (rootDir, fields[2]), vim.fs.joinpath (rootDir, fields[3]))
+    end,
+}
+
+local checkActions = {
+    mode = function (rootDir, fields)
+        local stat = assert (vim.uv.fs_stat (vim.fs.joinpath (rootDir, fields[3])))
+        return bit.band (stat.mode, permissionBits) == tonumber (fields[2], 8)
+    end,
+    links = function (rootDir, fields)
+        local stat = assert (vim.uv.fs_stat (vim.fs.joinpath (rootDir, fields[3])))
+        return stat.nlink == tonumber (fields[2])
+    end,
+    xattr = function (rootDir, fields)
+        local result = vim.system ({ "xattr", "-p", fields[2], vim.fs.joinpath (rootDir, fields[4]) }):wait ()
+        return (result.stdout:gsub ("\n$", "")) == fields[3]
+    end,
+    bytes = function (rootDir, fields)
+        local firstBytes = readBinaryFile (vim.fs.joinpath (rootDir, fields[2]))
+        return firstBytes ~= nil and firstBytes == readBinaryFile (vim.fs.joinpath (rootDir, fields[3]))
+    end,
+    transactions = function (rootDir, fields)
+        return countTransactions () == tonumber (fields[2])
+    end,
+}
+
+local function getActionFields (actions, token)
+    local fields = vim.split (token, ":", { plain = true })
+    local action = actions[fields[1]]
+    assert (action ~= nil, "unknown action: " .. token)
+    return action, fields
+end
+
+local function runSetup (rootDir, setupText)
+    local tokens = splitCommand (setupText)
+
+    for index = 1, #tokens do
+        local action, fields = getActionFields (setupActions, tokens[index])
+        action (rootDir, fields)
+    end
+end
+
+local function runChecks (stepIndex, checkText, rootDir)
+    local tokens = splitCommand (checkText)
+
+    for index = 1, #tokens do
+        local check, fields = getActionFields (checkActions, tokens[index])
+
+        if not check (rootDir, fields) then
+            return false, "step " .. tostring (stepIndex) .. " check failed: " .. tokens[index]
+        end
+    end
+
+    return true, nil
+end
+
+local platformPredicates = {
+    [""] = function () return true end,
+    posix = function () return vim.fn.has ("win32") == 0 end,
+    mac = function () return vim.fn.has ("mac") == 1 end,
+}
+
+local function isPlatformApplicable (platformName)
+    local predicate = platformPredicates[platformName]
+    assert (predicate ~= nil, "unknown platform in cases.md: " .. platformName)
+    return predicate ()
+end
+
+local function hasNonUtf8Byte (text)
+    local utf16Text = vim.iconv (text, "utf-8", "utf-16le")
+    return utf16Text == nil or vim.iconv (utf16Text, "utf-16le", "utf-8") ~= text
+end
+
+local function decodeToolText (structuredContent, plainName, encodedName)
+    local encodedText = structuredContent[encodedName]
+
+    if encodedText ~= nil then
+        return vim.base64.decode (encodedText)
+    end
+
+    return structuredContent[plainName] or ""
+end
+
+local function decodeToolReply (processResult)
+    local reply = vim.json.decode (vim.split (processResult.stdout, "\n", { plain = true })[1])
+    assert (reply.result ~= nil and reply.result.isError ~= true, "saw server call failed: " .. processResult.stdout)
+    local structuredContent = reply.result.structuredContent
+
+    return {
+        code = structuredContent.exitCode,
+        signal = 0,
+        stdout = decodeToolText (structuredContent, "output", "outputBase64"),
+        stderr = decodeToolText (structuredContent, "errors", "errorsBase64"),
+    }
+end
+
+local function startToolCall (sawArgs, stdinBytes, tempRoot)
+    local toolArguments = { arguments = sawArgs, directory = tempRoot }
+
+    if stdinBytes ~= "" then
+        toolArguments.stdin = stdinBytes
+    end
+
+    local request = {
+        jsonrpc = "2.0",
+        id = 1,
+        method = "tools/call",
+        params = {
+            name = serverToolName,
+            arguments = toolArguments,
+            _meta = {
+                [mcpProtocolVersionMember] = mcpProtocolVersion,
+                [mcpClientCapabilitiesMember] = vim.empty_dict (),
+            },
+        },
+    }
+    local serverProcess
+    local replyBytes = ""
+
+    serverProcess = vim.system ({ serverBinary }, {
+        stdin = true,
+        text = false,
+        cwd = tempRoot,
+        stdout = function (_, data)
+            replyBytes = replyBytes .. (data or "")
+            if data ~= nil and data:find ("\n", 1, true) ~= nil then serverProcess:write (nil) end
+        end,
+    })
+    serverProcess:write (vim.json.encode (request) .. "\n")
+
+    return {
+        wait = function ()
+            serverProcess:wait ()
+            return decodeToolReply ({ stdout = replyBytes })
+        end,
+    }
+end
+
+local function startSawProcesses (step, stdinBytes, tempRoot)
+    local processes = {}
+    local newestTransactionId = getNewestTransactionId ()
+
+    for processIndex = 1, step.parallel do
+        local commandText = step.command:gsub ("{n}", function () return tostring (processIndex) end)
+        commandText = commandText:gsub ("{tx}", function () return newestTransactionId end)
+        commandText = commandText:gsub ("{newline}", function () return "\n" end)
+        commandText = commandText:gsub ("{xff}", function () return "\255" end)
+        local sawArgs = splitCommand (commandText)
+
+        if serverBinary ~= nil and not hasNonUtf8Byte (commandText) and not hasNonUtf8Byte (stdinBytes) then
+            processes[processIndex] = startToolCall (sawArgs, stdinBytes, tempRoot)
+        else
+            local sawCmd = { sawBinary }
+            for index = 1, #sawArgs do sawCmd[#sawCmd + 1] = sawArgs[index] end
+            processes[processIndex] = vim.system (sawCmd, { stdin = stdinBytes, text = false, cwd = tempRoot })
+        end
+    end
+
+    return processes
+end
+
+local function waitSawProcesses (processes)
+    local results = {}
+
+    for index = 1, #processes do
+        results[index] = processes[index]:wait ()
+    end
+
+    return results
+end
+
+local function compareExitCodes (step, stepIndex, results)
+    for processIndex = 1, #results do
+        if results[processIndex].code ~= step.exit or results[processIndex].signal ~= 0 then
+            return false, "step " .. tostring (stepIndex) .. " process " .. tostring (processIndex) .. " exit: expected " .. tostring (step.exit) .. ", got " .. tostring (results[processIndex].code) .. (results[processIndex].signal ~= 0 and (", signal " .. tostring (results[processIndex].signal)) or "")
+        end
+    end
+
+    return true, nil
+end
+
 local function runBaselineStep (caseEntry, stepIndex, tempRoot, sawResult)
     local stepBaselineDir = vim.fs.joinpath (baselineRoot, caseEntry.name, tostring (stepIndex))
     local expectedStdout = readFileOrEmpty (vim.fs.joinpath (stepBaselineDir, "stdout"))
@@ -279,9 +552,19 @@ local function runBaselineStep (caseEntry, stepIndex, tempRoot, sawResult)
     return true, nil
 end
 
-local function compareReferenceStdout (step, stepIndex, sawResult, refResult)
+local function compareReferenceExit (step, stepIndex, refResult)
     if refResult.code ~= step.exit then
         return false, "step " .. tostring (stepIndex) .. " reference exit: expected " .. tostring (step.exit) .. ", got " .. tostring (refResult.code)
+    end
+
+    return true, nil
+end
+
+local function compareReferenceStdout (step, stepIndex, tempRoot, sawResult, refResult)
+    local matchedExit, exitReason = compareReferenceExit (step, stepIndex, refResult)
+
+    if not matchedExit then
+        return false, exitReason
     end
 
     if (sawResult.stdout or "") ~= (refResult.stdout or "") then
@@ -291,14 +574,27 @@ local function compareReferenceStdout (step, stepIndex, sawResult, refResult)
     return true, nil
 end
 
-local function compareReferenceResult (step, stepIndex, tempRoot, sawResult, refResult)
-    if step.compare == "stdout" then
-        return compareReferenceStdout (step, stepIndex, sawResult, refResult)
+local function getSortedLinesText (text)
+    local lines = vim.split (text, "\n", { plain = true })
+    table.sort (lines)
+    return table.concat (lines, "\n")
+end
+
+local function compareReferenceLines (step, stepIndex, tempRoot, sawResult, refResult)
+    local matchedExit, exitReason = compareReferenceExit (step, stepIndex, refResult)
+
+    if not matchedExit then
+        return false, exitReason
     end
 
-    assert (step.compare:sub (1, 5) == "file:", "unsupported compare mode: " .. step.compare)
-    local relPath = step.compare:sub (6)
+    if getSortedLinesText (sawResult.stdout or "") ~= getSortedLinesText (refResult.stdout or "") then
+        return false, "step " .. tostring (stepIndex) .. " sorted lines differ from reference"
+    end
 
+    return true, nil
+end
+
+local function compareReferenceFile (step, stepIndex, tempRoot, sawResult, refResult, relPath)
     if readBinaryFile (vim.fs.joinpath (tempRoot, relPath)) ~= (refResult.stdout or "") then
         return false, "step " .. tostring (stepIndex) .. " file differs from reference: " .. relPath
     end
@@ -306,11 +602,25 @@ local function compareReferenceResult (step, stepIndex, tempRoot, sawResult, ref
     return true, nil
 end
 
+local compareModes = {
+    stdout = compareReferenceStdout,
+    lines = compareReferenceLines,
+    file = compareReferenceFile,
+}
+
+local function compareReferenceResult (step, stepIndex, tempRoot, sawResult, refResult)
+    local fields = vim.split (step.compare, ":", { plain = true })
+    local compareMode = compareModes[fields[1]]
+    assert (compareMode ~= nil, "unsupported compare mode: " .. step.compare)
+    return compareMode (step, stepIndex, tempRoot, sawResult, refResult, fields[2])
+end
+
 local function runReferenceStep (step, stepIndex, initialFixture, stdinBytes, tempRoot, sawResult)
     local refRoot = makeTempDirectory ()
 
     local ok, matched, reason = pcall (function ()
         copyFixture (initialFixture, refRoot)
+        runSetup (refRoot, step.setup)
         local refResult = vim.system (splitCommand (step.reference), {
             stdin = stdinBytes,
             text = false,
@@ -322,6 +632,7 @@ local function runReferenceStep (step, stepIndex, initialFixture, stdinBytes, te
         return compareReferenceResult (step, stepIndex, tempRoot, sawResult, refResult)
     end)
 
+    makeTreeReadable (refRoot)
     vim.fn.delete (refRoot, "rf")
     assert (ok, matched)
     return matched, reason
@@ -334,22 +645,32 @@ local function runStep (caseEntry, stepIndex, initialFixture, tempRoot)
         copyFixture (step.fixture, tempRoot)
     end
 
-    local sawCmd = { sawBinary }
-    local sawArgs = splitCommand (step.command)
-    for index = 1, #sawArgs do sawCmd[#sawCmd + 1] = sawArgs[index] end
+    runSetup (tempRoot, step.setup)
 
     local stdinBytes = step.stdin ~= "" and assert (readBinaryFile (vim.fs.joinpath (stdinRoot, step.stdin)), "missing stdin file: " .. step.stdin) or ""
-    local sawResult = vim.system (sawCmd, { stdin = stdinBytes, text = false, cwd = tempRoot }):wait ()
+    local results = waitSawProcesses (startSawProcesses (step, stdinBytes, tempRoot))
 
-    if sawResult.code ~= step.exit then
-        return false, "step " .. tostring (stepIndex) .. " exit: expected " .. tostring (step.exit) .. ", got " .. tostring (sawResult.code)
+    local matchedExit, exitReason = compareExitCodes (step, stepIndex, results)
+
+    if not matchedExit then
+        return false, exitReason
+    end
+
+    local matchedChecks, checkReason = runChecks (stepIndex, step.check, tempRoot)
+
+    if not matchedChecks then
+        return false, checkReason
+    end
+
+    if step.parallel > 1 then
+        return true, nil
     end
 
     if step.reference == "" then
-        return runBaselineStep (caseEntry, stepIndex, tempRoot, sawResult)
+        return runBaselineStep (caseEntry, stepIndex, tempRoot, results[1])
     end
 
-    return runReferenceStep (step, stepIndex, initialFixture, stdinBytes, tempRoot, sawResult)
+    return runReferenceStep (step, stepIndex, initialFixture, stdinBytes, tempRoot, results[1])
 end
 
 local function getExpectedFilesDir (caseName, initialFixture)
@@ -378,6 +699,7 @@ local function executeCase (caseEntry, tempRoot)
         end
     end
 
+    makeTreeReadable (tempRoot)
     local lastStep = caseEntry.steps[#caseEntry.steps]
 
     if lastStep.reference == "" then
@@ -388,8 +710,14 @@ local function executeCase (caseEntry, tempRoot)
 end
 
 local function runCase (caseEntry)
+    if not isPlatformApplicable (caseEntry.steps[1].platform) then
+        print ("SKIP " .. caseEntry.name)
+        return true
+    end
+
     local tempRoot = makeTempDirectory ()
     local ok, matched, reason = pcall (executeCase, caseEntry, tempRoot)
+    makeTreeReadable (tempRoot)
     vim.fn.delete (tempRoot, "rf")
     assert (ok, matched)
 
@@ -416,26 +744,34 @@ local function runAll ()
     return allPassed
 end
 
-local appDataSaw = vim.fn.has ("win32") == 1
-    and vim.fs.joinpath (os.getenv ("APPDATA") or "", "saw")
-    or vim.fs.joinpath (os.getenv ("HOME") or "", "Library", "Application Support", "saw")
-local undoDir = vim.fs.joinpath (appDataSaw, "undo")
-local savedUndoDir = vim.fs.joinpath (appDataSaw, "undo-runner-" .. tostring (vim.uv.os_getpid ()))
-local hadUndo = false
+local function moveAside (folderPath)
+    local savedPath = folderPath .. "-runner-" .. tostring (vim.uv.os_getpid ())
 
-if vim.uv.fs_stat (undoDir) ~= nil then
-    assert (vim.uv.fs_rename (undoDir, savedUndoDir))
-    hadUndo = true
+    if vim.uv.fs_stat (folderPath) ~= nil then
+        assert (vim.uv.fs_rename (folderPath, savedPath))
+        return savedPath
+    end
+
+    return nil
+end
+
+local isolatedFolders = { undoDir, pendingDir, blobDir }
+local savedFolders = {}
+
+for index = 1, #isolatedFolders do
+    savedFolders[index] = moveAside (isolatedFolders[index])
 end
 
 local ok, resultOrError = xpcall (runAll, debug.traceback)
 
-if vim.uv.fs_stat (undoDir) ~= nil then
-    vim.fn.delete (undoDir, "rf")
-end
+for index = 1, #isolatedFolders do
+    if vim.uv.fs_stat (isolatedFolders[index]) ~= nil then
+        vim.fn.delete (isolatedFolders[index], "rf")
+    end
 
-if hadUndo then
-    assert (vim.uv.fs_rename (savedUndoDir, undoDir))
+    if savedFolders[index] ~= nil then
+        assert (vim.uv.fs_rename (savedFolders[index], isolatedFolders[index]))
+    end
 end
 
 if not ok then

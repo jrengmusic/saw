@@ -1,0 +1,4 @@
+# 2 targets, 1 found, 1 missing
+## 1 a.txt:1-1 of 10 sha256:b6a98d9ce9a2d914
+1	alpha
+## 2 nope.txt NOT FOUND

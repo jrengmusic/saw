@@ -10,40 +10,47 @@ public:
      */
     static constexpr int openRangeEnd { std::numeric_limits<int>::max() };
 
-    /** @brief Parses an argument list from @p startIndex using allowed option specifications.
+    /** @brief Index of the first argument after the verb.
      *
-     *  Tokens after `--` become positionals; negative-digit tokens stay positional.
+     *  The verb name is at index 0 of a verb's argument list, so the options start at index 1.
+     */
+    static constexpr int firstOptionIndex { 1 };
+
+    /** @brief Parses the argument list from firstOptionIndex into flags, values, and positionals.
      *
-     *  @param arguments    Full command argument array.
-     *  @param startIndex   Zero-based index where option parsing begins.
-     *  @param flagOptions  Allowed flag specs with pipe-delimited aliases.
-     *  @param valueOptions Allowed value-option specs with pipe-delimited aliases.
+     *  A `--` argument ends the options. Each argument after it is positional.
+     *  An unknown flag or a missing value is recorded in getStatus().
+     *  An optional-value option takes the next argument. When `--stdin` is the next argument, or
+     *  was already matched, the optional-value option acts as a flag.
+     *
+     *  @param arguments            The argument list, with the verb name at index 0.
+     *  @param flagOptions          Options that take no value.
+     *  @param valueOptions         Options that take the next argument as their value.
+     *  @param optionalValueOptions Options that take the next argument as their value, unless `--stdin` applies.
      */
     Arguments (const jam::Strings& arguments,
-               int startIndex,
-               const jam::Strings& flagOptions,
-               const jam::Strings& valueOptions);
+               const std::vector<std::string_view>& flagOptions,
+               const std::vector<std::string_view>& valueOptions,
+               const std::vector<std::string_view>& optionalValueOptions);
 
-    /** @brief Checks whether a single token matches any alias in an option specification.
+    /** @brief Tests whether an argument matches an option text.
      *
-     *  @param argument Single command-line token to test.
-     *  @param option   Option spec containing one or more pipe-delimited aliases.
+     *  An option text holds its aliases separated by `|`. A match with any alias is a match.
      *
-     *  @return True when @p argument equals any alias in @p option.
+     *  @param argument The argument text to test.
+     *  @param option   The option text, with its aliases separated by `|`.
+     *
+     *  @return True when the argument equals one of the aliases.
      */
-    static bool matchesOption (const juce::String& argument, const juce::String& option);
+    static bool matchesOption (std::string_view argument, std::string_view option);
 
-    /** @brief Checks whether an option appears before `--` starting at @p startIndex.
+    /** @brief Returns the name of an option, which is its first alias.
      *
-     *  @param arguments  Full command argument array.
-     *  @param startIndex Zero-based index where scanning begins.
-     *  @param option     Option spec with pipe-delimited aliases.
+     *  @param option The option text, with its aliases separated by `|`.
      *
-     *  @return True if any token before `--` matches @p option.
+     *  @return The first alias of the option text.
      */
-    static bool containsOptionBeforeTerminator (const jam::Strings& arguments,
-                                                int startIndex,
-                                                const juce::String& option);
+    static juce::String getOptionName (std::string_view option);
 
     /** @brief Parses a line or `start:end` range specification into a half-open range.
      *
@@ -61,29 +68,39 @@ public:
      */
     const juce::Result& getStatus() const noexcept;
 
-    /** @brief Checks whether a flag or value option appeared before `--`.
+    /** @brief Tests whether an option was matched as a flag or as a value option.
      *
-     *  @param option Canonical option spec string passed to the constructor.
+     *  @param option The option text, with its aliases separated by `|`.
      *
-     *  @return True when @p option matched at least once.
+     *  @return True when the option was matched.
      */
-    bool contains (const juce::String& option) const;
+    bool contains (std::string_view option) const;
 
-    /** @brief Returns the last value supplied for a value option.
+    /** @brief Returns the value of an option. An option may repeat, so the last value wins.
      *
-     *  @param option Canonical value-option spec string.
+     *  @param option The option text, with its aliases separated by `|`.
      *
-     *  @return Last matched value, or an empty string when absent.
+     *  @return The last value of the option, or an empty string when the option is absent.
      */
-    juce::String getValue (const juce::String& option) const;
+    juce::String getValue (std::string_view option) const;
 
-    /** @brief Returns all values supplied for a value option in argument order.
+    /** @brief Returns the value of an option as a view. An option may repeat, so the last value wins.
      *
-     *  @param option Canonical value-option spec string.
+     *  The view stays valid while this Arguments object lives.
      *
-     *  @return Array of all matched values for @p option.
+     *  @param option The option text, with its aliases separated by `|`.
+     *
+     *  @return The last value of the option, or an empty view when the option is absent.
      */
-    jam::Strings getValues (const juce::String& option) const;
+    std::string_view getValueView (std::string_view option) const;
+
+    /** @brief Returns every value of an option, in the order given.
+     *
+     *  @param option The option text, with its aliases separated by `|`.
+     *
+     *  @return All values of the option. The list is empty when the option is absent.
+     */
+    jam::Strings getValues (std::string_view option) const;
 
     /** @brief Returns positional arguments in order, including all tokens after `--`.
      *
@@ -91,14 +108,19 @@ public:
      */
     const jam::Strings& getPositionals() const noexcept;
 
-    /** @brief Parses the last value of @p option as a decimal integer at or above @p minimumValue.
+    /** @brief Returns the integer value of an option, with a minimum.
      *
-     *  @param option       Canonical value-option spec string.
-     *  @param minimumValue Inclusive lower bound for the integer value.
+     *  The value must be a canonical decimal integer, so text such as `007` or `+5` fails.
+     *  The status fails when the text is not such an integer, or when it is below the minimum.
+     *  The value is 0 when the status fails.
      *
-     *  @return Status result paired with the parsed integer, or failure with `0`.
+     *  @param option       The option text, with its aliases separated by `|`.
+     *  @param minimumValue The smallest accepted value.
+     *  @param defaultValue The value returned when the option is absent.
+     *
+     *  @return Status result paired with the parsed value, or with the default when the option is absent.
      */
-    std::pair<juce::Result, int> getInteger (const juce::String& option, int minimumValue) const;
+    std::pair<juce::Result, int> getInteger (std::string_view option, int minimumValue, int defaultValue) const;
 
     /** @brief Resolves the `--lines` option or returns `[1, openRangeEnd)` when omitted.
      *
@@ -107,14 +129,32 @@ public:
     std::pair<juce::Result, juce::Range<int>> getLineRangeFilter() const;
 
 private:
-    static int getMatchingOptionIndex (const juce::String& argument,
-                                       const jam::Strings& optionList);
-    static int getTerminatorIndex (const jam::Strings& arguments, int startIndex);
-    static bool isOptionArgument (const juce::String& argument) noexcept;
+    static bool containsOption (const std::vector<std::string_view>& matchedOptions, std::string_view option);
+    static int getMatchingOptionIndex (std::string_view argument,
+                                       const std::vector<std::string_view>& optionList);
+    static bool isOptionArgument (std::string_view argument) noexcept;
     static std::pair<bool, int> getParsedLineNumber (const juce::String& token, int minimumValue);
 
+    int addToken (const jam::Strings& arguments,
+                  int index,
+                  std::string_view token,
+                  const std::vector<std::string_view>& flagOptions,
+                  const std::vector<std::string_view>& valueOptions,
+                  const std::vector<std::string_view>& optionalValueOptions);
+    int addShortFlags (const jam::Strings& arguments,
+                       int index,
+                       const std::vector<std::string_view>& flagOptions,
+                       const std::vector<std::string_view>& valueOptions,
+                       const std::vector<std::string_view>& optionalValueOptions);
+    int addValue (const jam::Strings& arguments,
+                  int index,
+                  std::string_view option,
+                  std::string_view token);
+    int addFailure (const char* format, std::string_view token, int nextIndex);
+
     juce::Result status { juce::Result::ok() };
-    jam::Strings matchedFlags;
-    jam::Array<std::pair<juce::String, juce::String>> matchedValues;
+    std::vector<std::string_view> matchedFlags;
+    std::vector<std::string_view> matchedValueOptions;
+    jam::Strings matchedValues;
     jam::Strings positionals;
 };

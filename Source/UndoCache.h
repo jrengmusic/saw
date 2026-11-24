@@ -1,72 +1,109 @@
 #pragma once
 #include <JuceHeader.h>
+#include "TextDocument.h"
 
-/** @brief Persists, validates, and prunes pre-edit transaction snapshots on disk for `saw undo`.
+/** @brief Stores the pre-edit snapshots of transactions on disk, so that `saw undo` can restore them.
+ *
+ *  Each transaction has one record file and one blob file per original file. The record file
+ *  holds the JSON of the transaction. A blob file holds the bytes of one original file.
+ *
+ *  A record is staged in the pending folder, published with one rename into the undo folder,
+ *  and claimed by `undo` with the reverse rename. No lock exists.
  */
 struct UndoCache
 {
-    /** @brief Maximum number of retained undo transactions before oldest directories are deleted.
-     */
-    static constexpr int maxTransactions { 32 };
-
-    /** @brief Hex character width of the collision-avoidance suffix on transaction IDs.
-     */
-    static constexpr int randomHexLength { 6 };
-
-    /** @brief Exclusive upper bound for the random initial hex suffix on a new UTC prefix.
-     */
-    static constexpr int initialHexBound { 0x100000 };
-
-    /** @brief Fixed stack buffer size in bytes for formatting UTC transaction timestamps.
-     */
-    static constexpr size_t timeBufferCapacity { 32 };
-
-    /** @brief Returns the undo root directory inside user application data.
+    /** @brief Returns the folder that holds the blob files.
      *
-     *  @return Directory holding per-transaction backup folders.
+     *  @return Blob folder inside the user application data folder.
      */
-    static juce::File getDirectory();
+    static juce::File getBlobDirectory();
 
-    /** @brief Generates a unique transaction identifier and matching ISO-8601 UTC timestamp.
+    /** @brief Returns the path of the record of a transaction in the pending folder.
      *
-     *  @return Pair of `(transactionId, isoTimestamp)`.
+     *  @param transactionId Identifier of the transaction.
+     *
+     *  @return Path of the pending record file. The file may not exist.
      */
-    static std::pair<juce::String, juce::String> getNextIdAndTimestamp();
+    static juce::File getPendingFile (const juce::String& transactionId);
 
-    /** @brief Writes pre-edit backup blobs and `meta.json`, then prunes transactions beyond @ref maxTransactions.
+    /** @brief Returns the path of the blob file of one original file of a transaction.
      *
-     *  Deletes the newly created transaction directory if any blob or metadata write fails.
+     *  @param transactionId Identifier of the transaction.
+     *  @param index         Zero-based index of the file in the transaction.
      *
-     *  @param commandName     Subcommand name stored in `meta.json`.
-     *  @param canonicalPaths  Canonical file paths; must match all parallel arrays in size.
-     *  @param preHashes       Pre-edit SHA-256 hex digests for each file.
-     *  @param postHashes      Expected post-edit SHA-256 hex digests for each file.
-     *  @param executableFlags Pre-edit executable permission flags for each file.
-     *  @param preEditBlobs    Raw pre-edit file bytes stored as numbered blob files.
+     *  @return Path of the blob file. The file may not exist.
+     */
+    static juce::File getBlobFile (const juce::String& transactionId, int index);
+
+    /** @brief Publishes a pending record into the undo folder with one rename.
      *
-     *  @return Status result paired with the generated transaction ID on success.
+     *  @param transactionId Identifier of the transaction whose record is pending.
+     *
+     *  @return Ok when the rename succeeds, otherwise the failure of the rename.
+     */
+    static juce::Result publishTransaction (const juce::String& transactionId);
+
+    /** @brief Claims a transaction for `undo`, by moving its record out of the undo folder.
+     *
+     *  The claim creates the pending record, then moves the undo record onto it. When a pending
+     *  record already exists, the claim fails, unless isForce is set. A forced claim takes a pending
+     *  record that a stopped process left behind.
+     *
+     *  @param transactionId Identifier of the transaction to claim.
+     *  @param isForce       True to take a pending record that already exists.
+     *
+     *  @return Status result paired with true when the record came out of the undo folder, and
+     *          false when the record was not moved.
+     */
+    static std::pair<juce::Result, bool> claimTransaction (const juce::String& transactionId, bool isForce);
+
+    /** @brief Stages the blob files and the record of a transaction, in parallel.
+     *
+     *  A blob holds the planned bytes when the target and the blob folder can be swapped, so that
+     *  the commit is one exchange of two files. Otherwise a blob holds the original bytes. Any
+     *  failed write removes the transaction again.
+     *
+     *  @param commandName     Subcommand name stored in the record.
+     *  @param targetFiles     The files that the transaction changes, in order.
+     *  @param executableFlags The executable permission flag of each target file, before the edit.
+     *  @param originalDocuments The document of each target file, before the edit.
+     *  @param plannedTexts    The planned bytes of each target file.
+     *
+     *  @return Status result paired with the generated transaction id on success.
      */
     static std::pair<juce::Result, juce::String> addTransaction (const juce::String& commandName,
-                                                                 const jam::Strings& canonicalPaths,
-                                                                 const jam::Strings& preHashes,
-                                                                 const jam::Strings& postHashes,
+                                                                 const jam::Array<juce::File>& targetFiles,
                                                                  const jam::Array<bool>& executableFlags,
-                                                                 const jam::Array<std::string_view>& preEditBlobs);
+                                                                 const jam::Array<std::unique_ptr<TextDocument>>& originalDocuments,
+                                                                 const std::vector<std::string>& plannedTexts);
 
-    /** @brief Lists existing transaction identifiers ordered from newest to oldest.
+    /** @brief Lists the transaction ids, newest first.
      *
-     *  @return Sorted array of transaction folder names, newest first.
+     *  A pending id is listed only when its record is valid.
+     *
+     *  @return The ids, newest first.
      */
     static jam::Strings getTransactionIds();
 
-    /** @brief Loads and validates `meta.json` and referenced blob files for @p transactionId.
+    /** @brief Loads and validates the record of a transaction, and checks that its blob files exist.
      *
-     *  @param transactionId Identifier of the cached transaction directory.
+     *  @param transactionId Identifier of the transaction.
      *
-     *  @return Status result paired with the parsed `meta.json` document, or failure with null.
+     *  @return Status result paired with the parsed record, or failure with null. A record that
+     *          does not exist is reported as unknown. A record that does not validate is reported as corrupt.
      */
     static std::pair<juce::Result, std::unique_ptr<jam::JsonDocument>> getTransactionDocument (const juce::String& transactionId);
 
-private:
+    /** @brief Removes a transaction: its pending record, its undo record, and its blob files.
+     *
+     *  @param transactionId Identifier of the transaction to remove.
+     */
+    static void removeTransaction (const juce::String& transactionId);
+
+    /** @brief Removes the oldest transactions, and keeps the newest 32.
+     *
+     *  A blob file is deleted only when the record of its transaction was deleted. A concurrent
+     *  `undo` that claimed the record then keeps its blob files.
+     */
     static void removeOldestTransactions();
 };

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. "$(dirname "$0")/undo-cache.sh"
+
 work="$(mktemp -d)"
 cp -R /tmp/saw-bench-corpus/. "$work"
 exitCode=$?
