@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="_undo_cache_8h" kind="file" language="C++">
+    <compoundname>UndoCache.h</compoundname>
+    <includes local="no">JuceHeader.h</includes>
+    <includes refid="_staged_file_8h" local="yes">StagedFile.h</includes>
+    <includedby refid="_staged_file_8cpp" local="yes">StagedFile.cpp</includedby>
+    <includedby refid="_transaction_8cpp" local="yes">Transaction.cpp</includedby>
+    <includedby refid="_undo_8cpp" local="yes">Undo.cpp</includedby>
+    <includedby refid="_undo_cache_8cpp" local="yes">UndoCache.cpp</includedby>
+    <incdepgraph>
+      <node id="6">
+        <label>Input.h</label>
+        <link refid="_input_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>LineDiff.h</label>
+        <link refid="_line_diff_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>StagedFile.h</label>
+        <link refid="_staged_file_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>TextDocument.h</label>
+        <link refid="_text_document_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>UndoCache.h</label>
+        <link refid="_undo_cache_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>JuceHeader.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>StagedFile.cpp</label>
+        <link refid="_staged_file_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Transaction.cpp</label>
+        <link refid="_transaction_8cpp"/>
+      </node>
+      <node id="4">
+        <label>Undo.cpp</label>
+        <link refid="_undo_8cpp"/>
+      </node>
+      <node id="5">
+        <label>UndoCache.cpp</label>
+        <link refid="_undo_cache_8cpp"/>
+      </node>
+      <node id="1">
+        <label>UndoCache.h</label>
+        <link refid="_undo_cache_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="struct_undo_cache" prot="public">UndoCache</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;JuceHeader.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_staged_file_8h" kindref="compound">StagedFile.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13" refid="struct_undo_cache" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_undo_cache" kindref="compound">UndoCache</ref></highlight></codeline>
+<codeline lineno="14"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref><sp/><ref refid="struct_undo_cache_1a88df3e787d0cf1d5e7e6be37fdfeb7bc" kindref="member">getBlobDirectory</ref>();</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref><sp/><ref refid="struct_undo_cache_1a9406f020dc3e3e1d856f3358966bea8c" kindref="member">getBlobFile</ref><sp/>(std::string_view<sp/>transactionId,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>index);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref><sp/><ref refid="struct_undo_cache_1a5fb670f0e093ed1831561a421a29bd9e" kindref="member">publishTransaction</ref><sp/>(std::string_view<sp/>transactionId);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::pair&lt;juce::Result,<sp/>bool&gt;<sp/><ref refid="struct_undo_cache_1a1f1a2970b6804fd009fb10e68b7dc104" kindref="member">claimTransaction</ref><sp/>(std::string_view<sp/>transactionId,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isForce);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::pair&lt;juce::Result,<sp/>std::string&gt;<sp/><ref refid="struct_undo_cache_1a7b0c9fd799188881199db848a9d98182" kindref="member">addTransaction</ref><sp/>(std::string_view<sp/>commandName,</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;StagedFile&gt;</ref>&amp;<sp/>stagedFiles);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classjam_1_1Strings" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings</ref><sp/><ref refid="struct_undo_cache_1ac5fcde1cb0418b772348c8ae62b55a4e" kindref="member">getTransactionIds</ref>();</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::pair&lt;juce::Result,<sp/>std::unique_ptr&lt;jam::JsonDocument&gt;&gt;<sp/><ref refid="struct_undo_cache_1a31cb46a432a0f5fb05a7eefd98687544" kindref="member">getTransactionDocument</ref><sp/>(std::string_view<sp/>transactionId);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="struct_undo_cache_1abeba6cd17a782cab536ab514aff421a7" kindref="member">removeTransaction</ref><sp/>(std::string_view<sp/>transactionId);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="struct_undo_cache_1ad16fae57f09b3cdb014ff100337940a6" kindref="member">removeOldestTransactions</ref>();</highlight></codeline>
+<codeline lineno="96"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="UndoCache.h"/>
+  </compounddef>
+</doxygen>

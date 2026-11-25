@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="_ignore_rules_8h" kind="file" language="C++">
+    <compoundname>IgnoreRules.h</compoundname>
+    <includes local="no">JuceHeader.h</includes>
+    <includes refid="_transparent_string_hash_8h" local="yes">TransparentStringHash.h</includes>
+    <includedby refid="_ignore_rules_8cpp" local="yes">IgnoreRules.cpp</includedby>
+    <includedby refid="_paths_8cpp" local="yes">Paths.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>IgnoreRules.h</label>
+        <link refid="_ignore_rules_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>TransparentStringHash.h</label>
+        <link refid="_transparent_string_hash_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>JuceHeader.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>IgnoreRules.cpp</label>
+        <link refid="_ignore_rules_8cpp"/>
+      </node>
+      <node id="1">
+        <label>IgnoreRules.h</label>
+        <link refid="_ignore_rules_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Paths.cpp</label>
+        <link refid="_paths_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_ignore_rules" prot="public">IgnoreRules</innerclass>
+    <innerclass refid="struct_ignore_rules_1_1_access" prot="private">IgnoreRules::Access</innerclass>
+    <innerclass refid="struct_ignore_rules_1_1_rule" prot="private">IgnoreRules::Rule</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;JuceHeader.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_transparent_string_hash_8h" kindref="compound">TransparentStringHash.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10" refid="class_ignore_rules" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_ignore_rules_1a7b3e6f6f44407918514e58f63469035c" kindref="member">IgnoreRules</ref></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="12" refid="struct_ignore_rules_1_1_access" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_ignore_rules_1_1_access" kindref="compound">Access</ref><sp/>{};</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_ignore_rules_1a7b3e6f6f44407918514e58f63469035c" kindref="member">IgnoreRules</ref><sp/>(<ref refid="struct_ignore_rules_1_1_access" kindref="compound">Access</ref>,<sp/>std::shared_ptr&lt;const<sp/>IgnoreRules&gt;<sp/>newParent,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>newTopLevel,<sp/>std::string<sp/>newBasePrefix);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::shared_ptr&lt;const<sp/>IgnoreRules&gt;<sp/><ref refid="class_ignore_rules_1adb290642c69fdf8bd91bbd10f98f0e34" kindref="member">create</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>walkRoot);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::shared_ptr&lt;const<sp/>IgnoreRules&gt;<sp/><ref refid="class_ignore_rules_1a96f9ace5c7bc08b29b6eae29cea18d57" kindref="member">getChildRules</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::shared_ptr&lt;const<sp/>IgnoreRules&gt;&amp;<sp/>parentRules,</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>directory,</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string_view<sp/>relativePrefix);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/><ref refid="class_ignore_rules_1a9e2341de36fd52c6ca7af8908b2ad59d" kindref="member">getRootRelativePrefix</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>rootDirectory)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ignore_rules_1ab2fc64a1fef039bf1f8e1942e33e99f1" kindref="member">isIgnored</ref><sp/>(std::string_view<sp/>relativePath,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isDirectory)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="75" refid="struct_ignore_rules_1_1_rule" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_ignore_rules_1_1_rule" kindref="compound">Rule</ref></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="78" refid="struct_ignore_rules_1_1_rule_1ac8f3a50dbcce7a1f46da8134efdd9030" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::unique_ptr&lt;jam::RegExp&gt;<sp/><ref refid="struct_ignore_rules_1_1_rule_1ac8f3a50dbcce7a1f46da8134efdd9030" kindref="member">regExp</ref>;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="struct_ignore_rules_1_1_rule_1a7746291b7f4600e5272463a53477579e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::unique_ptr&lt;jam::RegExpProgram&gt;<sp/><ref refid="struct_ignore_rules_1_1_rule_1a7746291b7f4600e5272463a53477579e" kindref="member">program</ref>;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="struct_ignore_rules_1_1_rule_1a4bbdd2b204950687bf5cb25fa50e06ce" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::unique_ptr&lt;jam::LiteralSet&gt;<sp/><ref refid="struct_ignore_rules_1_1_rule_1a4bbdd2b204950687bf5cb25fa50e06ce" kindref="member">literalSet</ref>;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="struct_ignore_rules_1_1_rule_1a5b76512eb60450340ad3e47fae3b2ef2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_ignore_rules_1_1_rule_1a5b76512eb60450340ad3e47fae3b2ef2" kindref="member">isNegated</ref><sp/>{<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="struct_ignore_rules_1_1_rule_1ae557acb68ba6200f1d6b1453dd7bd27e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_ignore_rules_1_1_rule_1ae557acb68ba6200f1d6b1453dd7bd27e" kindref="member">isDirectoryOnly</ref><sp/>{<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101" refid="class_ignore_rules_1ae9b48ad8c61f720a76201dd18fdfa1d6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/></highlight><highlight class="normal"><ref refid="class_ignore_rules_1ae9b48ad8c61f720a76201dd18fdfa1d6" kindref="member">RuleIndexes</ref><sp/>=<sp/><ref refid="classjam_1_1HashMap" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::HashMap&lt;std::string, jam::Array&lt;int&gt;</ref>,<sp/><ref refid="struct_transparent_string_hash" kindref="compound">TransparentStringHash</ref>,<sp/>std::equal_to&lt;&gt;&gt;;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref><sp/><ref refid="class_ignore_rules_1a49d70d264973e8ca307728e1d13b2902" kindref="member">getTopLevelDirectory</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>walkRoot);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::shared_ptr&lt;const<sp/>IgnoreRules&gt;<sp/><ref refid="class_ignore_rules_1aba6ad4be1de90fd515d1fcdba358444d" kindref="member">getAncestorRules</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::shared_ptr&lt;const<sp/>IgnoreRules&gt;&amp;<sp/>parentRules,</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>directory);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref><sp/><ref refid="class_ignore_rules_1a3bb45b2a5a25e25e2531a9e67bb41d4a" kindref="member">getGlobalExcludesFile</ref>();</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="class_ignore_rules_1a88889d032bb89ecdd3abcb48a459a5b4" kindref="member">getExcludesFileFromConfig</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>configFile);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::shared_ptr&lt;const<sp/>IgnoreRules&gt;<sp/><ref refid="class_ignore_rules_1a5e8842abaf654c1d4d104df8d60178cc" kindref="member">getLinkedRules</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::shared_ptr&lt;const<sp/>IgnoreRules&gt;&amp;<sp/>parentRules,</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>file,</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>newTopLevel,</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>newBasePrefix);</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="class_ignore_rules_1a99af96e196bf2d3df027b0649a746729" kindref="member">getTranslatedGlobRegex</ref><sp/>(std::string_view<sp/>pattern,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isAnchored);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_ignore_rules_1a3c2f30bbb57ade5f3989572ceefd251f" kindref="member">addRulesFromFile</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>file);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_ignore_rules_1ad22cecf492f2e3e4fd0d15b298a231f6" kindref="member">addRule</ref><sp/>(std::string_view<sp/>rawLine);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_ignore_rules_1affc23f94d61f123189beb2e9714464b9" kindref="member">getLastMatch</ref><sp/>(std::string_view<sp/>relativePath,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isDirectory)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_ignore_rules_1a55f4846f30ff4185effc031176e30c23" kindref="member">getLastIndex</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ignore_rules_1ae9b48ad8c61f720a76201dd18fdfa1d6" kindref="member">RuleIndexes</ref>&amp;<sp/>indexes,<sp/>std::string_view<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isDirectory)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/><ref refid="class_ignore_rules_1ab9e4e7c05544d63f465e3a9d5374ef3a" kindref="member">getRelativePath</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>entry)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231" refid="class_ignore_rules_1ab6c309ee11408f8f565535c65ebcafc6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref><sp/><ref refid="class_ignore_rules_1ab6c309ee11408f8f565535c65ebcafc6" kindref="member">topLevel</ref>;</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234" refid="class_ignore_rules_1a8cf52acbefaccd704dc0e6b2680ea488" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/><ref refid="class_ignore_rules_1a8cf52acbefaccd704dc0e6b2680ea488" kindref="member">basePrefix</ref>;</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237" refid="class_ignore_rules_1ae9a1864a579e36a672b345ab65bdb9dc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::shared_ptr&lt;const<sp/>IgnoreRules&gt;<sp/><ref refid="class_ignore_rules_1ae9a1864a579e36a672b345ab65bdb9dc" kindref="member">parent</ref>;</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240" refid="class_ignore_rules_1a79738f1effbf569fa93076ba99293195" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;Rule&gt;</ref><sp/><ref refid="class_ignore_rules_1a79738f1effbf569fa93076ba99293195" kindref="member">rules</ref>;</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247" refid="class_ignore_rules_1a2019fe9376067b509202db01bfe9cb78" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_ignore_rules_1ae9b48ad8c61f720a76201dd18fdfa1d6" kindref="member">RuleIndexes</ref><sp/><ref refid="class_ignore_rules_1a2019fe9376067b509202db01bfe9cb78" kindref="member">suffixes</ref>;</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight></codeline>
+<codeline lineno="250" refid="class_ignore_rules_1a609eff12ee8f2c92750a64269dfcb8f6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_ignore_rules_1ae9b48ad8c61f720a76201dd18fdfa1d6" kindref="member">RuleIndexes</ref><sp/><ref refid="class_ignore_rules_1a609eff12ee8f2c92750a64269dfcb8f6" kindref="member">relativePaths</ref>;</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="253" refid="class_ignore_rules_1aa9b511fc2aa41644f73c7d9886024211" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_ignore_rules_1ae9b48ad8c61f720a76201dd18fdfa1d6" kindref="member">RuleIndexes</ref><sp/><ref refid="class_ignore_rules_1aa9b511fc2aa41644f73c7d9886024211" kindref="member">extensions</ref>;</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight></codeline>
+<codeline lineno="256" refid="class_ignore_rules_1a895cf1630f0d9b8381a7c83e22e6bd48" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;int&gt;</ref><sp/><ref refid="class_ignore_rules_1a895cf1630f0d9b8381a7c83e22e6bd48" kindref="member">others</ref>;</highlight></codeline>
+<codeline lineno="257"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="IgnoreRules.h"/>
+  </compounddef>
+</doxygen>

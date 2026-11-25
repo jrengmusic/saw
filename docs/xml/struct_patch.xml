@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="struct_patch" kind="struct" language="C++" prot="public">
+    <compoundname>Patch</compoundname>
+    <includes refid="_patch_8h" local="no">Patch.h</includes>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="struct_patch_1a61c2ae36b1a1ea8c3c193ff2caaade47" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_arguments" kindref="compound">Arguments</ref></type>
+        <definition>Arguments Patch::getArguments</definition>
+        <argsstring>(juce::Span&lt; const std::string_view &gt; argumentList)</argsstring>
+        <name>getArguments</name>
+        <qualifiedname>Patch::getArguments</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>argumentList</declname>
+        </param>
+        <briefdescription>
+<para>Parses the argument list of patch, with its flag and value options. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>argumentList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The argument list, with the verb name at index 0.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The parsed arguments. Their status holds any parse failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.h" line="16" column="22" bodyfile="Patch.cpp" bodystart="341" bodyend="344"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_patch_1a8a248ff325ba668ab5c784d9e48a4c8c" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref></type>
+        <definition>Stdio::Output Patch::run</definition>
+        <argsstring>(const Arguments &amp;arguments, const std::optional&lt; std::string &gt; &amp;input)</argsstring>
+        <name>run</name>
+        <qualifiedname>Patch::run</qualifiedname>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>const std::optional&lt; std::string &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+<para>Runs patch on parsed arguments. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A failed parse is returned as a failure. A positional argument is refused. The JSON is read from the file of <computeroutput>--file</computeroutput>, or else from standard input, which must not be a terminal.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>arguments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parsed arguments from getArguments. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The supplied input text, or nullopt for the process standard input.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The exit code, the output text, and the diagnostics. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.h" line="28" column="26" bodyfile="Patch.cpp" bodystart="346" bodyend="358"/>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">Arguments::contains</references>
+        <references refid="classjuce_1_1Result_1ae932f12129866251b1136f1629255f1c">juce::Result::failed</references>
+        <references refid="structtext_1_1_diagnostics_1af1d73d28b47085d0fd50b72cd5a8d731" compoundref="_text_8h" startline="34" endline="34">text::Diagnostics::failUnexpectedArgument</references>
+        <references refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">Stdio::getFailure</references>
+        <references refid="class_arguments_1aafc4f159b8d3a4fed87eed8db972f472" compoundref="_arguments_8cpp" startline="101" endline="104">Arguments::getPositionals</references>
+        <references refid="class_arguments_1a46db95dfc7cc4ce7e8e7af84ceaaebf7" compoundref="_arguments_8cpp" startline="71" endline="74">Arguments::getStatus</references>
+        <references refid="_patch_8cpp_1a90cf7bf24224586469772abae6c95d98" compoundref="_patch_8cpp" startline="316" endline="326">runFile</references>
+        <references refid="_patch_8cpp_1aaff59351be09f94c257b3fe8f4dcebeb" compoundref="_patch_8cpp" startline="328" endline="339">runStandardInput</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Implements the <computeroutput>saw patch</computeroutput> subcommand for applying validated multi-file JSON patches. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="Patch.h" line="8" column="1" bodyfile="Patch.h" bodystart="9" bodyend="29"/>
+    <listofallmembers>
+      <member refid="struct_patch_1a61c2ae36b1a1ea8c3c193ff2caaade47" prot="public" virt="non-virtual"><scope>Patch</scope><name>getArguments</name></member>
+      <member refid="struct_patch_1a8a248ff325ba668ab5c784d9e48a4c8c" prot="public" virt="non-virtual"><scope>Patch</scope><name>run</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

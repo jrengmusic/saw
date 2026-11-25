@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="_transparent_string_hash_8h" kind="file" language="C++">
+    <compoundname>TransparentStringHash.h</compoundname>
+    <includes local="no">JuceHeader.h</includes>
+    <includedby refid="_ignore_rules_8h" local="yes">IgnoreRules.h</includedby>
+    <includedby refid="_transparent_string_hash_8cpp" local="yes">TransparentStringHash.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>TransparentStringHash.h</label>
+        <link refid="_transparent_string_hash_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>JuceHeader.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>IgnoreRules.cpp</label>
+        <link refid="_ignore_rules_8cpp"/>
+      </node>
+      <node id="2">
+        <label>IgnoreRules.h</label>
+        <link refid="_ignore_rules_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Paths.cpp</label>
+        <link refid="_paths_8cpp"/>
+      </node>
+      <node id="5">
+        <label>TransparentStringHash.cpp</label>
+        <link refid="_transparent_string_hash_8cpp"/>
+      </node>
+      <node id="1">
+        <label>TransparentStringHash.h</label>
+        <link refid="_transparent_string_hash_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="struct_transparent_string_hash" prot="public">TransparentStringHash</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;JuceHeader.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8" refid="struct_transparent_string_hash" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_transparent_string_hash" kindref="compound">TransparentStringHash</ref></highlight></codeline>
+<codeline lineno="9"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="11" refid="struct_transparent_string_hash_1a86ee0c25b2ef23ca1784e4b32018876b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/></highlight><highlight class="normal"><ref refid="struct_transparent_string_hash_1a86ee0c25b2ef23ca1784e4b32018876b" kindref="member">is_transparent</ref><sp/>=<sp/>void;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="struct_transparent_string_hash_1a20e19a4f99e9a81eca86ff66097244fd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/></highlight><highlight class="normal"><ref refid="struct_transparent_string_hash_1a20e19a4f99e9a81eca86ff66097244fd" kindref="member">is_avalanching</ref><sp/>=<sp/>void;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>std::uint64_t<sp/><ref refid="struct_transparent_string_hash_1a9c08630d644acd8b575f97e666a798d2" kindref="member">operator() </ref>(std::string_view<sp/>key)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="TransparentStringHash.h"/>
+  </compounddef>
+</doxygen>

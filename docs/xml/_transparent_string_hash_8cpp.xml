@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="_transparent_string_hash_8cpp" kind="file" language="C++">
+    <compoundname>TransparentStringHash.cpp</compoundname>
+    <includes refid="_transparent_string_hash_8h" local="yes">TransparentStringHash.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>TransparentStringHash.cpp</label>
+        <link refid="_transparent_string_hash_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>TransparentStringHash.h</label>
+        <link refid="_transparent_string_hash_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>JuceHeader.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_transparent_string_hash_8h" kindref="compound">TransparentStringHash.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3" refid="struct_transparent_string_hash_1a9c08630d644acd8b575f97e666a798d2" refkind="member"><highlight class="normal">std::uint64_t<sp/><ref refid="struct_transparent_string_hash_1a9c08630d644acd8b575f97e666a798d2" kindref="member">TransparentStringHash::operator() </ref>(std::string_view<sp/>key)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Hash" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Hash&lt;std::string_view&gt;</ref><sp/>{}(key);</highlight></codeline>
+<codeline lineno="6"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="TransparentStringHash.cpp"/>
+  </compounddef>
+</doxygen>

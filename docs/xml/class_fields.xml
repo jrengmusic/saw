@@ -1,0 +1,1009 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="class_fields" kind="class" language="C++" prot="public">
+    <compoundname>Fields</compoundname>
+    <includes refid="_fields_8h" local="no">Fields.h</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_fields_1aef6afeda72068fb81bbf41ca348c382a" prot="private" static="no" mutable="no">
+        <type><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; int &gt;</type>
+        <definition>jam::Array&lt;int&gt; Fields::fieldIndices</definition>
+        <argsstring></argsstring>
+        <name>fieldIndices</name>
+        <qualifiedname>Fields::fieldIndices</qualifiedname>
+        <briefdescription>
+<para>One-based field indexes that the output selects, in output order. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="131" column="16" bodyfile="Fields.h" bodystart="131" bodyend="-1"/>
+        <referencedby refid="class_fields_1a886999ceb34ddbbfc30a48a466eeec11" compoundref="_fields_8cpp" startline="192" endline="223">appendFormattedLine</referencedby>
+        <referencedby refid="class_fields_1a1b7745af2bd268f84c8d39a7086a5cf4" compoundref="_fields_8cpp" startline="350" endline="364">Fields</referencedby>
+        <referencedby refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" compoundref="_fields_8cpp" startline="374" endline="403">run</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_fields_1a2aac5c16dcf90ddf5bd779a23b43ac40" prot="private" static="no" mutable="no">
+        <type>std::optional&lt; std::string_view &gt;</type>
+        <definition>std::optional&lt;std::string_view&gt; Fields::delimiter</definition>
+        <argsstring></argsstring>
+        <name>delimiter</name>
+        <qualifiedname>Fields::delimiter</qualifiedname>
+        <briefdescription>
+<para>The delimiter of the input. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Nullopt selects splitting on runs of whitespace. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="134" column="19" bodyfile="Fields.h" bodystart="134" bodyend="-1"/>
+        <referencedby refid="class_fields_1a1b7745af2bd268f84c8d39a7086a5cf4" compoundref="_fields_8cpp" startline="350" endline="364">Fields</referencedby>
+        <referencedby refid="class_fields_1adc116357af92540b420808d3a292a8da" compoundref="_fields_8cpp" startline="165" endline="176">setLineTokens</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_fields_1a89b674c7a4355a0fa918b9f708623fc4" prot="private" static="no" mutable="no">
+        <type>std::string_view</type>
+        <definition>std::string_view Fields::outputDelimiter</definition>
+        <argsstring></argsstring>
+        <name>outputDelimiter</name>
+        <qualifiedname>Fields::outputDelimiter</qualifiedname>
+        <briefdescription>
+<para>The text written between two selected fields. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="137" column="22" bodyfile="Fields.h" bodystart="137" bodyend="-1"/>
+        <referencedby refid="class_fields_1a886999ceb34ddbbfc30a48a466eeec11" compoundref="_fields_8cpp" startline="192" endline="223">appendFormattedLine</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_fields_1a6f6e525c5f10db41244a821c55b3b3a5" prot="private" static="no" mutable="no">
+        <type><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range</ref>&lt; int &gt;</type>
+        <definition>juce::Range&lt;int&gt; Fields::lineRange</definition>
+        <argsstring></argsstring>
+        <name>lineRange</name>
+        <qualifiedname>Fields::lineRange</qualifiedname>
+        <briefdescription>
+<para>One-based half-open range of lines that the command covers. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="140" column="17" bodyfile="Fields.h" bodystart="140" bodyend="-1"/>
+        <referencedby refid="class_fields_1ab28952ae0dc487874d9c2ea34de81800" compoundref="_fields_8cpp" startline="249" endline="281">getBytesOutput</referencedby>
+        <referencedby refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" compoundref="_fields_8cpp" startline="374" endline="403">run</referencedby>
+        <referencedby refid="class_fields_1a34cd865b987cf3e05cef34d3cd81ae8c" compoundref="_fields_8cpp" startline="298" endline="312">runStandardInput</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_fields_1aa2c1339f48e58ef5fc3eb262fc651095" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Fields::afterLine</definition>
+        <argsstring></argsstring>
+        <name>afterLine</name>
+        <qualifiedname>Fields::afterLine</qualifiedname>
+        <initializer>{ 0 }</initializer>
+        <briefdescription>
+<para><ref refid="class_lines" kindref="compound">Lines</ref> up to and including this line are not matched or printed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="143" column="9" bodyfile="Fields.h" bodystart="143" bodyend="143"/>
+        <referencedby refid="class_fields_1ab28952ae0dc487874d9c2ea34de81800" compoundref="_fields_8cpp" startline="249" endline="281">getBytesOutput</referencedby>
+        <referencedby refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" compoundref="_fields_8cpp" startline="374" endline="403">run</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_fields_1a56a67af994b5aa18a9545cf1c38d6aa1" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="class_pattern" kindref="compound">Pattern</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;Pattern&gt; Fields::matchPattern</definition>
+        <argsstring></argsstring>
+        <name>matchPattern</name>
+        <qualifiedname>Fields::matchPattern</qualifiedname>
+        <briefdescription>
+<para>The pattern that a line must match, or nullptr when every line is printed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="146" column="21" bodyfile="Fields.h" bodystart="146" bodyend="-1"/>
+        <referencedby refid="class_fields_1a2fce0693371797ba5d2c50343dbccade" compoundref="_fields_8cpp" startline="225" endline="247">appendFields</referencedby>
+        <referencedby refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" compoundref="_fields_8cpp" startline="374" endline="403">run</referencedby>
+        <referencedby refid="class_fields_1a92822f56a6c58834da5b85f0c6ca926c" compoundref="_fields_8cpp" startline="314" endline="348">runFiles</referencedby>
+        <referencedby refid="class_fields_1a34cd865b987cf3e05cef34d3cd81ae8c" compoundref="_fields_8cpp" startline="298" endline="312">runStandardInput</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_fields_1a4c12f9e77e3b081a50dbb9356d6d66fe" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Fields::isFirstOnly</definition>
+        <argsstring></argsstring>
+        <name>isFirstOnly</name>
+        <qualifiedname>Fields::isFirstOnly</qualifiedname>
+        <initializer>{ false }</initializer>
+        <briefdescription>
+<para>True when the search stops at the first matching line. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="149" column="10" bodyfile="Fields.h" bodystart="149" bodyend="149"/>
+        <referencedby refid="class_fields_1ab28952ae0dc487874d9c2ea34de81800" compoundref="_fields_8cpp" startline="249" endline="281">getBytesOutput</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_fields_1aa88c027578b8ef76d44da127854953a3" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Fields::isStrict</definition>
+        <argsstring></argsstring>
+        <name>isStrict</name>
+        <qualifiedname>Fields::isStrict</qualifiedname>
+        <initializer>{ false }</initializer>
+        <briefdescription>
+<para>True when a field outside the line is a failure rather than an empty field. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="152" column="10" bodyfile="Fields.h" bodystart="152" bodyend="152"/>
+        <referencedby refid="class_fields_1a886999ceb34ddbbfc30a48a466eeec11" compoundref="_fields_8cpp" startline="192" endline="223">appendFormattedLine</referencedby>
+        <referencedby refid="class_fields_1a3518ef4c553424efc49caaf9bfc5bc3d" compoundref="_fields_8cpp" startline="178" endline="190">getSelectedField</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_fields_1aff5741070773d0809905410e55428577" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_arguments" kindref="compound">Arguments</ref></type>
+        <definition>Arguments Fields::getArguments</definition>
+        <argsstring>(juce::Span&lt; const std::string_view &gt; argumentList)</argsstring>
+        <name>getArguments</name>
+        <qualifiedname>Fields::getArguments</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>argumentList</declname>
+        </param>
+        <briefdescription>
+<para>Parses the argument list of fields, with its flags and value options. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>argumentList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The argument list, with the verb name at index 0.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The parsed arguments. Their status holds any parse failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="18" column="22" bodyfile="Fields.cpp" bodystart="366" bodyend="372"/>
+      </memberdef>
+      <memberdef kind="function" id="class_fields_1a2ee50044e730fa68816471b8af7c69e0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref></type>
+        <definition>Stdio::Output Fields::run</definition>
+        <argsstring>(const Arguments &amp;arguments, const std::optional&lt; std::string &gt; &amp;input)</argsstring>
+        <name>run</name>
+        <qualifiedname>Fields::run</qualifiedname>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>const std::optional&lt; std::string &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+<para>Runs fields on parsed arguments. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The field settings and the filter settings are checked first. A failed check is returned as a failure. Without paths, standard input is read.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>arguments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parsed arguments from getArguments. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The supplied input text, or nullopt for the process standard input.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The exit code, the output documents, and the failures. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="30" column="26" bodyfile="Fields.cpp" bodystart="374" bodyend="403"/>
+        <references refid="class_fields_1aa2c1339f48e58ef5fc3eb262fc651095" compoundref="_fields_8h" startline="143" endline="143">afterLine</references>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">Arguments::contains</references>
+        <references refid="structtext_1_1_diagnostics_1a811d5ec116f1bd3f0bb0726881b1b91f" compoundref="_text_8h" startline="85" endline="85">text::Diagnostics::failDelimiterEmpty</references>
+        <references refid="classjuce_1_1Result_1ae932f12129866251b1136f1629255f1c">juce::Result::failed</references>
+        <references refid="structtext_1_1_diagnostics_1aeffbf09840f60235f5b3777b1b40a32c" compoundref="_text_8h" startline="48" endline="48">text::Diagnostics::failFieldsRequiresSpec</references>
+        <references refid="class_fields_1aef6afeda72068fb81bbf41ca348c382a" compoundref="_fields_8h" startline="131">fieldIndices</references>
+        <references refid="class_fields_1a1b7745af2bd268f84c8d39a7086a5cf4" compoundref="_fields_8cpp" startline="350" endline="364">Fields</references>
+        <references refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">Stdio::getFailure</references>
+        <references refid="_fields_8cpp_1a887d798a9c89ca7f9bbf401df9b1aa7c" compoundref="_fields_8cpp" startline="27" endline="51">getFieldIndices</references>
+        <references refid="_fields_8cpp_1a4ce981ec200e63a56a5c94891ce65fb2" compoundref="_fields_8cpp" startline="77" endline="95">getFilterSettings</references>
+        <references refid="class_arguments_1aafc4f159b8d3a4fed87eed8db972f472" compoundref="_arguments_8cpp" startline="101" endline="104">Arguments::getPositionals</references>
+        <references refid="class_arguments_1a46db95dfc7cc4ce7e8e7af84ceaaebf7" compoundref="_arguments_8cpp" startline="71" endline="74">Arguments::getStatus</references>
+        <references refid="class_arguments_1adade09c248ed8b06f65a73e1c133b47e" compoundref="_arguments_8cpp" startline="81" endline="85">Arguments::getValueView</references>
+        <references refid="class_fields_1a6f6e525c5f10db41244a821c55b3b3a5" compoundref="_fields_8h" startline="140">lineRange</references>
+        <references refid="class_fields_1a56a67af994b5aa18a9545cf1c38d6aa1" compoundref="_fields_8h" startline="146">matchPattern</references>
+        <references refid="class_fields_1a92822f56a6c58834da5b85f0c6ca926c" compoundref="_fields_8cpp" startline="314" endline="348">runFiles</references>
+        <references refid="class_fields_1a34cd865b987cf3e05cef34d3cd81ae8c" compoundref="_fields_8cpp" startline="298" endline="312">runStandardInput</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_fields_1a1b7745af2bd268f84c8d39a7086a5cf4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Fields::Fields</definition>
+        <argsstring>(const Arguments &amp;arguments, jam::Array&lt; int &gt; newFieldIndices, juce::Range&lt; int &gt; newLineRange, int newAfterLine, std::unique_ptr&lt; Pattern &gt; newMatchPattern)</argsstring>
+        <name>Fields</name>
+        <qualifiedname>Fields::Fields</qualifiedname>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; int &gt;</type>
+          <declname>newFieldIndices</declname>
+        </param>
+        <param>
+          <type><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range</ref>&lt; int &gt;</type>
+          <declname>newLineRange</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>newAfterLine</declname>
+        </param>
+        <param>
+          <type>std::unique_ptr&lt; <ref refid="class_pattern" kindref="compound">Pattern</ref> &gt;</type>
+          <declname>newMatchPattern</declname>
+        </param>
+        <briefdescription>
+<para>Binds the parsed field settings and filter settings of one fields command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>arguments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parsed arguments. The delimiter, the output delimiter, and the flags are read here. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newFieldIndices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The one-based field indexes that the output selects, in output order. A negative index counts from the end. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newLineRange</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>One-based half-open range of lines that the command covers. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newAfterLine</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="class_lines" kindref="compound">Lines</ref> up to and including this line are not matched or printed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newMatchPattern</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pattern that a line must match, or nullptr when every line is printed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="41" column="5" bodyfile="Fields.cpp" bodystart="350" bodyend="364"/>
+        <references refid="class_fields_1a2aac5c16dcf90ddf5bd779a23b43ac40" compoundref="_fields_8h" startline="134">delimiter</references>
+        <references refid="class_fields_1aef6afeda72068fb81bbf41ca348c382a" compoundref="_fields_8h" startline="131">fieldIndices</references>
+        <references refid="class_arguments_1adade09c248ed8b06f65a73e1c133b47e" compoundref="_arguments_8cpp" startline="81" endline="85">Arguments::getValueView</references>
+        <referencedby refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" compoundref="_fields_8cpp" startline="374" endline="403">run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_fields_1a34cd865b987cf3e05cef34d3cd81ae8c" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref></type>
+        <definition>Stdio::Output Fields::runStandardInput</definition>
+        <argsstring>(const std::optional&lt; std::string &gt; &amp;input) const</argsstring>
+        <name>runStandardInput</name>
+        <qualifiedname>Fields::runStandardInput</qualifiedname>
+        <param>
+          <type>const std::optional&lt; std::string &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+<para>Reads standard input as one text, and refuses a terminal. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Only the process standard input can be a terminal. A terminal is refused, so the command does not wait for typed text.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The supplied input text, or nullopt for the process standard input.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The exit code, the output documents, and the failures. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="51" column="19" bodyfile="Fields.cpp" bodystart="298" bodyend="312"/>
+        <references refid="structtext_1_1_diagnostics_1ad86264b279fcb97550e1eeacc334a8b1" compoundref="_text_8h" startline="35" endline="35">text::Diagnostics::failMissingPath</references>
+        <references refid="class_fields_1ab28952ae0dc487874d9c2ea34de81800" compoundref="_fields_8cpp" startline="249" endline="281">getBytesOutput</references>
+        <references refid="_fields_8cpp_1aa1a2e5ece245ef7913e97a483583fb1b" compoundref="_fields_8cpp" startline="154" endline="163">getDocumentsOutput</references>
+        <references refid="classjuce_1_1Range_1a44413a19310d5f14be8d6ece2feedc01">juce::Range&lt; typename ValueType &gt;::getEnd</references>
+        <references refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">Stdio::getFailure</references>
+        <references refid="class_text_document_1a85fcd586d9c6a28e39f53bedd6c3ff54" compoundref="_text_document_8cpp" startline="86" endline="96">TextDocument::getInput</references>
+        <references refid="struct_stdio_1a28994562faa0223a49215d05f819a20a" compoundref="_stdio_8cpp" startline="4" endline="7">Stdio::isTerminalInput</references>
+        <references refid="class_fields_1a6f6e525c5f10db41244a821c55b3b3a5" compoundref="_fields_8h" startline="140">lineRange</references>
+        <references refid="class_fields_1a56a67af994b5aa18a9545cf1c38d6aa1" compoundref="_fields_8h" startline="146">matchPattern</references>
+        <referencedby refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" compoundref="_fields_8cpp" startline="374" endline="403">run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_fields_1a92822f56a6c58834da5b85f0c6ca926c" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref></type>
+        <definition>Stdio::Output Fields::runFiles</definition>
+        <argsstring>(juce::Span&lt; const std::string_view &gt; rawPaths) const</argsstring>
+        <name>runFiles</name>
+        <qualifiedname>Fields::runFiles</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>rawPaths</declname>
+        </param>
+        <briefdescription>
+<para>Reads each file in its own job, and writes the output of each file into its own slot. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The slots keep the order of the sorted file entries. No lock is needed, because each job writes one slot.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rawPaths</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The paths that the user named.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The exit code, one document group for each file in file order, and the failures. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="61" column="19" bodyfile="Fields.cpp" bodystart="314" bodyend="348"/>
+        <references refid="struct_stdio_1aff9b0dc5051d3827bbc4a15547947870" compoundref="_stdio_8cpp" startline="29" endline="40">Stdio::addDocuments</references>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="classjam_1_1Array_1aa5240327dd94267390aefa03215033e1">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::begin</references>
+        <references refid="classjam_1_1Array_1a7336e35022c8a66e55217a273f0b8808">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::end</references>
+        <references refid="_fields_8cpp_1aa1a2e5ece245ef7913e97a483583fb1b" compoundref="_fields_8cpp" startline="154" endline="163">getDocumentsOutput</references>
+        <references refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">Stdio::getFailure</references>
+        <references refid="class_fields_1a84d812846b414e97fd2228c1335fb997" compoundref="_fields_8cpp" startline="283" endline="296">getFileOutput</references>
+        <references refid="struct_stdio_1a88c5bfa8d456a117e4296e0624abce90" compoundref="_stdio_8cpp" startline="90" endline="99">Stdio::getFirstFailure</references>
+        <references refid="struct_paths_1a5314f36d3b5852db454cb13f26e1f6be" compoundref="_paths_8cpp" startline="515" endline="538">Paths::getReadableFiles</references>
+        <references refid="classjam_1_1Array_1a5d5dee6bc301945729b43f4c140477ff">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::insertMultiple</references>
+        <references refid="class_fields_1a56a67af994b5aa18a9545cf1c38d6aa1" compoundref="_fields_8h" startline="146">matchPattern</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="classjam_1_1Array_1a5011ae5f02af2593d783611891ae64f0">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::resize</references>
+        <references refid="struct_jobs_1a639a3b9ddb2cedfa89f534cfcc3646d1" compoundref="_jobs_8h" startline="26" endline="89">Jobs::run</references>
+        <referencedby refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" compoundref="_fields_8cpp" startline="374" endline="403">run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_fields_1a84d812846b414e97fd2228c1335fb997" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, bool, <ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref> &gt;</type>
+        <definition>std::tuple&lt; juce::Result, bool, Stdio::Documents &gt; Fields::getFileOutput</definition>
+        <argsstring>(const juce::File &amp;file, std::string_view displayPath, bool isExplicit) const</argsstring>
+        <name>getFileOutput</name>
+        <qualifiedname>Fields::getFileOutput</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>displayPath</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isExplicit</declname>
+        </param>
+        <briefdescription>
+<para>Reads one file and returns its output, whether any line matched, and the read failure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The file to read. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>displayPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The display path of the file. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isExplicit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True when the file was named on the command line.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The status, whether any line matched, and the output documents. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="71" column="16" bodyfile="Fields.cpp" bodystart="283" bodyend="296"/>
+        <references refid="class_fields_1ab28952ae0dc487874d9c2ea34de81800" compoundref="_fields_8cpp" startline="249" endline="281">getBytesOutput</references>
+        <references refid="class_text_document_1a85fcd586d9c6a28e39f53bedd6c3ff54" compoundref="_text_document_8cpp" startline="86" endline="96">TextDocument::getInput</references>
+        <references refid="class_input_1af4915b1e6f1f77beea94bc7833406f31" compoundref="_input_8h" startline="28" endline="28">Input::maxBufferedReadSize</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <referencedby refid="class_fields_1a92822f56a6c58834da5b85f0c6ca926c" compoundref="_fields_8cpp" startline="314" endline="348">runFiles</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_fields_1ab28952ae0dc487874d9c2ea34de81800" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, bool, <ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref> &gt;</type>
+        <definition>std::tuple&lt; juce::Result, bool, Stdio::Documents &gt; Fields::getBytesOutput</definition>
+        <argsstring>(std::string_view bytes, std::string_view displayPath, bool isExplicit) const</argsstring>
+        <name>getBytesOutput</name>
+        <qualifiedname>Fields::getBytesOutput</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>displayPath</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isExplicit</declname>
+        </param>
+        <briefdescription>
+<para>Formats the selected lines of the bytes, and reports a binary input as a failure when it is explicit. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The NUL check covers only the bytes that the line loop read. With isFirstOnly, the loop stops at the first matching line, so a NUL byte after that line is not checked.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The bytes to format. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>displayPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The display path of the input. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isExplicit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True when the input was named as a file on the command line.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The result, whether any line matched, and the output documents. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="84" column="16" bodyfile="Fields.cpp" bodystart="249" bodyend="281"/>
+        <references refid="class_fields_1aa2c1339f48e58ef5fc3eb262fc651095" compoundref="_fields_8h" startline="143" endline="143">afterLine</references>
+        <references refid="class_fields_1a2fce0693371797ba5d2c50343dbccade" compoundref="_fields_8cpp" startline="225" endline="247">appendFields</references>
+        <references refid="class_text_document_1aa5be46eb8c5ccd163f5bbc01cca069be" compoundref="_text_document_8h" startline="227" endline="245">TextDocument::applyToLines</references>
+        <references refid="class_text_document_1a301442b4864a3ce11677f034a2ecbd52" compoundref="_text_document_8cpp" startline="40" endline="46">TextDocument::getBinaryStatus</references>
+        <references refid="struct_stdio_1a152adfef4e630acdfddc13f5f596c7d7" compoundref="_stdio_8cpp" startline="19" endline="27">Stdio::getDocuments</references>
+        <references refid="class_text_document_1a68d0ad47d84117eb3fe3b44fef62a829" compoundref="_text_document_8cpp" startline="48" endline="51">TextDocument::isBinary</references>
+        <references refid="class_fields_1a4c12f9e77e3b081a50dbb9356d6d66fe" compoundref="_fields_8h" startline="149" endline="149">isFirstOnly</references>
+        <references refid="class_fields_1a6f6e525c5f10db41244a821c55b3b3a5" compoundref="_fields_8h" startline="140">lineRange</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <referencedby refid="class_fields_1a84d812846b414e97fd2228c1335fb997" compoundref="_fields_8cpp" startline="283" endline="296">getFileOutput</referencedby>
+        <referencedby refid="class_fields_1a34cd865b987cf3e05cef34d3cd81ae8c" compoundref="_fields_8cpp" startline="298" endline="312">runStandardInput</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_fields_1a2fce0693371797ba5d2c50343dbccade" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, bool &gt;</type>
+        <definition>std::pair&lt; juce::Result, bool &gt; Fields::appendFields</definition>
+        <argsstring>(std::string &amp;output, jam::Array&lt; std::string_view &gt; &amp;tokens, std::string_view line, int lineNumber, std::string_view displayPath, jam::RegExpAutomaton &amp;automaton) const</argsstring>
+        <name>appendFields</name>
+        <qualifiedname>Fields::appendFields</qualifiedname>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; std::string_view &gt; &amp;</type>
+          <declname>tokens</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>line</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>lineNumber</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>displayPath</declname>
+        </param>
+        <param>
+          <type><ref refid="classjam_1_1RegExpAutomaton" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::RegExpAutomaton</ref> &amp;</type>
+          <declname>automaton</declname>
+        </param>
+        <briefdescription>
+<para>Matches one line, and when it matches, splits and formats it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The text that receives the formatted line. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tokens</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scratch array that receives the fields of the line. Its previous content is replaced. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>line</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line bytes, without the line ending. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lineNumber</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The one-based number of the line. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>displayPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The display path of the input, used in the failure text. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>automaton</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matcher state that the caller owns.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The status, and whether the line was matched and formatted. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="97" column="15" bodyfile="Fields.cpp" bodystart="225" bodyend="247"/>
+        <references refid="class_fields_1a886999ceb34ddbbfc30a48a466eeec11" compoundref="_fields_8cpp" startline="192" endline="223">appendFormattedLine</references>
+        <references refid="class_pattern_1a10a9c0d996dad1d4e1bfeda6cc5ba854" compoundref="_pattern_8cpp" startline="299" endline="319">Pattern::hasMatch</references>
+        <references refid="class_fields_1a56a67af994b5aa18a9545cf1c38d6aa1" compoundref="_fields_8h" startline="146">matchPattern</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="class_fields_1adc116357af92540b420808d3a292a8da" compoundref="_fields_8cpp" startline="165" endline="176">setLineTokens</references>
+        <referencedby refid="class_fields_1ab28952ae0dc487874d9c2ea34de81800" compoundref="_fields_8cpp" startline="249" endline="281">getBytesOutput</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_fields_1adc116357af92540b420808d3a292a8da" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Fields::setLineTokens</definition>
+        <argsstring>(jam::Array&lt; std::string_view &gt; &amp;tokens, std::string_view line) const</argsstring>
+        <name>setLineTokens</name>
+        <qualifiedname>Fields::setLineTokens</qualifiedname>
+        <param>
+          <type><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; std::string_view &gt; &amp;</type>
+          <declname>tokens</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>line</declname>
+        </param>
+        <briefdescription>
+<para>Splits a line into fields, by the delimiter, or by runs of whitespace when no delimiter is given. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>tokens</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Receives the fields. It is cleared first, and an empty line gives no fields. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>line</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line bytes, without the line ending. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="104" column="10" bodyfile="Fields.cpp" bodystart="165" bodyend="176"/>
+        <references refid="class_fields_1a2aac5c16dcf90ddf5bd779a23b43ac40" compoundref="_fields_8h" startline="134">delimiter</references>
+        <references refid="_fields_8cpp_1a4a48c7dc340a92b6e7efb6f455e62f77" compoundref="_fields_8cpp" startline="118" endline="152">setDelimitedTokens</references>
+        <references refid="_fields_8cpp_1a07184109a70accfcc007d9a25caeb8d0" compoundref="_fields_8cpp" startline="97" endline="116">setWhitespaceTokens</references>
+        <referencedby refid="class_fields_1a2fce0693371797ba5d2c50343dbccade" compoundref="_fields_8cpp" startline="225" endline="247">appendFields</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_fields_1a886999ceb34ddbbfc30a48a466eeec11" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result Fields::appendFormattedLine</definition>
+        <argsstring>(std::string &amp;output, const jam::Array&lt; std::string_view &gt; &amp;tokens, std::string_view displayPath, int lineNumber) const</argsstring>
+        <name>appendFormattedLine</name>
+        <qualifiedname>Fields::appendFormattedLine</qualifiedname>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; std::string_view &gt; &amp;</type>
+          <declname>tokens</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>displayPath</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>lineNumber</declname>
+        </param>
+        <briefdescription>
+<para>Appends the selected fields, joined by the output delimiter, and a newline. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An empty line is printed as a newline alone, unless strict mode is set. A field outside the line is a failure in strict mode.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The text that receives the line. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tokens</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The fields of the line. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>displayPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The display path of the input, used in the failure text. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lineNumber</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The one-based number of the line, used in the failure text.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Ok when every selected field was written, otherwise the failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="117" column="18" bodyfile="Fields.cpp" bodystart="192" bodyend="223"/>
+        <references refid="structjam_1_1Format_1a03d027c362f8e8e10a4b632c3af60c63">jam::Format::appendBytes</references>
+        <references refid="structjam_1_1Format_1a764df6571428615011c88a96ddc542ca">jam::Format::appendUtf8</references>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="structChars_1ab0e6e951a85086a81e11533c0bcfc422">Chars::colon</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1a6c44c1439626108c2dc3d9f0373de5a1" compoundref="_text_8h" startline="86" endline="86">text::Diagnostics::failFieldBounds</references>
+        <references refid="class_fields_1aef6afeda72068fb81bbf41ca348c382a" compoundref="_fields_8h" startline="131">fieldIndices</references>
+        <references refid="class_fields_1a3518ef4c553424efc49caaf9bfc5bc3d" compoundref="_fields_8cpp" startline="178" endline="190">getSelectedField</references>
+        <references refid="class_fields_1aa88c027578b8ef76d44da127854953a3" compoundref="_fields_8h" startline="152" endline="152">isStrict</references>
+        <references refid="structChars_1a4691bc69052e757e7325970098922899">Chars::newline</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="structtext_1_1_diagnostics_1a147ded53058353df7d13078b84a426c8" compoundref="_text_8h" startline="87" endline="87">text::Diagnostics::outOfRangeAt</references>
+        <references refid="class_fields_1a89b674c7a4355a0fa918b9f708623fc4" compoundref="_fields_8h" startline="137">outputDelimiter</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <referencedby refid="class_fields_1a2fce0693371797ba5d2c50343dbccade" compoundref="_fields_8cpp" startline="225" endline="247">appendFields</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_fields_1a3518ef4c553424efc49caaf9bfc5bc3d" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::optional&lt; std::string_view &gt;</type>
+        <definition>std::optional&lt; std::string_view &gt; Fields::getSelectedField</definition>
+        <argsstring>(int requested, const jam::Array&lt; std::string_view &gt; &amp;tokens) const</argsstring>
+        <name>getSelectedField</name>
+        <qualifiedname>Fields::getSelectedField</qualifiedname>
+        <param>
+          <type>int</type>
+          <declname>requested</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; std::string_view &gt; &amp;</type>
+          <declname>tokens</declname>
+        </param>
+        <briefdescription>
+<para>Returns the field at a one-based index, or at a negative index counted from the end. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A field outside the line is a failure only in strict mode. Otherwise the field is empty.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>requested</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The requested index. Zero is not a field. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tokens</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The fields of the line.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The field text, an empty view outside the line when not strict, or nullopt outside the line when strict. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Fields.h" line="128" column="19" bodyfile="Fields.cpp" bodystart="178" bodyend="190"/>
+        <references refid="class_fields_1aa88c027578b8ef76d44da127854953a3" compoundref="_fields_8h" startline="152" endline="152">isStrict</references>
+        <referencedby refid="class_fields_1a886999ceb34ddbbfc30a48a466eeec11" compoundref="_fields_8cpp" startline="192" endline="223">appendFormattedLine</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Implements the <computeroutput>saw fields</computeroutput> subcommand for extracting delimited columns from lines. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Fields</label>
+        <link refid="class_fields"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>fieldIndices</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>outputDelimiter</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>lineRange</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>matchPattern</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Pattern</label>
+        <link refid="class_pattern"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>regExp</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>program</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>literalSet</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>patternText</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>jam::Array&lt; int &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>jam::Array&lt; jam::CharSet &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>jam::Array&lt; jam::RegExp::Node &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>jam::Array&lt; jam::RegExpProgram::Instruction &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>jam::Array&lt; juce::String &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>jam::LiteralSet</label>
+        <link refid="classjam_1_1LiteralSet" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>literals</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>highMasks</edgelabel>
+          <edgelabel>lowMasks</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>buckets</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>jam::RegExp</label>
+        <link refid="classjam_1_1RegExp" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>nodes</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>charSets</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>groupNames</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>jam::RegExpProgram</label>
+        <link refid="classjam_1_1RegExpProgram" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>instructions</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>assertions</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>juce::DummyCriticalSection</label>
+        <link refid="classjuce_1_1DummyCriticalSection" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="6">
+        <label>juce::Range&lt; int &gt;</label>
+        <link refid="classjuce_1_1Range" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="22">
+        <label>std::array&lt; std::array&lt; uint8_t, simd::nibbleCount &gt;, simd::maximumFingerprintLength &gt;</label>
+      </node>
+      <node id="23">
+        <label>std::array&lt; std::vector&lt; int &gt;, bucketCount &gt;</label>
+        <childnode refid="24" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="5">
+        <label>std::basic_string_view&lt; Char &gt;</label>
+      </node>
+      <node id="20">
+        <label>std::string</label>
+        <childnode refid="21" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>std::string_view</label>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::unique_ptr&lt; Pattern &gt;</label>
+        <childnode refid="8" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>std::unique_ptr&lt; jam::LiteralSet &gt;</label>
+        <childnode refid="18" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>std::unique_ptr&lt; jam::RegExp &gt;</label>
+        <childnode refid="10" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>std::unique_ptr&lt; jam::RegExpProgram &gt;</label>
+        <childnode refid="15" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>std::vector&lt; int &gt;</label>
+      </node>
+      <node id="19">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="20" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Fields.h" line="9" column="1" bodyfile="Fields.h" bodystart="10" bodyend="153"/>
+    <listofallmembers>
+      <member refid="class_fields_1aa2c1339f48e58ef5fc3eb262fc651095" prot="private" virt="non-virtual"><scope>Fields</scope><name>afterLine</name></member>
+      <member refid="class_fields_1a2fce0693371797ba5d2c50343dbccade" prot="private" virt="non-virtual"><scope>Fields</scope><name>appendFields</name></member>
+      <member refid="class_fields_1a886999ceb34ddbbfc30a48a466eeec11" prot="private" virt="non-virtual"><scope>Fields</scope><name>appendFormattedLine</name></member>
+      <member refid="class_fields_1a2aac5c16dcf90ddf5bd779a23b43ac40" prot="private" virt="non-virtual"><scope>Fields</scope><name>delimiter</name></member>
+      <member refid="class_fields_1aef6afeda72068fb81bbf41ca348c382a" prot="private" virt="non-virtual"><scope>Fields</scope><name>fieldIndices</name></member>
+      <member refid="class_fields_1a1b7745af2bd268f84c8d39a7086a5cf4" prot="private" virt="non-virtual"><scope>Fields</scope><name>Fields</name></member>
+      <member refid="class_fields_1aff5741070773d0809905410e55428577" prot="public" virt="non-virtual"><scope>Fields</scope><name>getArguments</name></member>
+      <member refid="class_fields_1ab28952ae0dc487874d9c2ea34de81800" prot="private" virt="non-virtual"><scope>Fields</scope><name>getBytesOutput</name></member>
+      <member refid="class_fields_1a84d812846b414e97fd2228c1335fb997" prot="private" virt="non-virtual"><scope>Fields</scope><name>getFileOutput</name></member>
+      <member refid="class_fields_1a3518ef4c553424efc49caaf9bfc5bc3d" prot="private" virt="non-virtual"><scope>Fields</scope><name>getSelectedField</name></member>
+      <member refid="class_fields_1a4c12f9e77e3b081a50dbb9356d6d66fe" prot="private" virt="non-virtual"><scope>Fields</scope><name>isFirstOnly</name></member>
+      <member refid="class_fields_1aa88c027578b8ef76d44da127854953a3" prot="private" virt="non-virtual"><scope>Fields</scope><name>isStrict</name></member>
+      <member refid="class_fields_1a6f6e525c5f10db41244a821c55b3b3a5" prot="private" virt="non-virtual"><scope>Fields</scope><name>lineRange</name></member>
+      <member refid="class_fields_1a56a67af994b5aa18a9545cf1c38d6aa1" prot="private" virt="non-virtual"><scope>Fields</scope><name>matchPattern</name></member>
+      <member refid="class_fields_1a89b674c7a4355a0fa918b9f708623fc4" prot="private" virt="non-virtual"><scope>Fields</scope><name>outputDelimiter</name></member>
+      <member refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" prot="public" virt="non-virtual"><scope>Fields</scope><name>run</name></member>
+      <member refid="class_fields_1a92822f56a6c58834da5b85f0c6ca926c" prot="private" virt="non-virtual"><scope>Fields</scope><name>runFiles</name></member>
+      <member refid="class_fields_1a34cd865b987cf3e05cef34d3cd81ae8c" prot="private" virt="non-virtual"><scope>Fields</scope><name>runStandardInput</name></member>
+      <member refid="class_fields_1adc116357af92540b420808d3a292a8da" prot="private" virt="non-virtual"><scope>Fields</scope><name>setLineTokens</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

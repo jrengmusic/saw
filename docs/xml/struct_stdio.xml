@@ -1,0 +1,1179 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="struct_stdio" kind="struct" language="C++" prot="public">
+    <compoundname>Stdio</compoundname>
+    <includes refid="_stdio_8h" local="no">Stdio.h</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" prot="public" static="no">
+        <type><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; std::unique_ptr&lt; <ref refid="class_text_document" kindref="compound">TextDocument</ref> &gt; &gt;</type>
+        <definition>using Stdio::Documents = jam::Array&lt;std::unique_ptr&lt;TextDocument&gt;&gt;</definition>
+        <argsstring></argsstring>
+        <name>Documents</name>
+        <qualifiedname>Stdio::Documents</qualifiedname>
+        <briefdescription>
+<para>Ordered documents of the standard output of one command, one for each piece of output. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="26" column="5" bodyfile="Stdio.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" prot="public" static="no">
+        <type>std::tuple&lt; int, <ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Documents</ref>, <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref> &gt; &gt;</type>
+        <definition>using Stdio::Output = std::tuple&lt;int, Documents, jam::Array&lt;juce::Result&gt;&gt;</definition>
+        <argsstring></argsstring>
+        <name>Output</name>
+        <qualifiedname>Stdio::Output</qualifiedname>
+        <briefdescription>
+<para>Result of a command: exit code, the documents of the standard output, and the failures. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The documents are written as they are, and the failures are written as diagnostic lines on standard error. No copy is made between the creation of the output and its write. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="33" column="5" bodyfile="Stdio.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="struct_stdio_1a1a7d222553744f4567c34e97e43e6b87" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>int</type>
+        <definition>int Stdio::exitSuccess</definition>
+        <argsstring></argsstring>
+        <name>exitSuccess</name>
+        <qualifiedname>Stdio::exitSuccess</qualifiedname>
+        <initializer>{ 0 }</initializer>
+        <briefdescription>
+<para>Exit code when a command succeeds or finds matches. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="14" column="26" bodyfile="Stdio.h" bodystart="14" bodyend="14"/>
+        <referencedby refid="_command_line_8cpp_1a18061281c329199b21a564aa6858e902" compoundref="_command_line_8cpp" startline="67" endline="76">getBannerAndHelp</referencedby>
+        <referencedby refid="_fields_8cpp_1aa1a2e5ece245ef7913e97a483583fb1b" compoundref="_fields_8cpp" startline="154" endline="163">getDocumentsOutput</referencedby>
+        <referencedby refid="_excerpt_8cpp_1a588b070d25e6efc0b4fa3f9dd26a9c05" compoundref="_excerpt_8cpp" startline="281" endline="320">getOutput</referencedby>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+        <referencedby refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">Transaction::runCommit</referencedby>
+        <referencedby refid="_undo_8cpp_1a18d805b7b51c03251496e676125cdba6" compoundref="_undo_8cpp" startline="225" endline="234">runDryRun</referencedby>
+        <referencedby refid="class_transaction_1a856c5ba1594da36d25ea8717f8a65ab0" compoundref="_transaction_8cpp" startline="140" endline="158">Transaction::runDryRun</referencedby>
+        <referencedby refid="class_lines_1afd2f1bd0b2ed2e7413eb4133a1c9a776" compoundref="_lines_8cpp" startline="143" endline="176">Lines::runFiles</referencedby>
+        <referencedby refid="_find_8cpp_1aee6c2a289aa8ded9609e73746c945e12" compoundref="_find_8cpp" startline="114" endline="146">runFilesFind</referencedby>
+        <referencedby refid="_command_line_8cpp_1a3e0aebc0261a00384aa7f8595a05310b" compoundref="_command_line_8cpp" startline="78" endline="87">runGlobalOption</referencedby>
+        <referencedby refid="_undo_8cpp_1a8720a4fcfc984366d268fda7188a905d" compoundref="_undo_8cpp" startline="72" endline="95">runList</referencedby>
+        <referencedby refid="_find_8cpp_1af3cc5ec6e84dd907c9c1a0e3d4891e13" compoundref="_find_8cpp" startline="187" endline="213">runListFiles</referencedby>
+        <referencedby refid="class_lines_1a36fe96db47b1f75442e7f3814eb221d3" compoundref="_lines_8cpp" startline="125" endline="141">Lines::runStandardInput</referencedby>
+        <referencedby refid="_find_8cpp_1a52c2a6489204abd8f7c0508cbb0c236a" compoundref="_find_8cpp" startline="148" endline="185">runStdinFind</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_stdio_1abac5137237b98fa233c4681c7e336d81" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>int</type>
+        <definition>int Stdio::exitMismatch</definition>
+        <argsstring></argsstring>
+        <name>exitMismatch</name>
+        <qualifiedname>Stdio::exitMismatch</qualifiedname>
+        <initializer>{ 1 }</initializer>
+        <briefdescription>
+<para>Exit code when find matches nothing or <ndash/>expect disagrees with actual edits. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="17" column="26" bodyfile="Stdio.h" bodystart="17" bodyend="17"/>
+        <referencedby refid="_fields_8cpp_1aa1a2e5ece245ef7913e97a483583fb1b" compoundref="_fields_8cpp" startline="154" endline="163">getDocumentsOutput</referencedby>
+        <referencedby refid="class_transaction_1a5800eb9b3d14bded600e4b427b0917fd" compoundref="_transaction_8cpp" startline="70" endline="79">Transaction::getExpectMismatch</referencedby>
+        <referencedby refid="_excerpt_8cpp_1a588b070d25e6efc0b4fa3f9dd26a9c05" compoundref="_excerpt_8cpp" startline="281" endline="320">getOutput</referencedby>
+        <referencedby refid="_find_8cpp_1aee6c2a289aa8ded9609e73746c945e12" compoundref="_find_8cpp" startline="114" endline="146">runFilesFind</referencedby>
+        <referencedby refid="_find_8cpp_1af3cc5ec6e84dd907c9c1a0e3d4891e13" compoundref="_find_8cpp" startline="187" endline="213">runListFiles</referencedby>
+        <referencedby refid="_find_8cpp_1a52c2a6489204abd8f7c0508cbb0c236a" compoundref="_find_8cpp" startline="148" endline="185">runStdinFind</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_stdio_1a001792421c55d31cc4c4105fcf151c09" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>int</type>
+        <definition>int Stdio::exitError</definition>
+        <argsstring></argsstring>
+        <name>exitError</name>
+        <qualifiedname>Stdio::exitError</qualifiedname>
+        <initializer>{ 2 }</initializer>
+        <briefdescription>
+<para>Exit code when argument parsing, validation, I/O, or a transaction fails. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="20" column="26" bodyfile="Stdio.h" bodystart="20" bodyend="20"/>
+        <referencedby refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">getFailure</referencedby>
+        <referencedby refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">Transaction::runCommit</referencedby>
+        <referencedby refid="_find_8cpp_1aee6c2a289aa8ded9609e73746c945e12" compoundref="_find_8cpp" startline="114" endline="146">runFilesFind</referencedby>
+        <referencedby refid="_undo_8cpp_1a8720a4fcfc984366d268fda7188a905d" compoundref="_undo_8cpp" startline="72" endline="95">runList</referencedby>
+        <referencedby refid="_find_8cpp_1af3cc5ec6e84dd907c9c1a0e3d4891e13" compoundref="_find_8cpp" startline="187" endline="213">runListFiles</referencedby>
+        <referencedby refid="struct_stdio_1a2f47d9111aa65ce8942bc5ed68e42474" compoundref="_stdio_8cpp" startline="101" endline="130">write</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_stdio_1abb8232d7b694db1188d20d69dd8af4b0" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>std::string_view</type>
+        <definition>std::string_view Stdio::newline</definition>
+        <argsstring></argsstring>
+        <name>newline</name>
+        <qualifiedname>Stdio::newline</qualifiedname>
+        <initializer>{ &quot;\n&quot; }</initializer>
+        <briefdescription>
+<para>Line feed that ends each line of a diagnostic and each summary line. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="23" column="39" bodyfile="Stdio.h" bodystart="23" bodyend="23"/>
+        <referencedby refid="struct_stdio_1a1b582f58764e36c55ba2ef632d8b92eb" compoundref="_stdio_8h" startline="166" endline="173">applyToPieces</referencedby>
+        <referencedby refid="class_lines_1a018c05bb56412083e4c72a12a78ed1c2" compoundref="_lines_8cpp" startline="60" endline="111">Lines::getOutputDocuments</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="struct_stdio_1a0d704d1d99e172c759f752d6913edfb1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Output</ref></type>
+        <definition>Stdio::Output Stdio::getOutput</definition>
+        <argsstring>(int exitCode, Documents documents={}, jam::Array&lt; juce::Result &gt; failures={})</argsstring>
+        <name>getOutput</name>
+        <qualifiedname>Stdio::getOutput</qualifiedname>
+        <param>
+          <type>int</type>
+          <declname>exitCode</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Documents</ref></type>
+          <declname>documents</declname>
+          <defval>{}</defval>
+        </param>
+        <param>
+          <type><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref> &gt;</type>
+          <declname>failures</declname>
+          <defval>{}</defval>
+        </param>
+        <briefdescription>
+<para>Builds an <ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Output</ref> from the documents and the failures of a command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Both are moved into the <ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Output</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>exitCode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The exit code of the command. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>documents</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The documents of the standard output, in write order. It is empty when no output is written. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>failures</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The failures, each written as a diagnostic line on standard error. It is empty when there is none.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The exit code, the documents, and the failures. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="45" column="19" bodyfile="Stdio.cpp" bodystart="14" bodyend="17"/>
+        <referencedby refid="_command_line_8cpp_1a18061281c329199b21a564aa6858e902" compoundref="_command_line_8cpp" startline="67" endline="76">getBannerAndHelp</referencedby>
+        <referencedby refid="_fields_8cpp_1aa1a2e5ece245ef7913e97a483583fb1b" compoundref="_fields_8cpp" startline="154" endline="163">getDocumentsOutput</referencedby>
+        <referencedby refid="class_transaction_1a5800eb9b3d14bded600e4b427b0917fd" compoundref="_transaction_8cpp" startline="70" endline="79">Transaction::getExpectMismatch</referencedby>
+        <referencedby refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">getFailure</referencedby>
+        <referencedby refid="_excerpt_8cpp_1a588b070d25e6efc0b4fa3f9dd26a9c05" compoundref="_excerpt_8cpp" startline="281" endline="320">getOutput</referencedby>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+        <referencedby refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">Transaction::runCommit</referencedby>
+        <referencedby refid="_undo_8cpp_1a18d805b7b51c03251496e676125cdba6" compoundref="_undo_8cpp" startline="225" endline="234">runDryRun</referencedby>
+        <referencedby refid="class_transaction_1a856c5ba1594da36d25ea8717f8a65ab0" compoundref="_transaction_8cpp" startline="140" endline="158">Transaction::runDryRun</referencedby>
+        <referencedby refid="class_lines_1afd2f1bd0b2ed2e7413eb4133a1c9a776" compoundref="_lines_8cpp" startline="143" endline="176">Lines::runFiles</referencedby>
+        <referencedby refid="_find_8cpp_1aee6c2a289aa8ded9609e73746c945e12" compoundref="_find_8cpp" startline="114" endline="146">runFilesFind</referencedby>
+        <referencedby refid="_command_line_8cpp_1a3e0aebc0261a00384aa7f8595a05310b" compoundref="_command_line_8cpp" startline="78" endline="87">runGlobalOption</referencedby>
+        <referencedby refid="_undo_8cpp_1a8720a4fcfc984366d268fda7188a905d" compoundref="_undo_8cpp" startline="72" endline="95">runList</referencedby>
+        <referencedby refid="_find_8cpp_1af3cc5ec6e84dd907c9c1a0e3d4891e13" compoundref="_find_8cpp" startline="187" endline="213">runListFiles</referencedby>
+        <referencedby refid="class_lines_1a36fe96db47b1f75442e7f3814eb221d3" compoundref="_lines_8cpp" startline="125" endline="141">Lines::runStandardInput</referencedby>
+        <referencedby refid="_find_8cpp_1a52c2a6489204abd8f7c0508cbb0c236a" compoundref="_find_8cpp" startline="148" endline="185">runStdinFind</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1a152adfef4e630acdfddc13f5f596c7d7" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Documents</ref></type>
+        <definition>Stdio::Documents Stdio::getDocuments</definition>
+        <argsstring>(std::string &amp;&amp;text, std::string_view displayPath={})</argsstring>
+        <name>getDocuments</name>
+        <qualifiedname>Stdio::getDocuments</qualifiedname>
+        <param>
+          <type>std::string &amp;&amp;</type>
+          <declname>text</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>displayPath</declname>
+          <defval>{}</defval>
+        </param>
+        <briefdescription>
+<para>Wraps text in one document, or returns no document when the text is empty. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>text</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The text, moved into the document. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>displayPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The path of the document, or empty for standard output.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>One document holding the text, or no document. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="54" column="22" bodyfile="Stdio.cpp" bodystart="19" bodyend="27"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="class_text_document_1a3293f6242e8ad72578da47007b84fa36" compoundref="_text_document_8cpp" startline="150" endline="156">TextDocument::fromText</references>
+        <referencedby refid="class_fields_1ab28952ae0dc487874d9c2ea34de81800" compoundref="_fields_8cpp" startline="249" endline="281">Fields::getBytesOutput</referencedby>
+        <referencedby refid="_search_8cpp_1affd3ed5c01ff5253bd2f3c3f756c5682" compoundref="_search_8cpp" startline="29" endline="38">getCountOutcome</referencedby>
+        <referencedby refid="_excerpt_8cpp_1a40b7628c90fc0862cc0c73f1ec0d4205" compoundref="_excerpt_8cpp" startline="117" endline="174">getLiteralBlock</referencedby>
+        <referencedby refid="_excerpt_8cpp_1a588b070d25e6efc0b4fa3f9dd26a9c05" compoundref="_excerpt_8cpp" startline="281" endline="320">getOutput</referencedby>
+        <referencedby refid="class_lines_1a018c05bb56412083e4c72a12a78ed1c2" compoundref="_lines_8cpp" startline="60" endline="111">Lines::getOutputDocuments</referencedby>
+        <referencedby refid="_excerpt_8cpp_1ae3674c5bf69324a12c5dd46924b9eeec" compoundref="_excerpt_8cpp" startline="212" endline="238">getRangeBlock</referencedby>
+        <referencedby refid="_excerpt_8cpp_1a8fc736807b0ab422fbf6d71027d3dd4e" compoundref="_excerpt_8cpp" startline="83" endline="94">getStateBlock</referencedby>
+        <referencedby refid="class_search_1a996ee99c13776c969e03cc1f81d36df4" compoundref="_search_8cpp" startline="91" endline="116">Search::run</referencedby>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+        <referencedby refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">Transaction::runCommit</referencedby>
+        <referencedby refid="_command_line_8cpp_1a3e0aebc0261a00384aa7f8595a05310b" compoundref="_command_line_8cpp" startline="78" endline="87">runGlobalOption</referencedby>
+        <referencedby refid="_undo_8cpp_1a8720a4fcfc984366d268fda7188a905d" compoundref="_undo_8cpp" startline="72" endline="95">runList</referencedby>
+        <referencedby refid="_find_8cpp_1af3cc5ec6e84dd907c9c1a0e3d4891e13" compoundref="_find_8cpp" startline="187" endline="213">runListFiles</referencedby>
+        <referencedby refid="class_search_1a3b438e868398151582358ee066342910" compoundref="_search_8cpp" startline="136" endline="200">Search::runStream</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1aff9b0dc5051d3827bbc4a15547947870" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Stdio::addDocuments</definition>
+        <argsstring>(Documents &amp;documents, Documents &amp;&amp;addedDocuments)</argsstring>
+        <name>addDocuments</name>
+        <qualifiedname>Stdio::addDocuments</qualifiedname>
+        <param>
+          <type><ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Documents</ref> &amp;</type>
+          <declname>documents</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Documents</ref> &amp;&amp;</type>
+          <declname>addedDocuments</declname>
+        </param>
+        <briefdescription>
+<para>Appends documents to a list, moving each of them, so that no document is copied. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>documents</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list that receives the documents. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>addedDocuments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The documents to append. They are moved out. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="61" column="17" bodyfile="Stdio.cpp" bodystart="29" bodyend="40"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="classjam_1_1Array_1a4bfdd699e0fa66a471c234797aac5fe1">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::isEmpty</references>
+        <referencedby refid="_excerpt_8cpp_1a588b070d25e6efc0b4fa3f9dd26a9c05" compoundref="_excerpt_8cpp" startline="281" endline="320">getOutput</referencedby>
+        <referencedby refid="class_find_outcome_1a6eb079008230c4a872141840468d7468" compoundref="_find_outcome_8cpp" startline="33" endline="63">FindOutcome::getSortedDocuments</referencedby>
+        <referencedby refid="class_fields_1a92822f56a6c58834da5b85f0c6ca926c" compoundref="_fields_8cpp" startline="314" endline="348">Fields::runFiles</referencedby>
+        <referencedby refid="class_lines_1afd2f1bd0b2ed2e7413eb4133a1c9a776" compoundref="_lines_8cpp" startline="143" endline="176">Lines::runFiles</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Output</ref></type>
+        <definition>Stdio::Output Stdio::getFailure</definition>
+        <argsstring>(const juce::Result &amp;status)</argsstring>
+        <name>getFailure</name>
+        <qualifiedname>Stdio::getFailure</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref> &amp;</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Builds the output of a command that failed with one status. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The failed status.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Exit code exitError, no documents, and the status as the only failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="69" column="19" bodyfile="Stdio.cpp" bodystart="42" bodyend="47"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="struct_stdio_1a001792421c55d31cc4c4105fcf151c09" compoundref="_stdio_8h" startline="20" endline="20">exitError</references>
+        <references refid="struct_stdio_1a0d704d1d99e172c759f752d6913edfb1" compoundref="_stdio_8cpp" startline="14" endline="17">getOutput</references>
+        <referencedby refid="_fields_8cpp_1aa1a2e5ece245ef7913e97a483583fb1b" compoundref="_fields_8cpp" startline="154" endline="163">getDocumentsOutput</referencedby>
+        <referencedby refid="struct_stdio_1aea6c934247b0473b8184b53dbed3b8e1" compoundref="_stdio_8h" startline="130" endline="133">getFailure</referencedby>
+        <referencedby refid="struct_excerpt_1a3043ff600f0329d81b00cf9f3a08cbc0" compoundref="_excerpt_8cpp" startline="327" endline="348">Excerpt::run</referencedby>
+        <referencedby refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" compoundref="_fields_8cpp" startline="374" endline="403">Fields::run</referencedby>
+        <referencedby refid="struct_find_1a348ebb7eb765dc533fbfcbd6d2bfe2e6" compoundref="_find_8cpp" startline="296" endline="302">Find::run</referencedby>
+        <referencedby refid="class_lines_1a663396cf130926669d431d2b98ea5418" compoundref="_lines_8cpp" startline="366" endline="405">Lines::run</referencedby>
+        <referencedby refid="struct_patch_1a8a248ff325ba668ab5c784d9e48a4c8c" compoundref="_patch_8cpp" startline="346" endline="358">Patch::run</referencedby>
+        <referencedby refid="class_replace_1a8b722fac105d282ba2b5f272eb52e01c" compoundref="_replace_8cpp" startline="359" endline="413">Replace::run</referencedby>
+        <referencedby refid="class_transaction_1ab1e959e59ca6ad3115550892d0d7fa8a" compoundref="_transaction_8cpp" startline="44" endline="60">Transaction::run</referencedby>
+        <referencedby refid="struct_undo_1ad0a9a3ee8d81743fd7ae88f936eff0f6" compoundref="_undo_8cpp" startline="310" endline="319">Undo::run</referencedby>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+        <referencedby refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">Transaction::runCommit</referencedby>
+        <referencedby refid="_patch_8cpp_1a90cf7bf24224586469772abae6c95d98" compoundref="_patch_8cpp" startline="316" endline="326">runFile</referencedby>
+        <referencedby refid="class_fields_1a92822f56a6c58834da5b85f0c6ca926c" compoundref="_fields_8cpp" startline="314" endline="348">Fields::runFiles</referencedby>
+        <referencedby refid="class_lines_1afd2f1bd0b2ed2e7413eb4133a1c9a776" compoundref="_lines_8cpp" startline="143" endline="176">Lines::runFiles</referencedby>
+        <referencedby refid="class_replace_1a06e837582d0faf325f061a6dda278a2d" compoundref="_replace_8cpp" startline="297" endline="349">Replace::runFiles</referencedby>
+        <referencedby refid="_command_line_8cpp_1a3e0aebc0261a00384aa7f8595a05310b" compoundref="_command_line_8cpp" startline="78" endline="87">runGlobalOption</referencedby>
+        <referencedby refid="_patch_8cpp_1a4a61f046ffdf8e6ab3b1252bd28f94a8" compoundref="_patch_8cpp" startline="306" endline="314">runJson</referencedby>
+        <referencedby refid="_undo_8cpp_1a8720a4fcfc984366d268fda7188a905d" compoundref="_undo_8cpp" startline="72" endline="95">runList</referencedby>
+        <referencedby refid="class_lines_1a483aab1f3731243163a1e7a470d1b026" compoundref="_lines_8cpp" startline="315" endline="338">Lines::runMutation</referencedby>
+        <referencedby refid="class_fields_1a34cd865b987cf3e05cef34d3cd81ae8c" compoundref="_fields_8cpp" startline="298" endline="312">Fields::runStandardInput</referencedby>
+        <referencedby refid="class_lines_1a36fe96db47b1f75442e7f3814eb221d3" compoundref="_lines_8cpp" startline="125" endline="141">Lines::runStandardInput</referencedby>
+        <referencedby refid="class_replace_1aac7261f40ff9097449c4ebcde25b7f6f" compoundref="_replace_8cpp" startline="266" endline="295">Replace::runStandardInput</referencedby>
+        <referencedby refid="_patch_8cpp_1aaff59351be09f94c257b3fe8f4dcebeb" compoundref="_patch_8cpp" startline="328" endline="339">runStandardInput</referencedby>
+        <referencedby refid="_find_8cpp_1a52c2a6489204abd8f7c0508cbb0c236a" compoundref="_find_8cpp" startline="148" endline="185">runStdinFind</referencedby>
+        <referencedby refid="_undo_8cpp_1a4e56a80b73bd7335140b412aa7b94863" compoundref="_undo_8cpp" startline="266" endline="303">runTransaction</referencedby>
+        <referencedby refid="_patch_8cpp_1ae0389f55a6ababa8838cb4920cce60a1" compoundref="_patch_8cpp" startline="285" endline="304">runTransaction</referencedby>
+        <referencedby refid="_find_8cpp_1a668feba8bb6d008bd3e4ae89f78e6e86" compoundref="_find_8cpp" startline="241" endline="282">runWithValidatedArguments</referencedby>
+        <referencedby refid="_find_8cpp_1acf15a94402e370871c870d3b4ea6a8e4" compoundref="_find_8cpp" startline="215" endline="239">runWithValidatedOptions</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1ab0bc943ad54bb26eb46bacdb992a2f5b" prot="public" static="yes" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Stdio::isTerminalOutput</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>isTerminalOutput</name>
+        <qualifiedname>Stdio::isTerminalOutput</qualifiedname>
+        <briefdescription>
+<para>Checks whether standard output is connected to an interactive terminal. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>True when stdout is a TTY. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="75" column="17" bodyfile="Stdio.cpp" bodystart="9" bodyend="12"/>
+        <references refid="class_standard_stream_1a37d2b686b788ef551511d1cda117cb9c" compoundref="_standard_stream_8cpp" startline="131" endline="134">StandardStream::isTerminal</references>
+        <references refid="class_standard_stream_1a34dab4f1e141b683d91ab64a75a8ca1f" compoundref="_standard_stream_8h" startline="16" endline="16">StandardStream::output</references>
+        <referencedby refid="_command_line_8cpp_1ad210a429256c0d5519a1283932d6ab5f" compoundref="_command_line_8cpp" startline="33" endline="42">getScreenErase</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1a28994562faa0223a49215d05f819a20a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Stdio::isTerminalInput</definition>
+        <argsstring>(const std::optional&lt; std::string &gt; &amp;input)</argsstring>
+        <name>isTerminalInput</name>
+        <qualifiedname>Stdio::isTerminalInput</qualifiedname>
+        <param>
+          <type>const std::optional&lt; std::string &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+<para>Checks whether the input of a command is an interactive terminal. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Supplied input is never a terminal. Only the process standard input can be one.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The supplied input, or nullopt when the process standard input is read.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True when no input is supplied and standard input is a TTY. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="85" column="17" bodyfile="Stdio.cpp" bodystart="4" bodyend="7"/>
+        <references refid="class_standard_stream_1ac72e04b37de743cc53f98d7801e3a494" compoundref="_standard_stream_8h" startline="13" endline="13">StandardStream::input</references>
+        <references refid="class_standard_stream_1a37d2b686b788ef551511d1cda117cb9c" compoundref="_standard_stream_8cpp" startline="131" endline="134">StandardStream::isTerminal</references>
+        <referencedby refid="_excerpt_8cpp_1a2dc1d82cae55fa07daa9c320257455f0" compoundref="_excerpt_8cpp" startline="254" endline="279">getTargets</referencedby>
+        <referencedby refid="class_replace_1a8b722fac105d282ba2b5f272eb52e01c" compoundref="_replace_8cpp" startline="359" endline="413">Replace::run</referencedby>
+        <referencedby refid="class_fields_1a34cd865b987cf3e05cef34d3cd81ae8c" compoundref="_fields_8cpp" startline="298" endline="312">Fields::runStandardInput</referencedby>
+        <referencedby refid="class_lines_1a36fe96db47b1f75442e7f3814eb221d3" compoundref="_lines_8cpp" startline="125" endline="141">Lines::runStandardInput</referencedby>
+        <referencedby refid="_patch_8cpp_1aaff59351be09f94c257b3fe8f4dcebeb" compoundref="_patch_8cpp" startline="328" endline="339">runStandardInput</referencedby>
+        <referencedby refid="_find_8cpp_1acf15a94402e370871c870d3b4ea6a8e4" compoundref="_find_8cpp" startline="215" endline="239">runWithValidatedOptions</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1a1670d80da3fd6805c667369e0b02f617" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>Pieces</declname>
+            <defname>Pieces</defname>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>static std::string Stdio::getDiagnostic</definition>
+        <argsstring>(const Pieces &amp;... pieces)</argsstring>
+        <name>getDiagnostic</name>
+        <qualifiedname>Stdio::getDiagnostic</qualifiedname>
+        <param>
+          <type>const Pieces &amp;...</type>
+          <declname>pieces</declname>
+        </param>
+        <briefdescription>
+<para>Formats a diagnostic line with the program name as its prefix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Pieces</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The types of the pieces. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pieces</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pieces of the message, without a newline.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The program name, the diagnostic separator, the message, and one newline. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="95" column="24" bodyfile="Stdio.h" bodystart="95" bodyend="103"/>
+        <references refid="struct_stdio_1a104913e9b4dbb1dfdc9e498b217c1b86" compoundref="_stdio_8cpp" startline="49" endline="52">appendPiece</references>
+        <references refid="structjam_1_1Format_1a764df6571428615011c88a96ddc542ca">jam::Format::appendUtf8</references>
+        <references refid="namespaceId_1a5e729b9864fd096462b3f08ef1eb4b1a">Id::diagnosticSeparator</references>
+        <references refid="struct_stdio_1a1670d80da3fd6805c667369e0b02f617" compoundref="_stdio_8h" startline="95" endline="103">getDiagnostic</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="structChars_1a4691bc69052e757e7325970098922899">Chars::newline</references>
+        <referencedby refid="struct_stdio_1a1670d80da3fd6805c667369e0b02f617" compoundref="_stdio_8h" startline="95" endline="103">getDiagnostic</referencedby>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+        <referencedby refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">Transaction::runCommit</referencedby>
+        <referencedby refid="_undo_8cpp_1a18d805b7b51c03251496e676125cdba6" compoundref="_undo_8cpp" startline="225" endline="234">runDryRun</referencedby>
+        <referencedby refid="class_transaction_1a856c5ba1594da36d25ea8717f8a65ab0" compoundref="_transaction_8cpp" startline="140" endline="158">Transaction::runDryRun</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>Pieces</declname>
+            <defname>Pieces</defname>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>static juce::Result Stdio::fail</definition>
+        <argsstring>(const Pieces &amp;... pieces)</argsstring>
+        <name>fail</name>
+        <qualifiedname>Stdio::fail</qualifiedname>
+        <param>
+          <type>const Pieces &amp;...</type>
+          <declname>pieces</declname>
+        </param>
+        <briefdescription>
+<para>Builds a failed result whose message holds the pieces, in order. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The message has no program name and no newline. See getDiagnostic for the diagnostic line.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Pieces</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The types of the pieces. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pieces</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pieces of the message.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A failed <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref> with the message. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="115" column="25" bodyfile="Stdio.h" bodystart="115" bodyend="120"/>
+        <references refid="struct_stdio_1a104913e9b4dbb1dfdc9e498b217c1b86" compoundref="_stdio_8cpp" startline="49" endline="52">appendPiece</references>
+        <references refid="classjuce_1_1Result_1a27205a4dc7a973aebd1976270867be80">juce::Result::fail</references>
+        <referencedby refid="class_arguments_1a86a916f7746417cb727c596d68ff0b0b" compoundref="_arguments_8cpp" startline="280" endline="286">Arguments::addFailure</referencedby>
+        <referencedby refid="class_fields_1a886999ceb34ddbbfc30a48a466eeec11" compoundref="_fields_8cpp" startline="192" endline="223">Fields::appendFormattedLine</referencedby>
+        <referencedby refid="struct_undo_cache_1a1f1a2970b6804fd009fb10e68b7dc104" compoundref="_undo_cache_8cpp" startline="263" endline="287">UndoCache::claimTransaction</referencedby>
+        <referencedby refid="class_pattern_1a260f2a20cfce10496f1ec7c89e0ca4ee" compoundref="_pattern_8cpp" startline="212" endline="246">Pattern::create</referencedby>
+        <referencedby refid="class_pattern_1a2d772218b5d1493ec6c110dc67f500bd" compoundref="_pattern_8cpp" startline="287" endline="297">Pattern::findBacktracked</referencedby>
+        <referencedby refid="class_text_document_1a987c083e3e278a16bc499822f82227f3" compoundref="_text_document_8cpp" startline="35" endline="38">TextDocument::getBinaryFailure</referencedby>
+        <referencedby refid="_patch_validator_8cpp_1a7c65ee1acbb5a61fabc41ac62c4c4358" compoundref="_patch_validator_8cpp" startline="371" endline="399">getBoundsAndHashResult</referencedby>
+        <referencedby refid="class_text_document_1a96201f667cad98f5a7725570f7d39de1" compoundref="_text_document_8cpp" startline="53" endline="67">TextDocument::getBytesStatus</referencedby>
+        <referencedby refid="_replace_8cpp_1a3a9c9c9e9e6c5ed2fa4893707cf62102" compoundref="_replace_8cpp" startline="93" endline="102">getCaptureValidationStatus</referencedby>
+        <referencedby refid="_patch_validator_8cpp_1a963f25dbbf70235f61fda2ab4a031547" compoundref="_patch_validator_8cpp" startline="468" endline="471">getConflictFailure</referencedby>
+        <referencedby refid="_undo_cache_8cpp_1a95af52622af4c1e1a5d58f2e48b2c728" compoundref="_undo_cache_8cpp" startline="203" endline="211">getCorruptResult</referencedby>
+        <referencedby refid="_undo_8cpp_1add7b23e9d220a302b344c0537bd5f678" compoundref="_undo_8cpp" startline="153" endline="171">getCurrentState</referencedby>
+        <referencedby refid="class_lines_1a6ed5ebe10e10593329f6ac4ca2729831" compoundref="_lines_8cpp" startline="260" endline="283">Lines::getEffectiveMutationRange</referencedby>
+        <referencedby refid="_patch_validator_8cpp_1aeeeb6e2ce1a8c6fd9516705dad8b3c0d" compoundref="_patch_validator_8cpp" startline="242" endline="245">getEntryError</referencedby>
+        <referencedby refid="_undo_8cpp_1ac27a59361a0d3ade9678087f85f3cf43" compoundref="_undo_8cpp" startline="138" endline="151">getExistingCurrentDocument</referencedby>
+        <referencedby refid="class_transaction_1a5800eb9b3d14bded600e4b427b0917fd" compoundref="_transaction_8cpp" startline="70" endline="79">Transaction::getExpectMismatch</referencedby>
+        <referencedby refid="class_transaction_1a0b22d5fa86a8cf4b366ef9c8e091992a" compoundref="_transaction_8cpp" startline="62" endline="68">Transaction::getExpectStatus</referencedby>
+        <referencedby refid="struct_stdio_1aea6c934247b0473b8184b53dbed3b8e1" compoundref="_stdio_8h" startline="130" endline="133">getFailure</referencedby>
+        <referencedby refid="_fields_8cpp_1a887d798a9c89ca7f9bbf401df9b1aa7c" compoundref="_fields_8cpp" startline="27" endline="51">getFieldIndices</referencedby>
+        <referencedby refid="class_text_document_1aa884c7c2239bbe4d2691e58bc32d52f3" compoundref="_text_document_8cpp" startline="98" endline="109">TextDocument::getInput</referencedby>
+        <referencedby refid="class_arguments_1a4ea5fa0bd325fac6f266cf992e21afe1" compoundref="_arguments_8cpp" startline="124" endline="140">Arguments::getInteger</referencedby>
+        <referencedby refid="class_text_document_1a2d9d60ddb00a9f9d57178f8b65783966" compoundref="_text_document_8cpp" startline="69" endline="84">TextDocument::getLineHashStatus</referencedby>
+        <referencedby refid="class_arguments_1a23ac72ff046b511034f46422ee50d56b" compoundref="_arguments_8cpp" startline="36" endline="69">Arguments::getLineRange</referencedby>
+        <referencedby refid="_undo_8cpp_1aec31b2cc4f8900a66374a9b9378929f9" compoundref="_undo_8cpp" startline="36" endline="52">getListArgumentStatus</referencedby>
+        <referencedby refid="_lines_8cpp_1ae83c101fceb1b98a287b6afcb7c9bdc0" compoundref="_lines_8cpp" startline="217" endline="232">getMutateModeFlagStatus</referencedby>
+        <referencedby refid="_lines_8cpp_1ab80797cbc76a24431377c7f965e6e237" compoundref="_lines_8cpp" startline="234" endline="258">getMutateValidationStatus</referencedby>
+        <referencedby refid="_fields_8cpp_1a263d6766a4acde093fcdfd783e930bb0" compoundref="_fields_8cpp" startline="11" endline="25">getParsedFieldIndex</referencedby>
+        <referencedby refid="class_text_document_1a190a015fb1df67382b28f6046b64798e" compoundref="_text_document_8cpp" startline="27" endline="33">TextDocument::getReadFailure</referencedby>
+        <referencedby refid="_lines_8cpp_1a62ec325cc076717945392b4abe4c1207" compoundref="_lines_8cpp" startline="27" endline="38">getReadModeFlagStatus</referencedby>
+        <referencedby refid="class_transaction_1a7ad137f0b8635f5805a3e9ed15211127" compoundref="_transaction_8cpp" startline="81" endline="92">Transaction::getRollbackFailure</referencedby>
+        <referencedby refid="_undo_8cpp_1aa6b075ab0a675ebec6566b8258bc169d" compoundref="_undo_8cpp" startline="97" endline="114">getSelectedTransactionId</referencedby>
+        <referencedby refid="_excerpt_8cpp_1a2dc1d82cae55fa07daa9c320257455f0" compoundref="_excerpt_8cpp" startline="254" endline="279">getTargets</referencedby>
+        <referencedby refid="_pattern_8cpp_1a96e942ec0fcfc96c38d54cdf839de838" compoundref="_pattern_8cpp" startline="66" endline="76">getTextsValidity</referencedby>
+        <referencedby refid="struct_undo_cache_1a31cb46a432a0f5fb05a7eefd98687544" compoundref="_undo_cache_8cpp" startline="416" endline="429">UndoCache::getTransactionDocument</referencedby>
+        <referencedby refid="_patch_8cpp_1a314a2131f149eb0296c5b465792bbe05" compoundref="_patch_8cpp" startline="12" endline="28">getValidatedJsonDocument</referencedby>
+        <referencedby refid="_lines_8cpp_1a73c290d1b3fd041578ffcae617d7aa9e" compoundref="_lines_8cpp" startline="40" endline="51">getValidatedLineRange</referencedby>
+        <referencedby refid="_undo_8cpp_1aaa64c02f106afe3353cf8dd483803581" compoundref="_undo_8cpp" startline="116" endline="136">getVerifiedOriginalDocument</referencedby>
+        <referencedby refid="struct_writer_1a4ebe3e06a186f29366e2d37b838a48b3" compoundref="_writer_8cpp" startline="109" endline="116">Writer::getWriteFailure</referencedby>
+        <referencedby refid="struct_writer_1a93a55c6866ec6727d06e10b8d28de8ce" compoundref="_writer_8cpp" startline="118" endline="139">Writer::getWriteStatus</referencedby>
+        <referencedby refid="_patch_validator_8cpp_1ae05ebc83baea870cdb7023ed83c5406d" compoundref="_patch_validator_8cpp" startline="270" endline="293">isValidPatchSchema</referencedby>
+        <referencedby refid="struct_undo_cache_1a5fb670f0e093ed1831561a421a29bd9e" compoundref="_undo_cache_8cpp" startline="255" endline="261">UndoCache::publishTransaction</referencedby>
+        <referencedby refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" compoundref="_staged_file_8cpp" startline="190" endline="224">StagedFile::replace</referencedby>
+        <referencedby refid="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" compoundref="_staged_file_8cpp" startline="107" endline="153">StagedFile::restore</referencedby>
+        <referencedby refid="class_search_1a3b438e868398151582358ee066342910" compoundref="_search_8cpp" startline="136" endline="200">Search::runStream</referencedby>
+        <referencedby refid="_writer_8cpp_1a200d3d2de740e0a706470d7d0dc7b0b6" compoundref="_writer_8cpp" startline="13" endline="30">setBytes</referencedby>
+        <referencedby refid="_writer_8cpp_1aee909f8e1cacff3b7156189a72e57c9b" compoundref="_writer_8cpp" startline="5" endline="11">setMetadata</referencedby>
+        <referencedby refid="struct_writer_1ab755b151fbb007bdc588e602f6add415" compoundref="_writer_8cpp" startline="70" endline="90">Writer::toFile</referencedby>
+        <referencedby refid="struct_writer_1a81de3ecb6a9f1096dc42d51d7979b624" compoundref="_writer_8cpp" startline="92" endline="107">Writer::toStagedFile</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1aea6c934247b0473b8184b53dbed3b8e1" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>Pieces</declname>
+            <defname>Pieces</defname>
+          </param>
+        </templateparamlist>
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Output</ref></type>
+        <definition>static Output Stdio::getFailure</definition>
+        <argsstring>(const Pieces &amp;... pieces)</argsstring>
+        <name>getFailure</name>
+        <qualifiedname>Stdio::getFailure</qualifiedname>
+        <param>
+          <type>const Pieces &amp;...</type>
+          <declname>pieces</declname>
+        </param>
+        <briefdescription>
+<para>Builds the output of a failed command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Pieces</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The types of the pieces of the diagnostic message. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pieces</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pieces of the diagnostic message.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Exit code exitError, empty standard output, and the diagnostic on standard error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="130" column="19" bodyfile="Stdio.h" bodystart="130" bodyend="133"/>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">fail</references>
+        <references refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">getFailure</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1a88c5bfa8d456a117e4296e0624abce90" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result Stdio::getFirstFailure</definition>
+        <argsstring>(const jam::Array&lt; juce::Result &gt; &amp;statuses)</argsstring>
+        <name>getFirstFailure</name>
+        <qualifiedname>Stdio::getFirstFailure</qualifiedname>
+        <param>
+          <type>const <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref> &gt; &amp;</type>
+          <declname>statuses</declname>
+        </param>
+        <briefdescription>
+<para>Returns the first failed status in the order given. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The order of the statuses decides which failure is returned, so the same inputs give the same failure.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>statuses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The statuses, one for each job, in job order.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The first failed status, or ok when every status succeeded. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="143" column="25" bodyfile="Stdio.cpp" bodystart="90" bodyend="99"/>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <referencedby refid="struct_undo_cache_1a7b0c9fd799188881199db848a9d98182" compoundref="_undo_cache_8cpp" startline="320" endline="395">UndoCache::addTransaction</referencedby>
+        <referencedby refid="class_fields_1a92822f56a6c58834da5b85f0c6ca926c" compoundref="_fields_8cpp" startline="314" endline="348">Fields::runFiles</referencedby>
+        <referencedby refid="class_lines_1afd2f1bd0b2ed2e7413eb4133a1c9a776" compoundref="_lines_8cpp" startline="143" endline="176">Lines::runFiles</referencedby>
+        <referencedby refid="class_replace_1a06e837582d0faf325f061a6dda278a2d" compoundref="_replace_8cpp" startline="297" endline="349">Replace::runFiles</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1a2f47d9111aa65ce8942bc5ed68e42474" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int Stdio::write</definition>
+        <argsstring>(const Output &amp;output)</argsstring>
+        <name>write</name>
+        <qualifiedname>Stdio::write</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Output</ref> &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Writes both streams of an <ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Output</ref> and returns the exit code. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A failed write of the standard output gives exitError, and the failure is reported on standard error. A closed pipe is not a failure.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The command result to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The exit code of the command, or exitError when the standard output write fails. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="154" column="16" bodyfile="Stdio.cpp" bodystart="101" bodyend="130"/>
+        <references refid="struct_stdio_1a1b582f58764e36c55ba2ef632d8b92eb" compoundref="_stdio_8h" startline="166" endline="173">applyToPieces</references>
+        <references refid="class_standard_stream_1a76e8c1c1f7a133efd9a3c1d5ea89df0f" compoundref="_standard_stream_8h" startline="19" endline="19">StandardStream::error</references>
+        <references refid="struct_stdio_1a001792421c55d31cc4c4105fcf151c09" compoundref="_stdio_8h" startline="20" endline="20">exitError</references>
+        <references refid="class_standard_stream_1a0bc1af69f45962fd06aa470ab28225e1" compoundref="_standard_stream_8cpp" startline="26" endline="30">StandardStream::flush</references>
+        <references refid="class_standard_stream_1a778bd9b1cb86e42a498e628dcceedca6" compoundref="_standard_stream_8cpp" startline="21" endline="24">StandardStream::getStatus</references>
+        <references refid="class_standard_stream_1a34dab4f1e141b683d91ab64a75a8ca1f" compoundref="_standard_stream_8h" startline="16" endline="16">StandardStream::output</references>
+        <references refid="class_standard_stream_1a731197edcc411280dd8091bc5be62d06" compoundref="_standard_stream_8cpp" startline="44" endline="69">StandardStream::write</references>
+        <referencedby refid="_main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" compoundref="_main_8cpp" startline="45" endline="71">main</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1a1b582f58764e36c55ba2ef632d8b92eb" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Function</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Stdio::applyToPieces</definition>
+        <argsstring>(const juce::Result &amp;failure, const Function &amp;function)</argsstring>
+        <name>applyToPieces</name>
+        <qualifiedname>Stdio::applyToPieces</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref> &amp;</type>
+          <declname>failure</declname>
+        </param>
+        <param>
+          <type>const Function &amp;</type>
+          <declname>function</declname>
+        </param>
+        <briefdescription>
+<para>Passes the pieces of the diagnostic line of a failure to a function, in order, without building the line. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The pieces are the program name, the diagnostic separator, the message, and the line feed. The function writes each piece where it goes, so the line text is never built.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Function</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the callable. It takes a std::string_view. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>failure</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The failure whose message is the diagnostic. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>function</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Receives each piece in order. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="166" column="17" bodyfile="Stdio.h" bodystart="166" bodyend="173"/>
+        <references refid="namespaceId_1a5e729b9864fd096462b3f08ef1eb4b1a">Id::diagnosticSeparator</references>
+        <references refid="classjuce_1_1Result_1a66c89847ccbea729fade011d0daaa858">juce::Result::getErrorMessage</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="struct_stdio_1abb8232d7b694db1188d20d69dd8af4b0" compoundref="_stdio_8h" startline="23" endline="23">newline</references>
+        <referencedby refid="class_tool_server_1a5f2b9b19c86c8ca77a47154adc5e7f50" compoundref="_tool_server_8cpp" startline="79" endline="127">ToolServer::runTool</referencedby>
+        <referencedby refid="struct_stdio_1a2f47d9111aa65ce8942bc5ed68e42474" compoundref="_stdio_8cpp" startline="101" endline="130">write</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="struct_stdio_1a104913e9b4dbb1dfdc9e498b217c1b86" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Stdio::appendPiece</definition>
+        <argsstring>(std::string &amp;message, std::string_view piece)</argsstring>
+        <name>appendPiece</name>
+        <qualifiedname>Stdio::appendPiece</qualifiedname>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>message</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>piece</declname>
+        </param>
+        <briefdescription>
+<para>Appends one piece to a summary line of the standard output, as UTF-8 bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>message</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line that receives the piece. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>piece</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The piece to append. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="181" column="17" bodyfile="Stdio.cpp" bodystart="49" bodyend="52"/>
+        <references refid="structjam_1_1Format_1a03d027c362f8e8e10a4b632c3af60c63">jam::Format::appendBytes</references>
+        <referencedby refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">fail</referencedby>
+        <referencedby refid="struct_stdio_1a1670d80da3fd6805c667369e0b02f617" compoundref="_stdio_8h" startline="95" endline="103">getDiagnostic</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1ac22e203712b224e1eef35c0b599c3881" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Stdio::appendPiece</definition>
+        <argsstring>(std::string &amp;message, int piece)</argsstring>
+        <name>appendPiece</name>
+        <qualifiedname>Stdio::appendPiece</qualifiedname>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>message</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>piece</declname>
+        </param>
+        <briefdescription>
+<para>Appends one integer piece to a summary line, as decimal digits. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>message</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line that receives the piece. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>piece</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The integer to append. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="188" column="17" bodyfile="Stdio.cpp" bodystart="54" bodyend="57"/>
+        <references refid="structjam_1_1Format_1a6588bb82effb3fb3138073257057463f">jam::Format::appendDecimal</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1a5e66a74ff3d5b3c4053be0583fce5965" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Stdio::appendPiece</definition>
+        <argsstring>(std::string &amp;message, juce::juce_wchar piece)</argsstring>
+        <name>appendPiece</name>
+        <qualifiedname>Stdio::appendPiece</qualifiedname>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>message</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacejuce_1a7e33e94788af96bd19c405301b321541" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::juce_wchar</ref></type>
+          <declname>piece</declname>
+        </param>
+        <briefdescription>
+<para>Appends one character piece to a summary line, as UTF-8 bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>message</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line that receives the piece. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>piece</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The character to append. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="195" column="17" bodyfile="Stdio.cpp" bodystart="59" bodyend="62"/>
+        <references refid="structjam_1_1Format_1a764df6571428615011c88a96ddc542ca">jam::Format::appendUtf8</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1af57def0c00a6b3cac3e57e047700a9a3" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Stdio::appendPiece</definition>
+        <argsstring>(std::string &amp;message, const juce::Result &amp;piece)</argsstring>
+        <name>appendPiece</name>
+        <qualifiedname>Stdio::appendPiece</qualifiedname>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>message</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref> &amp;</type>
+          <declname>piece</declname>
+        </param>
+        <briefdescription>
+<para>Appends the message of a result to a summary line, as UTF-8 bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>message</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line that receives the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>piece</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The result whose error message is appended. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="202" column="17" bodyfile="Stdio.cpp" bodystart="64" bodyend="67"/>
+        <references refid="structjam_1_1Format_1a03d027c362f8e8e10a4b632c3af60c63">jam::Format::appendBytes</references>
+        <references refid="classjuce_1_1Result_1a66c89847ccbea729fade011d0daaa858">juce::Result::getErrorMessage</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1a9c6f944d2eaa252cd5dd1cc8ca1fe6e7" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Stdio::appendPiece</definition>
+        <argsstring>(juce::String &amp;message, std::string_view piece)</argsstring>
+        <name>appendPiece</name>
+        <qualifiedname>Stdio::appendPiece</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1String" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::String</ref> &amp;</type>
+          <declname>message</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>piece</declname>
+        </param>
+        <briefdescription>
+<para>Appends one piece to the message of a <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>message</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The message that receives the piece. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>piece</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The piece to append. An empty piece appends nothing. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="209" column="17" bodyfile="Stdio.cpp" bodystart="69" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1a8b12109ee47227aed6846d5bb27bdf54" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Stdio::appendPiece</definition>
+        <argsstring>(juce::String &amp;message, int piece)</argsstring>
+        <name>appendPiece</name>
+        <qualifiedname>Stdio::appendPiece</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1String" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::String</ref> &amp;</type>
+          <declname>message</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>piece</declname>
+        </param>
+        <briefdescription>
+<para>Appends one integer piece to the message of a <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, as decimal digits. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>message</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The message that receives the piece. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>piece</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The integer to append. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="216" column="17" bodyfile="Stdio.cpp" bodystart="75" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1a8194aa7dfc5a3b4e3f88f20366d07b78" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Stdio::appendPiece</definition>
+        <argsstring>(juce::String &amp;message, juce::juce_wchar piece)</argsstring>
+        <name>appendPiece</name>
+        <qualifiedname>Stdio::appendPiece</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1String" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::String</ref> &amp;</type>
+          <declname>message</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacejuce_1a7e33e94788af96bd19c405301b321541" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::juce_wchar</ref></type>
+          <declname>piece</declname>
+        </param>
+        <briefdescription>
+<para>Appends one character piece to the message of a <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>message</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The message that receives the piece. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>piece</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The character to append. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="223" column="17" bodyfile="Stdio.cpp" bodystart="80" bodyend="83"/>
+        <references refid="classjuce_1_1String_1a128e862810bc5e3f16cb70c3c9751867">juce::String::charToString</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_stdio_1a69e32d20e169dfbd030148d1a1477b05" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Stdio::appendPiece</definition>
+        <argsstring>(juce::String &amp;message, const juce::Result &amp;piece)</argsstring>
+        <name>appendPiece</name>
+        <qualifiedname>Stdio::appendPiece</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1String" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::String</ref> &amp;</type>
+          <declname>message</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref> &amp;</type>
+          <declname>piece</declname>
+        </param>
+        <briefdescription>
+<para>Appends the message of a result to the message of another result. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>message</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The message that receives the piece. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>piece</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The result whose error message is appended. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Stdio.h" line="230" column="17" bodyfile="Stdio.cpp" bodystart="85" bodyend="88"/>
+        <references refid="classjuce_1_1Result_1a66c89847ccbea729fade011d0daaa858">juce::Result::getErrorMessage</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Process exit codes, and the output of a command as documents and failures. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>A verb returns an <ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Output</ref>, so that no verb writes to a process stream. write sends the <ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Output</ref> to the process streams, once, at the end of the command. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Stdio</label>
+        <link refid="struct_stdio"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>newline</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::basic_string_view&lt; Char &gt;</label>
+      </node>
+      <node id="2">
+        <label>std::string_view</label>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Stdio.h" line="11" column="1" bodyfile="Stdio.h" bodystart="12" bodyend="231"/>
+    <listofallmembers>
+      <member refid="struct_stdio_1aff9b0dc5051d3827bbc4a15547947870" prot="public" virt="non-virtual"><scope>Stdio</scope><name>addDocuments</name></member>
+      <member refid="struct_stdio_1a104913e9b4dbb1dfdc9e498b217c1b86" prot="private" virt="non-virtual"><scope>Stdio</scope><name>appendPiece</name></member>
+      <member refid="struct_stdio_1ac22e203712b224e1eef35c0b599c3881" prot="private" virt="non-virtual"><scope>Stdio</scope><name>appendPiece</name></member>
+      <member refid="struct_stdio_1a5e66a74ff3d5b3c4053be0583fce5965" prot="private" virt="non-virtual"><scope>Stdio</scope><name>appendPiece</name></member>
+      <member refid="struct_stdio_1af57def0c00a6b3cac3e57e047700a9a3" prot="private" virt="non-virtual"><scope>Stdio</scope><name>appendPiece</name></member>
+      <member refid="struct_stdio_1a9c6f944d2eaa252cd5dd1cc8ca1fe6e7" prot="private" virt="non-virtual"><scope>Stdio</scope><name>appendPiece</name></member>
+      <member refid="struct_stdio_1a8b12109ee47227aed6846d5bb27bdf54" prot="private" virt="non-virtual"><scope>Stdio</scope><name>appendPiece</name></member>
+      <member refid="struct_stdio_1a8194aa7dfc5a3b4e3f88f20366d07b78" prot="private" virt="non-virtual"><scope>Stdio</scope><name>appendPiece</name></member>
+      <member refid="struct_stdio_1a69e32d20e169dfbd030148d1a1477b05" prot="private" virt="non-virtual"><scope>Stdio</scope><name>appendPiece</name></member>
+      <member refid="struct_stdio_1a1b582f58764e36c55ba2ef632d8b92eb" prot="public" virt="non-virtual"><scope>Stdio</scope><name>applyToPieces</name></member>
+      <member refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" prot="public" virt="non-virtual"><scope>Stdio</scope><name>Documents</name></member>
+      <member refid="struct_stdio_1a001792421c55d31cc4c4105fcf151c09" prot="public" virt="non-virtual"><scope>Stdio</scope><name>exitError</name></member>
+      <member refid="struct_stdio_1abac5137237b98fa233c4681c7e336d81" prot="public" virt="non-virtual"><scope>Stdio</scope><name>exitMismatch</name></member>
+      <member refid="struct_stdio_1a1a7d222553744f4567c34e97e43e6b87" prot="public" virt="non-virtual"><scope>Stdio</scope><name>exitSuccess</name></member>
+      <member refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" prot="public" virt="non-virtual"><scope>Stdio</scope><name>fail</name></member>
+      <member refid="struct_stdio_1a1670d80da3fd6805c667369e0b02f617" prot="public" virt="non-virtual"><scope>Stdio</scope><name>getDiagnostic</name></member>
+      <member refid="struct_stdio_1a152adfef4e630acdfddc13f5f596c7d7" prot="public" virt="non-virtual"><scope>Stdio</scope><name>getDocuments</name></member>
+      <member refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" prot="public" virt="non-virtual"><scope>Stdio</scope><name>getFailure</name></member>
+      <member refid="struct_stdio_1aea6c934247b0473b8184b53dbed3b8e1" prot="public" virt="non-virtual"><scope>Stdio</scope><name>getFailure</name></member>
+      <member refid="struct_stdio_1a88c5bfa8d456a117e4296e0624abce90" prot="public" virt="non-virtual"><scope>Stdio</scope><name>getFirstFailure</name></member>
+      <member refid="struct_stdio_1a0d704d1d99e172c759f752d6913edfb1" prot="public" virt="non-virtual"><scope>Stdio</scope><name>getOutput</name></member>
+      <member refid="struct_stdio_1a28994562faa0223a49215d05f819a20a" prot="public" virt="non-virtual"><scope>Stdio</scope><name>isTerminalInput</name></member>
+      <member refid="struct_stdio_1ab0bc943ad54bb26eb46bacdb992a2f5b" prot="public" virt="non-virtual"><scope>Stdio</scope><name>isTerminalOutput</name></member>
+      <member refid="struct_stdio_1abb8232d7b694db1188d20d69dd8af4b0" prot="public" virt="non-virtual"><scope>Stdio</scope><name>newline</name></member>
+      <member refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" prot="public" virt="non-virtual"><scope>Stdio</scope><name>Output</name></member>
+      <member refid="struct_stdio_1a2f47d9111aa65ce8942bc5ed68e42474" prot="public" virt="non-virtual"><scope>Stdio</scope><name>write</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

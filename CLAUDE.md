@@ -22,7 +22,7 @@ Every mutating command previews its changes by default. A write needs `--apply -
 - `cast/`, `project-info.md`: the vocabulary, texts, and build tables that cast reads.
 - `test/`: the runner `run.lua`, the case table `cases.md`, fixtures, and baselines.
 - `benchmark/`: the scout manifests, scripts, and reports.
-- `carol/`: the CAROL contract files and the sprint log.
+- `carol/`: the sprint log and the CAROL configuration.
 - `.claude/`: agents, commands, and settings for Claude Code.
 
 ## Key documents
@@ -34,4 +34,4 @@ Every mutating command previews its changes by default. A write needs `--apply -
 | `AGENTS.md` | CAROL project instructions. |
 | `carol/SPRINT-LOG.md` | Sprint log. |
 | `carol/config.yml` | CAROL configuration. |
-| `carol/CODING.md`, `carol/MANIFESTO.md`, `carol/NAMES.md` | Contract for C++ code. |
+| `~/.carol/CODING.md`, `~/.carol/MANIFESTO.md`, `~/.carol/NAMES.md` | Contract for C++ code. |

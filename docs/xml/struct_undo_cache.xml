@@ -1,0 +1,413 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="struct_undo_cache" kind="struct" language="C++" prot="public">
+    <compoundname>UndoCache</compoundname>
+    <includes refid="_undo_cache_8h" local="no">UndoCache.h</includes>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="struct_undo_cache_1a88df3e787d0cf1d5e7e6be37fdfeb7bc" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref></type>
+        <definition>juce::File UndoCache::getBlobDirectory</definition>
+        <argsstring>()</argsstring>
+        <name>getBlobDirectory</name>
+        <qualifiedname>UndoCache::getBlobDirectory</qualifiedname>
+        <briefdescription>
+<para>Returns the folder that holds the blob files. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Blob folder inside the user application data folder. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="UndoCache.h" line="19" column="23" bodyfile="UndoCache.cpp" bodystart="233" bodyend="236"/>
+        <references refid="_undo_cache_8cpp_1ae60f1a897448f7cce943c3f23a130379" compoundref="_undo_cache_8cpp" startline="213" endline="216">getApplicationDirectory</references>
+        <references refid="classjuce_1_1File_1a57b992aacb19e09ee5905cd0f0e9bb31">juce::File::getChildFile</references>
+        <referencedby refid="struct_undo_cache_1a7b0c9fd799188881199db848a9d98182" compoundref="_undo_cache_8cpp" startline="320" endline="395">addTransaction</referencedby>
+        <referencedby refid="struct_undo_cache_1a9406f020dc3e3e1d856f3358966bea8c" compoundref="_undo_cache_8cpp" startline="248" endline="253">getBlobFile</referencedby>
+        <referencedby refid="class_transaction_1a7ad137f0b8635f5805a3e9ed15211127" compoundref="_transaction_8cpp" startline="81" endline="92">Transaction::getRollbackFailure</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_undo_cache_1a9406f020dc3e3e1d856f3358966bea8c" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref></type>
+        <definition>juce::File UndoCache::getBlobFile</definition>
+        <argsstring>(std::string_view transactionId, int index)</argsstring>
+        <name>getBlobFile</name>
+        <qualifiedname>UndoCache::getBlobFile</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>transactionId</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Returns the path of the blob file of one original file of a transaction. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transactionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Identifier of the transaction. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero-based index of the file in the transaction.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Path of the blob file. The file may not exist. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="UndoCache.h" line="28" column="23" bodyfile="UndoCache.cpp" bodystart="248" bodyend="253"/>
+        <references refid="classjuce_1_1String_1a128e862810bc5e3f16cb70c3c9751867">juce::String::charToString</references>
+        <references refid="structChars_1a9c990428f7d53d094d0d9818ec666698">Chars::dash</references>
+        <references refid="classjam_1_1Strings_1aca02ec79e3d857bca6f9647dce6415fc">jam::Strings::fromView</references>
+        <references refid="struct_undo_cache_1a88df3e787d0cf1d5e7e6be37fdfeb7bc" compoundref="_undo_cache_8cpp" startline="233" endline="236">getBlobDirectory</references>
+        <references refid="classjuce_1_1File_1a57b992aacb19e09ee5905cd0f0e9bb31">juce::File::getChildFile</references>
+        <referencedby refid="struct_undo_cache_1a7b0c9fd799188881199db848a9d98182" compoundref="_undo_cache_8cpp" startline="320" endline="395">addTransaction</referencedby>
+        <referencedby refid="class_staged_file_1a8840cb0b0fc3e37729ae39270f2effd9" compoundref="_staged_file_8cpp" startline="72" endline="88">StagedFile::commit</referencedby>
+        <referencedby refid="_undo_8cpp_1aaaf63f385e4d48474c25821a8f5bb8bc" compoundref="_undo_8cpp" startline="173" endline="201">getVerifiedEntry</referencedby>
+        <referencedby refid="_undo_cache_8cpp_1ab7e9c555c80a91851e47e7b0e1ebbf2c" compoundref="_undo_cache_8cpp" startline="162" endline="179">isValidFilesArray</referencedby>
+        <referencedby refid="_undo_cache_8cpp_1a31ac1149703c8efc73e6a309ef21d5d7" compoundref="_undo_cache_8cpp" startline="431" endline="437">removeBlobs</referencedby>
+        <referencedby refid="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" compoundref="_staged_file_8cpp" startline="107" endline="153">StagedFile::restore</referencedby>
+        <referencedby refid="class_staged_file_1aea7f45176b058229d77e02f039ce555a" compoundref="_staged_file_8cpp" startline="90" endline="105">StagedFile::undo</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_undo_cache_1a5fb670f0e093ed1831561a421a29bd9e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result UndoCache::publishTransaction</definition>
+        <argsstring>(std::string_view transactionId)</argsstring>
+        <name>publishTransaction</name>
+        <qualifiedname>UndoCache::publishTransaction</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>transactionId</declname>
+        </param>
+        <briefdescription>
+<para>Publishes a pending record into the undo folder with one rename. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transactionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Identifier of the transaction whose record is pending.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Ok when the rename succeeds. Otherwise the failure that names the transaction id and reports that its record is pending. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="UndoCache.h" line="37" column="25" bodyfile="UndoCache.cpp" bodystart="255" bodyend="261"/>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1a9b544a52e82a8ea882f1e834d6f19473" compoundref="_text_8h" startline="101" endline="101">text::Diagnostics::failUndoPending</references>
+        <references refid="_undo_cache_8cpp_1a2c3d0b8ce83582b9df52578fbca8a79c" compoundref="_undo_cache_8cpp" startline="218" endline="221">getDirectory</references>
+        <references refid="_undo_cache_8cpp_1ac53e16427b64d55c2956edbd0ada4a93" compoundref="_undo_cache_8cpp" startline="228" endline="231">getPendingFile</references>
+        <references refid="_undo_cache_8cpp_1a1e3be1688d033673ad130d01557bad86" compoundref="_undo_cache_8cpp" startline="12" endline="15">getRecordName</references>
+        <references refid="structjam_1_1File_1a8417b42a7426d43b899080e1f73ab3ec">jam::File::moveFileTo</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="structtext_1_1_diagnostics_1ac6afb226d5b938277c4728993432dda4" compoundref="_text_8h" startline="102" endline="102">text::Diagnostics::undoPending</references>
+        <referencedby refid="class_transaction_1a9e9e14d173c40fc4767c6ad93ca14157" compoundref="_transaction_8cpp" startline="191" endline="217">Transaction::commit</referencedby>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+        <referencedby refid="_undo_8cpp_1a4e56a80b73bd7335140b412aa7b94863" compoundref="_undo_8cpp" startline="266" endline="303">runTransaction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_undo_cache_1a1f1a2970b6804fd009fb10e68b7dc104" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, bool &gt;</type>
+        <definition>std::pair&lt; juce::Result, bool &gt; UndoCache::claimTransaction</definition>
+        <argsstring>(std::string_view transactionId, bool isForce)</argsstring>
+        <name>claimTransaction</name>
+        <qualifiedname>UndoCache::claimTransaction</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>transactionId</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isForce</declname>
+        </param>
+        <briefdescription>
+<para>Claims a transaction for <computeroutput>undo</computeroutput>, by moving its record out of the undo folder. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The claim creates the pending record, then moves the undo record onto it. When a pending record already exists, the claim fails, unless isForce is set. A forced claim takes a pending record that a stopped process left behind.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transactionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Identifier of the transaction to claim. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isForce</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to take a pending record that already exists.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result paired with true when the record came out of the undo folder, and false when the record was not moved. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="UndoCache.h" line="51" column="22" bodyfile="UndoCache.cpp" bodystart="263" bodyend="287"/>
+        <references refid="structjam_1_1File_1aa12cd14476f6ec4640d9c5578cdcd84e">jam::File::createDirectory</references>
+        <references refid="structjam_1_1File_1a5c16d329fd4363e1b353b2498e6ee40d">jam::File::createNewFile</references>
+        <references refid="structjam_1_1File_1a0e1b3ba134fa6d78ac6c13bc23901bbe">jam::File::deleteFile</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1a28194be32561ce1e2e6a21514825e1c6" compoundref="_text_8h" startline="70" endline="70">text::Diagnostics::failOverwriteFailed</references>
+        <references refid="structtext_1_1_diagnostics_1a9b544a52e82a8ea882f1e834d6f19473" compoundref="_text_8h" startline="101" endline="101">text::Diagnostics::failUndoPending</references>
+        <references refid="structtext_1_1_diagnostics_1a0c7cbf43a306c796daf78e4c8e25f3ed" compoundref="_text_8h" startline="100" endline="100">text::Diagnostics::failUndoUnknown</references>
+        <references refid="_undo_cache_8cpp_1a2c3d0b8ce83582b9df52578fbca8a79c" compoundref="_undo_cache_8cpp" startline="218" endline="221">getDirectory</references>
+        <references refid="_undo_cache_8cpp_1ad8a9d0331c97629f0f94f54791b1fe9b" compoundref="_undo_cache_8cpp" startline="223" endline="226">getPendingDirectory</references>
+        <references refid="_undo_cache_8cpp_1ac53e16427b64d55c2956edbd0ada4a93" compoundref="_undo_cache_8cpp" startline="228" endline="231">getPendingFile</references>
+        <references refid="_undo_cache_8cpp_1a1e3be1688d033673ad130d01557bad86" compoundref="_undo_cache_8cpp" startline="12" endline="15">getRecordName</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="struct_writer_1a4ebe3e06a186f29366e2d37b838a48b3" compoundref="_writer_8cpp" startline="109" endline="116">Writer::getWriteFailure</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <references refid="structjam_1_1File_1a8417b42a7426d43b899080e1f73ab3ec">jam::File::moveFileTo</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="structtext_1_1_diagnostics_1ac6afb226d5b938277c4728993432dda4" compoundref="_text_8h" startline="102" endline="102">text::Diagnostics::undoPending</references>
+        <referencedby refid="_undo_8cpp_1a4e56a80b73bd7335140b412aa7b94863" compoundref="_undo_8cpp" startline="266" endline="303">runTransaction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_undo_cache_1a7b0c9fd799188881199db848a9d98182" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, std::string &gt;</type>
+        <definition>std::pair&lt; juce::Result, std::string &gt; UndoCache::addTransaction</definition>
+        <argsstring>(std::string_view commandName, const jam::Array&lt; StagedFile &gt; &amp;stagedFiles)</argsstring>
+        <name>addTransaction</name>
+        <qualifiedname>UndoCache::addTransaction</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>commandName</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="class_staged_file" kindref="compound">StagedFile</ref> &gt; &amp;</type>
+          <declname>stagedFiles</declname>
+        </param>
+        <briefdescription>
+<para>Stages the blob files and the record of a transaction, in parallel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A blob holds the planned bytes when the target and the blob folder can be swapped, so that the commit is one exchange of two files. Otherwise a blob holds the original bytes. Any failed write removes the transaction again.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>commandName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Subcommand name stored in the record. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>stagedFiles</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The staged files of the transaction. Each one gives its blob file and its record entry.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result paired with the generated transaction id on success. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="UndoCache.h" line="64" column="22" bodyfile="UndoCache.cpp" bodystart="320" bodyend="395"/>
+        <references refid="_undo_cache_8cpp_1a86a8a5f1175771f772d06fead966c695" compoundref="_undo_cache_8cpp" startline="289" endline="318">addPendingFile</references>
+        <references refid="structjam_1_1JsonWriter_1a51d9dcb8a172acbdce89afcf7b754235">jam::JsonWriter::appendArray</references>
+        <references refid="_undo_cache_8cpp_1aa7bddc603d47c12df6c1b09637f80e6f" compoundref="_undo_cache_8cpp" startline="82" endline="100">appendFileEntries</references>
+        <references refid="structjam_1_1JsonWriter_1a3dd6115b3b48e6a722a2c5bcae0cd70e">jam::JsonWriter::appendKey</references>
+        <references refid="structjam_1_1JsonWriter_1af7e36be58d2d47daf877904d7c6d77e1">jam::JsonWriter::appendObject</references>
+        <references refid="_undo_cache_8cpp_1a018b6c9b900bc44f313e6bfb14cbfe7b" compoundref="_undo_cache_8cpp" startline="73" endline="80">appendStringMember</references>
+        <references refid="structjam_1_1Format_1a764df6571428615011c88a96ddc542ca">jam::Format::appendUtf8</references>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="structjam_1_1File_1aa12cd14476f6ec4640d9c5578cdcd84e">jam::File::createDirectory</references>
+        <references refid="structChars_1a9c990428f7d53d094d0d9818ec666698">Chars::dash</references>
+        <references refid="structjam_1_1File_1a0e1b3ba134fa6d78ac6c13bc23901bbe">jam::File::deleteFile</references>
+        <references refid="structtext_1_1_diagnostics_1a28194be32561ce1e2e6a21514825e1c6" compoundref="_text_8h" startline="70" endline="70">text::Diagnostics::failOverwriteFailed</references>
+        <references refid="_undo_cache_8cpp_1ae60f1a897448f7cce943c3f23a130379" compoundref="_undo_cache_8cpp" startline="213" endline="216">getApplicationDirectory</references>
+        <references refid="struct_undo_cache_1a88df3e787d0cf1d5e7e6be37fdfeb7bc" compoundref="_undo_cache_8cpp" startline="233" endline="236">getBlobDirectory</references>
+        <references refid="struct_undo_cache_1a9406f020dc3e3e1d856f3358966bea8c" compoundref="_undo_cache_8cpp" startline="248" endline="253">getBlobFile</references>
+        <references refid="_undo_cache_8cpp_1a7fac43f8091ce7de6ef4c16e311bd753" compoundref="_undo_cache_8cpp" startline="39" endline="71">getContentHashes</references>
+        <references refid="_undo_cache_8cpp_1a2c3d0b8ce83582b9df52578fbca8a79c" compoundref="_undo_cache_8cpp" startline="218" endline="221">getDirectory</references>
+        <references refid="struct_stdio_1a88c5bfa8d456a117e4296e0624abce90" compoundref="_stdio_8cpp" startline="90" endline="99">Stdio::getFirstFailure</references>
+        <references refid="_undo_cache_8cpp_1ad8a9d0331c97629f0f94f54791b1fe9b" compoundref="_undo_cache_8cpp" startline="223" endline="226">getPendingDirectory</references>
+        <references refid="_undo_cache_8cpp_1ac53e16427b64d55c2956edbd0ada4a93" compoundref="_undo_cache_8cpp" startline="228" endline="231">getPendingFile</references>
+        <references refid="_undo_cache_8cpp_1aaf54ad63c53066dfab1b4b153b60d774" compoundref="_undo_cache_8cpp" startline="112" endline="128">getUtcText</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="struct_writer_1a4ebe3e06a186f29366e2d37b838a48b3" compoundref="_writer_8cpp" startline="109" endline="116">Writer::getWriteFailure</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <references refid="classjam_1_1Array_1a5d5dee6bc301945729b43f4c140477ff">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::insertMultiple</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="struct_undo_cache_1abeba6cd17a782cab536ab514aff421a7" compoundref="_undo_cache_8cpp" startline="439" endline="444">removeTransaction</references>
+        <references refid="struct_jobs_1a639a3b9ddb2cedfa89f534cfcc3646d1" compoundref="_jobs_8h" startline="26" endline="89">Jobs::run</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <references refid="struct_writer_1a83eaf99ea4087382f7a0c141ba37a025" compoundref="_writer_8cpp" startline="42" endline="62">Writer::toNewFile</references>
+        <references refid="structChars_1abcd3fcb0a8de59a78ab073aa5031dc46">Chars::upperZ</references>
+        <references refid="_undo_cache_8cpp_1a3c2d735259e1208ed9a9cca7b357572e" compoundref="_undo_cache_8cpp" startline="31" endline="37">writeBlob</references>
+        <referencedby refid="class_transaction_1a9e9e14d173c40fc4767c6ad93ca14157" compoundref="_transaction_8cpp" startline="191" endline="217">Transaction::commit</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_undo_cache_1ac5fcde1cb0418b772348c8ae62b55a4e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjam_1_1Strings" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings</ref></type>
+        <definition>jam::Strings UndoCache::getTransactionIds</definition>
+        <argsstring>()</argsstring>
+        <name>getTransactionIds</name>
+        <qualifiedname>UndoCache::getTransactionIds</qualifiedname>
+        <briefdescription>
+<para>Lists the transaction ids in ascending order. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A pending id is listed only when its record is valid.</para>
+<para><simplesect kind="return"><para>The ids, in ascending order. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="UndoCache.h" line="73" column="25" bodyfile="UndoCache.cpp" bodystart="397" bodyend="414"/>
+        <references refid="_undo_cache_8cpp_1a2c3d0b8ce83582b9df52578fbca8a79c" compoundref="_undo_cache_8cpp" startline="218" endline="221">getDirectory</references>
+        <references refid="_undo_cache_8cpp_1ad8a9d0331c97629f0f94f54791b1fe9b" compoundref="_undo_cache_8cpp" startline="223" endline="226">getPendingDirectory</references>
+        <references refid="_undo_cache_8cpp_1aa12fefcd3b2e22872dc22e5917c5f667" compoundref="_undo_cache_8cpp" startline="17" endline="29">getSortedIds</references>
+        <references refid="struct_undo_cache_1a31cb46a432a0f5fb05a7eefd98687544" compoundref="_undo_cache_8cpp" startline="416" endline="429">getTransactionDocument</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <referencedby refid="_undo_8cpp_1a8720a4fcfc984366d268fda7188a905d" compoundref="_undo_8cpp" startline="72" endline="95">runList</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_undo_cache_1a31cb46a432a0f5fb05a7eefd98687544" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, std::unique_ptr&lt; <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &gt; &gt;</type>
+        <definition>std::pair&lt; juce::Result, std::unique_ptr&lt; jam::JsonDocument &gt; &gt; UndoCache::getTransactionDocument</definition>
+        <argsstring>(std::string_view transactionId)</argsstring>
+        <name>getTransactionDocument</name>
+        <qualifiedname>UndoCache::getTransactionDocument</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>transactionId</declname>
+        </param>
+        <briefdescription>
+<para>Loads and validates the record of a transaction, and checks that its blob files exist. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transactionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Identifier of the transaction.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result paired with the parsed record, or failure with null. A record that does not exist is reported as unknown. A record that does not validate is reported as corrupt. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="UndoCache.h" line="82" column="22" bodyfile="UndoCache.cpp" bodystart="416" bodyend="429"/>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1a0c7cbf43a306c796daf78e4c8e25f3ed" compoundref="_text_8h" startline="100" endline="100">text::Diagnostics::failUndoUnknown</references>
+        <references refid="_undo_cache_8cpp_1a95af52622af4c1e1a5d58f2e48b2c728" compoundref="_undo_cache_8cpp" startline="203" endline="211">getCorruptResult</references>
+        <references refid="_undo_cache_8cpp_1aef79f6c97dc1ad88a6f8d6d20e01af03" compoundref="_undo_cache_8cpp" startline="238" endline="246">getRecordFile</references>
+        <references refid="_undo_cache_8cpp_1a845433eafc5c03bf4fb8739e18fb4916" compoundref="_undo_cache_8cpp" startline="181" endline="201">isValidTransactionDocument</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="structjam_1_1Document_1a367d65133f164cf9421ff0c3ddf2bbf6">jam::Document::parse</references>
+        <referencedby refid="struct_undo_cache_1ac5fcde1cb0418b772348c8ae62b55a4e" compoundref="_undo_cache_8cpp" startline="397" endline="414">getTransactionIds</referencedby>
+        <referencedby refid="_undo_8cpp_1a8720a4fcfc984366d268fda7188a905d" compoundref="_undo_8cpp" startline="72" endline="95">runList</referencedby>
+        <referencedby refid="_undo_8cpp_1a4e56a80b73bd7335140b412aa7b94863" compoundref="_undo_8cpp" startline="266" endline="303">runTransaction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_undo_cache_1abeba6cd17a782cab536ab514aff421a7" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UndoCache::removeTransaction</definition>
+        <argsstring>(std::string_view transactionId)</argsstring>
+        <name>removeTransaction</name>
+        <qualifiedname>UndoCache::removeTransaction</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>transactionId</declname>
+        </param>
+        <briefdescription>
+<para>Removes a transaction: its pending record, its undo record, and its blob files. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transactionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Identifier of the transaction to remove. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="UndoCache.h" line="88" column="17" bodyfile="UndoCache.cpp" bodystart="439" bodyend="444"/>
+        <references refid="structjam_1_1File_1a0e1b3ba134fa6d78ac6c13bc23901bbe">jam::File::deleteFile</references>
+        <references refid="_undo_cache_8cpp_1a2c3d0b8ce83582b9df52578fbca8a79c" compoundref="_undo_cache_8cpp" startline="218" endline="221">getDirectory</references>
+        <references refid="_undo_cache_8cpp_1ac53e16427b64d55c2956edbd0ada4a93" compoundref="_undo_cache_8cpp" startline="228" endline="231">getPendingFile</references>
+        <references refid="_undo_cache_8cpp_1a1e3be1688d033673ad130d01557bad86" compoundref="_undo_cache_8cpp" startline="12" endline="15">getRecordName</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <references refid="_undo_cache_8cpp_1a31ac1149703c8efc73e6a309ef21d5d7" compoundref="_undo_cache_8cpp" startline="431" endline="437">removeBlobs</references>
+        <referencedby refid="struct_undo_cache_1a7b0c9fd799188881199db848a9d98182" compoundref="_undo_cache_8cpp" startline="320" endline="395">addTransaction</referencedby>
+        <referencedby refid="class_transaction_1a9e9e14d173c40fc4767c6ad93ca14157" compoundref="_transaction_8cpp" startline="191" endline="217">Transaction::commit</referencedby>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_undo_cache_1ad16fae57f09b3cdb014ff100337940a6" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void UndoCache::removeOldestTransactions</definition>
+        <argsstring>()</argsstring>
+        <name>removeOldestTransactions</name>
+        <qualifiedname>UndoCache::removeOldestTransactions</qualifiedname>
+        <briefdescription>
+<para>Removes the oldest transactions, and keeps the newest 32. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A blob file is deleted only when the record of its transaction was deleted. A concurrent <computeroutput>undo</computeroutput> that claimed the record then keeps its blob files. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="UndoCache.h" line="95" column="17" bodyfile="UndoCache.cpp" bodystart="446" bodyend="460"/>
+        <references refid="structjam_1_1File_1a0e1b3ba134fa6d78ac6c13bc23901bbe">jam::File::deleteFile</references>
+        <references refid="_undo_cache_8cpp_1a2c3d0b8ce83582b9df52578fbca8a79c" compoundref="_undo_cache_8cpp" startline="218" endline="221">getDirectory</references>
+        <references refid="_undo_cache_8cpp_1a1e3be1688d033673ad130d01557bad86" compoundref="_undo_cache_8cpp" startline="12" endline="15">getRecordName</references>
+        <references refid="_undo_cache_8cpp_1aa12fefcd3b2e22872dc22e5917c5f667" compoundref="_undo_cache_8cpp" startline="17" endline="29">getSortedIds</references>
+        <references refid="_undo_cache_8cpp_1a31ac1149703c8efc73e6a309ef21d5d7" compoundref="_undo_cache_8cpp" startline="431" endline="437">removeBlobs</references>
+        <referencedby refid="class_transaction_1a9e9e14d173c40fc4767c6ad93ca14157" compoundref="_transaction_8cpp" startline="191" endline="217">Transaction::commit</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Stores the pre-edit snapshots of transactions on disk, so that <computeroutput>saw undo</computeroutput> can restore them. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Each transaction has one record file and one blob file per original file. The record file holds the JSON of the transaction. A blob file holds the bytes of one original file.</para>
+<para>A record is staged in the pending folder, published with one rename into the undo folder, and claimed by <computeroutput>undo</computeroutput> with the reverse rename. No lock exists. </para>
+    </detaileddescription>
+    <location file="UndoCache.h" line="13" column="1" bodyfile="UndoCache.h" bodystart="14" bodyend="96"/>
+    <listofallmembers>
+      <member refid="struct_undo_cache_1a7b0c9fd799188881199db848a9d98182" prot="public" virt="non-virtual"><scope>UndoCache</scope><name>addTransaction</name></member>
+      <member refid="struct_undo_cache_1a1f1a2970b6804fd009fb10e68b7dc104" prot="public" virt="non-virtual"><scope>UndoCache</scope><name>claimTransaction</name></member>
+      <member refid="struct_undo_cache_1a88df3e787d0cf1d5e7e6be37fdfeb7bc" prot="public" virt="non-virtual"><scope>UndoCache</scope><name>getBlobDirectory</name></member>
+      <member refid="struct_undo_cache_1a9406f020dc3e3e1d856f3358966bea8c" prot="public" virt="non-virtual"><scope>UndoCache</scope><name>getBlobFile</name></member>
+      <member refid="struct_undo_cache_1a31cb46a432a0f5fb05a7eefd98687544" prot="public" virt="non-virtual"><scope>UndoCache</scope><name>getTransactionDocument</name></member>
+      <member refid="struct_undo_cache_1ac5fcde1cb0418b772348c8ae62b55a4e" prot="public" virt="non-virtual"><scope>UndoCache</scope><name>getTransactionIds</name></member>
+      <member refid="struct_undo_cache_1a5fb670f0e093ed1831561a421a29bd9e" prot="public" virt="non-virtual"><scope>UndoCache</scope><name>publishTransaction</name></member>
+      <member refid="struct_undo_cache_1ad16fae57f09b3cdb014ff100337940a6" prot="public" virt="non-virtual"><scope>UndoCache</scope><name>removeOldestTransactions</name></member>
+      <member refid="struct_undo_cache_1abeba6cd17a782cab536ab514aff421a7" prot="public" virt="non-virtual"><scope>UndoCache</scope><name>removeTransaction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

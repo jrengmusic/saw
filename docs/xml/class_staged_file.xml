@@ -1,0 +1,922 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="class_staged_file" kind="class" language="C++" prot="public">
+    <compoundname>StagedFile</compoundname>
+    <includes refid="_staged_file_8h" local="no">StagedFile.h</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_staged_file_1a047677fbeb36e1757536134211dbcd40" prot="private" static="no" mutable="no">
+        <type><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref></type>
+        <definition>juce::File StagedFile::targetFile</definition>
+        <argsstring></argsstring>
+        <name>targetFile</name>
+        <qualifiedname>StagedFile::targetFile</qualifiedname>
+        <briefdescription>
+<para>The file that the transaction writes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="148" column="16" bodyfile="StagedFile.h" bodystart="148" bodyend="-1"/>
+        <referencedby refid="class_staged_file_1a8840cb0b0fc3e37729ae39270f2effd9" compoundref="_staged_file_8cpp" startline="72" endline="88">commit</referencedby>
+        <referencedby refid="class_staged_file_1a921b90af1f1fedb842d44f120f43ed16" compoundref="_staged_file_8cpp" startline="30" endline="33">getTargetFile</referencedby>
+        <referencedby refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" compoundref="_staged_file_8cpp" startline="190" endline="224">replace</referencedby>
+        <referencedby refid="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" compoundref="_staged_file_8cpp" startline="107" endline="153">restore</referencedby>
+        <referencedby refid="class_staged_file_1a7ee912febde968c3925687b812da3da6" compoundref="_staged_file_8cpp" startline="7" endline="15">StagedFile</referencedby>
+        <referencedby refid="class_staged_file_1a8b8d934a843c8fc77a11d92c98bd0647" compoundref="_staged_file_8cpp" startline="17" endline="28">StagedFile</referencedby>
+        <referencedby refid="class_staged_file_1ae39bc36d572b8eafe0b21e4fca631a81" compoundref="_staged_file_8cpp" startline="160" endline="188">swap</referencedby>
+        <referencedby refid="class_staged_file_1aea7f45176b058229d77e02f039ce555a" compoundref="_staged_file_8cpp" startline="90" endline="105">undo</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="class_text_document" kindref="compound">TextDocument</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;TextDocument&gt; StagedFile::originalDocument</definition>
+        <argsstring></argsstring>
+        <name>originalDocument</name>
+        <qualifiedname>StagedFile::originalDocument</qualifiedname>
+        <briefdescription>
+<para>The document before the write. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><ref refid="class_replace" kindref="compound">Replace</ref> and restore use its bytes as the expected content. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="151" column="21" bodyfile="StagedFile.h" bodystart="151" bodyend="-1"/>
+        <referencedby refid="class_staged_file_1ac4fbb6d9dcc5d4a5358d52dae513bcc4" compoundref="_staged_file_8cpp" startline="59" endline="70">appendUnifiedDiff</referencedby>
+        <referencedby refid="class_staged_file_1ac28f2a57e24a8fce9a47411321ef186b" compoundref="_staged_file_8cpp" startline="35" endline="38">getDisplayPath</referencedby>
+        <referencedby refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" compoundref="_staged_file_8cpp" startline="40" endline="43">getOriginalBytes</referencedby>
+        <referencedby refid="class_staged_file_1a7ee912febde968c3925687b812da3da6" compoundref="_staged_file_8cpp" startline="7" endline="15">StagedFile</referencedby>
+        <referencedby refid="class_staged_file_1a8b8d934a843c8fc77a11d92c98bd0647" compoundref="_staged_file_8cpp" startline="17" endline="28">StagedFile</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" prot="private" static="no" mutable="no">
+        <type>std::variant&lt; <ref refid="class_line_diff" kindref="compound">LineDiff</ref>, std::unique_ptr&lt; <ref refid="class_text_document" kindref="compound">TextDocument</ref> &gt; &gt;</type>
+        <definition>std::variant&lt;LineDiff, std::unique_ptr&lt;TextDocument&gt; &gt; StagedFile::plannedContent</definition>
+        <argsstring></argsstring>
+        <name>plannedContent</name>
+        <qualifiedname>StagedFile::plannedContent</qualifiedname>
+        <briefdescription>
+<para>The planned bytes: a <ref refid="class_line_diff" kindref="compound">LineDiff</ref> for an edit, or the planned document of an undo entry. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="154" column="18" bodyfile="StagedFile.h" bodystart="154" bodyend="-1"/>
+        <referencedby refid="class_staged_file_1ac4fbb6d9dcc5d4a5358d52dae513bcc4" compoundref="_staged_file_8cpp" startline="59" endline="70">appendUnifiedDiff</referencedby>
+        <referencedby refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" compoundref="_staged_file_8cpp" startline="45" endline="52">getPlannedBytes</referencedby>
+        <referencedby refid="class_staged_file_1a7ee912febde968c3925687b812da3da6" compoundref="_staged_file_8cpp" startline="7" endline="15">StagedFile</referencedby>
+        <referencedby refid="class_staged_file_1a8b8d934a843c8fc77a11d92c98bd0647" compoundref="_staged_file_8cpp" startline="17" endline="28">StagedFile</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_staged_file_1ac8eff0c463a6245672d84df443ae130f" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool StagedFile::executable</definition>
+        <argsstring></argsstring>
+        <name>executable</name>
+        <qualifiedname>StagedFile::executable</qualifiedname>
+        <initializer>{ false }</initializer>
+        <briefdescription>
+<para>The executable bit that a created target gets. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="157" column="10" bodyfile="StagedFile.h" bodystart="157" bodyend="157"/>
+        <referencedby refid="class_staged_file_1a661f47297b3bed8748cd40927ac9ee3c" compoundref="_staged_file_8cpp" startline="54" endline="57">isExecutable</referencedby>
+        <referencedby refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" compoundref="_staged_file_8cpp" startline="190" endline="224">replace</referencedby>
+        <referencedby refid="class_staged_file_1a7ee912febde968c3925687b812da3da6" compoundref="_staged_file_8cpp" startline="7" endline="15">StagedFile</referencedby>
+        <referencedby refid="class_staged_file_1a8b8d934a843c8fc77a11d92c98bd0647" compoundref="_staged_file_8cpp" startline="17" endline="28">StagedFile</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool StagedFile::existing</definition>
+        <argsstring></argsstring>
+        <name>existing</name>
+        <qualifiedname>StagedFile::existing</qualifiedname>
+        <initializer>{ true }</initializer>
+        <briefdescription>
+<para>True when the target exists before the write. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Restore deletes a target that did not exist. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="160" column="10" bodyfile="StagedFile.h" bodystart="160" bodyend="160"/>
+        <referencedby refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" compoundref="_staged_file_8cpp" startline="190" endline="224">replace</referencedby>
+        <referencedby refid="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" compoundref="_staged_file_8cpp" startline="107" endline="153">restore</referencedby>
+        <referencedby refid="class_staged_file_1a8b8d934a843c8fc77a11d92c98bd0647" compoundref="_staged_file_8cpp" startline="17" endline="28">StagedFile</referencedby>
+        <referencedby refid="class_staged_file_1aea7f45176b058229d77e02f039ce555a" compoundref="_staged_file_8cpp" startline="90" endline="105">undo</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_staged_file_1afe43d67cccf72cf126d5c53ff6d328ac" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int StagedFile::blobIndex</definition>
+        <argsstring></argsstring>
+        <name>blobIndex</name>
+        <qualifiedname>StagedFile::blobIndex</qualifiedname>
+        <initializer>{ 0 }</initializer>
+        <briefdescription>
+<para>The index of this file in the transaction. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>It names the blob file. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="163" column="9" bodyfile="StagedFile.h" bodystart="163" bodyend="163"/>
+        <referencedby refid="class_staged_file_1a8840cb0b0fc3e37729ae39270f2effd9" compoundref="_staged_file_8cpp" startline="72" endline="88">commit</referencedby>
+        <referencedby refid="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" compoundref="_staged_file_8cpp" startline="107" endline="153">restore</referencedby>
+        <referencedby refid="class_staged_file_1a7ee912febde968c3925687b812da3da6" compoundref="_staged_file_8cpp" startline="7" endline="15">StagedFile</referencedby>
+        <referencedby refid="class_staged_file_1a8b8d934a843c8fc77a11d92c98bd0647" compoundref="_staged_file_8cpp" startline="17" endline="28">StagedFile</referencedby>
+        <referencedby refid="class_staged_file_1aea7f45176b058229d77e02f039ce555a" compoundref="_staged_file_8cpp" startline="90" endline="105">undo</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_staged_file_1a7ee912febde968c3925687b812da3da6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>StagedFile::StagedFile</definition>
+        <argsstring>(const juce::File &amp;newTargetFile, std::unique_ptr&lt; TextDocument &gt; newOriginalDocument, LineDiff newDiff, int newBlobIndex)</argsstring>
+        <name>StagedFile</name>
+        <qualifiedname>StagedFile::StagedFile</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>newTargetFile</declname>
+        </param>
+        <param>
+          <type>std::unique_ptr&lt; <ref refid="class_text_document" kindref="compound">TextDocument</ref> &gt;</type>
+          <declname>newOriginalDocument</declname>
+        </param>
+        <param>
+          <type><ref refid="class_line_diff" kindref="compound">LineDiff</ref></type>
+          <declname>newDiff</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>newBlobIndex</declname>
+        </param>
+        <briefdescription>
+<para>Stages an edit of an existing file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The planned bytes come from the diff.</para>
+<para>The planned content is the diff itself, so the planned bytes are built one time and are not stored again. The executable bit is read from the target file. The target is marked as existing.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>newTargetFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The file that the transaction writes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newOriginalDocument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The document before the edit. Must not be null. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newDiff</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line-level diff that produces the planned bytes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newBlobIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of this file in the transaction. It names the blob file. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="24" column="5" bodyfile="StagedFile.cpp" bodystart="7" bodyend="15"/>
+        <references refid="class_staged_file_1afe43d67cccf72cf126d5c53ff6d328ac" compoundref="_staged_file_8h" startline="163" endline="163">blobIndex</references>
+        <references refid="class_staged_file_1ac8eff0c463a6245672d84df443ae130f" compoundref="_staged_file_8h" startline="157" endline="157">executable</references>
+        <references refid="class_staged_file_1a661f47297b3bed8748cd40927ac9ee3c" compoundref="_staged_file_8cpp" startline="54" endline="57">isExecutable</references>
+        <references refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" compoundref="_staged_file_8h" startline="151">originalDocument</references>
+        <references refid="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" compoundref="_staged_file_8h" startline="154">plannedContent</references>
+        <references refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" compoundref="_staged_file_8h" startline="148">targetFile</references>
+        <referencedby refid="_undo_8cpp_1aaaf63f385e4d48474c25821a8f5bb8bc" compoundref="_undo_8cpp" startline="173" endline="201">getVerifiedEntry</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_staged_file_1a8b8d934a843c8fc77a11d92c98bd0647" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>StagedFile::StagedFile</definition>
+        <argsstring>(const juce::File &amp;newTargetFile, std::unique_ptr&lt; TextDocument &gt; newOriginalDocument, std::unique_ptr&lt; TextDocument &gt; newPlannedDocument, bool newIsExecutable, bool newIsExisting, int newBlobIndex)</argsstring>
+        <name>StagedFile</name>
+        <qualifiedname>StagedFile::StagedFile</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>newTargetFile</declname>
+        </param>
+        <param>
+          <type>std::unique_ptr&lt; <ref refid="class_text_document" kindref="compound">TextDocument</ref> &gt;</type>
+          <declname>newOriginalDocument</declname>
+        </param>
+        <param>
+          <type>std::unique_ptr&lt; <ref refid="class_text_document" kindref="compound">TextDocument</ref> &gt;</type>
+          <declname>newPlannedDocument</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>newIsExecutable</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>newIsExisting</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>newBlobIndex</declname>
+        </param>
+        <briefdescription>
+<para>Stages an undo entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The planned document is the content that the undo writes.</para>
+<para>The original document is the content that the undo replaces. An undo entry has no diff, so the planned document is stored. Both documents must not be null.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>newTargetFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The file that the undo writes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newOriginalDocument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The content of the file before the undo. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newPlannedDocument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The content that the undo writes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newIsExecutable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The executable bit that the undo entry recorded. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newIsExisting</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True when the target exists before the write. False when the undo creates it. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newBlobIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of this file in the transaction. It names the blob file. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="38" column="5" bodyfile="StagedFile.cpp" bodystart="17" bodyend="28"/>
+        <references refid="class_staged_file_1afe43d67cccf72cf126d5c53ff6d328ac" compoundref="_staged_file_8h" startline="163" endline="163">blobIndex</references>
+        <references refid="class_staged_file_1ac8eff0c463a6245672d84df443ae130f" compoundref="_staged_file_8h" startline="157" endline="157">executable</references>
+        <references refid="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" compoundref="_staged_file_8h" startline="160" endline="160">existing</references>
+        <references refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" compoundref="_staged_file_8h" startline="151">originalDocument</references>
+        <references refid="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" compoundref="_staged_file_8h" startline="154">plannedContent</references>
+        <references refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" compoundref="_staged_file_8h" startline="148">targetFile</references>
+      </memberdef>
+      <memberdef kind="function" id="class_staged_file_1a921b90af1f1fedb842d44f120f43ed16" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+        <definition>const juce::File &amp; StagedFile::getTargetFile</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>getTargetFile</name>
+        <qualifiedname>StagedFile::getTargetFile</qualifiedname>
+        <briefdescription>
+<para>Returns the file that the transaction writes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The target file. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="44" column="22" bodyfile="StagedFile.cpp" bodystart="30" bodyend="33"/>
+        <references refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" compoundref="_staged_file_8h" startline="148">targetFile</references>
+        <referencedby refid="_undo_cache_8cpp_1a3c2d735259e1208ed9a9cca7b357572e" compoundref="_undo_cache_8cpp" startline="31" endline="37">writeBlob</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_staged_file_1ac28f2a57e24a8fce9a47411321ef186b" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>std::string_view</type>
+        <definition>std::string_view StagedFile::getDisplayPath</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>getDisplayPath</name>
+        <qualifiedname>StagedFile::getDisplayPath</qualifiedname>
+        <briefdescription>
+<para>Returns the path of the file as the user sees it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The display path of the original document. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="50" column="22" bodyfile="StagedFile.cpp" bodystart="35" bodyend="38"/>
+        <references refid="class_text_document_1a427fbb6c2b72d36e5c6251dc95319875" compoundref="_text_document_8cpp" startline="174" endline="177">TextDocument::getDisplayPath</references>
+        <references refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" compoundref="_staged_file_8h" startline="151">originalDocument</references>
+        <referencedby refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" compoundref="_staged_file_8cpp" startline="155" endline="158">getBytesStatus</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>std::string_view</type>
+        <definition>std::string_view StagedFile::getOriginalBytes</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>getOriginalBytes</name>
+        <qualifiedname>StagedFile::getOriginalBytes</qualifiedname>
+        <briefdescription>
+<para>Returns the bytes of the original document. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The original bytes. The view is valid while this staged file lives. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="56" column="22" bodyfile="StagedFile.cpp" bodystart="40" bodyend="43"/>
+        <references refid="class_text_document_1aaac207e0e885695583d01c2cb72c4136" compoundref="_text_document_8cpp" startline="179" endline="182">TextDocument::getBytes</references>
+        <references refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" compoundref="_staged_file_8h" startline="151">originalDocument</references>
+        <referencedby refid="class_staged_file_1a8840cb0b0fc3e37729ae39270f2effd9" compoundref="_staged_file_8cpp" startline="72" endline="88">commit</referencedby>
+        <referencedby refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" compoundref="_staged_file_8cpp" startline="190" endline="224">replace</referencedby>
+        <referencedby refid="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" compoundref="_staged_file_8cpp" startline="107" endline="153">restore</referencedby>
+        <referencedby refid="class_staged_file_1ae39bc36d572b8eafe0b21e4fca631a81" compoundref="_staged_file_8cpp" startline="160" endline="188">swap</referencedby>
+        <referencedby refid="_undo_cache_8cpp_1a3c2d735259e1208ed9a9cca7b357572e" compoundref="_undo_cache_8cpp" startline="31" endline="37">writeBlob</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>std::string_view</type>
+        <definition>std::string_view StagedFile::getPlannedBytes</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>getPlannedBytes</name>
+        <qualifiedname>StagedFile::getPlannedBytes</qualifiedname>
+        <briefdescription>
+<para>Returns the bytes that the transaction writes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For an edit, the bytes come from the diff. For an undo entry, they come from the planned document.</para>
+<para><simplesect kind="return"><para>The planned bytes. The view is valid while this staged file lives. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="64" column="22" bodyfile="StagedFile.cpp" bodystart="45" bodyend="52"/>
+        <references refid="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" compoundref="_staged_file_8h" startline="154">plannedContent</references>
+        <referencedby refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" compoundref="_staged_file_8cpp" startline="190" endline="224">replace</referencedby>
+        <referencedby refid="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" compoundref="_staged_file_8cpp" startline="107" endline="153">restore</referencedby>
+        <referencedby refid="class_staged_file_1ae39bc36d572b8eafe0b21e4fca631a81" compoundref="_staged_file_8cpp" startline="160" endline="188">swap</referencedby>
+        <referencedby refid="_undo_cache_8cpp_1a3c2d735259e1208ed9a9cca7b357572e" compoundref="_undo_cache_8cpp" startline="31" endline="37">writeBlob</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_staged_file_1a661f47297b3bed8748cd40927ac9ee3c" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool StagedFile::isExecutable</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>isExecutable</name>
+        <qualifiedname>StagedFile::isExecutable</qualifiedname>
+        <briefdescription>
+<para>Reports the executable bit that the record stores and that a created target gets. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>True when the executable bit is set. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="70" column="10" bodyfile="StagedFile.cpp" bodystart="54" bodyend="57"/>
+        <references refid="class_staged_file_1ac8eff0c463a6245672d84df443ae130f" compoundref="_staged_file_8h" startline="157" endline="157">executable</references>
+        <referencedby refid="class_staged_file_1a7ee912febde968c3925687b812da3da6" compoundref="_staged_file_8cpp" startline="7" endline="15">StagedFile</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_staged_file_1ac4fbb6d9dcc5d4a5358d52dae513bcc4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void StagedFile::appendUnifiedDiff</definition>
+        <argsstring>(std::string &amp;output) const</argsstring>
+        <name>appendUnifiedDiff</name>
+        <qualifiedname>StagedFile::appendUnifiedDiff</qualifiedname>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Appends the unified diff from the original bytes to the planned bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An undo entry has no diff, so the diff is computed here with Myers.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The text that receives the unified diff. Nothing is appended when the diff holds no changes. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="78" column="10" bodyfile="StagedFile.cpp" bodystart="59" bodyend="70"/>
+        <references refid="class_text_document_1aaac207e0e885695583d01c2cb72c4136" compoundref="_text_document_8cpp" startline="179" endline="182">TextDocument::getBytes</references>
+        <references refid="class_line_diff_1a2856900f7fc062016ce9448fc9dfaa8b">LineDiff::LineDiff</references>
+        <references refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" compoundref="_staged_file_8h" startline="151">originalDocument</references>
+        <references refid="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" compoundref="_staged_file_8h" startline="154">plannedContent</references>
+      </memberdef>
+      <memberdef kind="function" id="class_staged_file_1a8840cb0b0fc3e37729ae39270f2effd9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, bool &gt;</type>
+        <definition>std::pair&lt; juce::Result, bool &gt; StagedFile::commit</definition>
+        <argsstring>(std::string_view transactionId) const</argsstring>
+        <name>commit</name>
+        <qualifiedname>StagedFile::commit</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>transactionId</declname>
+        </param>
+        <briefdescription>
+<para>Writes the planned bytes, with a swap of the target and its blob when the target can be swapped. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A swappable target is exchanged with its blob, so that the blob keeps the original bytes for the undo. When the pair cannot be swapped, the original bytes are written to the blob, and the target is then replaced directly.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transactionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The transaction whose blob file is used.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result paired with true when the target may have changed, so that restore is needed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="89" column="15" bodyfile="StagedFile.cpp" bodystart="72" bodyend="88"/>
+        <references refid="class_staged_file_1afe43d67cccf72cf126d5c53ff6d328ac" compoundref="_staged_file_8h" startline="163" endline="163">blobIndex</references>
+        <references refid="struct_undo_cache_1a9406f020dc3e3e1d856f3358966bea8c" compoundref="_undo_cache_8cpp" startline="248" endline="253">UndoCache::getBlobFile</references>
+        <references refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" compoundref="_staged_file_8cpp" startline="40" endline="43">getOriginalBytes</references>
+        <references refid="structjam_1_1File_1aad54bb339f3243cf682682ecc19afe12">jam::File::isSwappable</references>
+        <references refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" compoundref="_staged_file_8cpp" startline="190" endline="224">replace</references>
+        <references refid="class_staged_file_1ae39bc36d572b8eafe0b21e4fca631a81" compoundref="_staged_file_8cpp" startline="160" endline="188">swap</references>
+        <references refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" compoundref="_staged_file_8h" startline="148">targetFile</references>
+        <references refid="struct_writer_1ab755b151fbb007bdc588e602f6add415" compoundref="_writer_8cpp" startline="70" endline="90">Writer::toFile</references>
+        <referencedby refid="class_transaction_1a9e9e14d173c40fc4767c6ad93ca14157" compoundref="_transaction_8cpp" startline="191" endline="217">Transaction::commit</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_staged_file_1aea7f45176b058229d77e02f039ce555a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, bool &gt;</type>
+        <definition>std::pair&lt; juce::Result, bool &gt; StagedFile::undo</definition>
+        <argsstring>(std::string_view transactionId) const</argsstring>
+        <name>undo</name>
+        <qualifiedname>StagedFile::undo</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>transactionId</declname>
+        </param>
+        <briefdescription>
+<para>Writes the bytes that the file had before the transaction. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An existing target that can be swapped is exchanged with its blob. Before the exchange, the blob takes the metadata of the target and the current time. Otherwise the planned bytes are written to the target.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transactionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The transaction whose blob file is used.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result paired with true when the target may have changed, so that restore is needed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="100" column="15" bodyfile="StagedFile.cpp" bodystart="90" bodyend="105"/>
+        <references refid="class_staged_file_1afe43d67cccf72cf126d5c53ff6d328ac" compoundref="_staged_file_8h" startline="163" endline="163">blobIndex</references>
+        <references refid="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" compoundref="_staged_file_8h" startline="160" endline="160">existing</references>
+        <references refid="struct_undo_cache_1a9406f020dc3e3e1d856f3358966bea8c" compoundref="_undo_cache_8cpp" startline="248" endline="253">UndoCache::getBlobFile</references>
+        <references refid="classjuce_1_1Time_1ad8306070f7b89d416fe8dabaa5a2abc2">juce::Time::getCurrentTime</references>
+        <references refid="structjam_1_1File_1aad54bb339f3243cf682682ecc19afe12">jam::File::isSwappable</references>
+        <references refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" compoundref="_staged_file_8cpp" startline="190" endline="224">replace</references>
+        <references refid="structjam_1_1File_1a1a7f31af88aff263e46c6255c1b6cb10">jam::File::setMetadata</references>
+        <references refid="class_staged_file_1ae39bc36d572b8eafe0b21e4fca631a81" compoundref="_staged_file_8cpp" startline="160" endline="188">swap</references>
+        <references refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" compoundref="_staged_file_8h" startline="148">targetFile</references>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result StagedFile::restore</definition>
+        <argsstring>(std::string_view transactionId) const</argsstring>
+        <name>restore</name>
+        <qualifiedname>StagedFile::restore</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>transactionId</declname>
+        </param>
+        <briefdescription>
+<para>Returns the target to its original bytes after a commit or an undo changed it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A file that the transaction created is deleted, once its planned bytes are checked. A blob that holds the original bytes is exchanged with the target. A blob that holds neither the planned bytes nor the original bytes is a failure. Otherwise the original bytes are written to the target, once the target is checked to hold the planned bytes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>transactionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The transaction whose blob file is used.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Ok when the target holds the original bytes, otherwise the failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="113" column="18" bodyfile="StagedFile.cpp" bodystart="107" bodyend="153"/>
+        <references refid="class_staged_file_1afe43d67cccf72cf126d5c53ff6d328ac" compoundref="_staged_file_8h" startline="163" endline="163">blobIndex</references>
+        <references refid="classjuce_1_1File_1ae0058be6d755ac686b4b1becf63183ef">juce::File::deleteFile</references>
+        <references refid="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" compoundref="_staged_file_8h" startline="160" endline="160">existing</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1a28194be32561ce1e2e6a21514825e1c6" compoundref="_text_8h" startline="70" endline="70">text::Diagnostics::failOverwriteFailed</references>
+        <references refid="struct_undo_cache_1a9406f020dc3e3e1d856f3358966bea8c" compoundref="_undo_cache_8cpp" startline="248" endline="253">UndoCache::getBlobFile</references>
+        <references refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" compoundref="_staged_file_8cpp" startline="155" endline="158">getBytesStatus</references>
+        <references refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" compoundref="_staged_file_8cpp" startline="40" endline="43">getOriginalBytes</references>
+        <references refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" compoundref="_staged_file_8cpp" startline="45" endline="52">getPlannedBytes</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="structjam_1_1File_1ab20decc5bba706804de00b6b43bdccea">jam::File::swapFiles</references>
+        <references refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" compoundref="_staged_file_8h" startline="148">targetFile</references>
+        <references refid="struct_writer_1ab755b151fbb007bdc588e602f6add415" compoundref="_writer_8cpp" startline="70" endline="90">Writer::toFile</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result StagedFile::getBytesStatus</definition>
+        <argsstring>(const juce::File &amp;file, std::string_view expectedBytes) const</argsstring>
+        <name>getBytesStatus</name>
+        <qualifiedname>StagedFile::getBytesStatus</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>expectedBytes</declname>
+        </param>
+        <briefdescription>
+<para>Checks that a file holds the expected bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The file to read. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>expectedBytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The bytes that the file must hold.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Ok when the bytes match. A file that cannot be read gives the read failure with the display path. Other bytes give the failure <ref refid="structtext_1_1_diagnostics_1a535617faa243046c7358b9c76d30de80" kindref="member">text::Diagnostics::failChecksumMismatch</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="124" column="18" bodyfile="StagedFile.cpp" bodystart="155" bodyend="158"/>
+        <references refid="structtext_1_1_diagnostics_1a535617faa243046c7358b9c76d30de80" compoundref="_text_8h" startline="108" endline="108">text::Diagnostics::failChecksumMismatch</references>
+        <references refid="class_text_document_1a96201f667cad98f5a7725570f7d39de1" compoundref="_text_document_8cpp" startline="53" endline="67">TextDocument::getBytesStatus</references>
+        <references refid="class_staged_file_1ac28f2a57e24a8fce9a47411321ef186b" compoundref="_staged_file_8cpp" startline="35" endline="38">getDisplayPath</references>
+        <referencedby refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" compoundref="_staged_file_8cpp" startline="190" endline="224">replace</referencedby>
+        <referencedby refid="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" compoundref="_staged_file_8cpp" startline="107" endline="153">restore</referencedby>
+        <referencedby refid="class_staged_file_1ae39bc36d572b8eafe0b21e4fca631a81" compoundref="_staged_file_8cpp" startline="160" endline="188">swap</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_staged_file_1ae39bc36d572b8eafe0b21e4fca631a81" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::optional&lt; std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, bool &gt; &gt;</type>
+        <definition>std::optional&lt; std::pair&lt; juce::Result, bool &gt; &gt; StagedFile::swap</definition>
+        <argsstring>(const juce::File &amp;blobFile) const</argsstring>
+        <name>swap</name>
+        <qualifiedname>StagedFile::swap</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>blobFile</declname>
+        </param>
+        <briefdescription>
+<para>Exchanges the target with a blob file, then checks the bytes of the blob and the target. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>After a successful exchange, the blob must hold the original bytes. When it does not, the exchange is reverted, and the failure is returned with true unless the blob then holds the planned bytes. The planned bytes of the target are checked after the exchange, and a failure there reports true.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blobFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The blob file to exchange with the target.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Nullopt when the pair cannot be swapped. Otherwise the status paired with true when the target may have changed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="136" column="19" bodyfile="StagedFile.cpp" bodystart="160" bodyend="188"/>
+        <references refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" compoundref="_staged_file_8cpp" startline="155" endline="158">getBytesStatus</references>
+        <references refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" compoundref="_staged_file_8cpp" startline="40" endline="43">getOriginalBytes</references>
+        <references refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" compoundref="_staged_file_8cpp" startline="45" endline="52">getPlannedBytes</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="structjam_1_1File_1ab20decc5bba706804de00b6b43bdccea">jam::File::swapFiles</references>
+        <references refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" compoundref="_staged_file_8h" startline="148">targetFile</references>
+        <referencedby refid="class_staged_file_1a8840cb0b0fc3e37729ae39270f2effd9" compoundref="_staged_file_8cpp" startline="72" endline="88">commit</referencedby>
+        <referencedby refid="class_staged_file_1aea7f45176b058229d77e02f039ce555a" compoundref="_staged_file_8cpp" startline="90" endline="105">undo</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, bool &gt;</type>
+        <definition>std::pair&lt; juce::Result, bool &gt; StagedFile::replace</definition>
+        <argsstring>() const</argsstring>
+        <name>replace</name>
+        <qualifiedname>StagedFile::replace</qualifiedname>
+        <briefdescription>
+<para>Writes the planned bytes to the target, without a swap. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An existing target must hold the original bytes first. A new target must not exist. The executable bit is set only for a new target.</para>
+<para><simplesect kind="return"><para>Status result paired with true when the write may have changed the target. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StagedFile.h" line="145" column="15" bodyfile="StagedFile.cpp" bodystart="190" bodyend="224"/>
+        <references refid="class_staged_file_1ac8eff0c463a6245672d84df443ae130f" compoundref="_staged_file_8h" startline="157" endline="157">executable</references>
+        <references refid="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" compoundref="_staged_file_8h" startline="160" endline="160">existing</references>
+        <references refid="classjuce_1_1File_1aec22e75cf76048360e1dda14d724d06d">juce::File::exists</references>
+        <references refid="classjuce_1_1File_1a37e88fbc390d78f3d79675974f53fa78">juce::File::existsAsFile</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1a535617faa243046c7358b9c76d30de80" compoundref="_text_8h" startline="108" endline="108">text::Diagnostics::failChecksumMismatch</references>
+        <references refid="structtext_1_1_diagnostics_1a28194be32561ce1e2e6a21514825e1c6" compoundref="_text_8h" startline="70" endline="70">text::Diagnostics::failOverwriteFailed</references>
+        <references refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" compoundref="_staged_file_8cpp" startline="155" endline="158">getBytesStatus</references>
+        <references refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" compoundref="_staged_file_8cpp" startline="40" endline="43">getOriginalBytes</references>
+        <references refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" compoundref="_staged_file_8cpp" startline="45" endline="52">getPlannedBytes</references>
+        <references refid="structjam_1_1File_1af5f98c17223ef2bde077738646b5262b">jam::File::isExecutable</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="classjuce_1_1File_1ac1705ac78060b59917abf6700ecc4c4f">juce::File::setExecutePermission</references>
+        <references refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" compoundref="_staged_file_8h" startline="148">targetFile</references>
+        <references refid="struct_writer_1ab755b151fbb007bdc588e602f6add415" compoundref="_writer_8cpp" startline="70" endline="90">Writer::toFile</references>
+        <references refid="classjuce_1_1Result_1a204ba5a9124544a89a5b0565672ef5f3">juce::Result::wasOk</references>
+        <referencedby refid="class_staged_file_1a8840cb0b0fc3e37729ae39270f2effd9" compoundref="_staged_file_8cpp" startline="72" endline="88">commit</referencedby>
+        <referencedby refid="class_staged_file_1aea7f45176b058229d77e02f039ce555a" compoundref="_staged_file_8cpp" startline="90" endline="105">undo</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>One target file of a transaction, with its original bytes and its planned bytes. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>A commit and an undo write the planned bytes. A restore brings the original bytes back. Each operation reads both byte sets from the documents and the diff that the staged file owns. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="20">
+        <label>Input</label>
+        <link refid="class_input"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>buffer</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>mappedFile</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>native</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>bytes</edgelabel>
+        </childnode>
+      </node>
+      <node id="25">
+        <label>Input::Native</label>
+        <link refid="struct_input_1_1_native"/>
+      </node>
+      <node id="1">
+        <label>StagedFile</label>
+        <link refid="class_staged_file"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>targetFile</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>originalDocument</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>TextDocument</label>
+        <link refid="class_text_document"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>dominantLineEnding</edgelabel>
+          <edgelabel>unixLineEnding</edgelabel>
+          <edgelabel>windowsLineEnding</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>input</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>jam::Array&lt; jam::Document::Property&lt; Value &gt; &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>jam::Array&lt; size_t &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>jam::Array&lt; std::tuple&lt; size_t, int, int &gt; &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>jam::Array&lt; std::unique_ptr&lt; ObjectClass &gt; &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>jam::Document</label>
+        <link refid="structjam_1_1Document" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>arena</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>source</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>lineOffsets</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>root</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>nameTokens</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>jam::Document::Element</label>
+        <link refid="structjam_1_1Document_1_1Element" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>id</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>firstChild</edgelabel>
+          <edgelabel>lastChild</edgelabel>
+          <edgelabel>nextSibling</edgelabel>
+          <edgelabel>parent</edgelabel>
+          <edgelabel>previousSibling</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>properties</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>jam::Owner&lt; jam::Document::Element &gt;</label>
+        <link refid="classjam_1_1Owner" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>entries</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>juce::DummyCriticalSection</label>
+        <link refid="classjuce_1_1DummyCriticalSection" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="2">
+        <label>juce::File</label>
+        <link refid="classjuce_1_1File" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="21">
+        <label>juce::HeapBlock&lt; char &gt;</label>
+        <link refid="classjuce_1_1HeapBlock" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="16">
+        <label>juce::Identifier</label>
+        <link refid="classjuce_1_1Identifier" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>null</edgelabel>
+        </childnode>
+      </node>
+      <node id="23">
+        <label>juce::MemoryMappedFile</label>
+        <link refid="classjuce_1_1MemoryMappedFile" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="11">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="13">
+        <label>std::basic_string_view&lt; Char &gt;</label>
+      </node>
+      <node id="10">
+        <label>std::string</label>
+        <childnode refid="11" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>std::string_view</label>
+        <childnode refid="13" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>std::unique_ptr&lt; Input &gt;</label>
+        <childnode refid="20" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>std::unique_ptr&lt; Input::Native &gt;</label>
+        <childnode refid="25" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::unique_ptr&lt; TextDocument &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="22">
+        <label>std::unique_ptr&lt; juce::MemoryMappedFile &gt;</label>
+        <childnode refid="23" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>std::unique_ptr&lt; std::string &gt;</label>
+        <childnode refid="10" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="StagedFile.h" line="11" column="1" bodyfile="StagedFile.h" bodystart="12" bodyend="164"/>
+    <listofallmembers>
+      <member refid="class_staged_file_1ac4fbb6d9dcc5d4a5358d52dae513bcc4" prot="public" virt="non-virtual"><scope>StagedFile</scope><name>appendUnifiedDiff</name></member>
+      <member refid="class_staged_file_1afe43d67cccf72cf126d5c53ff6d328ac" prot="private" virt="non-virtual"><scope>StagedFile</scope><name>blobIndex</name></member>
+      <member refid="class_staged_file_1a8840cb0b0fc3e37729ae39270f2effd9" prot="public" virt="non-virtual"><scope>StagedFile</scope><name>commit</name></member>
+      <member refid="class_staged_file_1ac8eff0c463a6245672d84df443ae130f" prot="private" virt="non-virtual"><scope>StagedFile</scope><name>executable</name></member>
+      <member refid="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" prot="private" virt="non-virtual"><scope>StagedFile</scope><name>existing</name></member>
+      <member refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" prot="private" virt="non-virtual"><scope>StagedFile</scope><name>getBytesStatus</name></member>
+      <member refid="class_staged_file_1ac28f2a57e24a8fce9a47411321ef186b" prot="public" virt="non-virtual"><scope>StagedFile</scope><name>getDisplayPath</name></member>
+      <member refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" prot="public" virt="non-virtual"><scope>StagedFile</scope><name>getOriginalBytes</name></member>
+      <member refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" prot="public" virt="non-virtual"><scope>StagedFile</scope><name>getPlannedBytes</name></member>
+      <member refid="class_staged_file_1a921b90af1f1fedb842d44f120f43ed16" prot="public" virt="non-virtual"><scope>StagedFile</scope><name>getTargetFile</name></member>
+      <member refid="class_staged_file_1a661f47297b3bed8748cd40927ac9ee3c" prot="public" virt="non-virtual"><scope>StagedFile</scope><name>isExecutable</name></member>
+      <member refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" prot="private" virt="non-virtual"><scope>StagedFile</scope><name>originalDocument</name></member>
+      <member refid="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" prot="private" virt="non-virtual"><scope>StagedFile</scope><name>plannedContent</name></member>
+      <member refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" prot="private" virt="non-virtual"><scope>StagedFile</scope><name>replace</name></member>
+      <member refid="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" prot="public" virt="non-virtual"><scope>StagedFile</scope><name>restore</name></member>
+      <member refid="class_staged_file_1a7ee912febde968c3925687b812da3da6" prot="public" virt="non-virtual"><scope>StagedFile</scope><name>StagedFile</name></member>
+      <member refid="class_staged_file_1a8b8d934a843c8fc77a11d92c98bd0647" prot="public" virt="non-virtual"><scope>StagedFile</scope><name>StagedFile</name></member>
+      <member refid="class_staged_file_1ae39bc36d572b8eafe0b21e4fca631a81" prot="private" virt="non-virtual"><scope>StagedFile</scope><name>swap</name></member>
+      <member refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" prot="private" virt="non-virtual"><scope>StagedFile</scope><name>targetFile</name></member>
+      <member refid="class_staged_file_1aea7f45176b058229d77e02f039ce555a" prot="public" virt="non-virtual"><scope>StagedFile</scope><name>undo</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

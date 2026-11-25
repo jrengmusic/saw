@@ -1,0 +1,730 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="class_transaction" kind="class" language="C++" prot="public">
+    <compoundname>Transaction</compoundname>
+    <includes refid="_transaction_8h" local="no">Transaction.h</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_transaction_1a589c4bcc2e67db0851e6a40445ecf251" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Transaction::commandName</definition>
+        <argsstring></argsstring>
+        <name>commandName</name>
+        <qualifiedname>Transaction::commandName</qualifiedname>
+        <briefdescription>
+<para>Mutating subcommand name, recorded with the undo record on commit. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="141" column="17" bodyfile="Transaction.h" bodystart="141" bodyend="-1"/>
+        <referencedby refid="class_transaction_1a9e9e14d173c40fc4767c6ad93ca14157" compoundref="_transaction_8cpp" startline="191" endline="217">commit</referencedby>
+        <referencedby refid="class_transaction_1aa8e03ea2b3cbad3298616aa9d6814a61" compoundref="_transaction_8cpp" startline="7" endline="10">Transaction</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_transaction_1acacd99f1c09ffa4a4668e4629e78c45b" prot="private" static="no" mutable="no">
+        <type>std::set&lt; <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &gt;</type>
+        <definition>std::set&lt;juce::File&gt; Transaction::targetFiles</definition>
+        <argsstring></argsstring>
+        <name>targetFiles</name>
+        <qualifiedname>Transaction::targetFiles</qualifiedname>
+        <briefdescription>
+<para>Files recorded by addTarget, so that a file named twice is edited once. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="144" column="14" bodyfile="Transaction.h" bodystart="144" bodyend="-1"/>
+        <referencedby refid="class_transaction_1a2f92a38e72c669b68b635b79daff4ccb" compoundref="_transaction_8cpp" startline="12" endline="17">addTarget</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_transaction_1a9b9091c79a3b7389a4cf681e28fd65bc" prot="private" static="no" mutable="no">
+        <type><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="class_staged_file" kindref="compound">StagedFile</ref> &gt;</type>
+        <definition>jam::Array&lt;StagedFile&gt; Transaction::stagedFiles</definition>
+        <argsstring></argsstring>
+        <name>stagedFiles</name>
+        <qualifiedname>Transaction::stagedFiles</qualifiedname>
+        <briefdescription>
+<para>Files whose planned bytes differ from their original bytes, in transaction order. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="147" column="16" bodyfile="Transaction.h" bodystart="147" bodyend="-1"/>
+        <referencedby refid="class_transaction_1ace7cab528daf25ccbb7e6042cbb4b25e" compoundref="_transaction_8cpp" startline="19" endline="42">addFile</referencedby>
+        <referencedby refid="class_transaction_1a09cb158e62732618b9a4cf32c7eba696" compoundref="_transaction_8cpp" startline="94" endline="121">applyToStagedFiles</referencedby>
+        <referencedby refid="class_transaction_1a9e9e14d173c40fc4767c6ad93ca14157" compoundref="_transaction_8cpp" startline="191" endline="217">commit</referencedby>
+        <referencedby refid="class_transaction_1a66ae9cab884f20145ae58ac270b7e507" compoundref="_transaction_8cpp" startline="123" endline="138">getDiffDocuments</referencedby>
+        <referencedby refid="class_transaction_1ab1e959e59ca6ad3115550892d0d7fa8a" compoundref="_transaction_8cpp" startline="44" endline="60">run</referencedby>
+        <referencedby refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">runCommit</referencedby>
+        <referencedby refid="class_transaction_1a856c5ba1594da36d25ea8717f8a65ab0" compoundref="_transaction_8cpp" startline="140" endline="158">runDryRun</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_transaction_1ae8950cbe28a1d1df8d417465b6396b7b" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Transaction::totalEditCount</definition>
+        <argsstring></argsstring>
+        <name>totalEditCount</name>
+        <qualifiedname>Transaction::totalEditCount</qualifiedname>
+        <initializer>{ 0 }</initializer>
+        <briefdescription>
+<para>Sum of the edit counts of every added file, compared with <ndash/>expect. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="150" column="9" bodyfile="Transaction.h" bodystart="150" bodyend="150"/>
+        <referencedby refid="class_transaction_1ace7cab528daf25ccbb7e6042cbb4b25e" compoundref="_transaction_8cpp" startline="19" endline="42">addFile</referencedby>
+        <referencedby refid="class_transaction_1ab1e959e59ca6ad3115550892d0d7fa8a" compoundref="_transaction_8cpp" startline="44" endline="60">run</referencedby>
+        <referencedby refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">runCommit</referencedby>
+        <referencedby refid="class_transaction_1a856c5ba1594da36d25ea8717f8a65ab0" compoundref="_transaction_8cpp" startline="140" endline="158">runDryRun</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_transaction_1aa8e03ea2b3cbad3298616aa9d6814a61" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Transaction::Transaction</definition>
+        <argsstring>(std::string_view newCommandName)</argsstring>
+        <name>Transaction</name>
+        <qualifiedname>Transaction::Transaction</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>newCommandName</declname>
+        </param>
+        <briefdescription>
+<para>Creates a transaction for one mutating subcommand. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>newCommandName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Mutating subcommand name, recorded with the undo record of the transaction on commit. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="18" column="14" bodyfile="Transaction.cpp" bodystart="7" bodyend="10"/>
+        <references refid="class_transaction_1a589c4bcc2e67db0851e6a40445ecf251" compoundref="_transaction_8h" startline="141">commandName</references>
+      </memberdef>
+      <memberdef kind="function" id="class_transaction_1a2f92a38e72c669b68b635b79daff4ccb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Transaction::addTarget</definition>
+        <argsstring>(const juce::File &amp;targetFile)</argsstring>
+        <name>addTarget</name>
+        <qualifiedname>Transaction::addTarget</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>targetFile</declname>
+        </param>
+        <briefdescription>
+<para>Records a target file, and reports whether the file is new to this transaction. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A caller skips a file for which this returns false, so a file named twice in one command is edited once.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>targetFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The file to record.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True when the file was not recorded before. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="28" column="10" bodyfile="Transaction.cpp" bodystart="12" bodyend="17"/>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <references refid="class_transaction_1acacd99f1c09ffa4a4668e4629e78c45b" compoundref="_transaction_8h" startline="144">targetFiles</references>
+        <referencedby refid="class_replace_1a06e837582d0faf325f061a6dda278a2d" compoundref="_replace_8cpp" startline="297" endline="349">Replace::runFiles</referencedby>
+        <referencedby refid="class_lines_1a483aab1f3731243163a1e7a470d1b026" compoundref="_lines_8cpp" startline="315" endline="338">Lines::runMutation</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_transaction_1ace7cab528daf25ccbb7e6042cbb4b25e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result Transaction::addFile</definition>
+        <argsstring>(const juce::File &amp;targetFile, std::unique_ptr&lt; TextDocument &gt; originalDocument, LineDiff diff, int fileEditCount)</argsstring>
+        <name>addFile</name>
+        <qualifiedname>Transaction::addFile</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>targetFile</declname>
+        </param>
+        <param>
+          <type>std::unique_ptr&lt; <ref refid="class_text_document" kindref="compound">TextDocument</ref> &gt;</type>
+          <declname>originalDocument</declname>
+        </param>
+        <param>
+          <type><ref refid="class_line_diff" kindref="compound">LineDiff</ref></type>
+          <declname>diff</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>fileEditCount</declname>
+        </param>
+        <briefdescription>
+<para>Records edit counts, and stages the file when its planned bytes differ from its original bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The edit count is added to the total even when the bytes do not change. The file is staged only when the planned bytes differ from the original bytes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>targetFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Destination file on disk. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>originalDocument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pre-edit document snapshot; must not be null. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>diff</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Line-level changes to apply onto <computeroutput>originalDocument</computeroutput>. The diff holds the planned bytes, which the staged file writes at commit. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fileEditCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Logical edit count added to the <computeroutput>--expect</computeroutput> total.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Ok when the file is staged or needs no change. Otherwise the failure that <ref refid="struct_writer_1a93a55c6866ec6727d06e10b8d28de8ce" kindref="member">Writer::getWriteStatus</ref> reports, such as a hard-linked or read-only file. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="44" column="18" bodyfile="Transaction.cpp" bodystart="19" bodyend="42"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="class_line_diff_1afab795e6d55b29f73b9144280f44b591" compoundref="_line_diff_8cpp" startline="402" endline="405">LineDiff::getPlannedBytes</references>
+        <references refid="struct_writer_1a93a55c6866ec6727d06e10b8d28de8ce" compoundref="_writer_8cpp" startline="118" endline="139">Writer::getWriteStatus</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <references refid="class_transaction_1a9b9091c79a3b7389a4cf681e28fd65bc" compoundref="_transaction_8h" startline="147">stagedFiles</references>
+        <references refid="class_transaction_1ae8950cbe28a1d1df8d417465b6396b7b" compoundref="_transaction_8h" startline="150" endline="150">totalEditCount</references>
+        <referencedby refid="class_lines_1acc9556622af1319da99a5674b45c18c7" compoundref="_lines_8cpp" startline="293" endline="313">Lines::addFileMutation</referencedby>
+        <referencedby refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" compoundref="_patch_8cpp" startline="192" endline="254">addTargetFile</referencedby>
+        <referencedby refid="class_replace_1a06e837582d0faf325f061a6dda278a2d" compoundref="_replace_8cpp" startline="297" endline="349">Replace::runFiles</referencedby>
+        <referencedby refid="class_replace_1aac7261f40ff9097449c4ebcde25b7f6f" compoundref="_replace_8cpp" startline="266" endline="295">Replace::runStandardInput</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_transaction_1ab1e959e59ca6ad3115550892d0d7fa8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref></type>
+        <definition>Stdio::Output Transaction::run</definition>
+        <argsstring>(const Arguments &amp;arguments)</argsstring>
+        <name>run</name>
+        <qualifiedname>Transaction::run</qualifiedname>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <briefdescription>
+<para>Runs the transaction: a checked dry run, or a commit with <computeroutput>--apply</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Without <computeroutput>--apply</computeroutput>, the command prints the unified diff of each staged file and writes nothing. When <computeroutput>--expect</computeroutput> is given, it must match the total edit count first. A mismatch prints the diff, reports both counts, and exits with exitMismatch. Nothing is written, and no commit runs.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>arguments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parsed arguments of the command.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The exit code, the output documents, and the failures. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="59" column="19" bodyfile="Transaction.cpp" bodystart="44" bodyend="60"/>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">Arguments::contains</references>
+        <references refid="class_transaction_1a66ae9cab884f20145ae58ac270b7e507" compoundref="_transaction_8cpp" startline="123" endline="138">getDiffDocuments</references>
+        <references refid="class_transaction_1a5800eb9b3d14bded600e4b427b0917fd" compoundref="_transaction_8cpp" startline="70" endline="79">getExpectMismatch</references>
+        <references refid="class_transaction_1a0b22d5fa86a8cf4b366ef9c8e091992a" compoundref="_transaction_8cpp" startline="62" endline="68">getExpectStatus</references>
+        <references refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">Stdio::getFailure</references>
+        <references refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">runCommit</references>
+        <references refid="class_transaction_1a856c5ba1594da36d25ea8717f8a65ab0" compoundref="_transaction_8cpp" startline="140" endline="158">runDryRun</references>
+        <references refid="class_transaction_1a9b9091c79a3b7389a4cf681e28fd65bc" compoundref="_transaction_8h" startline="147">stagedFiles</references>
+        <references refid="class_transaction_1ae8950cbe28a1d1df8d417465b6396b7b" compoundref="_transaction_8h" startline="150" endline="150">totalEditCount</references>
+        <referencedby refid="class_replace_1a06e837582d0faf325f061a6dda278a2d" compoundref="_replace_8cpp" startline="297" endline="349">Replace::runFiles</referencedby>
+        <referencedby refid="class_lines_1a483aab1f3731243163a1e7a470d1b026" compoundref="_lines_8cpp" startline="315" endline="338">Lines::runMutation</referencedby>
+        <referencedby refid="class_replace_1aac7261f40ff9097449c4ebcde25b7f6f" compoundref="_replace_8cpp" startline="266" endline="295">Replace::runStandardInput</referencedby>
+        <referencedby refid="_patch_8cpp_1ae0389f55a6ababa8838cb4920cce60a1" compoundref="_patch_8cpp" startline="285" endline="304">runTransaction</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_transaction_1a0b22d5fa86a8cf4b366ef9c8e091992a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, int &gt;</type>
+        <definition>std::pair&lt; juce::Result, int &gt; Transaction::getExpectStatus</definition>
+        <argsstring>(const Arguments &amp;arguments)</argsstring>
+        <name>getExpectStatus</name>
+        <qualifiedname>Transaction::getExpectStatus</qualifiedname>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <briefdescription>
+<para>Reads the <computeroutput>--expect</computeroutput> count from the arguments, and checks it against <computeroutput>--apply</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><computeroutput>--apply</computeroutput> requires <computeroutput>--expect</computeroutput>. The count is 0 when <computeroutput>--expect</computeroutput> is absent.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>arguments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parsed arguments of the command.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result paired with the expected edit count. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="69" column="22" bodyfile="Transaction.cpp" bodystart="62" bodyend="68"/>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">Arguments::contains</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1a869f3e254d5593bad06267f44014a989" compoundref="_text_8h" startline="61" endline="61">text::Diagnostics::failApplyRequiresExpect</references>
+        <references refid="class_arguments_1acf274eaba4f4163f63edb3057b110a97" compoundref="_arguments_8cpp" startline="113" endline="122">Arguments::getInteger</references>
+        <referencedby refid="class_transaction_1ab1e959e59ca6ad3115550892d0d7fa8a" compoundref="_transaction_8cpp" startline="44" endline="60">run</referencedby>
+        <referencedby refid="_patch_8cpp_1ae0389f55a6ababa8838cb4920cce60a1" compoundref="_patch_8cpp" startline="285" endline="304">runTransaction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_transaction_1a5800eb9b3d14bded600e4b427b0917fd" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref></type>
+        <definition>Stdio::Output Transaction::getExpectMismatch</definition>
+        <argsstring>(Stdio::Documents diff, int expectedCount, int actualCount)</argsstring>
+        <name>getExpectMismatch</name>
+        <qualifiedname>Transaction::getExpectMismatch</qualifiedname>
+        <param>
+          <type><ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref></type>
+          <declname>diff</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>expectedCount</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>actualCount</declname>
+        </param>
+        <briefdescription>
+<para>Builds the output of a run whose edit count differs from <computeroutput>--expect</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>diff</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The diff documents to print on standard output. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>expectedCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The count that <computeroutput>--expect</computeroutput> gave. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>actualCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The count that the edits made.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Exit code exitMismatch, the diff documents, and a failure that holds both counts. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="79" column="26" bodyfile="Transaction.cpp" bodystart="70" bodyend="79"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="struct_stdio_1abac5137237b98fa233c4681c7e336d81" compoundref="_stdio_8h" startline="17" endline="17">Stdio::exitMismatch</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1aeccd04f4626b0360c8710582d7d7b829" compoundref="_text_8h" startline="63" endline="63">text::Diagnostics::failExpectMismatch</references>
+        <references refid="structtext_1_1_diagnostics_1acd3fdc75f4f5d4a95666e79812bc12ec" compoundref="_text_8h" startline="64" endline="64">text::Diagnostics::foundEdits</references>
+        <references refid="struct_stdio_1a0d704d1d99e172c759f752d6913edfb1" compoundref="_stdio_8cpp" startline="14" endline="17">Stdio::getOutput</references>
+        <references refid="structtext_1_1_diagnostics_1af4b9fed437059aa6418e96afec82fc4c" compoundref="_text_8h" startline="65" endline="65">text::Diagnostics::nothingWritten</references>
+        <referencedby refid="class_transaction_1ab1e959e59ca6ad3115550892d0d7fa8a" compoundref="_transaction_8cpp" startline="44" endline="60">run</referencedby>
+        <referencedby refid="_patch_8cpp_1ae0389f55a6ababa8838cb4920cce60a1" compoundref="_patch_8cpp" startline="285" endline="304">runTransaction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_transaction_1a7ad137f0b8635f5805a3e9ed15211127" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result Transaction::getRollbackFailure</definition>
+        <argsstring>(std::string_view failure, std::string_view failedPath, const juce::Result &amp;status, const jam::Strings &amp;unrestoredPaths)</argsstring>
+        <name>getRollbackFailure</name>
+        <qualifiedname>Transaction::getRollbackFailure</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>failure</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>failedPath</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref> &amp;</type>
+          <declname>status</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjam_1_1Strings" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings</ref> &amp;</type>
+          <declname>unrestoredPaths</declname>
+        </param>
+        <briefdescription>
+<para>Builds the failure of a write whose rollback left some files unrestored. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The message holds the failure text, the failed path, the write failure, the unrestored paths joined with a comma and a space, and the path of the blob folder.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>failure</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The failure text that starts the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>failedPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The display path of the file that failed to write. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The write failure. Its error message is appended. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>unrestoredPaths</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The display paths that could not be restored.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The failed result. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="93" column="25" bodyfile="Transaction.cpp" bodystart="81" bodyend="92"/>
+        <references refid="structtext_1_1_diagnostics_1aa8c262bc6d722543a364c5db5233f2a5" compoundref="_text_8h" startline="72" endline="72">text::Diagnostics::backupKept</references>
+        <references refid="namespaceId_1a5e729b9864fd096462b3f08ef1eb4b1a">Id::diagnosticSeparator</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="struct_undo_cache_1a88df3e787d0cf1d5e7e6be37fdfeb7bc" compoundref="_undo_cache_8cpp" startline="233" endline="236">UndoCache::getBlobDirectory</references>
+        <references refid="classjuce_1_1File_1a515fa016b189068f365cc875e241e2a1">juce::File::getFullPathName</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="classjam_1_1Strings_1a59e9b6bde36bec5dfce0022bd9a41f3e">jam::Strings::joinIntoString</references>
+        <references refid="structtext_1_1_diagnostics_1ac729cc0b65d2445d1d55f0dae89524aa" compoundref="_text_8h" startline="71" endline="71">text::Diagnostics::rollbackFailed</references>
+        <referencedby refid="class_transaction_1a9e9e14d173c40fc4767c6ad93ca14157" compoundref="_transaction_8cpp" startline="191" endline="217">commit</referencedby>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_transaction_1a09cb158e62732618b9a4cf32c7eba696" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, std::string_view, <ref refid="classjam_1_1Strings" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings</ref> &gt;</type>
+        <definition>std::tuple&lt; juce::Result, std::string_view, jam::Strings &gt; Transaction::applyToStagedFiles</definition>
+        <argsstring>(const jam::Array&lt; StagedFile &gt; &amp;stagedFiles, std::string_view transactionId, const std::function&lt; std::pair&lt; juce::Result, bool &gt;(const StagedFile &amp;)&gt; &amp;function)</argsstring>
+        <name>applyToStagedFiles</name>
+        <qualifiedname>Transaction::applyToStagedFiles</qualifiedname>
+        <param>
+          <type>const <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="class_staged_file" kindref="compound">StagedFile</ref> &gt; &amp;</type>
+          <declname>stagedFiles</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>transactionId</declname>
+        </param>
+        <param>
+          <type>const std::function&lt; std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, bool &gt;(const <ref refid="class_staged_file" kindref="compound">StagedFile</ref> &amp;)&gt; &amp;</type>
+          <declname>function</declname>
+        </param>
+        <briefdescription>
+<para>Calls a function for each staged file in order, and restores the files before a failure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The loop stops at the first failure. The files before the failure are restored. The failing file is restored too when its call reports true. A restore that fails does not stop the other restores.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>stagedFiles</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The staged files, in transaction order. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>transactionId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The transaction whose blob files the restore reads. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>function</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The operation for one staged file. Its bool is true when the target may have changed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Tuple of: the failure, or ok; the display path of the file that failed; and the display paths that could not be restored. The path is empty and the list is empty when every call succeeds. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="107" column="23" bodyfile="Transaction.cpp" bodystart="94" bodyend="121"/>
+        <references refid="classjam_1_1Strings_1a9223c1bf16916a52b122ae7e9d871f50">jam::Strings::add</references>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <references refid="class_transaction_1a9b9091c79a3b7389a4cf681e28fd65bc" compoundref="_transaction_8h" startline="147">stagedFiles</references>
+        <referencedby refid="class_transaction_1a9e9e14d173c40fc4767c6ad93ca14157" compoundref="_transaction_8cpp" startline="191" endline="217">commit</referencedby>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_transaction_1a66ae9cab884f20145ae58ac270b7e507" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref></type>
+        <definition>Stdio::Documents Transaction::getDiffDocuments</definition>
+        <argsstring>(const jam::Array&lt; StagedFile &gt; &amp;stagedFiles)</argsstring>
+        <name>getDiffDocuments</name>
+        <qualifiedname>Transaction::getDiffDocuments</qualifiedname>
+        <param>
+          <type>const <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="class_staged_file" kindref="compound">StagedFile</ref> &gt; &amp;</type>
+          <declname>stagedFiles</declname>
+        </param>
+        <briefdescription>
+<para>Builds the unified diff of each staged file whose diff is not empty. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>stagedFiles</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The staged files, in transaction order.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>One document for each staged file whose diff is not empty, in transaction order. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="115" column="29" bodyfile="Transaction.cpp" bodystart="123" bodyend="138"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="class_text_document_1a3293f6242e8ad72578da47007b84fa36" compoundref="_text_document_8cpp" startline="150" endline="156">TextDocument::fromText</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <references refid="class_transaction_1a9b9091c79a3b7389a4cf681e28fd65bc" compoundref="_transaction_8h" startline="147">stagedFiles</references>
+        <referencedby refid="class_transaction_1ab1e959e59ca6ad3115550892d0d7fa8a" compoundref="_transaction_8cpp" startline="44" endline="60">run</referencedby>
+        <referencedby refid="_undo_8cpp_1a18d805b7b51c03251496e676125cdba6" compoundref="_undo_8cpp" startline="225" endline="234">runDryRun</referencedby>
+        <referencedby refid="class_transaction_1a856c5ba1594da36d25ea8717f8a65ab0" compoundref="_transaction_8cpp" startline="140" endline="158">runDryRun</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_transaction_1a856c5ba1594da36d25ea8717f8a65ab0" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref></type>
+        <definition>Stdio::Output Transaction::runDryRun</definition>
+        <argsstring>() const</argsstring>
+        <name>runDryRun</name>
+        <qualifiedname>Transaction::runDryRun</qualifiedname>
+        <briefdescription>
+<para>Builds the output of a dry run: the diff documents and the summary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Exit code exitSuccess, the diff documents with the summary document, and no failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="122" column="19" bodyfile="Transaction.cpp" bodystart="140" bodyend="158"/>
+        <references refid="structtext_1_1_diagnostics_1aabb5729c1ee5b5020ca8f6d59a4b6056" compoundref="_text_8h" startline="110" endline="110">text::Diagnostics::editsIn</references>
+        <references refid="struct_stdio_1a1a7d222553744f4567c34e97e43e6b87" compoundref="_stdio_8h" startline="14" endline="14">Stdio::exitSuccess</references>
+        <references refid="structtext_1_1_diagnostics_1a76851414dfceb1ce9d52c459f6c27354" compoundref="_text_8h" startline="111" endline="111">text::Diagnostics::expectToWrite</references>
+        <references refid="class_text_document_1a3293f6242e8ad72578da47007b84fa36" compoundref="_text_document_8cpp" startline="150" endline="156">TextDocument::fromText</references>
+        <references refid="struct_stdio_1a1670d80da3fd6805c667369e0b02f617" compoundref="_stdio_8h" startline="95" endline="103">Stdio::getDiagnostic</references>
+        <references refid="class_transaction_1a66ae9cab884f20145ae58ac270b7e507" compoundref="_transaction_8cpp" startline="123" endline="138">getDiffDocuments</references>
+        <references refid="struct_stdio_1a0d704d1d99e172c759f752d6913edfb1" compoundref="_stdio_8cpp" startline="14" endline="17">Stdio::getOutput</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <references refid="class_transaction_1a9b9091c79a3b7389a4cf681e28fd65bc" compoundref="_transaction_8h" startline="147">stagedFiles</references>
+        <references refid="structtext_1_1_diagnostics_1a9e30ba15aa165c21345a6159415077de" compoundref="_text_8h" startline="109" endline="109">text::Diagnostics::summaryDryRun</references>
+        <references refid="structtext_1_1_diagnostics_1a9fae66952208d1353eccdae98bc1ffdc" compoundref="_text_8h" startline="113" endline="113">text::Diagnostics::summaryDryRunZero</references>
+        <references refid="class_transaction_1ae8950cbe28a1d1df8d417465b6396b7b" compoundref="_transaction_8h" startline="150" endline="150">totalEditCount</references>
+        <references refid="structtext_1_1_diagnostics_1acb7620c1bb7d8f5957c653ff295a7f37" compoundref="_text_8h" startline="112" endline="112">text::Diagnostics::toWrite</references>
+        <referencedby refid="class_transaction_1ab1e959e59ca6ad3115550892d0d7fa8a" compoundref="_transaction_8cpp" startline="44" endline="60">run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref></type>
+        <definition>Stdio::Output Transaction::runCommit</definition>
+        <argsstring>()</argsstring>
+        <name>runCommit</name>
+        <qualifiedname>Transaction::runCommit</qualifiedname>
+        <briefdescription>
+<para>Commits the staged files and builds the output of the commit. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Exit code exitSuccess when the commit and the publish succeed. Exit code exitError when the files were written but the publish failed, with the id still reported. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="129" column="19" bodyfile="Transaction.cpp" bodystart="160" bodyend="189"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="structChars_1ab49a1038f17219d6f768eb1575513a0a">Chars::closeParen</references>
+        <references refid="class_transaction_1a9e9e14d173c40fc4767c6ad93ca14157" compoundref="_transaction_8cpp" startline="191" endline="217">commit</references>
+        <references refid="structtext_1_1_diagnostics_1aabb5729c1ee5b5020ca8f6d59a4b6056" compoundref="_text_8h" startline="110" endline="110">text::Diagnostics::editsIn</references>
+        <references refid="struct_stdio_1a001792421c55d31cc4c4105fcf151c09" compoundref="_stdio_8h" startline="20" endline="20">Stdio::exitError</references>
+        <references refid="struct_stdio_1a1a7d222553744f4567c34e97e43e6b87" compoundref="_stdio_8h" startline="14" endline="14">Stdio::exitSuccess</references>
+        <references refid="struct_stdio_1a1670d80da3fd6805c667369e0b02f617" compoundref="_stdio_8h" startline="95" endline="103">Stdio::getDiagnostic</references>
+        <references refid="struct_stdio_1a152adfef4e630acdfddc13f5f596c7d7" compoundref="_stdio_8cpp" startline="19" endline="27">Stdio::getDocuments</references>
+        <references refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">Stdio::getFailure</references>
+        <references refid="struct_stdio_1a0d704d1d99e172c759f752d6913edfb1" compoundref="_stdio_8cpp" startline="14" endline="17">Stdio::getOutput</references>
+        <references refid="classjam_1_1Array_1a4bfdd699e0fa66a471c234797aac5fe1">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::isEmpty</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <references refid="class_transaction_1a9b9091c79a3b7389a4cf681e28fd65bc" compoundref="_transaction_8h" startline="147">stagedFiles</references>
+        <references refid="structtext_1_1_diagnostics_1a1f13e84fa3ea21c2dc8b087e2e6345cc" compoundref="_text_8h" startline="114" endline="114">text::Diagnostics::summaryApplied</references>
+        <references refid="structtext_1_1_diagnostics_1a0d8afb70eb902cf4e09cbd70e6d7354d" compoundref="_text_8h" startline="116" endline="116">text::Diagnostics::summaryAppliedZero</references>
+        <references refid="structtext_1_1_diagnostics_1a7e30bb522fb773ced4b7fe746f27d288" compoundref="_text_8h" startline="117" endline="117">text::Diagnostics::summaryNoContentChanged</references>
+        <references refid="class_transaction_1ae8950cbe28a1d1df8d417465b6396b7b" compoundref="_transaction_8h" startline="150" endline="150">totalEditCount</references>
+        <references refid="structtext_1_1_diagnostics_1ababbf64022efe9c9f3bf29d186ef95a3" compoundref="_text_8h" startline="115" endline="115">text::Diagnostics::transactionOpen</references>
+        <referencedby refid="class_transaction_1ab1e959e59ca6ad3115550892d0d7fa8a" compoundref="_transaction_8cpp" startline="44" endline="60">run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_transaction_1a9e9e14d173c40fc4767c6ad93ca14157" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, std::string &gt;</type>
+        <definition>std::pair&lt; juce::Result, std::string &gt; Transaction::commit</definition>
+        <argsstring>()</argsstring>
+        <name>commit</name>
+        <qualifiedname>Transaction::commit</qualifiedname>
+        <briefdescription>
+<para>Stages the blobs and the record, writes the planned files, and publishes the record. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The id is returned as soon as the files are written, even when the publish fails. This lets the caller report the id, so the user can undo the written files.</para>
+<para><simplesect kind="return"><para>Status result paired with the transaction id. The id is empty when staging or writing failed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Transaction.h" line="138" column="15" bodyfile="Transaction.cpp" bodystart="191" bodyend="217"/>
+        <references refid="struct_undo_cache_1a7b0c9fd799188881199db848a9d98182" compoundref="_undo_cache_8cpp" startline="320" endline="395">UndoCache::addTransaction</references>
+        <references refid="class_transaction_1a09cb158e62732618b9a4cf32c7eba696" compoundref="_transaction_8cpp" startline="94" endline="121">applyToStagedFiles</references>
+        <references refid="class_transaction_1a589c4bcc2e67db0851e6a40445ecf251" compoundref="_transaction_8h" startline="141">commandName</references>
+        <references refid="class_staged_file_1a8840cb0b0fc3e37729ae39270f2effd9" compoundref="_staged_file_8cpp" startline="72" endline="88">StagedFile::commit</references>
+        <references refid="structtext_1_1_diagnostics_1a36a20d77239a5883e3322b3f14725b82" compoundref="_text_8h" startline="68" endline="68">text::Diagnostics::failWrite</references>
+        <references refid="class_transaction_1a7ad137f0b8635f5805a3e9ed15211127" compoundref="_transaction_8cpp" startline="81" endline="92">getRollbackFailure</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="struct_writer_1a4ebe3e06a186f29366e2d37b838a48b3" compoundref="_writer_8cpp" startline="109" endline="116">Writer::getWriteFailure</references>
+        <references refid="struct_undo_cache_1a5fb670f0e093ed1831561a421a29bd9e" compoundref="_undo_cache_8cpp" startline="255" endline="261">UndoCache::publishTransaction</references>
+        <references refid="struct_undo_cache_1ad16fae57f09b3cdb014ff100337940a6" compoundref="_undo_cache_8cpp" startline="446" endline="460">UndoCache::removeOldestTransactions</references>
+        <references refid="struct_undo_cache_1abeba6cd17a782cab536ab514aff421a7" compoundref="_undo_cache_8cpp" startline="439" endline="444">UndoCache::removeTransaction</references>
+        <references refid="class_transaction_1a9b9091c79a3b7389a4cf681e28fd65bc" compoundref="_transaction_8h" startline="147">stagedFiles</references>
+        <referencedby refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">runCommit</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Stages multi-file edits for unified dry-run preview, <computeroutput>--expect</computeroutput> checks, and atomic commit. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Transaction</label>
+        <link refid="class_transaction"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>commandName</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>targetFiles</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>stagedFiles</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>jam::Array&lt; StagedFile &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>juce::DummyCriticalSection</label>
+        <link refid="classjuce_1_1DummyCriticalSection" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="5">
+        <label>juce::File</label>
+        <link refid="classjuce_1_1File" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="3">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="4">
+        <label>std::set&lt; juce::File &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>keys</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::string</label>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Transaction.h" line="11" column="1" bodyfile="Transaction.h" bodystart="12" bodyend="151"/>
+    <listofallmembers>
+      <member refid="class_transaction_1ace7cab528daf25ccbb7e6042cbb4b25e" prot="public" virt="non-virtual"><scope>Transaction</scope><name>addFile</name></member>
+      <member refid="class_transaction_1a2f92a38e72c669b68b635b79daff4ccb" prot="public" virt="non-virtual"><scope>Transaction</scope><name>addTarget</name></member>
+      <member refid="class_transaction_1a09cb158e62732618b9a4cf32c7eba696" prot="public" virt="non-virtual"><scope>Transaction</scope><name>applyToStagedFiles</name></member>
+      <member refid="class_transaction_1a589c4bcc2e67db0851e6a40445ecf251" prot="private" virt="non-virtual"><scope>Transaction</scope><name>commandName</name></member>
+      <member refid="class_transaction_1a9e9e14d173c40fc4767c6ad93ca14157" prot="private" virt="non-virtual"><scope>Transaction</scope><name>commit</name></member>
+      <member refid="class_transaction_1a66ae9cab884f20145ae58ac270b7e507" prot="public" virt="non-virtual"><scope>Transaction</scope><name>getDiffDocuments</name></member>
+      <member refid="class_transaction_1a5800eb9b3d14bded600e4b427b0917fd" prot="public" virt="non-virtual"><scope>Transaction</scope><name>getExpectMismatch</name></member>
+      <member refid="class_transaction_1a0b22d5fa86a8cf4b366ef9c8e091992a" prot="public" virt="non-virtual"><scope>Transaction</scope><name>getExpectStatus</name></member>
+      <member refid="class_transaction_1a7ad137f0b8635f5805a3e9ed15211127" prot="public" virt="non-virtual"><scope>Transaction</scope><name>getRollbackFailure</name></member>
+      <member refid="class_transaction_1ab1e959e59ca6ad3115550892d0d7fa8a" prot="public" virt="non-virtual"><scope>Transaction</scope><name>run</name></member>
+      <member refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" prot="private" virt="non-virtual"><scope>Transaction</scope><name>runCommit</name></member>
+      <member refid="class_transaction_1a856c5ba1594da36d25ea8717f8a65ab0" prot="private" virt="non-virtual"><scope>Transaction</scope><name>runDryRun</name></member>
+      <member refid="class_transaction_1a9b9091c79a3b7389a4cf681e28fd65bc" prot="private" virt="non-virtual"><scope>Transaction</scope><name>stagedFiles</name></member>
+      <member refid="class_transaction_1acacd99f1c09ffa4a4668e4629e78c45b" prot="private" virt="non-virtual"><scope>Transaction</scope><name>targetFiles</name></member>
+      <member refid="class_transaction_1ae8950cbe28a1d1df8d417465b6396b7b" prot="private" virt="non-virtual"><scope>Transaction</scope><name>totalEditCount</name></member>
+      <member refid="class_transaction_1aa8e03ea2b3cbad3298616aa9d6814a61" prot="public" virt="non-virtual"><scope>Transaction</scope><name>Transaction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

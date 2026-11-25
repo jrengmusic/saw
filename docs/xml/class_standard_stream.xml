@@ -1,0 +1,637 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="class_standard_stream" kind="class" language="C++" prot="public">
+    <compoundname>StandardStream</compoundname>
+    <basecompoundref refid="classjuce_1_1OutputStream" prot="public" virt="non-virtual">juce::OutputStream</basecompoundref>
+    <includes refid="_standard_stream_8h" local="no">StandardStream.h</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_standard_stream_1ac72e04b37de743cc53f98d7801e3a494" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>int</type>
+        <definition>int StandardStream::input</definition>
+        <argsstring></argsstring>
+        <name>input</name>
+        <qualifiedname>StandardStream::input</qualifiedname>
+        <initializer>{ 0 }</initializer>
+        <briefdescription>
+<para>Descriptor of standard input. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="13" column="26" bodyfile="StandardStream.h" bodystart="13" bodyend="13"/>
+        <referencedby refid="struct_stdio_1a28994562faa0223a49215d05f819a20a" compoundref="_stdio_8cpp" startline="4" endline="7">Stdio::isTerminalInput</referencedby>
+        <referencedby refid="class_standard_stream_1a9549dbf12415464b6fd2b13da3d1b9ad" compoundref="_standard_stream_8cpp" startline="111" endline="119">read</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_standard_stream_1a34dab4f1e141b683d91ab64a75a8ca1f" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>int</type>
+        <definition>int StandardStream::output</definition>
+        <argsstring></argsstring>
+        <name>output</name>
+        <qualifiedname>StandardStream::output</qualifiedname>
+        <initializer>{ 1 }</initializer>
+        <briefdescription>
+<para>Descriptor of standard output. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="16" column="26" bodyfile="StandardStream.h" bodystart="16" bodyend="16"/>
+        <referencedby refid="struct_stdio_1ab0bc943ad54bb26eb46bacdb992a2f5b" compoundref="_stdio_8cpp" startline="9" endline="12">Stdio::isTerminalOutput</referencedby>
+        <referencedby refid="struct_stdio_1a2f47d9111aa65ce8942bc5ed68e42474" compoundref="_stdio_8cpp" startline="101" endline="130">Stdio::write</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_standard_stream_1a76e8c1c1f7a133efd9a3c1d5ea89df0f" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>int</type>
+        <definition>int StandardStream::error</definition>
+        <argsstring></argsstring>
+        <name>error</name>
+        <qualifiedname>StandardStream::error</qualifiedname>
+        <initializer>{ 2 }</initializer>
+        <briefdescription>
+<para>Descriptor of standard error. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="19" column="26" bodyfile="StandardStream.h" bodystart="19" bodyend="19"/>
+        <referencedby refid="struct_stdio_1a2f47d9111aa65ce8942bc5ed68e42474" compoundref="_stdio_8cpp" startline="101" endline="130">Stdio::write</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="class_standard_stream_1a6fef34f3ad5947ef5b9a9e68bde7b576" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type>size_t</type>
+        <definition>size_t StandardStream::bufferSize</definition>
+        <argsstring></argsstring>
+        <name>bufferSize</name>
+        <qualifiedname>StandardStream::bufferSize</qualifiedname>
+        <initializer>{ 64 * 1024 }</initializer>
+        <briefdescription>
+<para>Size of the buffer that holds small writes until the next flush. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="88" column="29" bodyfile="StandardStream.h" bodystart="88" bodyend="88"/>
+        <referencedby refid="class_standard_stream_1a731197edcc411280dd8091bc5be62d06" compoundref="_standard_stream_8cpp" startline="44" endline="69">write</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_standard_stream_1a86f9f76093984bc5f9d79e88bdfaffb1" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type>size_t</type>
+        <definition>size_t StandardStream::maximumChunkSize</definition>
+        <argsstring></argsstring>
+        <name>maximumChunkSize</name>
+        <qualifiedname>StandardStream::maximumChunkSize</qualifiedname>
+        <initializer>{ 64 * 1024 }</initializer>
+        <briefdescription>
+<para>Largest number of bytes passed to one platform write call. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="91" column="29" bodyfile="StandardStream.h" bodystart="91" bodyend="91"/>
+        <referencedby refid="class_standard_stream_1ab24f0d29cfe498a0e1984ff34342e77f" compoundref="_standard_stream_8cpp" startline="71" endline="89">writeAll</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_standard_stream_1ae5207e4406fd963edcfa1c825b25db39" prot="private" static="no" mutable="no">
+        <type>const int</type>
+        <definition>const int StandardStream::descriptor</definition>
+        <argsstring></argsstring>
+        <name>descriptor</name>
+        <qualifiedname>StandardStream::descriptor</qualifiedname>
+        <briefdescription>
+<para>The descriptor that receives the bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="109" column="15" bodyfile="StandardStream.h" bodystart="109" bodyend="-1"/>
+        <referencedby refid="class_standard_stream_1a37d2b686b788ef551511d1cda117cb9c" compoundref="_standard_stream_8cpp" startline="131" endline="134">isTerminal</referencedby>
+        <referencedby refid="class_standard_stream_1abeb8c43e40cd2d77dfa4fd6aab3d4b7a" compoundref="_standard_stream_8cpp" startline="11" endline="14">StandardStream</referencedby>
+        <referencedby refid="class_standard_stream_1a8b29b2b49e78cb8741322246ea4cce49" compoundref="_standard_stream_8cpp" startline="121" endline="129">writeBytes</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_standard_stream_1a57dd5b707975f6188ecab4ade6102822" prot="private" static="no" mutable="no">
+        <type><ref refid="classjuce_1_1HeapBlock" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::HeapBlock</ref>&lt; char &gt;</type>
+        <definition>juce::HeapBlock&lt;char&gt; StandardStream::buffer</definition>
+        <argsstring></argsstring>
+        <name>buffer</name>
+        <qualifiedname>StandardStream::buffer</qualifiedname>
+        <initializer>{ <ref refid="class_standard_stream_1a6fef34f3ad5947ef5b9a9e68bde7b576" kindref="member">bufferSize</ref> }</initializer>
+        <briefdescription>
+<para>Holds small writes, so that one flush makes one platform call. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="112" column="21" bodyfile="StandardStream.h" bodystart="112" bodyend="112"/>
+        <referencedby refid="class_standard_stream_1a0bc1af69f45962fd06aa470ab28225e1" compoundref="_standard_stream_8cpp" startline="26" endline="30">flush</referencedby>
+        <referencedby refid="class_standard_stream_1a731197edcc411280dd8091bc5be62d06" compoundref="_standard_stream_8cpp" startline="44" endline="69">write</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_standard_stream_1a28555c11315914dfdfe2bc7b336e32df" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t StandardStream::numInBuffer</definition>
+        <argsstring></argsstring>
+        <name>numInBuffer</name>
+        <qualifiedname>StandardStream::numInBuffer</qualifiedname>
+        <initializer>{ 0 }</initializer>
+        <briefdescription>
+<para>Number of bytes held in buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="115" column="12" bodyfile="StandardStream.h" bodystart="115" bodyend="115"/>
+        <referencedby refid="class_standard_stream_1a0bc1af69f45962fd06aa470ab28225e1" compoundref="_standard_stream_8cpp" startline="26" endline="30">flush</referencedby>
+        <referencedby refid="class_standard_stream_1a731197edcc411280dd8091bc5be62d06" compoundref="_standard_stream_8cpp" startline="44" endline="69">write</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_standard_stream_1a1962581791b7b127bd36c93427d4a835" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool StandardStream::isClosed</definition>
+        <argsstring></argsstring>
+        <name>isClosed</name>
+        <qualifiedname>StandardStream::isClosed</qualifiedname>
+        <initializer>{ false }</initializer>
+        <briefdescription>
+<para>Set when the pipe is closed or a write failed, so that later writes do nothing. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="118" column="10" bodyfile="StandardStream.h" bodystart="118" bodyend="118"/>
+        <referencedby refid="class_standard_stream_1a731197edcc411280dd8091bc5be62d06" compoundref="_standard_stream_8cpp" startline="44" endline="69">write</referencedby>
+        <referencedby refid="class_standard_stream_1ab24f0d29cfe498a0e1984ff34342e77f" compoundref="_standard_stream_8cpp" startline="71" endline="89">writeAll</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_standard_stream_1abe56b002b4e5ca0f8cc2af8a42fdd2a0" prot="private" static="no" mutable="no">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result StandardStream::status</definition>
+        <argsstring></argsstring>
+        <name>status</name>
+        <qualifiedname>StandardStream::status</qualifiedname>
+        <initializer>{ <ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>() }</initializer>
+        <briefdescription>
+<para>The first failure of the stream, or ok. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="121" column="18" bodyfile="StandardStream.h" bodystart="121" bodyend="121"/>
+        <referencedby refid="class_standard_stream_1a778bd9b1cb86e42a498e628dcceedca6" compoundref="_standard_stream_8cpp" startline="21" endline="24">getStatus</referencedby>
+        <referencedby refid="class_standard_stream_1ab24f0d29cfe498a0e1984ff34342e77f" compoundref="_standard_stream_8cpp" startline="71" endline="89">writeAll</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_standard_stream_1a9549dbf12415464b6fd2b13da3d1b9ad" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespacejuce_1a6afa306885ea6220ef17d2a02cfa7f0a" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::int64</ref></type>
+        <definition>juce::int64 StandardStream::read</definition>
+        <argsstring>(char *destination, size_t maximumSize)</argsstring>
+        <name>read</name>
+        <qualifiedname>StandardStream::read</qualifiedname>
+        <param>
+          <type>char *</type>
+          <declname>destination</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>maximumSize</declname>
+        </param>
+        <briefdescription>
+<para>Reads bytes from standard input. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>On POSIX, a read that a signal interrupts is retried. On Windows, the stream is set to binary mode, and one read is limited to a fixed transfer size.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>destination</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer that receives the bytes. It must hold at least maximumSize bytes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The largest number of bytes to read.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The number of bytes read, 0 at the end of the stream, or a negative value on error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="31" column="24" bodyfile="StandardStream.cpp" bodystart="111" bodyend="119"/>
+        <references refid="class_standard_stream_1ac72e04b37de743cc53f98d7801e3a494" compoundref="_standard_stream_8h" startline="13" endline="13">input</references>
+        <references refid="class_standard_stream_1a9549dbf12415464b6fd2b13da3d1b9ad" compoundref="_standard_stream_8cpp" startline="111" endline="119">read</references>
+        <referencedby refid="class_standard_stream_1a9549dbf12415464b6fd2b13da3d1b9ad" compoundref="_standard_stream_8cpp" startline="111" endline="119">read</referencedby>
+        <referencedby refid="class_search_1a3b438e868398151582358ee066342910" compoundref="_search_8cpp" startline="136" endline="200">Search::runStream</referencedby>
+        <referencedby refid="class_input_1a1a9f979a79953e658c761d4c651bc5c1" compoundref="_input_8cpp" startline="146" endline="182">Input::setReadBytes</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_standard_stream_1a37d2b686b788ef551511d1cda117cb9c" prot="public" static="yes" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool StandardStream::isTerminal</definition>
+        <argsstring>(int descriptor) noexcept</argsstring>
+        <name>isTerminal</name>
+        <qualifiedname>StandardStream::isTerminal</qualifiedname>
+        <param>
+          <type>int</type>
+          <declname>descriptor</declname>
+        </param>
+        <briefdescription>
+<para>Checks whether a descriptor is connected to an interactive terminal. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>descriptor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The descriptor to test.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True when the descriptor is a TTY. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="39" column="17" bodyfile="StandardStream.cpp" bodystart="131" bodyend="134"/>
+        <references refid="class_standard_stream_1ae5207e4406fd963edcfa1c825b25db39" compoundref="_standard_stream_8h" startline="109">descriptor</references>
+        <referencedby refid="struct_stdio_1a28994562faa0223a49215d05f819a20a" compoundref="_stdio_8cpp" startline="4" endline="7">Stdio::isTerminalInput</referencedby>
+        <referencedby refid="struct_stdio_1ab0bc943ad54bb26eb46bacdb992a2f5b" compoundref="_stdio_8cpp" startline="9" endline="12">Stdio::isTerminalOutput</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_standard_stream_1abeb8c43e40cd2d77dfa4fd6aab3d4b7a" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>StandardStream::StandardStream</definition>
+        <argsstring>(int newDescriptor)</argsstring>
+        <name>StandardStream</name>
+        <qualifiedname>StandardStream::StandardStream</qualifiedname>
+        <param>
+          <type>int</type>
+          <declname>newDescriptor</declname>
+        </param>
+        <briefdescription>
+<para>Binds the stream to one descriptor, with an empty buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>newDescriptor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The open descriptor that receives the bytes. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="45" column="14" bodyfile="StandardStream.cpp" bodystart="11" bodyend="14"/>
+        <references refid="class_standard_stream_1ae5207e4406fd963edcfa1c825b25db39" compoundref="_standard_stream_8h" startline="109">descriptor</references>
+      </memberdef>
+      <memberdef kind="function" id="class_standard_stream_1a6db66a77f1c7daa0b5e775b89dfa1e9e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>StandardStream::~StandardStream</definition>
+        <argsstring>() override</argsstring>
+        <name>~StandardStream</name>
+        <qualifiedname>StandardStream::~StandardStream</qualifiedname>
+        <briefdescription>
+<para>Writes the buffered bytes before the stream is destroyed, so no buffered output is lost. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="48" column="5" bodyfile="StandardStream.cpp" bodystart="16" bodyend="19"/>
+        <references refid="class_standard_stream_1a0bc1af69f45962fd06aa470ab28225e1" compoundref="_standard_stream_8cpp" startline="26" endline="30">flush</references>
+      </memberdef>
+      <memberdef kind="function" id="class_standard_stream_1a778bd9b1cb86e42a498e628dcceedca6" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>const <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref> &amp;</type>
+        <definition>const juce::Result &amp; StandardStream::getStatus</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>getStatus</name>
+        <qualifiedname>StandardStream::getStatus</qualifiedname>
+        <briefdescription>
+<para>Returns the status of the stream. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The status is set by the first write that failed. A closed pipe ends the output and leaves the status ok.</para>
+<para><simplesect kind="return"><para>The status of the stream, ok while no write has failed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="57" column="24" bodyfile="StandardStream.cpp" bodystart="21" bodyend="24"/>
+        <references refid="class_standard_stream_1abe56b002b4e5ca0f8cc2af8a42fdd2a0" compoundref="_standard_stream_8h" startline="121" endline="121">status</references>
+        <referencedby refid="struct_stdio_1a2f47d9111aa65ce8942bc5ed68e42474" compoundref="_stdio_8cpp" startline="101" endline="130">Stdio::write</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_standard_stream_1a0bc1af69f45962fd06aa470ab28225e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void StandardStream::flush</definition>
+        <argsstring>() override</argsstring>
+        <name>flush</name>
+        <qualifiedname>StandardStream::flush</qualifiedname>
+        <reimplements refid="classjuce_1_1OutputStream_1ad371b10b7cf5f26919e00b9127f8f3e3">flush</reimplements>
+        <briefdescription>
+<para>Writes the buffered bytes to the descriptor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="60" column="10" bodyfile="StandardStream.cpp" bodystart="26" bodyend="30"/>
+        <references refid="class_standard_stream_1a57dd5b707975f6188ecab4ade6102822" compoundref="_standard_stream_8h" startline="112" endline="112">buffer</references>
+        <references refid="class_standard_stream_1a28555c11315914dfdfe2bc7b336e32df" compoundref="_standard_stream_8h" startline="115" endline="115">numInBuffer</references>
+        <references refid="class_standard_stream_1ab24f0d29cfe498a0e1984ff34342e77f" compoundref="_standard_stream_8cpp" startline="71" endline="89">writeAll</references>
+        <referencedby refid="class_standard_stream_1a731197edcc411280dd8091bc5be62d06" compoundref="_standard_stream_8cpp" startline="44" endline="69">write</referencedby>
+        <referencedby refid="struct_stdio_1a2f47d9111aa65ce8942bc5ed68e42474" compoundref="_stdio_8cpp" startline="101" endline="130">Stdio::write</referencedby>
+        <referencedby refid="class_standard_stream_1a6db66a77f1c7daa0b5e775b89dfa1e9e" compoundref="_standard_stream_8cpp" startline="16" endline="19">~StandardStream</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_standard_stream_1a4b169820937a5cc83e6a7ecf86f1737f" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacejuce_1a6afa306885ea6220ef17d2a02cfa7f0a" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::int64</ref></type>
+        <definition>juce::int64 StandardStream::getPosition</definition>
+        <argsstring>() override</argsstring>
+        <name>getPosition</name>
+        <qualifiedname>StandardStream::getPosition</qualifiedname>
+        <reimplements refid="classjuce_1_1OutputStream_1a59f3d5ebc107a1eaddbfbe9808fac7f8">getPosition</reimplements>
+        <briefdescription>
+<para>Not supported: the descriptor is not seekable. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The call asserts in debug builds.</para>
+<para><simplesect kind="return"><para>Always 0. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="66" column="17" bodyfile="StandardStream.cpp" bodystart="32" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="class_standard_stream_1a2b3c18b3109c6561838a073981ded1dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool StandardStream::setPosition</definition>
+        <argsstring>(juce::int64) override</argsstring>
+        <name>setPosition</name>
+        <qualifiedname>StandardStream::setPosition</qualifiedname>
+        <reimplements refid="classjuce_1_1OutputStream_1acbc80607a6ad24f85d5e6e661a4c510c">setPosition</reimplements>
+        <param>
+          <type><ref refid="namespacejuce_1a6afa306885ea6220ef17d2a02cfa7f0a" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::int64</ref></type>
+        </param>
+        <briefdescription>
+<para>Not supported: the descriptor is not seekable. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The call asserts in debug builds.</para>
+<para><simplesect kind="return"><para>Always false. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="72" column="10" bodyfile="StandardStream.cpp" bodystart="38" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="class_standard_stream_1a731197edcc411280dd8091bc5be62d06" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool StandardStream::write</definition>
+        <argsstring>(const void *dataToWrite, size_t numberOfBytes) override</argsstring>
+        <name>write</name>
+        <qualifiedname>StandardStream::write</qualifiedname>
+        <reimplements refid="classjuce_1_1OutputStream_1a22f9d3fa2137798e99cd135b04b0f1f9">write</reimplements>
+        <param>
+          <type>const void *</type>
+          <declname>dataToWrite</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>numberOfBytes</declname>
+        </param>
+        <briefdescription>
+<para>Buffers a write that fits, and sends a larger one straight to the descriptor after a flush. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A write that does not fit in the free space flushes the buffer first. It is then buffered when it is smaller than bufferSize, so that large text is not copied on its way to the descriptor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataToWrite</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The bytes to write. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numberOfBytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of bytes in dataToWrite.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True while the stream accepts writes, false once the stream is closed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="84" column="10" bodyfile="StandardStream.cpp" bodystart="44" bodyend="69"/>
+        <references refid="class_standard_stream_1a57dd5b707975f6188ecab4ade6102822" compoundref="_standard_stream_8h" startline="112" endline="112">buffer</references>
+        <references refid="class_standard_stream_1a6fef34f3ad5947ef5b9a9e68bde7b576" compoundref="_standard_stream_8h" startline="88" endline="88">bufferSize</references>
+        <references refid="class_standard_stream_1a0bc1af69f45962fd06aa470ab28225e1" compoundref="_standard_stream_8cpp" startline="26" endline="30">flush</references>
+        <references refid="class_standard_stream_1a1962581791b7b127bd36c93427d4a835" compoundref="_standard_stream_8h" startline="118" endline="118">isClosed</references>
+        <references refid="class_standard_stream_1a28555c11315914dfdfe2bc7b336e32df" compoundref="_standard_stream_8h" startline="115" endline="115">numInBuffer</references>
+        <references refid="class_standard_stream_1ab24f0d29cfe498a0e1984ff34342e77f" compoundref="_standard_stream_8cpp" startline="71" endline="89">writeAll</references>
+        <referencedby refid="struct_stdio_1a2f47d9111aa65ce8942bc5ed68e42474" compoundref="_stdio_8cpp" startline="101" endline="130">Stdio::write</referencedby>
+        <referencedby refid="class_standard_stream_1a8b29b2b49e78cb8741322246ea4cce49" compoundref="_standard_stream_8cpp" startline="121" endline="129">writeBytes</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_standard_stream_1a8b29b2b49e78cb8741322246ea4cce49" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespacejuce_1a6afa306885ea6220ef17d2a02cfa7f0a" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::int64</ref></type>
+        <definition>juce::int64 StandardStream::writeBytes</definition>
+        <argsstring>(const char *source, size_t size)</argsstring>
+        <name>writeBytes</name>
+        <qualifiedname>StandardStream::writeBytes</qualifiedname>
+        <param>
+          <type>const char *</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Writes one chunk to the descriptor, and retries the call when a signal interrupts it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>source</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The first byte of the chunk. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of bytes in the chunk.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The number of bytes written, 0 when the descriptor took none, or a negative value on error. A closed pipe is an error with errno EPIPE. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="100" column="17" bodyfile="StandardStream.cpp" bodystart="121" bodyend="129"/>
+        <references refid="class_standard_stream_1ae5207e4406fd963edcfa1c825b25db39" compoundref="_standard_stream_8h" startline="109">descriptor</references>
+        <references refid="class_standard_stream_1a731197edcc411280dd8091bc5be62d06" compoundref="_standard_stream_8cpp" startline="44" endline="69">write</references>
+        <referencedby refid="class_standard_stream_1ab24f0d29cfe498a0e1984ff34342e77f" compoundref="_standard_stream_8cpp" startline="71" endline="89">writeAll</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_standard_stream_1ab24f0d29cfe498a0e1984ff34342e77f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void StandardStream::writeAll</definition>
+        <argsstring>(std::string_view text)</argsstring>
+        <name>writeAll</name>
+        <qualifiedname>StandardStream::writeAll</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>text</declname>
+        </param>
+        <briefdescription>
+<para>Writes all of the text, and marks the stream closed after a write that did not complete. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>text</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The bytes to write. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="StandardStream.h" line="106" column="10" bodyfile="StandardStream.cpp" bodystart="71" bodyend="89"/>
+        <references refid="classjuce_1_1Result_1a27205a4dc7a973aebd1976270867be80">juce::Result::fail</references>
+        <references refid="structtext_1_1_diagnostics_1aaade5963d831130950986db9515d42ab" compoundref="_text_8h" startline="42" endline="42">text::Diagnostics::failStandardOutput</references>
+        <references refid="class_standard_stream_1a1962581791b7b127bd36c93427d4a835" compoundref="_standard_stream_8h" startline="118" endline="118">isClosed</references>
+        <references refid="class_standard_stream_1a86f9f76093984bc5f9d79e88bdfaffb1" compoundref="_standard_stream_8h" startline="91" endline="91">maximumChunkSize</references>
+        <references refid="class_standard_stream_1abe56b002b4e5ca0f8cc2af8a42fdd2a0" compoundref="_standard_stream_8h" startline="121" endline="121">status</references>
+        <references refid="class_standard_stream_1a8b29b2b49e78cb8741322246ea4cce49" compoundref="_standard_stream_8cpp" startline="121" endline="129">writeBytes</references>
+        <referencedby refid="class_standard_stream_1a0bc1af69f45962fd06aa470ab28225e1" compoundref="_standard_stream_8cpp" startline="26" endline="30">flush</referencedby>
+        <referencedby refid="class_standard_stream_1a731197edcc411280dd8091bc5be62d06" compoundref="_standard_stream_8cpp" startline="44" endline="69">write</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><ref refid="classjuce_1_1OutputStream" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::OutputStream</ref> over one descriptor, buffered for small writes. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The platform calls stay in this class, so callers see one result on every platform. The stream is not seekable. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>StandardStream</label>
+        <link refid="class_standard_stream"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>juce::OutputStream</label>
+        <link refid="classjuce_1_1OutputStream" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>StandardStream</label>
+        <link refid="class_standard_stream"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>buffer</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>status</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>juce::HeapBlock&lt; char &gt;</label>
+        <link refid="classjuce_1_1HeapBlock" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="2">
+        <label>juce::OutputStream</label>
+        <link refid="classjuce_1_1OutputStream" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="4">
+        <label>juce::Result</label>
+        <link refid="classjuce_1_1Result" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+    </collaborationgraph>
+    <location file="StandardStream.h" line="9" column="1" bodyfile="StandardStream.h" bodystart="10" bodyend="124"/>
+    <listofallmembers>
+      <member refid="class_standard_stream_1a57dd5b707975f6188ecab4ade6102822" prot="private" virt="non-virtual"><scope>StandardStream</scope><name>buffer</name></member>
+      <member refid="class_standard_stream_1a6fef34f3ad5947ef5b9a9e68bde7b576" prot="private" virt="non-virtual"><scope>StandardStream</scope><name>bufferSize</name></member>
+      <member refid="class_standard_stream_1ae5207e4406fd963edcfa1c825b25db39" prot="private" virt="non-virtual"><scope>StandardStream</scope><name>descriptor</name></member>
+      <member refid="class_standard_stream_1a76e8c1c1f7a133efd9a3c1d5ea89df0f" prot="public" virt="non-virtual"><scope>StandardStream</scope><name>error</name></member>
+      <member refid="class_standard_stream_1a0bc1af69f45962fd06aa470ab28225e1" prot="public" virt="virtual"><scope>StandardStream</scope><name>flush</name></member>
+      <member refid="classjuce_1_1OutputStream_1af822a0fa44575c3eddd271aaf5847295" prot="public" virt="non-virtual"><scope>StandardStream</scope><name>getNewLineString</name></member>
+      <member refid="class_standard_stream_1a4b169820937a5cc83e6a7ecf86f1737f" prot="public" virt="virtual"><scope>StandardStream</scope><name>getPosition</name></member>
+      <member refid="class_standard_stream_1a778bd9b1cb86e42a498e628dcceedca6" prot="public" virt="non-virtual"><scope>StandardStream</scope><name>getStatus</name></member>
+      <member refid="class_standard_stream_1ac72e04b37de743cc53f98d7801e3a494" prot="public" virt="non-virtual"><scope>StandardStream</scope><name>input</name></member>
+      <member refid="class_standard_stream_1a1962581791b7b127bd36c93427d4a835" prot="private" virt="non-virtual"><scope>StandardStream</scope><name>isClosed</name></member>
+      <member refid="class_standard_stream_1a37d2b686b788ef551511d1cda117cb9c" prot="public" virt="non-virtual"><scope>StandardStream</scope><name>isTerminal</name></member>
+      <member refid="class_standard_stream_1a86f9f76093984bc5f9d79e88bdfaffb1" prot="private" virt="non-virtual"><scope>StandardStream</scope><name>maximumChunkSize</name></member>
+      <member refid="class_standard_stream_1a28555c11315914dfdfe2bc7b336e32df" prot="private" virt="non-virtual"><scope>StandardStream</scope><name>numInBuffer</name></member>
+      <member refid="class_standard_stream_1a34dab4f1e141b683d91ab64a75a8ca1f" prot="public" virt="non-virtual"><scope>StandardStream</scope><name>output</name></member>
+      <member refid="classjuce_1_1OutputStream_1a2fb99463619e12bcd1485d8f53673845" prot="protected" virt="non-virtual"><scope>StandardStream</scope><name>OutputStream</name></member>
+      <member refid="class_standard_stream_1a9549dbf12415464b6fd2b13da3d1b9ad" prot="public" virt="non-virtual"><scope>StandardStream</scope><name>read</name></member>
+      <member refid="classjuce_1_1OutputStream_1a2e58482a8450357f5dea96d912877684" prot="public" virt="non-virtual"><scope>StandardStream</scope><name>setNewLineString</name></member>
+      <member refid="class_standard_stream_1a2b3c18b3109c6561838a073981ded1dd" prot="public" virt="virtual"><scope>StandardStream</scope><name>setPosition</name></member>
+      <member refid="class_standard_stream_1abeb8c43e40cd2d77dfa4fd6aab3d4b7a" prot="public" virt="non-virtual"><scope>StandardStream</scope><name>StandardStream</name></member>
+      <member refid="class_standard_stream_1abe56b002b4e5ca0f8cc2af8a42fdd2a0" prot="private" virt="non-virtual"><scope>StandardStream</scope><name>status</name></member>
+      <member refid="class_standard_stream_1a731197edcc411280dd8091bc5be62d06" prot="public" virt="virtual"><scope>StandardStream</scope><name>write</name></member>
+      <member refid="class_standard_stream_1ab24f0d29cfe498a0e1984ff34342e77f" prot="private" virt="non-virtual"><scope>StandardStream</scope><name>writeAll</name></member>
+      <member refid="classjuce_1_1OutputStream_1a85a16c2231834106b21f56caea1700d5" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeBool</name></member>
+      <member refid="classjuce_1_1OutputStream_1ac8852947cf78aba2810c022f9397603d" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeByte</name></member>
+      <member refid="class_standard_stream_1a8b29b2b49e78cb8741322246ea4cce49" prot="private" virt="non-virtual"><scope>StandardStream</scope><name>writeBytes</name></member>
+      <member refid="classjuce_1_1OutputStream_1ae10e21736db8345ef69fb774d47543d6" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeCompressedInt</name></member>
+      <member refid="classjuce_1_1OutputStream_1a745e6f6f70f49c0bb1f33a0b1108043c" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeDouble</name></member>
+      <member refid="classjuce_1_1OutputStream_1a5e15103510b54b30cd7c3fc739be48c5" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeDoubleBigEndian</name></member>
+      <member refid="classjuce_1_1OutputStream_1a673ac0a314e61eb6f566a12f471a922f" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeFloat</name></member>
+      <member refid="classjuce_1_1OutputStream_1ad5f1d173fb3735b4257e087c22fbfaac" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeFloatBigEndian</name></member>
+      <member refid="classjuce_1_1OutputStream_1af32c2e73fb3a262b3c04b6ed7cf21895" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeFromInputStream</name></member>
+      <member refid="classjuce_1_1OutputStream_1aacfc94f233a871f40bdebdb39905c093" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeInt</name></member>
+      <member refid="classjuce_1_1OutputStream_1aee648d21c41f8d6b9b77e4dfc86b5445" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeInt64</name></member>
+      <member refid="classjuce_1_1OutputStream_1a28b2883ad60265a097f70db9f40fa49e" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeInt64BigEndian</name></member>
+      <member refid="classjuce_1_1OutputStream_1abc371723c65e443b0836dcf5e847616f" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeIntBigEndian</name></member>
+      <member refid="classjuce_1_1OutputStream_1ad846de7b2eca46f6f3d75d029cdd9825" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeRepeatedByte</name></member>
+      <member refid="classjuce_1_1OutputStream_1a5d6aa0787552ad355d885e3255a74315" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeShort</name></member>
+      <member refid="classjuce_1_1OutputStream_1ad50b6fb22e388dd30c9a12ee8dbb28f3" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeShortBigEndian</name></member>
+      <member refid="classjuce_1_1OutputStream_1aefff76058adb90bec658885e6d58ecc8" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeString</name></member>
+      <member refid="classjuce_1_1OutputStream_1af3d0487407d48ddfe678ee08e3179479" prot="public" virt="virtual"><scope>StandardStream</scope><name>writeText</name></member>
+      <member refid="classjuce_1_1OutputStream_1adbd945ad1e65af8bfec982fa050c8eb7" prot="public" virt="virtual"><scope>StandardStream</scope><name>~OutputStream</name></member>
+      <member refid="class_standard_stream_1a6db66a77f1c7daa0b5e775b89dfa1e9e" prot="public" virt="non-virtual"><scope>StandardStream</scope><name>~StandardStream</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

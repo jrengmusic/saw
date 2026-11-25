@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="struct_undo" kind="struct" language="C++" prot="public">
+    <compoundname>Undo</compoundname>
+    <includes refid="_undo_8h" local="no">Undo.h</includes>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="struct_undo_1a4e27a323ee5df8eca0ac8e408ee9833a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_arguments" kindref="compound">Arguments</ref></type>
+        <definition>Arguments Undo::getArguments</definition>
+        <argsstring>(juce::Span&lt; const std::string_view &gt; argumentList)</argsstring>
+        <name>getArguments</name>
+        <qualifiedname>Undo::getArguments</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>argumentList</declname>
+        </param>
+        <briefdescription>
+<para>Parses the argument list of undo, with its flags. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>argumentList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The argument list, with the verb name at index 0.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The parsed arguments. Their status holds any parse failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Undo.h" line="16" column="22" bodyfile="Undo.cpp" bodystart="305" bodyend="308"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_undo_1ad0a9a3ee8d81743fd7ae88f936eff0f6" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref></type>
+        <definition>Stdio::Output Undo::run</definition>
+        <argsstring>(const Arguments &amp;arguments, const std::optional&lt; std::string &gt; &amp;input)</argsstring>
+        <name>run</name>
+        <qualifiedname>Undo::run</qualifiedname>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>const std::optional&lt; std::string &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+<para>Runs undo on parsed arguments. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A failed parse is returned as a failure. With <computeroutput>--list</computeroutput>, the transactions are listed. Otherwise one transaction is previewed, or restored with <computeroutput>--apply</computeroutput>. The input is not read.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>arguments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parsed arguments from getArguments. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The supplied input text. <ref refid="struct_undo" kindref="compound">Undo</ref> does not read it.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The exit code, the output text, and the diagnostics. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Undo.h" line="28" column="26" bodyfile="Undo.cpp" bodystart="310" bodyend="319"/>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">Arguments::contains</references>
+        <references refid="classjuce_1_1Result_1ae932f12129866251b1136f1629255f1c">juce::Result::failed</references>
+        <references refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">Stdio::getFailure</references>
+        <references refid="class_arguments_1a46db95dfc7cc4ce7e8e7af84ceaaebf7" compoundref="_arguments_8cpp" startline="71" endline="74">Arguments::getStatus</references>
+        <references refid="_undo_8cpp_1a8720a4fcfc984366d268fda7188a905d" compoundref="_undo_8cpp" startline="72" endline="95">runList</references>
+        <references refid="_undo_8cpp_1a4e56a80b73bd7335140b412aa7b94863" compoundref="_undo_8cpp" startline="266" endline="303">runTransaction</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Implements the <computeroutput>saw undo</computeroutput> subcommand for listing, previewing, and restoring transactions. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="Undo.h" line="8" column="1" bodyfile="Undo.h" bodystart="9" bodyend="29"/>
+    <listofallmembers>
+      <member refid="struct_undo_1a4e27a323ee5df8eca0ac8e408ee9833a" prot="public" virt="non-virtual"><scope>Undo</scope><name>getArguments</name></member>
+      <member refid="struct_undo_1ad0a9a3ee8d81743fd7ae88f936eff0f6" prot="public" virt="non-virtual"><scope>Undo</scope><name>run</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

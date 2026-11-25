@@ -1,0 +1,492 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="class_input" kind="class" language="C++" prot="public">
+    <compoundname>Input</compoundname>
+    <includes refid="_input_8h" local="no">Input.h</includes>
+    <innerclass refid="struct_input_1_1_access" prot="private">Input::Access</innerclass>
+    <innerclass refid="struct_input_1_1_native" prot="public">Input::Native</innerclass>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_input_1a95071d83755879d3c0d4b2bcbb37e6f2" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>int</type>
+        <definition>int Input::allLines</definition>
+        <argsstring></argsstring>
+        <name>allLines</name>
+        <qualifiedname>Input::allLines</qualifiedname>
+        <initializer>{ std::numeric_limits&lt;int&gt;::max() }</initializer>
+        <briefdescription>
+<para>Line count that reads the whole input. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="16" column="26" bodyfile="Input.h" bodystart="16" bodyend="16"/>
+        <referencedby refid="_lines_8cpp_1aedacbbd493784099c1d02833532682fc" compoundref="_lines_8cpp" startline="340" endline="356">getPayloadText</referencedby>
+        <referencedby refid="_replace_8cpp_1ac6d8ff610e30ea4b6823a17a4d149ca5" compoundref="_replace_8cpp" startline="104" endline="131">getReplacementText</referencedby>
+        <referencedby refid="_excerpt_8cpp_1a2dc1d82cae55fa07daa9c320257455f0" compoundref="_excerpt_8cpp" startline="254" endline="279">getTargets</referencedby>
+        <referencedby refid="class_replace_1aac7261f40ff9097449c4ebcde25b7f6f" compoundref="_replace_8cpp" startline="266" endline="295">Replace::runStandardInput</referencedby>
+        <referencedby refid="_patch_8cpp_1aaff59351be09f94c257b3fe8f4dcebeb" compoundref="_patch_8cpp" startline="328" endline="339">runStandardInput</referencedby>
+        <referencedby refid="_find_8cpp_1a52c2a6489204abd8f7c0508cbb0c236a" compoundref="_find_8cpp" startline="148" endline="185">runStdinFind</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_input_1adfde65e6955a7f1c62782df59cb6cf0a" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>size_t</type>
+        <definition>size_t Input::allBytes</definition>
+        <argsstring></argsstring>
+        <name>allBytes</name>
+        <qualifiedname>Input::allBytes</qualifiedname>
+        <initializer>{ std::numeric_limits&lt;size_t&gt;::max() }</initializer>
+        <briefdescription>
+<para>Byte limit that makes fromFile read every file into an owned buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>No file is larger than this value, so no file is mapped. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="22" column="29" bodyfile="Input.h" bodystart="22" bodyend="22"/>
+        <referencedby refid="class_lines_1acc9556622af1319da99a5674b45c18c7" compoundref="_lines_8cpp" startline="293" endline="313">Lines::addFileMutation</referencedby>
+        <referencedby refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" compoundref="_patch_8cpp" startline="192" endline="254">addTargetFile</referencedby>
+        <referencedby refid="_undo_8cpp_1ac27a59361a0d3ade9678087f85f3cf43" compoundref="_undo_8cpp" startline="138" endline="151">getExistingCurrentDocument</referencedby>
+        <referencedby refid="class_replace_1a6a98bf61337e23ff4d443d231553af19" compoundref="_replace_8cpp" startline="239" endline="264">Replace::getReplacedFile</referencedby>
+        <referencedby refid="_undo_8cpp_1aaa64c02f106afe3353cf8dd483803581" compoundref="_undo_8cpp" startline="116" endline="136">getVerifiedOriginalDocument</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_input_1af4915b1e6f1f77beea94bc7833406f31" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>size_t</type>
+        <definition>size_t Input::maxBufferedReadSize</definition>
+        <argsstring></argsstring>
+        <name>maxBufferedReadSize</name>
+        <qualifiedname>Input::maxBufferedReadSize</qualifiedname>
+        <initializer>{ 256 * 1024 }</initializer>
+        <briefdescription>
+<para>Largest file size that fromFile reads into a buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A larger file is mapped. When the map fails, the file is read into a buffer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="28" column="29" bodyfile="Input.h" bodystart="28" bodyend="28"/>
+        <referencedby refid="class_ignore_rules_1a3c2f30bbb57ade5f3989572ceefd251f" compoundref="_ignore_rules_8cpp" startline="699" endline="713">IgnoreRules::addRulesFromFile</referencedby>
+        <referencedby refid="class_text_document_1a96201f667cad98f5a7725570f7d39de1" compoundref="_text_document_8cpp" startline="53" endline="67">TextDocument::getBytesStatus</referencedby>
+        <referencedby refid="class_ignore_rules_1a88889d032bb89ecdd3abcb48a459a5b4" compoundref="_ignore_rules_8cpp" startline="606" endline="619">IgnoreRules::getExcludesFileFromConfig</referencedby>
+        <referencedby refid="class_fields_1a84d812846b414e97fd2228c1335fb997" compoundref="_fields_8cpp" startline="283" endline="296">Fields::getFileOutput</referencedby>
+        <referencedby refid="class_lines_1adf732d1ccaf15c877805885744bd5baa" compoundref="_lines_8cpp" startline="113" endline="123">Lines::getFileOutput</referencedby>
+        <referencedby refid="_excerpt_8cpp_1a021a6449f73b1d4393d9efe6859af478" compoundref="_excerpt_8cpp" startline="96" endline="115">getLoadedDocument</referencedby>
+        <referencedby refid="_replace_8cpp_1ac6d8ff610e30ea4b6823a17a4d149ca5" compoundref="_replace_8cpp" startline="104" endline="131">getReplacementText</referencedby>
+        <referencedby refid="_undo_8cpp_1aaa64c02f106afe3353cf8dd483803581" compoundref="_undo_8cpp" startline="116" endline="136">getVerifiedOriginalDocument</referencedby>
+        <referencedby refid="_patch_8cpp_1a90cf7bf24224586469772abae6c95d98" compoundref="_patch_8cpp" startline="316" endline="326">runFile</referencedby>
+        <referencedby refid="class_search_1a661ddd9d7d36fbb90cc2c32bc83ca2ab" compoundref="_search_8cpp" startline="118" endline="134">Search::runFile</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_input_1ae5e98594f298e0d7f4096f8fd64cbe6f" prot="private" static="no" mutable="no">
+        <type><ref refid="classjuce_1_1HeapBlock" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::HeapBlock</ref>&lt; char &gt;</type>
+        <definition>juce::HeapBlock&lt;char&gt; Input::buffer</definition>
+        <argsstring></argsstring>
+        <name>buffer</name>
+        <qualifiedname>Input::buffer</qualifiedname>
+        <briefdescription>
+<para>Holds the bytes read into memory, for a file that is read and for standard input that is read. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="115" column="21" bodyfile="Input.h" bodystart="115" bodyend="-1"/>
+        <referencedby refid="class_input_1a1a9f979a79953e658c761d4c651bc5c1" compoundref="_input_8cpp" startline="146" endline="182">setReadBytes</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_input_1a664b34208d49f3f1dec78aa70c3f9fd9" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="classjuce_1_1MemoryMappedFile" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::MemoryMappedFile</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;juce::MemoryMappedFile&gt; Input::mappedFile</definition>
+        <argsstring></argsstring>
+        <name>mappedFile</name>
+        <qualifiedname>Input::mappedFile</qualifiedname>
+        <briefdescription>
+<para>Holds the mapping of a file that is larger than the read limit, and unmaps it on destruction. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="118" column="21" bodyfile="Input.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_input_1acb15b95f4e3c5ebdee35f4815d48d7f5" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="struct_input_1_1_native" kindref="compound">Native</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;Native&gt; Input::native</definition>
+        <argsstring></argsstring>
+        <name>native</name>
+        <qualifiedname>Input::native</qualifiedname>
+        <briefdescription>
+<para>Holds the mapping of standard input on POSIX platforms, and unmaps it on destruction. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="121" column="21" bodyfile="Input.h" bodystart="121" bodyend="-1"/>
+        <referencedby refid="class_input_1a8b96c62e0744b737358498d324ae8f59" compoundref="_input_8cpp" startline="119" endline="144">setMappedBytes</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_input_1a2b4dfe619927fe753be3233b4878bd80" prot="private" static="no" mutable="no">
+        <type>std::string_view</type>
+        <definition>std::string_view Input::bytes</definition>
+        <argsstring></argsstring>
+        <name>bytes</name>
+        <qualifiedname>Input::bytes</qualifiedname>
+        <briefdescription>
+<para>View of the bytes of the input. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The owner is buffer, mappedFile, native, or the caller&apos;s text. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="124" column="22" bodyfile="Input.h" bodystart="124" bodyend="-1"/>
+        <referencedby refid="class_input_1a8a07428ab8fa48d22f3958ed4ae00c98" compoundref="_input_8cpp" startline="114" endline="117">getBytes</referencedby>
+        <referencedby refid="class_input_1a8b96c62e0744b737358498d324ae8f59" compoundref="_input_8cpp" startline="119" endline="144">setMappedBytes</referencedby>
+        <referencedby refid="class_input_1a1a9f979a79953e658c761d4c651bc5c1" compoundref="_input_8cpp" startline="146" endline="182">setReadBytes</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_input_1aadc8488f68d8dd6cd6d7c9ab78e8fb84" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Input::Input</definition>
+        <argsstring>(Access)</argsstring>
+        <name>Input</name>
+        <qualifiedname>Input::Input</qualifiedname>
+        <param>
+          <type><ref refid="struct_input_1_1_access" kindref="compound">Access</ref></type>
+        </param>
+        <briefdescription>
+<para>Creates an empty <ref refid="class_input" kindref="compound">Input</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Only the static factories can name <ref refid="struct_input_1_1_access" kindref="compound">Access</ref>, so only they construct one. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="31" column="14" bodyfile="Input.cpp" bodystart="84" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="class_input_1af2db35ba67c8a8ccd23bef6a482fc291" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Input::~Input</definition>
+        <argsstring>()</argsstring>
+        <name>~Input</name>
+        <qualifiedname>Input::~Input</qualifiedname>
+        <briefdescription>
+<para>Destroys the <ref refid="class_input" kindref="compound">Input</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The members release the mappings and the buffer.</para>
+<para>The destructor is defaulted. native unmaps the standard input, and mappedFile unmaps a mapped file. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="37" column="5"/>
+        <references refid="class_input_1a3fc492d5ac07056e1c68ec5a045455cb" compoundref="_input_8cpp" startline="88" endline="102">create</references>
+        <references refid="class_input_1a97cbce202c2ccc522edea054b6d00f91" compoundref="_input_8cpp" startline="44" endline="82">fromFile</references>
+        <references refid="class_input_1a8a07428ab8fa48d22f3958ed4ae00c98" compoundref="_input_8cpp" startline="114" endline="117">getBytes</references>
+        <references refid="class_input_1a5ec67f3f0d1b5446a0f8463ea75d7c3e" compoundref="_input_8cpp" startline="104" endline="112">isStream</references>
+        <references refid="class_input_1a8b96c62e0744b737358498d324ae8f59" compoundref="_input_8cpp" startline="119" endline="144">setMappedBytes</references>
+        <references refid="class_input_1a1a9f979a79953e658c761d4c651bc5c1" compoundref="_input_8cpp" startline="146" endline="182">setReadBytes</references>
+      </memberdef>
+      <memberdef kind="function" id="class_input_1a8a07428ab8fa48d22f3958ed4ae00c98" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>std::string_view</type>
+        <definition>std::string_view Input::getBytes</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>getBytes</name>
+        <qualifiedname>Input::getBytes</qualifiedname>
+        <briefdescription>
+<para>Returns the bytes of the input. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>A view on the bytes. The view is valid while this <ref refid="class_input" kindref="compound">Input</ref> lives, and, for a supplied source, while that source lives. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="88" column="22" bodyfile="Input.cpp" bodystart="114" bodyend="117"/>
+        <references refid="class_input_1a2b4dfe619927fe753be3233b4878bd80" compoundref="_input_8h" startline="124">bytes</references>
+        <referencedby refid="class_input_1af2db35ba67c8a8ccd23bef6a482fc291">~Input</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_input_1a3fc492d5ac07056e1c68ec5a045455cb" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, std::unique_ptr&lt; <ref refid="class_input" kindref="compound">Input</ref> &gt; &gt;</type>
+        <definition>std::pair&lt; juce::Result, std::unique_ptr&lt; Input &gt; &gt; Input::create</definition>
+        <argsstring>(const std::optional&lt; std::string &gt; &amp;source, int numLines)</argsstring>
+        <name>create</name>
+        <qualifiedname>Input::create</qualifiedname>
+        <param>
+          <type>const std::optional&lt; std::string &gt; &amp;</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>numLines</declname>
+        </param>
+        <briefdescription>
+<para>Creates the input of a command from its source. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A supplied source is used as it is, and the <ref refid="class_input" kindref="compound">Input</ref> holds a view on it, so the source must outlive the <ref refid="class_input" kindref="compound">Input</ref>. Without a supplied source, a regular standard input is mapped from its current offset. An offset at or past the end gives an empty input. When the map fails, or standard input is not a regular file, standard input is read instead. Standard input that is read stops at numLines newlines or the end. A mapped standard input is not limited by numLines.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>source</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The supplied text, or nullopt for the process standard input. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numLines</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of newlines to read from standard input that is read. allLines reads to the end.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result paired with the <ref refid="class_input" kindref="compound">Input</ref>, or nullptr when standard input cannot be read. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="52" column="22" bodyfile="Input.cpp" bodystart="88" bodyend="102"/>
+        <references refid="classjuce_1_1Result_1a27205a4dc7a973aebd1976270867be80">juce::Result::fail</references>
+        <references refid="structtext_1_1_diagnostics_1ac004a158de0d07a69ca7b7a48a71d420" compoundref="_text_8h" startline="41" endline="41">text::Diagnostics::failStandardInput</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <referencedby refid="class_text_document_1aa884c7c2239bbe4d2691e58bc32d52f3" compoundref="_text_document_8cpp" startline="98" endline="109">TextDocument::getInput</referencedby>
+        <referencedby refid="_lines_8cpp_1aedacbbd493784099c1d02833532682fc" compoundref="_lines_8cpp" startline="340" endline="356">getPayloadText</referencedby>
+        <referencedby refid="_replace_8cpp_1ac6d8ff610e30ea4b6823a17a4d149ca5" compoundref="_replace_8cpp" startline="104" endline="131">getReplacementText</referencedby>
+        <referencedby refid="_excerpt_8cpp_1a2dc1d82cae55fa07daa9c320257455f0" compoundref="_excerpt_8cpp" startline="254" endline="279">getTargets</referencedby>
+        <referencedby refid="_patch_8cpp_1aaff59351be09f94c257b3fe8f4dcebeb" compoundref="_patch_8cpp" startline="328" endline="339">runStandardInput</referencedby>
+        <referencedby refid="class_input_1af2db35ba67c8a8ccd23bef6a482fc291">~Input</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_input_1a97cbce202c2ccc522edea054b6d00f91" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_input" kindref="compound">Input</ref> &gt;</type>
+        <definition>std::unique_ptr&lt; Input &gt; Input::fromFile</definition>
+        <argsstring>(const juce::File &amp;file, size_t maxReadSize)</argsstring>
+        <name>fromFile</name>
+        <qualifiedname>Input::fromFile</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>maxReadSize</declname>
+        </param>
+        <briefdescription>
+<para>Opens a file as an <ref refid="class_input" kindref="compound">Input</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The size comes from std::filesystem::file_size. That call fails for a named pipe, a socket, a device, and a folder on macOS, so none of those is opened. The null device is the one exception: it gives an empty <ref refid="class_input" kindref="compound">Input</ref>. A file larger than maxReadSize is mapped. When the map fails, the file is read into an owned buffer. A smaller file is read into an owned buffer, and a read that returns fewer bytes than the size gives nullptr. Passing allBytes always reads into an owned buffer, so a later write to the file cannot change the bytes. On macOS, a mapped file that another process makes shorter gives no fault: a missing byte reads as NUL.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The file to open. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxReadSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The largest file size that is read into a buffer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The <ref refid="class_input" kindref="compound">Input</ref>, or nullptr when the file cannot be opened or read. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="69" column="28" bodyfile="Input.cpp" bodystart="44" bodyend="82"/>
+        <references refid="classjuce_1_1FileInputStream_1a7a7486ae0f4f70400ae4219bcb375bac">juce::FileInputStream::failedToOpen</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="_input_8cpp_1aeaac6efc834a7e57fec24ee9bdfd69a1" compoundref="_input_8cpp" startline="10" endline="14">isNullDevice</references>
+        <references refid="classjuce_1_1MemoryMappedFile_1acb17e1ac2c4919de6cca24e6d92b13f7a9db38fcd6341ddc8e94f020f41e3fa5d">juce::MemoryMappedFile::readOnly</references>
+        <referencedby refid="class_text_document_1a85fcd586d9c6a28e39f53bedd6c3ff54" compoundref="_text_document_8cpp" startline="86" endline="96">TextDocument::getInput</referencedby>
+        <referencedby refid="class_search_1a661ddd9d7d36fbb90cc2c32bc83ca2ab" compoundref="_search_8cpp" startline="118" endline="134">Search::runFile</referencedby>
+        <referencedby refid="class_input_1af2db35ba67c8a8ccd23bef6a482fc291">~Input</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_input_1a5ec67f3f0d1b5446a0f8463ea75d7c3e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Input::isStream</definition>
+        <argsstring>(const std::optional&lt; std::string &gt; &amp;source)</argsstring>
+        <name>isStream</name>
+        <qualifiedname>Input::isStream</qualifiedname>
+        <param>
+          <type>const std::optional&lt; std::string &gt; &amp;</type>
+          <declname>source</declname>
+        </param>
+        <briefdescription>
+<para>Checks whether the input of a command is a stream, not a regular file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>On Windows, every standard input without a supplied text is a stream. On other platforms, standard input is a stream when no text is supplied and its status is not a regular file, or when its status cannot be read.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>source</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The supplied text, or nullopt for the process standard input.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True when the input is a stream. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="81" column="17" bodyfile="Input.cpp" bodystart="104" bodyend="112"/>
+        <referencedby refid="_find_8cpp_1a52c2a6489204abd8f7c0508cbb0c236a" compoundref="_find_8cpp" startline="148" endline="185">runStdinFind</referencedby>
+        <referencedby refid="class_input_1af2db35ba67c8a8ccd23bef6a482fc291">~Input</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_input_1a8b96c62e0744b737358498d324ae8f59" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Input::setMappedBytes</definition>
+        <argsstring>()</argsstring>
+        <name>setMappedBytes</name>
+        <qualifiedname>Input::setMappedBytes</qualifiedname>
+        <briefdescription>
+<para>Maps the standard input from its current offset to its end, when standard input is a regular file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>True when the mapping gives the bytes, or when the offset is at or past the end, which gives an empty input. False when standard input is not a regular file or the map fails, so the caller reads it instead. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="104" column="10" bodyfile="Input.cpp" bodystart="119" bodyend="144"/>
+        <references refid="struct_input_1_1_native_1a9c752a3e5dfbc9c9843cfc8a18919bfe" compoundref="_input_8cpp" startline="37" endline="37">Input::Native::address</references>
+        <references refid="class_input_1a2b4dfe619927fe753be3233b4878bd80" compoundref="_input_8h" startline="124">bytes</references>
+        <references refid="class_input_1acb15b95f4e3c5ebdee35f4815d48d7f5" compoundref="_input_8h" startline="121">native</references>
+        <referencedby refid="class_input_1af2db35ba67c8a8ccd23bef6a482fc291">~Input</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_input_1a1a9f979a79953e658c761d4c651bc5c1" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Input::setReadBytes</definition>
+        <argsstring>(int numLines)</argsstring>
+        <name>setReadBytes</name>
+        <qualifiedname>Input::setReadBytes</qualifiedname>
+        <param>
+          <type>int</type>
+          <declname>numLines</declname>
+        </param>
+        <briefdescription>
+<para>Reads standard input into the buffer, until numLines newlines are read or the end is reached. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>numLines</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of newlines that ends the read. allLines reads to the end.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True when the read ends at the end of the input or at numLines, false when a read fails. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Input.h" line="112" column="10" bodyfile="Input.cpp" bodystart="146" bodyend="182"/>
+        <references refid="class_input_1ae5e98594f298e0d7f4096f8fd64cbe6f" compoundref="_input_8h" startline="115">buffer</references>
+        <references refid="class_input_1a2b4dfe619927fe753be3233b4878bd80" compoundref="_input_8h" startline="124">bytes</references>
+        <references refid="namespacejam_1_1simd_1aba502cc7ed50ba2587c11ef256a54d20">jam::simd::countByte</references>
+        <references refid="classjuce_1_1HeapBlock_1acb9c0594d3f6d8be0cbf1670e9f5248d">juce::HeapBlock&lt; class ElementType, bool throwOnFailure &gt;::getData</references>
+        <references refid="classjuce_1_1HeapBlock_1a7e477b206e0333ab3f05728e1b939990">juce::HeapBlock&lt; class ElementType, bool throwOnFailure &gt;::malloc</references>
+        <references refid="structChars_1a4691bc69052e757e7325970098922899">Chars::newline</references>
+        <references refid="class_standard_stream_1a9549dbf12415464b6fd2b13da3d1b9ad" compoundref="_standard_stream_8cpp" startline="111" endline="119">StandardStream::read</references>
+        <references refid="classjuce_1_1HeapBlock_1aef5d26dfb08dc6f0e63a5e2fb2545b3f">juce::HeapBlock&lt; class ElementType, bool throwOnFailure &gt;::realloc</references>
+        <referencedby refid="class_input_1af2db35ba67c8a8ccd23bef6a482fc291">~Input</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Bytes of one source behind one view: a mapped file, a buffer read into memory, or a supplied text. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The <ref refid="class_input" kindref="compound">Input</ref> owns each mapping and each buffer that it creates. The standard-input mapping is held by native, which unmaps it when the <ref refid="class_input" kindref="compound">Input</ref> is destroyed. A mapped file is held by mappedFile, which unmaps it. A buffer is held by buffer. A supplied text is not owned, so the view refers to the caller&apos;s text. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Input</label>
+        <link refid="class_input"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>buffer</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mappedFile</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>native</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>bytes</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Input::Native</label>
+        <link refid="struct_input_1_1_native"/>
+      </node>
+      <node id="2">
+        <label>juce::HeapBlock&lt; char &gt;</label>
+        <link refid="classjuce_1_1HeapBlock" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="4">
+        <label>juce::MemoryMappedFile</label>
+        <link refid="classjuce_1_1MemoryMappedFile" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="8">
+        <label>std::basic_string_view&lt; Char &gt;</label>
+      </node>
+      <node id="7">
+        <label>std::string_view</label>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>std::unique_ptr&lt; Input::Native &gt;</label>
+        <childnode refid="6" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::unique_ptr&lt; juce::MemoryMappedFile &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Input.h" line="10" column="1" bodyfile="Input.h" bodystart="11" bodyend="127"/>
+    <listofallmembers>
+      <member refid="class_input_1adfde65e6955a7f1c62782df59cb6cf0a" prot="public" virt="non-virtual"><scope>Input</scope><name>allBytes</name></member>
+      <member refid="class_input_1a95071d83755879d3c0d4b2bcbb37e6f2" prot="public" virt="non-virtual"><scope>Input</scope><name>allLines</name></member>
+      <member refid="class_input_1ae5e98594f298e0d7f4096f8fd64cbe6f" prot="private" virt="non-virtual"><scope>Input</scope><name>buffer</name></member>
+      <member refid="class_input_1a2b4dfe619927fe753be3233b4878bd80" prot="private" virt="non-virtual"><scope>Input</scope><name>bytes</name></member>
+      <member refid="class_input_1a3fc492d5ac07056e1c68ec5a045455cb" prot="public" virt="non-virtual"><scope>Input</scope><name>create</name></member>
+      <member refid="class_input_1a97cbce202c2ccc522edea054b6d00f91" prot="public" virt="non-virtual"><scope>Input</scope><name>fromFile</name></member>
+      <member refid="class_input_1a8a07428ab8fa48d22f3958ed4ae00c98" prot="public" virt="non-virtual"><scope>Input</scope><name>getBytes</name></member>
+      <member refid="class_input_1aadc8488f68d8dd6cd6d7c9ab78e8fb84" prot="public" virt="non-virtual"><scope>Input</scope><name>Input</name></member>
+      <member refid="class_input_1a5ec67f3f0d1b5446a0f8463ea75d7c3e" prot="public" virt="non-virtual"><scope>Input</scope><name>isStream</name></member>
+      <member refid="class_input_1a664b34208d49f3f1dec78aa70c3f9fd9" prot="private" virt="non-virtual"><scope>Input</scope><name>mappedFile</name></member>
+      <member refid="class_input_1af4915b1e6f1f77beea94bc7833406f31" prot="public" virt="non-virtual"><scope>Input</scope><name>maxBufferedReadSize</name></member>
+      <member refid="class_input_1acb15b95f4e3c5ebdee35f4815d48d7f5" prot="private" virt="non-virtual"><scope>Input</scope><name>native</name></member>
+      <member refid="class_input_1a8b96c62e0744b737358498d324ae8f59" prot="private" virt="non-virtual"><scope>Input</scope><name>setMappedBytes</name></member>
+      <member refid="class_input_1a1a9f979a79953e658c761d4c651bc5c1" prot="private" virt="non-virtual"><scope>Input</scope><name>setReadBytes</name></member>
+      <member refid="class_input_1af2db35ba67c8a8ccd23bef6a482fc291" prot="public" virt="non-virtual"><scope>Input</scope><name>~Input</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

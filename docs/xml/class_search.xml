@@ -1,0 +1,999 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="class_search" kind="class" language="C++" prot="public">
+    <compoundname>Search</compoundname>
+    <includes refid="_search_8h" local="no">Search.h</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_search_1a17cb87685b6cbb9fb6f4934992f2b469" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Search::isQuiet</definition>
+        <argsstring></argsstring>
+        <name>isQuiet</name>
+        <qualifiedname>Search::isQuiet</qualifiedname>
+        <initializer>{ false }</initializer>
+        <briefdescription>
+<para>Quiet mode: the first match ends the search, and no output is printed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="153" column="10" bodyfile="Search.h" bodystart="153" bodyend="153"/>
+        <referencedby refid="class_search_1a51e89e99cf7a912b9472bac1d690b105" compoundref="_search_8cpp" startline="385" endline="393">getEmptyFileOutcome</referencedby>
+        <referencedby refid="class_search_1ae18d5f84e2075fb4e462fee9c33d8e6e" compoundref="_search_8cpp" startline="395" endline="408">isChunkedSearch</referencedby>
+        <referencedby refid="class_search_1a996ee99c13776c969e03cc1f81d36df4" compoundref="_search_8cpp" startline="91" endline="116">run</referencedby>
+        <referencedby refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</referencedby>
+        <referencedby refid="class_search_1a3b438e868398151582358ee066342910" compoundref="_search_8cpp" startline="136" endline="200">runStream</referencedby>
+        <referencedby refid="class_search_1a38683fe4d6ecdab41b733c789bb62540" compoundref="_search_8cpp" startline="75" endline="89">Search</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_search_1ab735e6c56e1e6f675733d2998d8e74ea" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Search::isFilesWithMatches</definition>
+        <argsstring></argsstring>
+        <name>isFilesWithMatches</name>
+        <qualifiedname>Search::isFilesWithMatches</qualifiedname>
+        <initializer>{ false }</initializer>
+        <briefdescription>
+<para>Files-with-matches mode: the first match ends the search, and only the display path is printed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="156" column="10" bodyfile="Search.h" bodystart="156" bodyend="156"/>
+        <referencedby refid="class_search_1a51e89e99cf7a912b9472bac1d690b105" compoundref="_search_8cpp" startline="385" endline="393">getEmptyFileOutcome</referencedby>
+        <referencedby refid="class_search_1ae18d5f84e2075fb4e462fee9c33d8e6e" compoundref="_search_8cpp" startline="395" endline="408">isChunkedSearch</referencedby>
+        <referencedby refid="class_search_1a996ee99c13776c969e03cc1f81d36df4" compoundref="_search_8cpp" startline="91" endline="116">run</referencedby>
+        <referencedby refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</referencedby>
+        <referencedby refid="class_search_1a3b438e868398151582358ee066342910" compoundref="_search_8cpp" startline="136" endline="200">runStream</referencedby>
+        <referencedby refid="class_search_1a38683fe4d6ecdab41b733c789bb62540" compoundref="_search_8cpp" startline="75" endline="89">Search</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_search_1ac259bbc15883faa3ec4d75bab223bb08" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Search::isCount</definition>
+        <argsstring></argsstring>
+        <name>isCount</name>
+        <qualifiedname>Search::isCount</qualifiedname>
+        <initializer>{ false }</initializer>
+        <briefdescription>
+<para>Count mode: the output is the number of matches, not the lines. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="159" column="10" bodyfile="Search.h" bodystart="159" bodyend="159"/>
+        <referencedby refid="class_search_1a51e89e99cf7a912b9472bac1d690b105" compoundref="_search_8cpp" startline="385" endline="393">getEmptyFileOutcome</referencedby>
+        <referencedby refid="class_search_1a996ee99c13776c969e03cc1f81d36df4" compoundref="_search_8cpp" startline="91" endline="116">run</referencedby>
+        <referencedby refid="class_search_1a5e116d3ee5a675741a9d2a9982455267" compoundref="_search_8cpp" startline="299" endline="383">runChunks</referencedby>
+        <referencedby refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</referencedby>
+        <referencedby refid="class_search_1a3b438e868398151582358ee066342910" compoundref="_search_8cpp" startline="136" endline="200">runStream</referencedby>
+        <referencedby refid="class_search_1a38683fe4d6ecdab41b733c789bb62540" compoundref="_search_8cpp" startline="75" endline="89">Search</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_search_1a0146c4051fbfb729bc9c08764ec9d47c" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Search::isOnlyMatching</definition>
+        <argsstring></argsstring>
+        <name>isOnlyMatching</name>
+        <qualifiedname>Search::isOnlyMatching</qualifiedname>
+        <initializer>{ false }</initializer>
+        <briefdescription>
+<para>Only-matching mode: the output holds the matched text, not the whole line. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="162" column="10" bodyfile="Search.h" bodystart="162" bodyend="162"/>
+        <referencedby refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</referencedby>
+        <referencedby refid="class_search_1a38683fe4d6ecdab41b733c789bb62540" compoundref="_search_8cpp" startline="75" endline="89">Search</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_search_1ab2588579644f08d45aad6f47d716696b" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Search::isInvert</definition>
+        <argsstring></argsstring>
+        <name>isInvert</name>
+        <qualifiedname>Search::isInvert</qualifiedname>
+        <initializer>{ false }</initializer>
+        <briefdescription>
+<para>Invert mode: the output holds the lines that do not match. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="165" column="10" bodyfile="Search.h" bodystart="165" bodyend="165"/>
+        <referencedby refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</referencedby>
+        <referencedby refid="class_search_1a38683fe4d6ecdab41b733c789bb62540" compoundref="_search_8cpp" startline="75" endline="89">Search</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_search_1a7b98e01c2671e9d4a78bf8333290ca78" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Search::isFirst</definition>
+        <argsstring></argsstring>
+        <name>isFirst</name>
+        <qualifiedname>Search::isFirst</qualifiedname>
+        <initializer>{ false }</initializer>
+        <briefdescription>
+<para>First mode: the search stops at the first matching line. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="168" column="10" bodyfile="Search.h" bodystart="168" bodyend="168"/>
+        <referencedby refid="class_search_1ae18d5f84e2075fb4e462fee9c33d8e6e" compoundref="_search_8cpp" startline="395" endline="408">isChunkedSearch</referencedby>
+        <referencedby refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</referencedby>
+        <referencedby refid="class_search_1a3b438e868398151582358ee066342910" compoundref="_search_8cpp" startline="136" endline="200">runStream</referencedby>
+        <referencedby refid="class_search_1a38683fe4d6ecdab41b733c789bb62540" compoundref="_search_8cpp" startline="75" endline="89">Search</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_search_1a97744de04f943c7d91a31947974613cc" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Search::isShowingLineNumber</definition>
+        <argsstring></argsstring>
+        <name>isShowingLineNumber</name>
+        <qualifiedname>Search::isShowingLineNumber</qualifiedname>
+        <initializer>{ false }</initializer>
+        <briefdescription>
+<para>True when each output line carries its line number. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="171" column="10" bodyfile="Search.h" bodystart="171" bodyend="171"/>
+        <referencedby refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</referencedby>
+        <referencedby refid="class_search_1a3b438e868398151582358ee066342910" compoundref="_search_8cpp" startline="136" endline="200">runStream</referencedby>
+        <referencedby refid="class_search_1a38683fe4d6ecdab41b733c789bb62540" compoundref="_search_8cpp" startline="75" endline="89">Search</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_search_1a1a27532c6b559a8e7720cbc8c8593487" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Search::isShowingHash</definition>
+        <argsstring></argsstring>
+        <name>isShowingHash</name>
+        <qualifiedname>Search::isShowingHash</qualifiedname>
+        <initializer>{ false }</initializer>
+        <briefdescription>
+<para>True when each output line carries its hash. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="174" column="10" bodyfile="Search.h" bodystart="174" bodyend="174"/>
+        <referencedby refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</referencedby>
+        <referencedby refid="class_search_1a3b438e868398151582358ee066342910" compoundref="_search_8cpp" startline="136" endline="200">runStream</referencedby>
+        <referencedby refid="class_search_1a38683fe4d6ecdab41b733c789bb62540" compoundref="_search_8cpp" startline="75" endline="89">Search</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_search_1a6ecbf52d07abc63f564bcd88bd0ea33b" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Search::beforeContext</definition>
+        <argsstring></argsstring>
+        <name>beforeContext</name>
+        <qualifiedname>Search::beforeContext</qualifiedname>
+        <initializer>{ 0 }</initializer>
+        <briefdescription>
+<para><ref refid="class_lines" kindref="compound">Lines</ref> printed before each match. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="177" column="9" bodyfile="Search.h" bodystart="177" bodyend="177"/>
+        <referencedby refid="class_search_1ae18d5f84e2075fb4e462fee9c33d8e6e" compoundref="_search_8cpp" startline="395" endline="408">isChunkedSearch</referencedby>
+        <referencedby refid="class_search_1a5e5912550ec717402c0f69cb4938f9bf" compoundref="_search_8cpp" startline="410" endline="413">isStreamSearch</referencedby>
+        <referencedby refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</referencedby>
+        <referencedby refid="class_search_1a38683fe4d6ecdab41b733c789bb62540" compoundref="_search_8cpp" startline="75" endline="89">Search</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_search_1a3c708e1eeca12a7ef5129b10699c73f1" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Search::afterContext</definition>
+        <argsstring></argsstring>
+        <name>afterContext</name>
+        <qualifiedname>Search::afterContext</qualifiedname>
+        <initializer>{ 0 }</initializer>
+        <briefdescription>
+<para><ref refid="class_lines" kindref="compound">Lines</ref> printed after each match. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="180" column="9" bodyfile="Search.h" bodystart="180" bodyend="180"/>
+        <referencedby refid="class_search_1ae18d5f84e2075fb4e462fee9c33d8e6e" compoundref="_search_8cpp" startline="395" endline="408">isChunkedSearch</referencedby>
+        <referencedby refid="class_search_1a5e5912550ec717402c0f69cb4938f9bf" compoundref="_search_8cpp" startline="410" endline="413">isStreamSearch</referencedby>
+        <referencedby refid="class_search_1a996ee99c13776c969e03cc1f81d36df4" compoundref="_search_8cpp" startline="91" endline="116">run</referencedby>
+        <referencedby refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</referencedby>
+        <referencedby refid="class_search_1a38683fe4d6ecdab41b733c789bb62540" compoundref="_search_8cpp" startline="75" endline="89">Search</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_search_1ab24620eca04b2906ec525caef5826df5" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Search::afterLine</definition>
+        <argsstring></argsstring>
+        <name>afterLine</name>
+        <qualifiedname>Search::afterLine</qualifiedname>
+        <initializer>{ 0 }</initializer>
+        <briefdescription>
+<para>Matches are taken only on lines numbered after this line. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="183" column="9" bodyfile="Search.h" bodystart="183" bodyend="183"/>
+        <referencedby refid="class_search_1ae18d5f84e2075fb4e462fee9c33d8e6e" compoundref="_search_8cpp" startline="395" endline="408">isChunkedSearch</referencedby>
+        <referencedby refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</referencedby>
+        <referencedby refid="class_search_1a3b438e868398151582358ee066342910" compoundref="_search_8cpp" startline="136" endline="200">runStream</referencedby>
+        <referencedby refid="class_search_1a38683fe4d6ecdab41b733c789bb62540" compoundref="_search_8cpp" startline="75" endline="89">Search</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_search_1a83747b40d329ff5c586a9ea39514c4fb" prot="private" static="no" mutable="no">
+        <type><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range</ref>&lt; int &gt;</type>
+        <definition>juce::Range&lt;int&gt; Search::lineRange</definition>
+        <argsstring></argsstring>
+        <name>lineRange</name>
+        <qualifiedname>Search::lineRange</qualifiedname>
+        <briefdescription>
+<para>One-based half-open range of lines that the search covers. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="186" column="17" bodyfile="Search.h" bodystart="186" bodyend="-1"/>
+        <referencedby refid="class_search_1ae18d5f84e2075fb4e462fee9c33d8e6e" compoundref="_search_8cpp" startline="395" endline="408">isChunkedSearch</referencedby>
+        <referencedby refid="class_search_1a996ee99c13776c969e03cc1f81d36df4" compoundref="_search_8cpp" startline="91" endline="116">run</referencedby>
+        <referencedby refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</referencedby>
+        <referencedby refid="class_search_1a3b438e868398151582358ee066342910" compoundref="_search_8cpp" startline="136" endline="200">runStream</referencedby>
+        <referencedby refid="class_search_1a38683fe4d6ecdab41b733c789bb62540" compoundref="_search_8cpp" startline="75" endline="89">Search</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_search_1a38683fe4d6ecdab41b733c789bb62540" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Search::Search</definition>
+        <argsstring>(const Arguments &amp;arguments, int newBeforeContext, int newAfterContext, int newAfterLine, juce::Range&lt; int &gt; newLineRange)</argsstring>
+        <name>Search</name>
+        <qualifiedname>Search::Search</qualifiedname>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>newBeforeContext</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>newAfterContext</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>newAfterLine</declname>
+        </param>
+        <param>
+          <type><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range</ref>&lt; int &gt;</type>
+          <declname>newLineRange</declname>
+        </param>
+        <briefdescription>
+<para>Builds a search with the settings of one command. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>arguments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parsed arguments. Flags such as quiet, count, and invert are read here. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newBeforeContext</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of lines to print before each match. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newAfterContext</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of lines to print after each match. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newAfterLine</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matches are taken only on lines that are numbered after this line. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newLineRange</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>One-based half-open range of lines that the search covers. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="23" column="5" bodyfile="Search.cpp" bodystart="75" bodyend="89"/>
+        <references refid="class_search_1a3c708e1eeca12a7ef5129b10699c73f1" compoundref="_search_8h" startline="180" endline="180">afterContext</references>
+        <references refid="class_search_1ab24620eca04b2906ec525caef5826df5" compoundref="_search_8h" startline="183" endline="183">afterLine</references>
+        <references refid="class_search_1a6ecbf52d07abc63f564bcd88bd0ea33b" compoundref="_search_8h" startline="177" endline="177">beforeContext</references>
+        <references refid="class_search_1ac259bbc15883faa3ec4d75bab223bb08" compoundref="_search_8h" startline="159" endline="159">isCount</references>
+        <references refid="class_search_1ab735e6c56e1e6f675733d2998d8e74ea" compoundref="_search_8h" startline="156" endline="156">isFilesWithMatches</references>
+        <references refid="class_search_1a7b98e01c2671e9d4a78bf8333290ca78" compoundref="_search_8h" startline="168" endline="168">isFirst</references>
+        <references refid="class_search_1ab2588579644f08d45aad6f47d716696b" compoundref="_search_8h" startline="165" endline="165">isInvert</references>
+        <references refid="class_search_1a0146c4051fbfb729bc9c08764ec9d47c" compoundref="_search_8h" startline="162" endline="162">isOnlyMatching</references>
+        <references refid="class_search_1a17cb87685b6cbb9fb6f4934992f2b469" compoundref="_search_8h" startline="153" endline="153">isQuiet</references>
+        <references refid="class_search_1a1a27532c6b559a8e7720cbc8c8593487" compoundref="_search_8h" startline="174" endline="174">isShowingHash</references>
+        <references refid="class_search_1a97744de04f943c7d91a31947974613cc" compoundref="_search_8h" startline="171" endline="171">isShowingLineNumber</references>
+        <references refid="class_search_1a83747b40d329ff5c586a9ea39514c4fb" compoundref="_search_8h" startline="186">lineRange</references>
+      </memberdef>
+      <memberdef kind="function" id="class_search_1a996ee99c13776c969e03cc1f81d36df4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, int, <ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref> &gt;</type>
+        <definition>std::tuple&lt; juce::Result, int, Stdio::Documents &gt; Search::run</definition>
+        <argsstring>(std::string_view bytes, std::string_view displayPath, const Pattern &amp;pattern, jam::RegExpAutomaton &amp;automaton, bool isExplicit, bool isShowingPathPrefix) const</argsstring>
+        <name>run</name>
+        <qualifiedname>Search::run</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>displayPath</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_pattern" kindref="compound">Pattern</ref> &amp;</type>
+          <declname>pattern</declname>
+        </param>
+        <param>
+          <type><ref refid="classjam_1_1RegExpAutomaton" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::RegExpAutomaton</ref> &amp;</type>
+          <declname>automaton</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isExplicit</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isShowingPathPrefix</declname>
+        </param>
+        <briefdescription>
+<para>Searches bytes that are already in memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A large input with no context and no early stop is searched in parallel chunks.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The bytes to search. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>displayPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The path shown in the output. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>pattern</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The compiled pattern. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>automaton</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matcher state that the caller owns. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isExplicit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True when the input was named as a file on the command line. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isShowingPathPrefix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to prefix the output lines with the display path.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result, the number of matching lines, and the output documents. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="38" column="16" bodyfile="Search.cpp" bodystart="91" bodyend="116"/>
+        <references refid="class_search_1a3c708e1eeca12a7ef5129b10699c73f1" compoundref="_search_8h" startline="180" endline="180">afterContext</references>
+        <references refid="class_text_document_1a301442b4864a3ce11677f034a2ecbd52" compoundref="_text_document_8cpp" startline="40" endline="46">TextDocument::getBinaryStatus</references>
+        <references refid="_search_8cpp_1affd3ed5c01ff5253bd2f3c3f756c5682" compoundref="_search_8cpp" startline="29" endline="38">getCountOutcome</references>
+        <references refid="struct_stdio_1a152adfef4e630acdfddc13f5f596c7d7" compoundref="_stdio_8cpp" startline="19" endline="27">Stdio::getDocuments</references>
+        <references refid="classjuce_1_1Range_1a44413a19310d5f14be8d6ece2feedc01">juce::Range&lt; typename ValueType &gt;::getEnd</references>
+        <references refid="class_text_document_1a3b2f56bc1bc3a2aa92a1010c7bd360ad" compoundref="_text_document_8cpp" startline="224" endline="228">TextDocument::getLeadingLines</references>
+        <references refid="_search_8cpp_1a829b05d6b86738fb8f67afe825f6dff6" compoundref="_search_8cpp" startline="10" endline="10">initialLineNumber</references>
+        <references refid="class_text_document_1a68d0ad47d84117eb3fe3b44fef62a829" compoundref="_text_document_8cpp" startline="48" endline="51">TextDocument::isBinary</references>
+        <references refid="class_search_1ae18d5f84e2075fb4e462fee9c33d8e6e" compoundref="_search_8cpp" startline="395" endline="408">isChunkedSearch</references>
+        <references refid="class_search_1ac259bbc15883faa3ec4d75bab223bb08" compoundref="_search_8h" startline="159" endline="159">isCount</references>
+        <references refid="class_search_1ab735e6c56e1e6f675733d2998d8e74ea" compoundref="_search_8h" startline="156" endline="156">isFilesWithMatches</references>
+        <references refid="class_search_1a17cb87685b6cbb9fb6f4934992f2b469" compoundref="_search_8h" startline="153" endline="153">isQuiet</references>
+        <references refid="class_search_1a83747b40d329ff5c586a9ea39514c4fb" compoundref="_search_8h" startline="186">lineRange</references>
+        <references refid="class_arguments_1a50ed1aff24255f1f80d6f9453af7d627" compoundref="_arguments_8h" startline="11" endline="11">Arguments::openRangeEnd</references>
+        <references refid="class_search_1a5e116d3ee5a675741a9d2a9982455267" compoundref="_search_8cpp" startline="299" endline="383">runChunks</references>
+        <references refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</references>
+        <referencedby refid="class_search_1a661ddd9d7d36fbb90cc2c32bc83ca2ab" compoundref="_search_8cpp" startline="118" endline="134">runFile</referencedby>
+        <referencedby refid="_find_8cpp_1a52c2a6489204abd8f7c0508cbb0c236a" compoundref="_find_8cpp" startline="148" endline="185">runStdinFind</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_search_1a661ddd9d7d36fbb90cc2c32bc83ca2ab" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, int, <ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref> &gt;</type>
+        <definition>std::tuple&lt; juce::Result, int, Stdio::Documents &gt; Search::runFile</definition>
+        <argsstring>(const juce::File &amp;file, std::string_view displayPath, const Pattern &amp;pattern, jam::RegExpAutomaton &amp;automaton, bool isExplicit, bool isShowingPathPrefix) const</argsstring>
+        <name>runFile</name>
+        <qualifiedname>Search::runFile</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>displayPath</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_pattern" kindref="compound">Pattern</ref> &amp;</type>
+          <declname>pattern</declname>
+        </param>
+        <param>
+          <type><ref refid="classjam_1_1RegExpAutomaton" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::RegExpAutomaton</ref> &amp;</type>
+          <declname>automaton</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isExplicit</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isShowingPathPrefix</declname>
+        </param>
+        <briefdescription>
+<para>Opens a file and searches its bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The <ref refid="class_input" kindref="compound">Input</ref> of the file owns the bytes for the search. A file of up to <ref refid="class_input_1af4915b1e6f1f77beea94bc7833406f31" kindref="member">Input::maxBufferedReadSize</ref> bytes is read into a buffer, and a larger file is mapped. A file that cannot be read gives the read failure as the status result. An empty file gives the empty-file outcome.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The file to read. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>displayPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The path shown in the output. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>pattern</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The compiled pattern. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>automaton</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matcher state that the caller owns. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isExplicit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True when the input was named as a file on the command line. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isShowingPathPrefix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to prefix the output lines with the display path.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result, the number of matching lines, and the output documents. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="60" column="16" bodyfile="Search.cpp" bodystart="118" bodyend="134"/>
+        <references refid="class_input_1a97cbce202c2ccc522edea054b6d00f91" compoundref="_input_8cpp" startline="44" endline="82">Input::fromFile</references>
+        <references refid="class_search_1a51e89e99cf7a912b9472bac1d690b105" compoundref="_search_8cpp" startline="385" endline="393">getEmptyFileOutcome</references>
+        <references refid="class_text_document_1a190a015fb1df67382b28f6046b64798e" compoundref="_text_document_8cpp" startline="27" endline="33">TextDocument::getReadFailure</references>
+        <references refid="class_input_1af4915b1e6f1f77beea94bc7833406f31" compoundref="_input_8h" startline="28" endline="28">Input::maxBufferedReadSize</references>
+        <references refid="class_search_1a996ee99c13776c969e03cc1f81d36df4" compoundref="_search_8cpp" startline="91" endline="116">run</references>
+        <referencedby refid="class_find_outcome_1a362ca15f515f90946efc58d00205fd60" compoundref="_find_outcome_8cpp" startline="4" endline="21">FindOutcome::addFile</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_search_1a3b438e868398151582358ee066342910" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, int, <ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref>, size_t &gt;</type>
+        <definition>std::tuple&lt; juce::Result, int, Stdio::Documents, size_t &gt; Search::runStream</definition>
+        <argsstring>(const Pattern &amp;pattern) const</argsstring>
+        <name>runStream</name>
+        <qualifiedname>Search::runStream</qualifiedname>
+        <param>
+          <type>const <ref refid="class_pattern" kindref="compound">Pattern</ref> &amp;</type>
+          <declname>pattern</declname>
+        </param>
+        <briefdescription>
+<para>Searches the process standard input in blocks of complete lines, as they arrive. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A match that ends the search early ends the read too, so an endless input can be searched.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pattern</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The compiled pattern.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result, the number of matching lines, the output documents, and the number of bytes read from standard input. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="76" column="16" bodyfile="Search.cpp" bodystart="136" bodyend="200"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="class_search_1ab24620eca04b2906ec525caef5826df5" compoundref="_search_8h" startline="183" endline="183">afterLine</references>
+        <references refid="namespacejam_1_1simd_1aba502cc7ed50ba2587c11ef256a54d20">jam::simd::countByte</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1ac004a158de0d07a69ca7b7a48a71d420" compoundref="_text_8h" startline="41" endline="41">text::Diagnostics::failStandardInput</references>
+        <references refid="class_text_document_1a3293f6242e8ad72578da47007b84fa36" compoundref="_text_document_8cpp" startline="150" endline="156">TextDocument::fromText</references>
+        <references refid="class_text_document_1a301442b4864a3ce11677f034a2ecbd52" compoundref="_text_document_8cpp" startline="40" endline="46">TextDocument::getBinaryStatus</references>
+        <references refid="struct_stdio_1a152adfef4e630acdfddc13f5f596c7d7" compoundref="_stdio_8cpp" startline="19" endline="27">Stdio::getDocuments</references>
+        <references refid="classjuce_1_1Range_1a44413a19310d5f14be8d6ece2feedc01">juce::Range&lt; typename ValueType &gt;::getEnd</references>
+        <references refid="_search_8cpp_1ad5d23b3b76c82f353731607ebd09f1c2" compoundref="_search_8cpp" startline="12" endline="27">getFormattedCountOutput</references>
+        <references refid="class_text_document_1a3b2f56bc1bc3a2aa92a1010c7bd360ad" compoundref="_text_document_8cpp" startline="224" endline="228">TextDocument::getLeadingLines</references>
+        <references refid="classjuce_1_1Range_1a06f05db7a87b8e7e782b6c535c0c439b">juce::Range&lt; typename ValueType &gt;::getStart</references>
+        <references refid="_search_8cpp_1a829b05d6b86738fb8f67afe825f6dff6" compoundref="_search_8cpp" startline="10" endline="10">initialLineNumber</references>
+        <references refid="class_text_document_1a68d0ad47d84117eb3fe3b44fef62a829" compoundref="_text_document_8cpp" startline="48" endline="51">TextDocument::isBinary</references>
+        <references refid="class_search_1ac259bbc15883faa3ec4d75bab223bb08" compoundref="_search_8h" startline="159" endline="159">isCount</references>
+        <references refid="class_search_1ab735e6c56e1e6f675733d2998d8e74ea" compoundref="_search_8h" startline="156" endline="156">isFilesWithMatches</references>
+        <references refid="class_search_1a7b98e01c2671e9d4a78bf8333290ca78" compoundref="_search_8h" startline="168" endline="168">isFirst</references>
+        <references refid="class_search_1a17cb87685b6cbb9fb6f4934992f2b469" compoundref="_search_8h" startline="153" endline="153">isQuiet</references>
+        <references refid="class_search_1a1a27532c6b559a8e7720cbc8c8593487" compoundref="_search_8h" startline="174" endline="174">isShowingHash</references>
+        <references refid="class_search_1a97744de04f943c7d91a31947974613cc" compoundref="_search_8h" startline="171" endline="171">isShowingLineNumber</references>
+        <references refid="class_search_1a83747b40d329ff5c586a9ea39514c4fb" compoundref="_search_8h" startline="186">lineRange</references>
+        <references refid="structChars_1a4691bc69052e757e7325970098922899">Chars::newline</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="class_arguments_1a50ed1aff24255f1f80d6f9453af7d627" compoundref="_arguments_8h" startline="11" endline="11">Arguments::openRangeEnd</references>
+        <references refid="class_standard_stream_1a9549dbf12415464b6fd2b13da3d1b9ad" compoundref="_standard_stream_8cpp" startline="111" endline="119">StandardStream::read</references>
+        <references refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</references>
+        <referencedby refid="_find_8cpp_1a52c2a6489204abd8f7c0508cbb0c236a" compoundref="_find_8cpp" startline="148" endline="185">runStdinFind</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_search_1a5e5912550ec717402c0f69cb4938f9bf" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Search::isStreamSearch</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>isStreamSearch</name>
+        <qualifiedname>Search::isStreamSearch</qualifiedname>
+        <briefdescription>
+<para>Reports whether the search needs no context lines. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>True when neither before nor after context is requested. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="82" column="10" bodyfile="Search.cpp" bodystart="410" bodyend="413"/>
+        <references refid="class_search_1a3c708e1eeca12a7ef5129b10699c73f1" compoundref="_search_8h" startline="180" endline="180">afterContext</references>
+        <references refid="class_search_1a6ecbf52d07abc63f564bcd88bd0ea33b" compoundref="_search_8h" startline="177" endline="177">beforeContext</references>
+        <referencedby refid="_find_8cpp_1a52c2a6489204abd8f7c0508cbb0c236a" compoundref="_find_8cpp" startline="148" endline="185">runStdinFind</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, int, std::string, size_t &gt;</type>
+        <definition>std::tuple&lt; juce::Result, int, std::string, size_t &gt; Search::runLines</definition>
+        <argsstring>(std::string_view bytes, std::string_view displayPath, const Pattern &amp;pattern, jam::RegExpAutomaton &amp;automaton, bool isShowingPathPrefix, int firstLineNumber) const</argsstring>
+        <name>runLines</name>
+        <qualifiedname>Search::runLines</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>displayPath</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_pattern" kindref="compound">Pattern</ref> &amp;</type>
+          <declname>pattern</declname>
+        </param>
+        <param>
+          <type><ref refid="classjam_1_1RegExpAutomaton" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::RegExpAutomaton</ref> &amp;</type>
+          <declname>automaton</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isShowingPathPrefix</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>firstLineNumber</declname>
+        </param>
+        <briefdescription>
+<para>Searches the lines of a byte range, and returns the output text and the size of the input that the result depends on. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The bytes to search. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>displayPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The path shown in the output. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>pattern</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The compiled pattern. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>automaton</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matcher state that the caller owns. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isShowingPathPrefix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to prefix the output lines with the display path. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>firstLineNumber</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line number of the first byte of bytes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result, the number of matching lines, the output text, and the number of bytes of the input that the result depends on. A NUL byte after that point does not make the input binary. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="98" column="16" bodyfile="Search.cpp" bodystart="202" bodyend="297"/>
+        <references refid="class_match_writer_1aecacbcf7d6dff9c126d60e6ab0da16f1" compoundref="_match_writer_8cpp" startline="40" endline="89">MatchWriter::addMatch</references>
+        <references refid="class_search_1a3c708e1eeca12a7ef5129b10699c73f1" compoundref="_search_8h" startline="180" endline="180">afterContext</references>
+        <references refid="class_search_1ab24620eca04b2906ec525caef5826df5" compoundref="_search_8h" startline="183" endline="183">afterLine</references>
+        <references refid="structjam_1_1Format_1a03d027c362f8e8e10a4b632c3af60c63">jam::Format::appendBytes</references>
+        <references refid="structjam_1_1Format_1a764df6571428615011c88a96ddc542ca">jam::Format::appendUtf8</references>
+        <references refid="class_search_1a6ecbf52d07abc63f564bcd88bd0ea33b" compoundref="_search_8h" startline="177" endline="177">beforeContext</references>
+        <references refid="classjuce_1_1Range_1ae79c7c58a016a34d9c7b238f531eb975">juce::Range&lt; typename ValueType &gt;::contains</references>
+        <references refid="namespacejam_1_1simd_1af7acb3f0944348a1c9eb71d1e445fc07">jam::simd::findByte</references>
+        <references refid="class_pattern_1a709f0ee064239664fc4cb0c5192d0a31" compoundref="_pattern_8cpp" startline="191" endline="202">Pattern::findCandidate</references>
+        <references refid="classjuce_1_1Range_1a44413a19310d5f14be8d6ece2feedc01">juce::Range&lt; typename ValueType &gt;::getEnd</references>
+        <references refid="class_text_document_1aa8879ac99053ef5518cb783062a4b8c2" compoundref="_text_document_8cpp" startline="216" endline="222">TextDocument::getLine</references>
+        <references refid="_search_8cpp_1aff057606d70c1901fb69737cc6a376b8" compoundref="_search_8cpp" startline="40" endline="50">getLineMatch</references>
+        <references refid="class_match_writer_1adfb694fab95aff9a26f6488a87476be6" compoundref="_match_writer_8cpp" startline="35" endline="38">MatchWriter::getLineNumber</references>
+        <references refid="class_match_writer_1acef45fe9aa071d21a20b18b492b42c3a" compoundref="_match_writer_8cpp" startline="99" endline="102">MatchWriter::getPrintedSize</references>
+        <references refid="classjuce_1_1Range_1a06f05db7a87b8e7e782b6c535c0c439b">juce::Range&lt; typename ValueType &gt;::getStart</references>
+        <references refid="class_search_1ac259bbc15883faa3ec4d75bab223bb08" compoundref="_search_8h" startline="159" endline="159">isCount</references>
+        <references refid="class_search_1ab735e6c56e1e6f675733d2998d8e74ea" compoundref="_search_8h" startline="156" endline="156">isFilesWithMatches</references>
+        <references refid="class_search_1a7b98e01c2671e9d4a78bf8333290ca78" compoundref="_search_8h" startline="168" endline="168">isFirst</references>
+        <references refid="class_search_1ab2588579644f08d45aad6f47d716696b" compoundref="_search_8h" startline="165" endline="165">isInvert</references>
+        <references refid="class_search_1a0146c4051fbfb729bc9c08764ec9d47c" compoundref="_search_8h" startline="162" endline="162">isOnlyMatching</references>
+        <references refid="class_search_1a17cb87685b6cbb9fb6f4934992f2b469" compoundref="_search_8h" startline="153" endline="153">isQuiet</references>
+        <references refid="class_search_1a1a27532c6b559a8e7720cbc8c8593487" compoundref="_search_8h" startline="174" endline="174">isShowingHash</references>
+        <references refid="class_search_1a97744de04f943c7d91a31947974613cc" compoundref="_search_8h" startline="171" endline="171">isShowingLineNumber</references>
+        <references refid="class_search_1a83747b40d329ff5c586a9ea39514c4fb" compoundref="_search_8h" startline="186">lineRange</references>
+        <references refid="structChars_1a4691bc69052e757e7325970098922899">Chars::newline</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="class_arguments_1a50ed1aff24255f1f80d6f9453af7d627" compoundref="_arguments_8h" startline="11" endline="11">Arguments::openRangeEnd</references>
+        <references refid="class_match_writer_1adacd10534a679ac1e3d9f918bbd72802" compoundref="_match_writer_8cpp" startline="91" endline="97">MatchWriter::removeOutput</references>
+        <references refid="class_match_writer_1a9b01daa6066a7ae6fd7a1540e02e8653" compoundref="_match_writer_8cpp" startline="27" endline="33">MatchWriter::setLineNumber</references>
+        <referencedby refid="class_search_1a996ee99c13776c969e03cc1f81d36df4" compoundref="_search_8cpp" startline="91" endline="116">run</referencedby>
+        <referencedby refid="class_search_1a5e116d3ee5a675741a9d2a9982455267" compoundref="_search_8cpp" startline="299" endline="383">runChunks</referencedby>
+        <referencedby refid="class_search_1a3b438e868398151582358ee066342910" compoundref="_search_8cpp" startline="136" endline="200">runStream</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_search_1a5e116d3ee5a675741a9d2a9982455267" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, int, <ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref> &gt;</type>
+        <definition>std::tuple&lt; juce::Result, int, Stdio::Documents &gt; Search::runChunks</definition>
+        <argsstring>(std::string_view bytes, std::string_view displayPath, const Pattern &amp;pattern, bool isExplicit, bool isShowingPathPrefix) const</argsstring>
+        <name>runChunks</name>
+        <qualifiedname>Search::runChunks</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>displayPath</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_pattern" kindref="compound">Pattern</ref> &amp;</type>
+          <declname>pattern</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isExplicit</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isShowingPathPrefix</declname>
+        </param>
+        <briefdescription>
+<para>Searches a large byte range in parallel chunks, with one output document for each chunk. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The chunks are cut at a newline, so each line is in one chunk. The chunks are counted for their newlines and their NUL bytes first, so that each chunk knows its first line number. Then the chunks are searched in parallel. A NUL byte in any chunk makes an explicit input or a counted input binary, and that is reported at once. Otherwise a failure is returned before any output, and a binary status is returned when the input is not explicit and the search failed or found a match. The documents are returned in chunk order, and empty chunks give no document.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The bytes to search. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>displayPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The path shown in the output. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>pattern</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The compiled pattern. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isExplicit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True when the input was named as a file on the command line. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isShowingPathPrefix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to prefix the output lines with the display path.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result, the number of matching lines, and the output documents, one for each chunk. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="122" column="16" bodyfile="Search.cpp" bodystart="299" bodyend="383"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="namespacejam_1_1simd_1aba502cc7ed50ba2587c11ef256a54d20">jam::simd::countByte</references>
+        <references refid="classjam_1_1Array_1a79e89487d47591c2c1dcceb7ba5aa61e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::ensureStorageAllocated</references>
+        <references refid="class_text_document_1a3293f6242e8ad72578da47007b84fa36" compoundref="_text_document_8cpp" startline="150" endline="156">TextDocument::fromText</references>
+        <references refid="class_text_document_1a301442b4864a3ce11677f034a2ecbd52" compoundref="_text_document_8cpp" startline="40" endline="46">TextDocument::getBinaryStatus</references>
+        <references refid="_search_8cpp_1a932a496b752997f6e1e47ba1b73c318e" compoundref="_search_8cpp" startline="69" endline="73">getChunk</references>
+        <references refid="_search_8cpp_1a907ddd2b5ca5db4fdba5d83f1152df91" compoundref="_search_8cpp" startline="52" endline="67">getChunkEnds</references>
+        <references refid="_search_8cpp_1affd3ed5c01ff5253bd2f3c3f756c5682" compoundref="_search_8cpp" startline="29" endline="38">getCountOutcome</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <references refid="_search_8cpp_1a829b05d6b86738fb8f67afe825f6dff6" compoundref="_search_8cpp" startline="10" endline="10">initialLineNumber</references>
+        <references refid="classjam_1_1Array_1a5d5dee6bc301945729b43f4c140477ff">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::insertMultiple</references>
+        <references refid="class_text_document_1a526057024fda53328375356af326981d" compoundref="_text_document_8cpp" startline="184" endline="187">TextDocument::isBinary</references>
+        <references refid="class_search_1ac259bbc15883faa3ec4d75bab223bb08" compoundref="_search_8h" startline="159" endline="159">isCount</references>
+        <references refid="structChars_1a4691bc69052e757e7325970098922899">Chars::newline</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="classjam_1_1Array_1a5011ae5f02af2593d783611891ae64f0">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::resize</references>
+        <references refid="struct_jobs_1a639a3b9ddb2cedfa89f534cfcc3646d1" compoundref="_jobs_8h" startline="26" endline="89">Jobs::run</references>
+        <references refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">runLines</references>
+        <referencedby refid="class_search_1a996ee99c13776c969e03cc1f81d36df4" compoundref="_search_8cpp" startline="91" endline="116">run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_search_1a51e89e99cf7a912b9472bac1d690b105" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, int, <ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref> &gt;</type>
+        <definition>std::tuple&lt; juce::Result, int, Stdio::Documents &gt; Search::getEmptyFileOutcome</definition>
+        <argsstring>(std::string_view displayPath, bool isExplicit, bool isShowingPathPrefix) const</argsstring>
+        <name>getEmptyFileOutcome</name>
+        <qualifiedname>Search::getEmptyFileOutcome</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>displayPath</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isExplicit</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isShowingPathPrefix</declname>
+        </param>
+        <briefdescription>
+<para>Returns the outcome of an input with no bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An explicit input with a count option prints a zero count, unless quiet or files-with-matches is set. Any other empty input prints nothing.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>displayPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The path shown in the output. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isExplicit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True when the input was named as a file on the command line. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isShowingPathPrefix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to prefix the count with the display path.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result, zero matches, and the output documents. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="139" column="16" bodyfile="Search.cpp" bodystart="385" bodyend="393"/>
+        <references refid="_search_8cpp_1affd3ed5c01ff5253bd2f3c3f756c5682" compoundref="_search_8cpp" startline="29" endline="38">getCountOutcome</references>
+        <references refid="class_search_1ac259bbc15883faa3ec4d75bab223bb08" compoundref="_search_8h" startline="159" endline="159">isCount</references>
+        <references refid="class_search_1ab735e6c56e1e6f675733d2998d8e74ea" compoundref="_search_8h" startline="156" endline="156">isFilesWithMatches</references>
+        <references refid="class_search_1a17cb87685b6cbb9fb6f4934992f2b469" compoundref="_search_8h" startline="153" endline="153">isQuiet</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <referencedby refid="class_search_1a661ddd9d7d36fbb90cc2c32bc83ca2ab" compoundref="_search_8cpp" startline="118" endline="134">runFile</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_search_1ae18d5f84e2075fb4e462fee9c33d8e6e" prot="private" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Search::isChunkedSearch</definition>
+        <argsstring>(size_t size) const noexcept</argsstring>
+        <name>isChunkedSearch</name>
+        <qualifiedname>Search::isChunkedSearch</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Reports whether a byte range is large enough, and needs no context, to be searched in parallel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the bytes in question.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True when the size reaches the chunked threshold and no option stops the search early or limits the lines or the context. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Search.h" line="150" column="10" bodyfile="Search.cpp" bodystart="395" bodyend="408"/>
+        <references refid="class_search_1a3c708e1eeca12a7ef5129b10699c73f1" compoundref="_search_8h" startline="180" endline="180">afterContext</references>
+        <references refid="class_search_1ab24620eca04b2906ec525caef5826df5" compoundref="_search_8h" startline="183" endline="183">afterLine</references>
+        <references refid="class_search_1a6ecbf52d07abc63f564bcd88bd0ea33b" compoundref="_search_8h" startline="177" endline="177">beforeContext</references>
+        <references refid="class_search_1ab735e6c56e1e6f675733d2998d8e74ea" compoundref="_search_8h" startline="156" endline="156">isFilesWithMatches</references>
+        <references refid="class_search_1a7b98e01c2671e9d4a78bf8333290ca78" compoundref="_search_8h" startline="168" endline="168">isFirst</references>
+        <references refid="class_search_1a17cb87685b6cbb9fb6f4934992f2b469" compoundref="_search_8h" startline="153" endline="153">isQuiet</references>
+        <references refid="class_search_1a83747b40d329ff5c586a9ea39514c4fb" compoundref="_search_8h" startline="186">lineRange</references>
+        <references refid="class_arguments_1a50ed1aff24255f1f80d6f9453af7d627" compoundref="_arguments_8h" startline="11" endline="11">Arguments::openRangeEnd</references>
+        <referencedby refid="class_search_1a996ee99c13776c969e03cc1f81d36df4" compoundref="_search_8cpp" startline="91" endline="116">run</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Searches the bytes of one input for a pattern, with the settings of one command. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The settings are read one time from the arguments, when the <ref refid="class_search" kindref="compound">Search</ref> is built. Every run then uses the same settings, so no run reads the arguments again. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Search</label>
+        <link refid="class_search"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>lineRange</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>juce::Range&lt; int &gt;</label>
+        <link refid="classjuce_1_1Range" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+    </collaborationgraph>
+    <location file="Search.h" line="12" column="1" bodyfile="Search.h" bodystart="13" bodyend="187"/>
+    <listofallmembers>
+      <member refid="class_search_1a3c708e1eeca12a7ef5129b10699c73f1" prot="private" virt="non-virtual"><scope>Search</scope><name>afterContext</name></member>
+      <member refid="class_search_1ab24620eca04b2906ec525caef5826df5" prot="private" virt="non-virtual"><scope>Search</scope><name>afterLine</name></member>
+      <member refid="class_search_1a6ecbf52d07abc63f564bcd88bd0ea33b" prot="private" virt="non-virtual"><scope>Search</scope><name>beforeContext</name></member>
+      <member refid="class_search_1a51e89e99cf7a912b9472bac1d690b105" prot="private" virt="non-virtual"><scope>Search</scope><name>getEmptyFileOutcome</name></member>
+      <member refid="class_search_1ae18d5f84e2075fb4e462fee9c33d8e6e" prot="private" virt="non-virtual"><scope>Search</scope><name>isChunkedSearch</name></member>
+      <member refid="class_search_1ac259bbc15883faa3ec4d75bab223bb08" prot="private" virt="non-virtual"><scope>Search</scope><name>isCount</name></member>
+      <member refid="class_search_1ab735e6c56e1e6f675733d2998d8e74ea" prot="private" virt="non-virtual"><scope>Search</scope><name>isFilesWithMatches</name></member>
+      <member refid="class_search_1a7b98e01c2671e9d4a78bf8333290ca78" prot="private" virt="non-virtual"><scope>Search</scope><name>isFirst</name></member>
+      <member refid="class_search_1ab2588579644f08d45aad6f47d716696b" prot="private" virt="non-virtual"><scope>Search</scope><name>isInvert</name></member>
+      <member refid="class_search_1a0146c4051fbfb729bc9c08764ec9d47c" prot="private" virt="non-virtual"><scope>Search</scope><name>isOnlyMatching</name></member>
+      <member refid="class_search_1a17cb87685b6cbb9fb6f4934992f2b469" prot="private" virt="non-virtual"><scope>Search</scope><name>isQuiet</name></member>
+      <member refid="class_search_1a1a27532c6b559a8e7720cbc8c8593487" prot="private" virt="non-virtual"><scope>Search</scope><name>isShowingHash</name></member>
+      <member refid="class_search_1a97744de04f943c7d91a31947974613cc" prot="private" virt="non-virtual"><scope>Search</scope><name>isShowingLineNumber</name></member>
+      <member refid="class_search_1a5e5912550ec717402c0f69cb4938f9bf" prot="public" virt="non-virtual"><scope>Search</scope><name>isStreamSearch</name></member>
+      <member refid="class_search_1a83747b40d329ff5c586a9ea39514c4fb" prot="private" virt="non-virtual"><scope>Search</scope><name>lineRange</name></member>
+      <member refid="class_search_1a996ee99c13776c969e03cc1f81d36df4" prot="public" virt="non-virtual"><scope>Search</scope><name>run</name></member>
+      <member refid="class_search_1a5e116d3ee5a675741a9d2a9982455267" prot="private" virt="non-virtual"><scope>Search</scope><name>runChunks</name></member>
+      <member refid="class_search_1a661ddd9d7d36fbb90cc2c32bc83ca2ab" prot="public" virt="non-virtual"><scope>Search</scope><name>runFile</name></member>
+      <member refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" prot="private" virt="non-virtual"><scope>Search</scope><name>runLines</name></member>
+      <member refid="class_search_1a3b438e868398151582358ee066342910" prot="public" virt="non-virtual"><scope>Search</scope><name>runStream</name></member>
+      <member refid="class_search_1a38683fe4d6ecdab41b733c789bb62540" prot="public" virt="non-virtual"><scope>Search</scope><name>Search</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

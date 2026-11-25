@@ -1,0 +1,819 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="_lines_8cpp" kind="file" language="C++">
+    <compoundname>Lines.cpp</compoundname>
+    <includes refid="_lines_8h" local="yes">Lines.h</includes>
+    <includes refid="_arguments_8h" local="yes">Arguments.h</includes>
+    <includes refid="_input_8h" local="yes">Input.h</includes>
+    <includes refid="_jobs_8h" local="yes">Jobs.h</includes>
+    <includes refid="_line_diff_8h" local="yes">LineDiff.h</includes>
+    <includes refid="_paths_8h" local="yes">Paths.h</includes>
+    <includes refid="_stdio_8h" local="yes">Stdio.h</includes>
+    <includes refid="_text_document_8h" local="yes">TextDocument.h</includes>
+    <includes refid="_transaction_8h" local="yes">Transaction.h</includes>
+    <includes refid="_generated_8h" local="yes">generated/Generated.h</includes>
+    <incdepgraph>
+      <node id="4">
+        <label>Arguments.h</label>
+        <link refid="_arguments_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Input.h</label>
+        <link refid="_input_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>Jobs.h</label>
+        <link refid="_jobs_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>LineDiff.h</label>
+        <link refid="_line_diff_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Lines.cpp</label>
+        <link refid="_lines_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Lines.h</label>
+        <link refid="_lines_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>Paths.h</label>
+        <link refid="_paths_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>StagedFile.h</label>
+        <link refid="_staged_file_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Stdio.h</label>
+        <link refid="_stdio_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>TextDocument.h</label>
+        <link refid="_text_document_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Transaction.h</label>
+        <link refid="_transaction_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Files.h</label>
+        <link refid="_files_8h"/>
+      </node>
+      <node id="8">
+        <label>generated/Generated.h</label>
+        <link refid="_generated_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>HashMaps.h</label>
+        <link refid="_hash_maps_8h"/>
+      </node>
+      <node id="10">
+        <label>Identifiers.h</label>
+        <link refid="_identifiers_8h"/>
+      </node>
+      <node id="9">
+        <label>ProjectInfo.h</label>
+        <link refid="_project_info_8h"/>
+      </node>
+      <node id="11">
+        <label>Text.h</label>
+        <link refid="_text_8h"/>
+      </node>
+      <node id="3">
+        <label>JuceHeader.h</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="_lines_8cpp_1a3c9f97aaac6840d7c54047d2fcff66cf" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>std::array</type>
+        <definition>std::array mutateOptions</definition>
+        <argsstring></argsstring>
+        <name>mutateOptions</name>
+        <initializer>{ <ref refid="namespaceId_1af382903659c1930f3703cd6ec2da760e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Id::deleteOption</ref>, <ref refid="namespaceId_1ad1782f2969f8bf697745f5df161e22d1" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Id::replaceOption</ref>, <ref refid="namespaceId_1ac0279c762d19c326d483c428d542ae4c" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Id::insertBeforeOption</ref>, <ref refid="namespaceId_1a436f5cd8a637385504cafe14dd395815" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Id::insertAfterOption</ref> }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Lines.cpp" line="12" column="29" bodyfile="Lines.cpp" bodystart="12" bodyend="12"/>
+        <referencedby refid="_lines_8cpp_1aada541219732c0d5e13bfd35858b0371" compoundref="_lines_8cpp" startline="178" endline="187">getActiveMutationOption</referencedby>
+        <referencedby refid="_lines_8cpp_1a71e653b8d28aade7ed4fe639d4dd4c81" compoundref="_lines_8cpp" startline="14" endline="25">getMutateFlagCount</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_lines_8cpp_1a71e653b8d28aade7ed4fe639d4dd4c81" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>static int getMutateFlagCount</definition>
+        <argsstring>(const Arguments &amp;arguments)</argsstring>
+        <name>getMutateFlagCount</name>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Lines.cpp" line="14" column="12" bodyfile="Lines.cpp" bodystart="14" bodyend="25"/>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">Arguments::contains</references>
+        <references refid="_lines_8cpp_1a71e653b8d28aade7ed4fe639d4dd4c81" compoundref="_lines_8cpp" startline="14" endline="25">getMutateFlagCount</references>
+        <references refid="_lines_8cpp_1a3c9f97aaac6840d7c54047d2fcff66cf" compoundref="_lines_8cpp" startline="12" endline="12">mutateOptions</references>
+        <referencedby refid="_lines_8cpp_1a71e653b8d28aade7ed4fe639d4dd4c81" compoundref="_lines_8cpp" startline="14" endline="25">getMutateFlagCount</referencedby>
+        <referencedby refid="_lines_8cpp_1a73c290d1b3fd041578ffcae617d7aa9e" compoundref="_lines_8cpp" startline="40" endline="51">getValidatedLineRange</referencedby>
+        <referencedby refid="class_lines_1a663396cf130926669d431d2b98ea5418" compoundref="_lines_8cpp" startline="366" endline="405">Lines::run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_lines_8cpp_1a62ec325cc076717945392b4abe4c1207" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>static juce::Result getReadModeFlagStatus</definition>
+        <argsstring>(const Arguments &amp;arguments)</argsstring>
+        <name>getReadModeFlagStatus</name>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Lines.cpp" line="27" column="21" bodyfile="Lines.cpp" bodystart="27" bodyend="38"/>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">Arguments::contains</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1a54030ad642dee1157d22d8255503812d" compoundref="_text_8h" startline="32" endline="32">text::Diagnostics::failFlagUnknown</references>
+        <references refid="class_arguments_1a22766bdf309e7f6aee01aea6ecc324a0" compoundref="_arguments_8cpp" startline="31" endline="34">Arguments::getOptionName</references>
+        <references refid="_lines_8cpp_1a62ec325cc076717945392b4abe4c1207" compoundref="_lines_8cpp" startline="27" endline="38">getReadModeFlagStatus</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <referencedby refid="_lines_8cpp_1a62ec325cc076717945392b4abe4c1207" compoundref="_lines_8cpp" startline="27" endline="38">getReadModeFlagStatus</referencedby>
+        <referencedby refid="class_lines_1a663396cf130926669d431d2b98ea5418" compoundref="_lines_8cpp" startline="366" endline="405">Lines::run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_lines_8cpp_1a73c290d1b3fd041578ffcae617d7aa9e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, <ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range</ref>&lt; int &gt; &gt;</type>
+        <definition>static std::pair&lt; juce::Result, juce::Range&lt; int &gt; &gt; getValidatedLineRange</definition>
+        <argsstring>(const Arguments &amp;arguments)</argsstring>
+        <name>getValidatedLineRange</name>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Lines.cpp" line="40" column="18" bodyfile="Lines.cpp" bodystart="40" bodyend="51"/>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">Arguments::contains</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1aba304b81001c4ecc9fcc7bd5573895cd" compoundref="_text_8h" startline="47" endline="47">text::Diagnostics::failLinesRequiresRange</references>
+        <references refid="structtext_1_1_diagnostics_1a1fbb3c595fb2a0aa3548c796d98e3259" compoundref="_text_8h" startline="79" endline="79">text::Diagnostics::failMutateFlagsConflict</references>
+        <references refid="class_arguments_1a23ac72ff046b511034f46422ee50d56b" compoundref="_arguments_8cpp" startline="36" endline="69">Arguments::getLineRange</references>
+        <references refid="_lines_8cpp_1a71e653b8d28aade7ed4fe639d4dd4c81" compoundref="_lines_8cpp" startline="14" endline="25">getMutateFlagCount</references>
+        <references refid="class_arguments_1aafc4f159b8d3a4fed87eed8db972f472" compoundref="_arguments_8cpp" startline="101" endline="104">Arguments::getPositionals</references>
+        <references refid="_lines_8cpp_1a73c290d1b3fd041578ffcae617d7aa9e" compoundref="_lines_8cpp" startline="40" endline="51">getValidatedLineRange</references>
+        <referencedby refid="_lines_8cpp_1a73c290d1b3fd041578ffcae617d7aa9e" compoundref="_lines_8cpp" startline="40" endline="51">getValidatedLineRange</referencedby>
+        <referencedby refid="class_lines_1a663396cf130926669d431d2b98ea5418" compoundref="_lines_8cpp" startline="366" endline="405">Lines::run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_lines_8cpp_1aada541219732c0d5e13bfd35858b0371" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref></type>
+        <definition>static juce::Identifier getActiveMutationOption</definition>
+        <argsstring>(const Arguments &amp;arguments)</argsstring>
+        <name>getActiveMutationOption</name>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Lines.cpp" line="178" column="25" bodyfile="Lines.cpp" bodystart="178" bodyend="187"/>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">Arguments::contains</references>
+        <references refid="_lines_8cpp_1aada541219732c0d5e13bfd35858b0371" compoundref="_lines_8cpp" startline="178" endline="187">getActiveMutationOption</references>
+        <references refid="_lines_8cpp_1a3c9f97aaac6840d7c54047d2fcff66cf" compoundref="_lines_8cpp" startline="12" endline="12">mutateOptions</references>
+        <referencedby refid="_lines_8cpp_1aada541219732c0d5e13bfd35858b0371" compoundref="_lines_8cpp" startline="178" endline="187">getActiveMutationOption</referencedby>
+        <referencedby refid="class_lines_1a271a082c3fb97cadcb1b662be43e81cb" compoundref="_lines_8cpp" startline="189" endline="199">Lines::Lines</referencedby>
+        <referencedby refid="class_lines_1a663396cf130926669d431d2b98ea5418" compoundref="_lines_8cpp" startline="366" endline="405">Lines::run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_lines_8cpp_1a9067a0fae2dfc1e064d9da85ffa7b366" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="structjam_1_1Function_1_1Map" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Function::Map</ref>&lt; <ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>, <ref refid="structjam_1_1Function_1ae0c82daeeeb7f4c4eaf062d55601f5cd" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Function::pointerCapacity</ref>, std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt;(<ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range</ref>&lt; int &gt;, std::string_view)&gt; &amp;</type>
+        <definition>static const jam::Function::Map&lt; juce::Identifier, jam::Function::pointerCapacity, std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt;(juce::Range&lt; int &gt;, std::string_view)&gt; &amp; getLineMutations</definition>
+        <argsstring>()</argsstring>
+        <name>getLineMutations</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Lines.cpp" line="201" column="36" bodyfile="Lines.cpp" bodystart="201" bodyend="215"/>
+        <references refid="structjam_1_1Function_1_1Map_1ad53732bb862659c66b8112c75f437248">jam::Function::Map&lt; typename KeyType, size_t capacity, typename... Signatures &gt;::add</references>
+        <references refid="class_line_diff_1a0f5b2cdb36d89b7071b6915a1dd6c51a" compoundref="_line_diff_8cpp" startline="261" endline="264">LineDiff::getDeletion</references>
+        <references refid="class_line_diff_1aa54330d886c9c47e59906d8860e5e17e" compoundref="_line_diff_8cpp" startline="271" endline="274">LineDiff::getInsertion</references>
+        <references refid="_lines_8cpp_1a9067a0fae2dfc1e064d9da85ffa7b366" compoundref="_lines_8cpp" startline="201" endline="215">getLineMutations</references>
+        <references refid="class_line_diff_1a76ecc8ce43b3be96827d43624198a6ce" compoundref="_line_diff_8cpp" startline="266" endline="269">LineDiff::getReplacement</references>
+        <referencedby refid="class_lines_1acc9556622af1319da99a5674b45c18c7" compoundref="_lines_8cpp" startline="293" endline="313">Lines::addFileMutation</referencedby>
+        <referencedby refid="_lines_8cpp_1a9067a0fae2dfc1e064d9da85ffa7b366" compoundref="_lines_8cpp" startline="201" endline="215">getLineMutations</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_lines_8cpp_1ae83c101fceb1b98a287b6afcb7c9bdc0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>static juce::Result getMutateModeFlagStatus</definition>
+        <argsstring>(const Arguments &amp;arguments, const juce::Identifier &amp;activeMutation)</argsstring>
+        <name>getMutateModeFlagStatus</name>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref> &amp;</type>
+          <declname>activeMutation</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Lines.cpp" line="217" column="21" bodyfile="Lines.cpp" bodystart="217" bodyend="232"/>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">Arguments::contains</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1a54030ad642dee1157d22d8255503812d" compoundref="_text_8h" startline="32" endline="32">text::Diagnostics::failFlagUnknown</references>
+        <references refid="_lines_8cpp_1ae83c101fceb1b98a287b6afcb7c9bdc0" compoundref="_lines_8cpp" startline="217" endline="232">getMutateModeFlagStatus</references>
+        <references refid="class_arguments_1a22766bdf309e7f6aee01aea6ecc324a0" compoundref="_arguments_8cpp" startline="31" endline="34">Arguments::getOptionName</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <referencedby refid="_lines_8cpp_1ae83c101fceb1b98a287b6afcb7c9bdc0" compoundref="_lines_8cpp" startline="217" endline="232">getMutateModeFlagStatus</referencedby>
+        <referencedby refid="_lines_8cpp_1ab80797cbc76a24431377c7f965e6e237" compoundref="_lines_8cpp" startline="234" endline="258">getMutateValidationStatus</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_lines_8cpp_1ab80797cbc76a24431377c7f965e6e237" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>static juce::Result getMutateValidationStatus</definition>
+        <argsstring>(const Arguments &amp;arguments, const juce::Identifier &amp;activeMutation)</argsstring>
+        <name>getMutateValidationStatus</name>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref> &amp;</type>
+          <declname>activeMutation</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Lines.cpp" line="234" column="21" bodyfile="Lines.cpp" bodystart="234" bodyend="258"/>
+        <references refid="structChars_1ab0e6e951a85086a81e11533c0bcfc422">Chars::colon</references>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">Arguments::contains</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1a0b7abc4a1785d262d26c30aec58faaef" compoundref="_text_8h" startline="78" endline="78">text::Diagnostics::failInsertSingleLine</references>
+        <references refid="structtext_1_1_diagnostics_1ad86264b279fcb97550e1eeacc334a8b1" compoundref="_text_8h" startline="35" endline="35">text::Diagnostics::failMissingPath</references>
+        <references refid="structtext_1_1_diagnostics_1af1d73d28b47085d0fd50b72cd5a8d731" compoundref="_text_8h" startline="34" endline="34">text::Diagnostics::failUnexpectedArgument</references>
+        <references refid="_lines_8cpp_1ae83c101fceb1b98a287b6afcb7c9bdc0" compoundref="_lines_8cpp" startline="217" endline="232">getMutateModeFlagStatus</references>
+        <references refid="_lines_8cpp_1ab80797cbc76a24431377c7f965e6e237" compoundref="_lines_8cpp" startline="234" endline="258">getMutateValidationStatus</references>
+        <references refid="class_arguments_1aafc4f159b8d3a4fed87eed8db972f472" compoundref="_arguments_8cpp" startline="101" endline="104">Arguments::getPositionals</references>
+        <references refid="class_arguments_1adade09c248ed8b06f65a73e1c133b47e" compoundref="_arguments_8cpp" startline="81" endline="85">Arguments::getValueView</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="classjuce_1_1Identifier_1ab6f0db1de2c36cacd1a9d7280f73aeeb">juce::Identifier::toString</references>
+        <referencedby refid="_lines_8cpp_1ab80797cbc76a24431377c7f965e6e237" compoundref="_lines_8cpp" startline="234" endline="258">getMutateValidationStatus</referencedby>
+        <referencedby refid="class_lines_1a663396cf130926669d431d2b98ea5418" compoundref="_lines_8cpp" startline="366" endline="405">Lines::run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_lines_8cpp_1aedacbbd493784099c1d02833532682fc" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, std::unique_ptr&lt; <ref refid="class_input" kindref="compound">Input</ref> &gt;, std::string_view &gt;</type>
+        <definition>static std::tuple&lt; juce::Result, std::unique_ptr&lt; Input &gt;, std::string_view &gt; getPayloadText</definition>
+        <argsstring>(const Arguments &amp;arguments, const juce::Identifier &amp;activeMutation, const std::optional&lt; std::string &gt; &amp;input)</argsstring>
+        <name>getPayloadText</name>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref> &amp;</type>
+          <declname>activeMutation</declname>
+        </param>
+        <param>
+          <type>const std::optional&lt; std::string &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Lines.cpp" line="340" column="19" bodyfile="Lines.cpp" bodystart="340" bodyend="356"/>
+        <references refid="class_input_1a95071d83755879d3c0d4b2bcbb37e6f2" compoundref="_input_8h" startline="16" endline="16">Input::allLines</references>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">Arguments::contains</references>
+        <references refid="class_input_1a3fc492d5ac07056e1c68ec5a045455cb" compoundref="_input_8cpp" startline="88" endline="102">Input::create</references>
+        <references refid="_lines_8cpp_1aedacbbd493784099c1d02833532682fc" compoundref="_lines_8cpp" startline="340" endline="356">getPayloadText</references>
+        <references refid="class_arguments_1adade09c248ed8b06f65a73e1c133b47e" compoundref="_arguments_8cpp" startline="81" endline="85">Arguments::getValueView</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="classjuce_1_1Identifier_1ab6f0db1de2c36cacd1a9d7280f73aeeb">juce::Identifier::toString</references>
+        <referencedby refid="_lines_8cpp_1aedacbbd493784099c1d02833532682fc" compoundref="_lines_8cpp" startline="340" endline="356">getPayloadText</referencedby>
+        <referencedby refid="class_lines_1a663396cf130926669d431d2b98ea5418" compoundref="_lines_8cpp" startline="366" endline="405">Lines::run</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_lines_8h" kindref="compound">Lines.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_arguments_8h" kindref="compound">Arguments.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_input_8h" kindref="compound">Input.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_jobs_8h" kindref="compound">Jobs.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_line_diff_8h" kindref="compound">LineDiff.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_paths_8h" kindref="compound">Paths.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_stdio_8h" kindref="compound">Stdio.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_text_document_8h" kindref="compound">TextDocument.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_transaction_8h" kindref="compound">Transaction.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_generated_8h" kindref="compound">generated/Generated.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="_lines_8cpp_1a3c9f97aaac6840d7c54047d2fcff66cf" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>std::array<sp/><ref refid="_lines_8cpp_1a3c9f97aaac6840d7c54047d2fcff66cf" kindref="member">mutateOptions</ref><sp/>{<sp/>Id::deleteOption,<sp/>Id::replaceOption,<sp/>Id::insertBeforeOption,<sp/>Id::insertAfterOption<sp/>};</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="_lines_8cpp_1a71e653b8d28aade7ed4fe639d4dd4c81" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="_lines_8cpp_1a71e653b8d28aade7ed4fe639d4dd4c81" kindref="member">getMutateFlagCount</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments)</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>count<sp/>{<sp/>0<sp/>};</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>option<sp/>:<sp/><ref refid="_lines_8cpp_1a3c9f97aaac6840d7c54047d2fcff66cf" kindref="member">mutateOptions</ref>)</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arguments.<ref refid="class_arguments_1a16e02d082e3c502be80194a47e907535" kindref="member">contains</ref><sp/>(option))</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>++count;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>count;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="_lines_8cpp_1a62ec325cc076717945392b4abe4c1207" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref><sp/><ref refid="_lines_8cpp_1a62ec325cc076717945392b4abe4c1207" kindref="member">getReadModeFlagStatus</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments)</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>std::array<sp/>mutateOnlyOptions<sp/>{<sp/>Id::stdinOption,<sp/>Id::verifyHashOption,<sp/>Id::applyOption,<sp/>Id::expectOption<sp/>};</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>option<sp/>:<sp/>mutateOnlyOptions)</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arguments.<ref refid="class_arguments_1a16e02d082e3c502be80194a47e907535" kindref="member">contains</ref><sp/>(option))</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" kindref="member">Stdio::fail</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1a54030ad642dee1157d22d8255503812d" kindref="member">text::Diagnostics::failFlagUnknown</ref>,<sp/><ref refid="class_arguments_1a22766bdf309e7f6aee01aea6ecc324a0" kindref="member">Arguments::getOptionName</ref><sp/>(option));</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>();</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="_lines_8cpp_1a73c290d1b3fd041578ffcae617d7aa9e" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::pair&lt;juce::Result,<sp/>juce::Range&lt;int&gt;&gt;<sp/><ref refid="_lines_8cpp_1a73c290d1b3fd041578ffcae617d7aa9e" kindref="member">getValidatedLineRange</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments)</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="_lines_8cpp_1a71e653b8d28aade7ed4fe639d4dd4c81" kindref="member">getMutateFlagCount</ref><sp/>(arguments)<sp/>&gt;<sp/>1)</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" kindref="member">Stdio::fail</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1a1fbb3c595fb2a0aa3548c796d98e3259" kindref="member">text::Diagnostics::failMutateFlagsConflict</ref>),<sp/>{}<sp/>};</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>positionals<sp/>{<sp/>arguments.<ref refid="class_arguments_1aafc4f159b8d3a4fed87eed8db972f472" kindref="member">getPositionals</ref>()<sp/>};</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(positionals.size()<sp/>&lt;<sp/>1)</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" kindref="member">Stdio::fail</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1aba304b81001c4ecc9fcc7bd5573895cd" kindref="member">text::Diagnostics::failLinesRequiresRange</ref>),<sp/>{}<sp/>};</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_arguments_1a23ac72ff046b511034f46422ee50d56b" kindref="member">Arguments::getLineRange</ref><sp/>(positionals.at<sp/>(0),<sp/>arguments.<ref refid="class_arguments_1a16e02d082e3c502be80194a47e907535" kindref="member">contains</ref><sp/>(Id::insertAfterOption));</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="class_lines_1acaa4942992f2237b592af06384e471b2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_lines_1acaa4942992f2237b592af06384e471b2" kindref="member">Lines::appendFormattedLine</ref><sp/>(std::string&amp;<sp/>output,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lineNumber,<sp/>std::string_view<sp/>line)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="54"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_text_document_1a2ee7d8b63b5afe8196e037cb1e5b1796" kindref="member">TextDocument::appendLinePrefix</ref><sp/>(output,<sp/>lineNumber,<sp/>line,<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">char</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal"><sp/>(<ref refid="class_lines_1a39425990bf32ba2d2e98ecfef380c6e4" kindref="member">isShowingHash</ref><sp/>?<sp/><ref refid="structChars_1ab0e6e951a85086a81e11533c0bcfc422" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Chars::colon</ref><sp/>:<sp/><ref refid="structChars_1a332626f4b75d06a63871148b04c8023e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Chars::tab</ref>),<sp/><ref refid="class_lines_1a0634093b62fbbefdc932a55a8deecacb" kindref="member">isShowingLineNumber</ref>,<sp/><ref refid="class_lines_1a39425990bf32ba2d2e98ecfef380c6e4" kindref="member">isShowingHash</ref>);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structjam_1_1Format_1a03d027c362f8e8e10a4b632c3af60c63" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Format::appendBytes</ref><sp/>(output,<sp/>line);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structjam_1_1Format_1a764df6571428615011c88a96ddc542ca" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Format::appendUtf8</ref><sp/>(output,<sp/><ref refid="structChars_1a4691bc69052e757e7325970098922899" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Chars::newline</ref>);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="class_lines_1a018c05bb56412083e4c72a12a78ed1c2" refkind="member"><highlight class="normal">std::pair&lt;juce::Result,<sp/>Stdio::Documents&gt;<sp/><ref refid="class_lines_1a018c05bb56412083e4c72a12a78ed1c2" kindref="member">Lines::getOutputDocuments</ref><sp/>(std::unique_ptr&lt;Input&gt;<sp/>input,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string_view<sp/>displayPath,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isExplicit)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="63"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string_view<sp/>bytes<sp/>{<sp/>input-&gt;getBytes()<sp/>};</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(bytes.empty())</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>(),<sp/><ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref><sp/>{}<sp/>};</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/><ref refid="class_lines_1a0634093b62fbbefdc932a55a8deecacb" kindref="member">isShowingLineNumber</ref><sp/>and<sp/>not<sp/><ref refid="class_lines_1a39425990bf32ba2d2e98ecfef380c6e4" kindref="member">isShowingHash</ref>)</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>firstOffset<sp/>{<sp/><ref refid="class_text_document_1a3b2f56bc1bc3a2aa92a1010c7bd360ad" kindref="member">TextDocument::getLeadingLines</ref><sp/>(bytes,<sp/><ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>.<ref refid="classjuce_1_1Range_1a06f05db7a87b8e7e782b6c535c0c439b" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">getStart</ref>()<sp/>-<sp/>1).size()<sp/>};</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string_view<sp/>rest<sp/>{<sp/>bytes.substr<sp/>(firstOffset)<sp/>};</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string_view<sp/>rangeBytes<sp/>{<sp/><ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>.<ref refid="classjuce_1_1Range_1a44413a19310d5f14be8d6ece2feedc01" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">getEnd</ref>()<sp/>==<sp/><ref refid="class_arguments_1a50ed1aff24255f1f80d6f9453af7d627" kindref="member">Arguments::openRangeEnd</ref></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>?<sp/>rest</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="class_text_document_1a3b2f56bc1bc3a2aa92a1010c7bd360ad" kindref="member">TextDocument::getLeadingLines</ref><sp/>(rest,<sp/><ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>.<ref refid="classjuce_1_1Range_1adf20d9d78a28abf6f6190e7e05a885ee" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">getLength</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>hasCarriageReturn<sp/>{<sp/><ref refid="namespacejam_1_1simd_1af7acb3f0944348a1c9eb71d1e445fc07" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::simd::findByte</ref><sp/>(rangeBytes.data(),<sp/>rangeBytes.size(),<sp/>0,<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">char</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal"><sp/>(<ref refid="structChars_1a4db3b142f5d69046eab6be2586aa25f7" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Chars::carriageReturn</ref>))<sp/>&lt;<sp/>rangeBytes.size()<sp/>};</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>hasCarriageReturn)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_text_document_1a68d0ad47d84117eb3fe3b44fef62a829" kindref="member">TextDocument::isBinary</ref><sp/>(bytes.substr<sp/>(0,<sp/>firstOffset<sp/>+<sp/>rangeBytes.size())))</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="class_text_document_1a301442b4864a3ce11677f034a2ecbd52" kindref="member">TextDocument::getBinaryStatus</ref><sp/>(displayPath,<sp/>isExplicit),<sp/><ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref><sp/>{}<sp/>};</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref><sp/>documents;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>rangeBytes.empty())</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isNewlineMissing<sp/>{<sp/>rangeBytes.back()<sp/>!=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">char</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal"><sp/>(<ref refid="structChars_1a4691bc69052e757e7325970098922899" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Chars::newline</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>documents.<ref refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">add</ref><sp/>(<ref refid="class_text_document_1ac8bdb8264ba5a6b3d15667fd097f218f" kindref="member">TextDocument::fromInput</ref><sp/>(std::move<sp/>(input),<sp/>displayPath,<sp/>rangeBytes));</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(isNewlineMissing)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>documents.<ref refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">add</ref><sp/>(<ref refid="class_text_document_1ac9190f0e4a6735b0625ea85c7be1c9c8" kindref="member">TextDocument::fromView</ref><sp/>(<ref refid="struct_stdio_1abb8232d7b694db1188d20d69dd8af4b0" kindref="member">Stdio::newline</ref>,<sp/>displayPath));</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>(),<sp/>std::move<sp/>(documents)<sp/>};</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>output;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>readSize<sp/>{<sp/><ref refid="class_text_document_1aa5be46eb8c5ccd163f5bbc01cca069be" kindref="member">TextDocument::applyToLines</ref><sp/>(bytes,</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>,</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>&amp;output]<sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lineNumber,<sp/>std::string_view<sp/>line)</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_lines_1acaa4942992f2237b592af06384e471b2" kindref="member">appendFormattedLine</ref><sp/>(output,<sp/>lineNumber,<sp/>line);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>})<sp/>};</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_text_document_1a68d0ad47d84117eb3fe3b44fef62a829" kindref="member">TextDocument::isBinary</ref><sp/>(bytes.substr<sp/>(0,<sp/>readSize)))</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="class_text_document_1a301442b4864a3ce11677f034a2ecbd52" kindref="member">TextDocument::getBinaryStatus</ref><sp/>(displayPath,<sp/>isExplicit),<sp/><ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref><sp/>{}<sp/>};</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>(),<sp/><ref refid="struct_stdio_1a152adfef4e630acdfddc13f5f596c7d7" kindref="member">Stdio::getDocuments</ref><sp/>(std::move<sp/>(output),<sp/>displayPath)<sp/>};</highlight></codeline>
+<codeline lineno="111"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="class_lines_1adf732d1ccaf15c877805885744bd5baa" refkind="member"><highlight class="normal">std::pair&lt;juce::Result,<sp/>Stdio::Documents&gt;<sp/><ref refid="class_lines_1adf732d1ccaf15c877805885744bd5baa" kindref="member">Lines::getFileOutput</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>file,</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string_view<sp/>displayPath,</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isExplicit)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="116"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[inputStatus,<sp/>input]<sp/>{<sp/><ref refid="class_text_document_1a85fcd586d9c6a28e39f53bedd6c3ff54" kindref="member">TextDocument::getInput</ref><sp/>(file,<sp/>displayPath,<sp/><ref refid="class_input_1af4915b1e6f1f77beea94bc7833406f31" kindref="member">Input::maxBufferedReadSize</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(inputStatus.failed())</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/>inputStatus,<sp/><ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref><sp/>{}<sp/>};</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_lines_1a018c05bb56412083e4c72a12a78ed1c2" kindref="member">getOutputDocuments</ref><sp/>(std::move<sp/>(input),<sp/>displayPath,<sp/>isExplicit);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="class_lines_1a36fe96db47b1f75442e7f3814eb221d3" refkind="member"><highlight class="normal"><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref><sp/><ref refid="class_lines_1a36fe96db47b1f75442e7f3814eb221d3" kindref="member">Lines::runStandardInput</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::optional&lt;std::string&gt;&amp;<sp/>input)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="126"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="struct_stdio_1a28994562faa0223a49215d05f819a20a" kindref="member">Stdio::isTerminalInput</ref><sp/>(input))</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1ad86264b279fcb97550e1eeacc334a8b1" kindref="member">text::Diagnostics::failMissingPath</ref>);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[inputStatus,<sp/>standardInput]<sp/>{<sp/><ref refid="class_text_document_1a85fcd586d9c6a28e39f53bedd6c3ff54" kindref="member">TextDocument::getInput</ref><sp/>(input,<sp/><ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>.<ref refid="classjuce_1_1Range_1a44413a19310d5f14be8d6ece2feedc01" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">getEnd</ref>()<sp/>-<sp/>1)<sp/>};</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(inputStatus.failed())</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(inputStatus);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[outputStatus,<sp/>documents]<sp/>{<sp/><ref refid="class_lines_1a018c05bb56412083e4c72a12a78ed1c2" kindref="member">getOutputDocuments</ref><sp/>(std::move<sp/>(standardInput),<sp/>Id::stdinPath,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">)<sp/>};</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(outputStatus.failed())</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(outputStatus);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1a0d704d1d99e172c759f752d6913edfb1" kindref="member">Stdio::getOutput</ref><sp/>(<ref refid="struct_stdio_1a1a7d222553744f4567c34e97e43e6b87" kindref="member">Stdio::exitSuccess</ref>,<sp/>std::move<sp/>(documents));</highlight></codeline>
+<codeline lineno="141"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="class_lines_1afd2f1bd0b2ed2e7413eb4133a1c9a776" refkind="member"><highlight class="normal"><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref><sp/><ref refid="class_lines_1afd2f1bd0b2ed2e7413eb4133a1c9a776" kindref="member">Lines::runFiles</ref><sp/>(<ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span&lt;const std::string_view&gt;</ref><sp/>rawPaths)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="144"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[readStatus,<sp/><ref refid="namespacefiles" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">files</ref>]<sp/>{<sp/><ref refid="struct_paths_1a5314f36d3b5852db454cb13f26e1f6be" kindref="member">Paths::getReadableFiles</ref><sp/>(rawPaths,<sp/>{},<sp/>{},<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">)<sp/>};</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(readStatus.failed())</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(readStatus);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>fileCount<sp/>{<sp/><ref refid="namespacefiles" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">files</ref>.size()<sp/>};</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;juce::Result&gt;</ref><sp/>statuses;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>statuses.<ref refid="classjam_1_1Array_1a5d5dee6bc301945729b43f4c140477ff" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">insertMultiple</ref><sp/>(0,<sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>(),<sp/>fileCount);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;Stdio::Documents&gt;</ref><sp/>results;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/>results.<ref refid="classjam_1_1Array_1a5011ae5f02af2593d783611891ae64f0" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">resize</ref><sp/>(fileCount);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_jobs_1a639a3b9ddb2cedfa89f534cfcc3646d1" kindref="member">Jobs::run</ref><sp/>(fileCount,</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">this</highlight><highlight class="normal">,<sp/>&amp;pathEntries<sp/>=<sp/><ref refid="namespacefiles" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">files</ref>,<sp/>&amp;statuses,<sp/>&amp;results]<sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>index)</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>[displayPath,<sp/>targetFile,<sp/>isExplicit]<sp/>{<sp/>pathEntries.at<sp/>(index)<sp/>};</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[fileStatus,<sp/>fileDocuments]<sp/>{<sp/><ref refid="class_lines_1adf732d1ccaf15c877805885744bd5baa" kindref="member">getFileOutput</ref><sp/>(targetFile,<sp/>displayPath,<sp/>isExplicit)<sp/>};</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>statuses.<ref refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">at</ref><sp/>(index)<sp/>=<sp/>std::move<sp/>(fileStatus);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>results.<ref refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">at</ref><sp/>(index)<sp/>=<sp/>std::move<sp/>(fileDocuments);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref><sp/>firstFailure<sp/>{<sp/><ref refid="struct_stdio_1a88c5bfa8d456a117e4296e0624abce90" kindref="member">Stdio::getFirstFailure</ref><sp/>(statuses)<sp/>};</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(firstFailure.failed())</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(firstFailure);</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_stdio_1ab085ed5a56d5d15a65ab01954b2aa703" kindref="member">Stdio::Documents</ref><sp/>documents;</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>fileDocuments<sp/>:<sp/>results)</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="struct_stdio_1aff9b0dc5051d3827bbc4a15547947870" kindref="member">Stdio::addDocuments</ref><sp/>(documents,<sp/>std::move<sp/>(fileDocuments));</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1a0d704d1d99e172c759f752d6913edfb1" kindref="member">Stdio::getOutput</ref><sp/>(<ref refid="struct_stdio_1a1a7d222553744f4567c34e97e43e6b87" kindref="member">Stdio::exitSuccess</ref>,<sp/>std::move<sp/>(documents));</highlight></codeline>
+<codeline lineno="176"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178" refid="_lines_8cpp_1aada541219732c0d5e13bfd35858b0371" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/><ref refid="_lines_8cpp_1aada541219732c0d5e13bfd35858b0371" kindref="member">getActiveMutationOption</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments)</highlight></codeline>
+<codeline lineno="179"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>option<sp/>:<sp/><ref refid="_lines_8cpp_1a3c9f97aaac6840d7c54047d2fcff66cf" kindref="member">mutateOptions</ref>)</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arguments.<ref refid="class_arguments_1a16e02d082e3c502be80194a47e907535" kindref="member">contains</ref><sp/>(option))</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>(option.data());</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{};</highlight></codeline>
+<codeline lineno="187"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189" refid="class_lines_1a271a082c3fb97cadcb1b662be43e81cb" refkind="member"><highlight class="normal"><ref refid="class_lines_1a271a082c3fb97cadcb1b662be43e81cb" kindref="member">Lines::Lines</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments,<sp/><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range&lt;int&gt;</ref><sp/>newLineRange,<sp/>std::unique_ptr&lt;Input&gt;<sp/>newPayloadInput,<sp/>std::string_view<sp/>newPayloadText)</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/><ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref><sp/>(newLineRange),</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_lines_1aff37a68cbd1c5e339211140737efb80d" kindref="member">rangeText</ref><sp/>(arguments.getPositionals().at<sp/>(0)),</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_lines_1af0efe5edcecc9f3f167dfe24fd3cb9ae" kindref="member">activeMutation</ref><sp/>(<ref refid="_lines_8cpp_1aada541219732c0d5e13bfd35858b0371" kindref="member">getActiveMutationOption</ref><sp/>(arguments)),</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_lines_1abecbf8a0e048919bc35a6a048b3ef9d1" kindref="member">expectedHash</ref><sp/>(arguments.contains<sp/>(<ref refid="namespaceId" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Id</ref>::verifyHashOption)<sp/>?<sp/><ref refid="namespacestd" kindref="compound">std</ref>::optional&lt;<ref refid="namespacestd" kindref="compound">std</ref>::string_view&gt;<sp/>{<sp/>arguments.<ref refid="class_arguments_1adade09c248ed8b06f65a73e1c133b47e" kindref="member">getValueView</ref><sp/>(Id::verifyHashOption)<sp/>}<sp/>:<sp/>std::nullopt),</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>payloadInput<sp/>(std::move<sp/>(newPayloadInput)),</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>payloadText<sp/>(newPayloadText),</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>isShowingHash<sp/>(arguments.contains<sp/>(Id::hashOption)),</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>isShowingLineNumber<sp/>(arguments.contains<sp/>(Id::lineNumberOption))</highlight></codeline>
+<codeline lineno="198"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="199"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201" refid="_lines_8cpp_1a9067a0fae2dfc1e064d9da85ffa7b366" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Function_1_1Map" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Function::Map&lt;juce::Identifier, jam::Function::pointerCapacity, std::tuple&lt;int, int, std::optional&lt;std::string_view&gt;</ref>&gt;<sp/>(<ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range&lt;int&gt;</ref>,<sp/>std::string_view)&gt;&amp;<sp/><ref refid="_lines_8cpp_1a9067a0fae2dfc1e064d9da85ffa7b366" kindref="member">getLineMutations</ref>()</highlight></codeline>
+<codeline lineno="202"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>lineMutations<sp/>(</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[]</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structjam_1_1Function_1_1Map" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Function::Map&lt;juce::Identifier, jam::Function::pointerCapacity, std::tuple&lt;int, int, std::optional&lt;std::string_view&gt;</ref>&gt;<sp/>(<ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range&lt;int&gt;</ref>,<sp/>std::string_view)&gt;<sp/>mutations;</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mutations.<ref refid="structjam_1_1Function_1_1Map_1ad53732bb862659c66b8112c75f437248" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">add</ref><sp/>(<ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>(Id::deleteOption.data()),<sp/>[]<sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>&amp;,<sp/><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range&lt;int&gt;</ref><sp/>range,<sp/>std::string_view)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_line_diff_1a0f5b2cdb36d89b7071b6915a1dd6c51a" kindref="member">LineDiff::getDeletion</ref><sp/>(range);<sp/>});</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mutations.add<sp/>(<ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>(Id::replaceOption.data()),<sp/>[]<sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>&amp;,<sp/><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range&lt;int&gt;</ref><sp/>range,<sp/>std::string_view<sp/><ref refid="namespacetext" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">text</ref>)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_line_diff_1a76ecc8ce43b3be96827d43624198a6ce" kindref="member">LineDiff::getReplacement</ref><sp/>(range,<sp/><ref refid="namespacetext" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">text</ref>);<sp/>});</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mutations.add<sp/>(<ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>(Id::insertBeforeOption.data()),<sp/>[]<sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>&amp;,<sp/><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range&lt;int&gt;</ref><sp/>range,<sp/>std::string_view<sp/><ref refid="namespacetext" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">text</ref>)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_line_diff_1aa54330d886c9c47e59906d8860e5e17e" kindref="member">LineDiff::getInsertion</ref><sp/>(range.getStart()<sp/>-<sp/>1,<sp/><ref refid="namespacetext" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">text</ref>);<sp/>});</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mutations.add<sp/>(<ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>(Id::insertAfterOption.data()),<sp/>[]<sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>&amp;,<sp/><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range&lt;int&gt;</ref><sp/>range,<sp/>std::string_view<sp/><ref refid="namespacetext" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">text</ref>)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_line_diff_1aa54330d886c9c47e59906d8860e5e17e" kindref="member">LineDiff::getInsertion</ref><sp/>(range.getStart(),<sp/><ref refid="namespacetext" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">text</ref>);<sp/>});</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mutations;</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}());</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lineMutations;</highlight></codeline>
+<codeline lineno="215"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="217" refid="_lines_8cpp_1ae83c101fceb1b98a287b6afcb7c9bdc0" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref><sp/><ref refid="_lines_8cpp_1ae83c101fceb1b98a287b6afcb7c9bdc0" kindref="member">getMutateModeFlagStatus</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments,</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>&amp;<sp/>activeMutation)</highlight></codeline>
+<codeline lineno="219"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>std::array<sp/>readOnlyOptions<sp/>{<sp/>Id::lineNumberOption,<sp/>Id::hashOption<sp/>};</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>option<sp/>:<sp/>readOnlyOptions)</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arguments.<ref refid="class_arguments_1a16e02d082e3c502be80194a47e907535" kindref="member">contains</ref><sp/>(option))</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" kindref="member">Stdio::fail</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1a54030ad642dee1157d22d8255503812d" kindref="member">text::Diagnostics::failFlagUnknown</ref>,<sp/><ref refid="class_arguments_1a22766bdf309e7f6aee01aea6ecc324a0" kindref="member">Arguments::getOptionName</ref><sp/>(option));</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(activeMutation<sp/>==<sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>(Id::deleteOption.data())<sp/>and<sp/>arguments.<ref refid="class_arguments_1a16e02d082e3c502be80194a47e907535" kindref="member">contains</ref><sp/>(Id::stdinOption))</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" kindref="member">Stdio::fail</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1a54030ad642dee1157d22d8255503812d" kindref="member">text::Diagnostics::failFlagUnknown</ref>,<sp/><ref refid="class_arguments_1a22766bdf309e7f6aee01aea6ecc324a0" kindref="member">Arguments::getOptionName</ref><sp/>(Id::stdinOption));</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>();</highlight></codeline>
+<codeline lineno="232"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234" refid="_lines_8cpp_1ab80797cbc76a24431377c7f965e6e237" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref><sp/><ref refid="_lines_8cpp_1ab80797cbc76a24431377c7f965e6e237" kindref="member">getMutateValidationStatus</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments,</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>&amp;<sp/>activeMutation)</highlight></codeline>
+<codeline lineno="236"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>flagStatus<sp/>{<sp/><ref refid="_lines_8cpp_1ae83c101fceb1b98a287b6afcb7c9bdc0" kindref="member">getMutateModeFlagStatus</ref><sp/>(arguments,<sp/>activeMutation)<sp/>};</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(flagStatus.failed())</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>flagStatus;</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>mutationValueView<sp/>{<sp/>arguments.<ref refid="class_arguments_1adade09c248ed8b06f65a73e1c133b47e" kindref="member">getValueView</ref><sp/>(<ref refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings::getView</ref><sp/>(activeMutation.<ref refid="classjuce_1_1Identifier_1ab6f0db1de2c36cacd1a9d7280f73aeeb" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">toString</ref>()))<sp/>};</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"></highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arguments.<ref refid="class_arguments_1a16e02d082e3c502be80194a47e907535" kindref="member">contains</ref><sp/>(Id::stdinOption)<sp/>and<sp/>not<sp/>mutationValueView.empty())</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" kindref="member">Stdio::fail</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1af1d73d28b47085d0fd50b72cd5a8d731" kindref="member">text::Diagnostics::failUnexpectedArgument</ref>,<sp/>mutationValueView);</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>positionals<sp/>{<sp/>arguments.<ref refid="class_arguments_1aafc4f159b8d3a4fed87eed8db972f472" kindref="member">getPositionals</ref>()<sp/>};</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isInsert<sp/>{<sp/>activeMutation<sp/>==<sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>(Id::insertBeforeOption.data())</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>or<sp/>activeMutation<sp/>==<sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>(Id::insertAfterOption.data())<sp/>};</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(isInsert<sp/>and<sp/>positionals.at<sp/>(0).find<sp/>(</highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">char</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal"><sp/>(<ref refid="structChars_1ab0e6e951a85086a81e11533c0bcfc422" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Chars::colon</ref>))<sp/>!=<sp/>std::string_view::npos)</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" kindref="member">Stdio::fail</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1a0b7abc4a1785d262d26c30aec58faaef" kindref="member">text::Diagnostics::failInsertSingleLine</ref>,<sp/>positionals.at<sp/>(0));</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(positionals.size()<sp/>&lt;<sp/>2)</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" kindref="member">Stdio::fail</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1ad86264b279fcb97550e1eeacc334a8b1" kindref="member">text::Diagnostics::failMissingPath</ref>);</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>();</highlight></codeline>
+<codeline lineno="258"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight></codeline>
+<codeline lineno="260" refid="class_lines_1a6ed5ebe10e10593329f6ac4ca2729831" refkind="member"><highlight class="normal">std::pair&lt;juce::Result,<sp/>juce::Range&lt;int&gt;&gt;<sp/><ref refid="class_lines_1a6ed5ebe10e10593329f6ac4ca2729831" kindref="member">Lines::getEffectiveMutationRange</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_text_document" kindref="compound">TextDocument</ref>&amp;<sp/>document,<sp/>std::string_view<sp/>displayPath)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="261"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>numLines<sp/>{<sp/>document.<ref refid="class_text_document_1a06055593df0117e730a0326a1645bf27" kindref="member">getNumLines</ref>()<sp/>};</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>effectiveEnd<sp/>{<sp/><ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>.<ref refid="classjuce_1_1Range_1a44413a19310d5f14be8d6ece2feedc01" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">getEnd</ref>()<sp/>==<sp/><ref refid="class_arguments_1a50ed1aff24255f1f80d6f9453af7d627" kindref="member">Arguments::openRangeEnd</ref><sp/>?<sp/>numLines<sp/>+<sp/>1<sp/>:<sp/><ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>.<ref refid="classjuce_1_1Range_1a44413a19310d5f14be8d6ece2feedc01" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">getEnd</ref>()<sp/>};</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isInsertAfter<sp/>{<sp/><ref refid="class_lines_1af0efe5edcecc9f3f167dfe24fd3cb9ae" kindref="member">activeMutation</ref><sp/>==<sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>(Id::insertAfterOption.data())<sp/>};</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isInBounds<sp/>{<sp/>isInsertAfter</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>?<sp/>(<ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>.<ref refid="classjuce_1_1Range_1a06f05db7a87b8e7e782b6c535c0c439b" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">getStart</ref>()<sp/>&gt;=<sp/>0<sp/>and<sp/><ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>.<ref refid="classjuce_1_1Range_1a06f05db7a87b8e7e782b6c535c0c439b" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">getStart</ref>()<sp/>&lt;=<sp/>numLines)</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>(numLines<sp/>&gt;<sp/>0</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/><ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>.<ref refid="classjuce_1_1Range_1a06f05db7a87b8e7e782b6c535c0c439b" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">getStart</ref>()<sp/>&gt;=<sp/>1</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/>effectiveEnd<sp/>-<sp/>1<sp/>&lt;=<sp/>numLines</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/><ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>.<ref refid="classjuce_1_1Range_1a06f05db7a87b8e7e782b6c535c0c439b" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">getStart</ref>()<sp/>&lt;=<sp/>effectiveEnd<sp/>-<sp/>1)<sp/>};</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>isInBounds)</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" kindref="member">Stdio::fail</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1a580335f6281267563821ed5ed57580d1" kindref="member">text::Diagnostics::failLineRangeBounds</ref>,</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_lines_1aff37a68cbd1c5e339211140737efb80d" kindref="member">rangeText</ref>,</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structtext_1_1_diagnostics_1abb2b8d69b8c79c1660778c49dc90700f" kindref="member">text::Diagnostics::outOfBoundsFor</ref>,</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>displayPath,</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structtext_1_1_diagnostics_1ad7620da34390c7d7eadd1dfdb2db70a0" kindref="member">text::Diagnostics::linesOpen</ref>,</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>numLines,</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structtext_1_1_diagnostics_1a150849b3c016cb0d40cad7db115788ed" kindref="member">text::Diagnostics::linesClose</ref>),</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{}<sp/>};</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"></highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>(),<sp/><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range&lt;int&gt;</ref><sp/>(<ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>.<ref refid="classjuce_1_1Range_1a06f05db7a87b8e7e782b6c535c0c439b" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">getStart</ref>(),<sp/>effectiveEnd)<sp/>};</highlight></codeline>
+<codeline lineno="283"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"></highlight></codeline>
+<codeline lineno="285" refid="class_lines_1aa123bc1da686722520be8c2fd87b03db" refkind="member"><highlight class="normal"><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref><sp/><ref refid="class_lines_1aa123bc1da686722520be8c2fd87b03db" kindref="member">Lines::getVerifiedHashStatus</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_text_document" kindref="compound">TextDocument</ref>&amp;<sp/>document)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="286"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_lines_1abecbf8a0e048919bc35a6a048b3ef9d1" kindref="member">expectedHash</ref>.has_value())</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>document.<ref refid="class_text_document_1a2d9d60ddb00a9f9d57178f8b65783966" kindref="member">getLineHashStatus</ref><sp/>(<ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>.<ref refid="classjuce_1_1Range_1a06f05db7a87b8e7e782b6c535c0c439b" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">getStart</ref>(),<sp/>*<ref refid="class_lines_1abecbf8a0e048919bc35a6a048b3ef9d1" kindref="member">expectedHash</ref>);</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"></highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>();</highlight></codeline>
+<codeline lineno="291"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"></highlight></codeline>
+<codeline lineno="293" refid="class_lines_1acc9556622af1319da99a5674b45c18c7" refkind="member"><highlight class="normal"><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref><sp/><ref refid="class_lines_1acc9556622af1319da99a5674b45c18c7" kindref="member">Lines::addFileMutation</ref><sp/>(<ref refid="class_transaction" kindref="compound">Transaction</ref>&amp;<sp/>transaction,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>targetFile,<sp/>std::string_view<sp/>displayPath)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="294"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[documentStatus,<sp/>document]<sp/>{<sp/><ref refid="class_text_document_1a368b7c5d829df5e20f76c11c0a6463e6" kindref="member">TextDocument::fromTextFile</ref><sp/>(targetFile,<sp/>displayPath,<sp/><ref refid="class_input_1adfde65e6955a7f1c62782df59cb6cf0a" kindref="member">Input::allBytes</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"></highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(documentStatus.failed())</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>documentStatus;</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[rangeStatus,<sp/>effectiveRange]<sp/>{<sp/><ref refid="class_lines_1a6ed5ebe10e10593329f6ac4ca2729831" kindref="member">getEffectiveMutationRange</ref><sp/>(*document,<sp/>displayPath)<sp/>};</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"></highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rangeStatus.failed())</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>rangeStatus;</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"></highlight></codeline>
+<codeline lineno="305"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>hashStatus<sp/>{<sp/><ref refid="class_lines_1aa123bc1da686722520be8c2fd87b03db" kindref="member">getVerifiedHashStatus</ref><sp/>(*document)<sp/>};</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(hashStatus.failed())</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>hashStatus;</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"></highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>mutation<sp/>{<sp/><ref refid="_lines_8cpp_1a9067a0fae2dfc1e064d9da85ffa7b366" kindref="member">getLineMutations</ref>().get<sp/>(<ref refid="class_lines_1af0efe5edcecc9f3f167dfe24fd3cb9ae" kindref="member">activeMutation</ref>,<sp/>effectiveRange,<sp/><ref refid="class_lines_1ad256f5b60723f12e7f5f33a0b1f516db" kindref="member">payloadText</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_line_diff" kindref="compound">LineDiff</ref><sp/>diff<sp/>(*document,<sp/>[&amp;mutation]<sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>addChange)<sp/>{<sp/>std::apply<sp/>(addChange,<sp/>mutation);<sp/>});</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>transaction.<ref refid="class_transaction_1ace7cab528daf25ccbb7e6042cbb4b25e" kindref="member">addFile</ref><sp/>(targetFile,<sp/>std::move<sp/>(document),<sp/>std::move<sp/>(diff),<sp/>1);</highlight></codeline>
+<codeline lineno="313"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"></highlight></codeline>
+<codeline lineno="315" refid="class_lines_1a483aab1f3731243163a1e7a470d1b026" refkind="member"><highlight class="normal"><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref><sp/><ref refid="class_lines_1a483aab1f3731243163a1e7a470d1b026" kindref="member">Lines::runMutation</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="316"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[readStatus,<sp/><ref refid="namespacefiles" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">files</ref>]<sp/>{<sp/><ref refid="struct_paths_1a5314f36d3b5852db454cb13f26e1f6be" kindref="member">Paths::getReadableFiles</ref><sp/>(arguments.<ref refid="class_arguments_1aafc4f159b8d3a4fed87eed8db972f472" kindref="member">getPositionals</ref><sp/>(1),<sp/>{},<sp/>{},<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">)<sp/>};</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"></highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(readStatus.failed())</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(readStatus);</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"></highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_transaction" kindref="compound">Transaction</ref><sp/>transaction<sp/>{<sp/>Id::lines<sp/>};</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"></highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>[displayPath,<sp/>targetFile,<sp/>isExplicit]<sp/>:<sp/><ref refid="namespacefiles" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">files</ref>)</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="326"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::ignoreUnused</ref><sp/>(isExplicit);</highlight></codeline>
+<codeline lineno="327"><highlight class="normal"></highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(transaction.<ref refid="class_transaction_1a2f92a38e72c669b68b635b79daff4ccb" kindref="member">addTarget</ref><sp/>(targetFile))</highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>fileStatus<sp/>{<sp/><ref refid="class_lines_1acc9556622af1319da99a5674b45c18c7" kindref="member">addFileMutation</ref><sp/>(transaction,<sp/>targetFile,<sp/>displayPath)<sp/>};</highlight></codeline>
+<codeline lineno="331"><highlight class="normal"></highlight></codeline>
+<codeline lineno="332"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(fileStatus.failed())</highlight></codeline>
+<codeline lineno="333"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(fileStatus);</highlight></codeline>
+<codeline lineno="334"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"></highlight></codeline>
+<codeline lineno="337"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>transaction.<ref refid="class_transaction_1ab1e959e59ca6ad3115550892d0d7fa8a" kindref="member">run</ref><sp/>(arguments);</highlight></codeline>
+<codeline lineno="338"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="339"><highlight class="normal"></highlight></codeline>
+<codeline lineno="340" refid="_lines_8cpp_1aedacbbd493784099c1d02833532682fc" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::tuple&lt;juce::Result,<sp/>std::unique_ptr&lt;Input&gt;,<sp/>std::string_view&gt;<sp/><ref refid="_lines_8cpp_1aedacbbd493784099c1d02833532682fc" kindref="member">getPayloadText</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments,</highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>&amp;<sp/>activeMutation,</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::optional&lt;std::string&gt;&amp;<sp/>input)</highlight></codeline>
+<codeline lineno="343"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="344"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arguments.<ref refid="class_arguments_1a16e02d082e3c502be80194a47e907535" kindref="member">contains</ref><sp/>(Id::stdinOption))</highlight></codeline>
+<codeline lineno="345"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="346"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[inputStatus,<sp/>standardInput]<sp/>{<sp/><ref refid="class_input_1a3fc492d5ac07056e1c68ec5a045455cb" kindref="member">Input::create</ref><sp/>(input,<sp/><ref refid="class_input_1a95071d83755879d3c0d4b2bcbb37e6f2" kindref="member">Input::allLines</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"></highlight></codeline>
+<codeline lineno="348"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(inputStatus.failed())</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/>inputStatus,<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">,<sp/>std::string_view<sp/>{}<sp/>};</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"></highlight></codeline>
+<codeline lineno="351"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string_view<sp/>standardBytes<sp/>{<sp/>standardInput-&gt;getBytes()<sp/>};</highlight></codeline>
+<codeline lineno="352"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>(),<sp/>std::move<sp/>(standardInput),<sp/>standardBytes<sp/>};</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="354"><highlight class="normal"></highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>(),<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">,<sp/>arguments.<ref refid="class_arguments_1adade09c248ed8b06f65a73e1c133b47e" kindref="member">getValueView</ref><sp/>(<ref refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings::getView</ref><sp/>(activeMutation.<ref refid="classjuce_1_1Identifier_1ab6f0db1de2c36cacd1a9d7280f73aeeb" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">toString</ref>()))<sp/>};</highlight></codeline>
+<codeline lineno="356"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="357"><highlight class="normal"></highlight></codeline>
+<codeline lineno="358" refid="class_lines_1a3b7a4fac15c779afd1ec1f0b8fd6ffc6" refkind="member"><highlight class="normal"><ref refid="class_arguments" kindref="compound">Arguments</ref><sp/><ref refid="class_lines_1a3b7a4fac15c779afd1ec1f0b8fd6ffc6" kindref="member">Lines::getArguments</ref><sp/>(<ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span&lt;const std::string_view&gt;</ref><sp/>argumentList)</highlight></codeline>
+<codeline lineno="359"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="360"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref><sp/>{<sp/>argumentList,</highlight></codeline>
+<codeline lineno="361"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>Id::lineNumberOption,<sp/>Id::hashOption,<sp/>Id::deleteOption,<sp/>Id::stdinOption,<sp/>Id::applyOption<sp/>},</highlight></codeline>
+<codeline lineno="362"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>Id::verifyHashOption,<sp/>Id::expectOption<sp/>},</highlight></codeline>
+<codeline lineno="363"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>Id::replaceOption,<sp/>Id::insertBeforeOption,<sp/>Id::insertAfterOption<sp/>}<sp/>};</highlight></codeline>
+<codeline lineno="364"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="365"><highlight class="normal"></highlight></codeline>
+<codeline lineno="366" refid="class_lines_1a663396cf130926669d431d2b98ea5418" refkind="member"><highlight class="normal"><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref><sp/><ref refid="class_lines_1a663396cf130926669d431d2b98ea5418" kindref="member">Lines::run</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::optional&lt;std::string&gt;&amp;<sp/>input)</highlight></codeline>
+<codeline lineno="367"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="368"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arguments.<ref refid="class_arguments_1a46db95dfc7cc4ce7e8e7af84ceaaebf7" kindref="member">getStatus</ref>().<ref refid="classjuce_1_1Result_1ae932f12129866251b1136f1629255f1c" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">failed</ref>())</highlight></codeline>
+<codeline lineno="369"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(arguments.<ref refid="class_arguments_1a46db95dfc7cc4ce7e8e7af84ceaaebf7" kindref="member">getStatus</ref>());</highlight></codeline>
+<codeline lineno="370"><highlight class="normal"></highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[rangeStatus,<sp/><ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>]<sp/>{<sp/><ref refid="_lines_8cpp_1a73c290d1b3fd041578ffcae617d7aa9e" kindref="member">getValidatedLineRange</ref><sp/>(arguments)<sp/>};</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"></highlight></codeline>
+<codeline lineno="373"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rangeStatus.failed())</highlight></codeline>
+<codeline lineno="374"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(rangeStatus);</highlight></codeline>
+<codeline lineno="375"><highlight class="normal"></highlight></codeline>
+<codeline lineno="376"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="_lines_8cpp_1a71e653b8d28aade7ed4fe639d4dd4c81" kindref="member">getMutateFlagCount</ref><sp/>(arguments)<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="377"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="378"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>flagStatus<sp/>{<sp/><ref refid="_lines_8cpp_1a62ec325cc076717945392b4abe4c1207" kindref="member">getReadModeFlagStatus</ref><sp/>(arguments)<sp/>};</highlight></codeline>
+<codeline lineno="379"><highlight class="normal"></highlight></codeline>
+<codeline lineno="380"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(flagStatus.failed())</highlight></codeline>
+<codeline lineno="381"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(flagStatus);</highlight></codeline>
+<codeline lineno="382"><highlight class="normal"></highlight></codeline>
+<codeline lineno="383"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_lines_1a271a082c3fb97cadcb1b662be43e81cb" kindref="member">Lines</ref><sp/>lines<sp/>{<sp/>arguments,<sp/><ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>,<sp/>{},<sp/>{}<sp/>};</highlight></codeline>
+<codeline lineno="384"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rawPaths<sp/>{<sp/>arguments.<ref refid="class_arguments_1aafc4f159b8d3a4fed87eed8db972f472" kindref="member">getPositionals</ref><sp/>(1)<sp/>};</highlight></codeline>
+<codeline lineno="385"><highlight class="normal"></highlight></codeline>
+<codeline lineno="386"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rawPaths.empty())</highlight></codeline>
+<codeline lineno="387"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lines.<ref refid="class_lines_1a36fe96db47b1f75442e7f3814eb221d3" kindref="member">runStandardInput</ref><sp/>(input);</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"></highlight></codeline>
+<codeline lineno="389"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lines.<ref refid="class_lines_1afd2f1bd0b2ed2e7413eb4133a1c9a776" kindref="member">runFiles</ref><sp/>(rawPaths);</highlight></codeline>
+<codeline lineno="390"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="391"><highlight class="normal"></highlight></codeline>
+<codeline lineno="392"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="class_lines_1af0efe5edcecc9f3f167dfe24fd3cb9ae" kindref="member">activeMutation</ref><sp/>{<sp/><ref refid="_lines_8cpp_1aada541219732c0d5e13bfd35858b0371" kindref="member">getActiveMutationOption</ref><sp/>(arguments)<sp/>};</highlight></codeline>
+<codeline lineno="393"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>validationStatus<sp/>{<sp/><ref refid="_lines_8cpp_1ab80797cbc76a24431377c7f965e6e237" kindref="member">getMutateValidationStatus</ref><sp/>(arguments,<sp/><ref refid="class_lines_1af0efe5edcecc9f3f167dfe24fd3cb9ae" kindref="member">activeMutation</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"></highlight></codeline>
+<codeline lineno="395"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(validationStatus.failed())</highlight></codeline>
+<codeline lineno="396"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(validationStatus);</highlight></codeline>
+<codeline lineno="397"><highlight class="normal"></highlight></codeline>
+<codeline lineno="398"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[payloadStatus,<sp/><ref refid="class_lines_1aeb6780df35e6086071d0a8362debd6a0" kindref="member">payloadInput</ref>,<sp/><ref refid="class_lines_1ad256f5b60723f12e7f5f33a0b1f516db" kindref="member">payloadText</ref>]<sp/>{<sp/><ref refid="_lines_8cpp_1aedacbbd493784099c1d02833532682fc" kindref="member">getPayloadText</ref><sp/>(arguments,<sp/><ref refid="class_lines_1af0efe5edcecc9f3f167dfe24fd3cb9ae" kindref="member">activeMutation</ref>,<sp/>input)<sp/>};</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"></highlight></codeline>
+<codeline lineno="400"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(payloadStatus.failed())</highlight></codeline>
+<codeline lineno="401"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(payloadStatus);</highlight></codeline>
+<codeline lineno="402"><highlight class="normal"></highlight></codeline>
+<codeline lineno="403"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_lines_1a271a082c3fb97cadcb1b662be43e81cb" kindref="member">Lines</ref><sp/>lines<sp/>{<sp/>arguments,<sp/><ref refid="class_lines_1a9fd35a5bc12b0706864af5a9e9e29106" kindref="member">lineRange</ref>,<sp/>std::move<sp/>(<ref refid="class_lines_1aeb6780df35e6086071d0a8362debd6a0" kindref="member">payloadInput</ref>),<sp/><ref refid="class_lines_1ad256f5b60723f12e7f5f33a0b1f516db" kindref="member">payloadText</ref><sp/>};</highlight></codeline>
+<codeline lineno="404"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lines.<ref refid="class_lines_1a483aab1f3731243163a1e7a470d1b026" kindref="member">runMutation</ref><sp/>(arguments);</highlight></codeline>
+<codeline lineno="405"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="Lines.cpp"/>
+  </compounddef>
+</doxygen>

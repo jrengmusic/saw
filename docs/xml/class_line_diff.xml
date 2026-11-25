@@ -1,0 +1,1093 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="class_line_diff" kind="class" language="C++" prot="public">
+    <compoundname>LineDiff</compoundname>
+    <includes refid="_line_diff_8h" local="no">LineDiff.h</includes>
+    <innerclass refid="struct_line_diff_1_1_change" prot="public">LineDiff::Change</innerclass>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_line_diff_1a6d0db1797761c80323013779b01938b5" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string LineDiff::plannedText</definition>
+        <argsstring></argsstring>
+        <name>plannedText</name>
+        <qualifiedname>LineDiff::plannedText</qualifiedname>
+        <briefdescription>
+<para>The planned bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The callable constructor builds them, and the Myers constructor leaves them empty. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="238" column="17" bodyfile="LineDiff.h" bodystart="238" bodyend="-1"/>
+        <referencedby refid="class_line_diff_1a5e276ce30da053dc0f1bec4b07347545" compoundref="_line_diff_8cpp" startline="276" endline="322">appendChange</referencedby>
+        <referencedby refid="class_line_diff_1a698fbc7f1013cc6eb3bc03085a35c783" compoundref="_line_diff_8cpp" startline="340" endline="350">appendWithEnding</referencedby>
+        <referencedby refid="class_line_diff_1afab795e6d55b29f73b9144280f44b591" compoundref="_line_diff_8cpp" startline="402" endline="405">getPlannedBytes</referencedby>
+        <referencedby refid="class_line_diff_1a2a32ce02c1f9e003b40faa8d910bb2b3" compoundref="_line_diff_8cpp" startline="352" endline="395">setPlannedEnd</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_line_diff_1a337c4003fda9af5544800ade597f13fb" prot="private" static="no" mutable="no">
+        <type><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="struct_line_diff_1_1_change" kindref="compound">Change</ref> &gt;</type>
+        <definition>jam::Array&lt;Change&gt; LineDiff::changes</definition>
+        <argsstring></argsstring>
+        <name>changes</name>
+        <qualifiedname>LineDiff::changes</qualifiedname>
+        <briefdescription>
+<para>Ordered list of line-level changes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="242" column="16" bodyfile="LineDiff.h" bodystart="242" bodyend="-1"/>
+        <referencedby refid="class_line_diff_1a5e276ce30da053dc0f1bec4b07347545" compoundref="_line_diff_8cpp" startline="276" endline="322">appendChange</referencedby>
+        <referencedby refid="class_line_diff_1a205c6be0a4963dae7693de8e0bea352d" compoundref="_line_diff_8cpp" startline="441" endline="465">appendHunkBody</referencedby>
+        <referencedby refid="class_line_diff_1a01e2ee54a3bdda83e11823725c2894a8" compoundref="_line_diff_8cpp" startline="467" endline="512">appendUnifiedDiff</referencedby>
+        <referencedby refid="class_line_diff_1aa153eaa17599c7b0ef5fb07452ade27a" compoundref="_line_diff_8cpp" startline="397" endline="400">LineDiff</referencedby>
+        <referencedby refid="class_line_diff_1a2a32ce02c1f9e003b40faa8d910bb2b3" compoundref="_line_diff_8cpp" startline="352" endline="395">setPlannedEnd</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_line_diff_1a2229e228f264461bbe652eecf1281b9a" prot="private" static="no" mutable="no">
+        <type><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; std::pair&lt; size_t, size_t &gt; &gt;</type>
+        <definition>jam::Array&lt;std::pair&lt;size_t, size_t&gt; &gt; LineDiff::insertedLines</definition>
+        <argsstring></argsstring>
+        <name>insertedLines</name>
+        <qualifiedname>LineDiff::insertedLines</qualifiedname>
+        <briefdescription>
+<para>The offset and the size of each inserted line, in the bytes that appendUnifiedDiff receives. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A change refers to its lines through its insertedRange. The offset indexes plannedText for the callable constructor, and the bytes of the target document for the Myers constructor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="249" column="16" bodyfile="LineDiff.h" bodystart="249" bodyend="-1"/>
+        <referencedby refid="class_line_diff_1a5e276ce30da053dc0f1bec4b07347545" compoundref="_line_diff_8cpp" startline="276" endline="322">appendChange</referencedby>
+        <referencedby refid="class_line_diff_1ae6c01cd3164dc9faa2eab195521b5a22" compoundref="_line_diff_8cpp" startline="419" endline="439">appendHunkChange</referencedby>
+        <referencedby refid="class_line_diff_1aa153eaa17599c7b0ef5fb07452ade27a" compoundref="_line_diff_8cpp" startline="397" endline="400">LineDiff</referencedby>
+        <referencedby refid="class_line_diff_1a2a32ce02c1f9e003b40faa8d910bb2b3" compoundref="_line_diff_8cpp" startline="352" endline="395">setPlannedEnd</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_line_diff_1a2856900f7fc062016ce9448fc9dfaa8b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>LineDiff::LineDiff</definition>
+        <argsstring>()=default</argsstring>
+        <name>LineDiff</name>
+        <qualifiedname>LineDiff::LineDiff</qualifiedname>
+        <briefdescription>
+<para>Creates a diff with no changes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="33" column="5"/>
+        <referencedby refid="class_staged_file_1ac4fbb6d9dcc5d4a5358d52dae513bcc4" compoundref="_staged_file_8cpp" startline="59" endline="70">StagedFile::appendUnifiedDiff</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_line_diff_1a6fa2cc63d5f2f9378f5ab38110a1ae0a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Function</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>LineDiff::LineDiff</definition>
+        <argsstring>(const TextDocument &amp;original, const Function &amp;addChanges)</argsstring>
+        <name>LineDiff</name>
+        <qualifiedname>LineDiff::LineDiff</qualifiedname>
+        <param>
+          <type>const <ref refid="class_text_document" kindref="compound">TextDocument</ref> &amp;</type>
+          <declname>original</declname>
+        </param>
+        <param>
+          <type>const Function &amp;</type>
+          <declname>addChanges</declname>
+        </param>
+        <briefdescription>
+<para>Builds the changes and the planned bytes in one pass, from a callable that adds the changes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The callable receives addChange, and calls it as addChange (start, length, insertedText) for each change, in ascending order of start. The inserted text replaces the length lines from start. A nullopt text is a deletion. Each inserted line takes the line ending of the original line that it replaces, or the line ending of the document when no original line is replaced.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Function</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callable that accepts the addChange callable. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>original</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The document before the changes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>addChanges</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callable that adds the changes. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="47" column="5" bodyfile="LineDiff.h" bodystart="47" bodyend="57"/>
+        <references refid="class_line_diff_1a5e276ce30da053dc0f1bec4b07347545" compoundref="_line_diff_8cpp" startline="276" endline="322">appendChange</references>
+        <references refid="class_line_diff_1a2a32ce02c1f9e003b40faa8d910bb2b3" compoundref="_line_diff_8cpp" startline="352" endline="395">setPlannedEnd</references>
+      </memberdef>
+      <memberdef kind="function" id="class_line_diff_1aa153eaa17599c7b0ef5fb07452ade27a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>LineDiff::LineDiff</definition>
+        <argsstring>(const TextDocument &amp;original, const TextDocument &amp;target)</argsstring>
+        <name>LineDiff</name>
+        <qualifiedname>LineDiff::LineDiff</qualifiedname>
+        <param>
+          <type>const <ref refid="class_text_document" kindref="compound">TextDocument</ref> &amp;</type>
+          <declname>original</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_text_document" kindref="compound">TextDocument</ref> &amp;</type>
+          <declname>target</declname>
+        </param>
+        <briefdescription>
+<para>Computes the shortest line-level edit script from <computeroutput>original</computeroutput> to <computeroutput>target</computeroutput> using Myers diff. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The inserted lines are offsets into the bytes of <computeroutput>target</computeroutput>, so the bytes of <computeroutput>target</computeroutput> must not change while this diff is used. No planned bytes are built, so getPlannedBytes is empty.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>original</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Baseline document before edits. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target document after edits. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="67" column="5" bodyfile="LineDiff.cpp" bodystart="397" bodyend="400"/>
+        <references refid="_line_diff_8cpp_1ac516c7796bef196343e48522f54c548e" compoundref="_line_diff_8cpp" startline="164" endline="198">addRangeChanges</references>
+        <references refid="class_line_diff_1a337c4003fda9af5544800ade597f13fb" compoundref="_line_diff_8h" startline="242">changes</references>
+        <references refid="class_text_document_1a06055593df0117e730a0326a1645bf27" compoundref="_text_document_8cpp" startline="189" endline="195">TextDocument::getNumLines</references>
+        <references refid="class_line_diff_1a2229e228f264461bbe652eecf1281b9a" compoundref="_line_diff_8h" startline="249">insertedLines</references>
+      </memberdef>
+      <memberdef kind="function" id="class_line_diff_1afab795e6d55b29f73b9144280f44b591" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>std::string_view</type>
+        <definition>std::string_view LineDiff::getPlannedBytes</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>getPlannedBytes</name>
+        <qualifiedname>LineDiff::getPlannedBytes</qualifiedname>
+        <briefdescription>
+<para>Returns the planned bytes that the changes produce. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The view is empty for the Myers constructor, because its inserted lines index the bytes of the target document.</para>
+<para><simplesect kind="return"><para>The planned bytes. The view is valid while this diff lives. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="75" column="22" bodyfile="LineDiff.cpp" bodystart="402" bodyend="405"/>
+        <references refid="class_line_diff_1a6d0db1797761c80323013779b01938b5" compoundref="_line_diff_8h" startline="238">plannedText</references>
+        <referencedby refid="class_transaction_1ace7cab528daf25ccbb7e6042cbb4b25e" compoundref="_transaction_8cpp" startline="19" endline="42">Transaction::addFile</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_line_diff_1a01e2ee54a3bdda83e11823725c2894a8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void LineDiff::appendUnifiedDiff</definition>
+        <argsstring>(std::string &amp;output, const TextDocument &amp;original, std::string_view plannedBytes) const</argsstring>
+        <name>appendUnifiedDiff</name>
+        <qualifiedname>LineDiff::appendUnifiedDiff</qualifiedname>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_text_document" kindref="compound">TextDocument</ref> &amp;</type>
+          <declname>original</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>plannedBytes</declname>
+        </param>
+        <briefdescription>
+<para>Appends unified diff hunks between <computeroutput>original</computeroutput> and <computeroutput>plannedBytes</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Changes that lie within 2 * 3 unchanged lines of each other share one hunk. Each hunk has up to three unchanged context lines before and after its changes, limited by the document bounds.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The text that receives the unified diff. Nothing is appended when the diff holds no changes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>original</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Document before changes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>plannedBytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The bytes that the inserted lines index: <ref refid="class_line_diff_1afab795e6d55b29f73b9144280f44b591" kindref="member">getPlannedBytes()</ref> for the callable constructor, or the bytes of the target document for the Myers constructor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="87" column="10" bodyfile="LineDiff.cpp" bodystart="467" bodyend="512"/>
+        <references refid="structjam_1_1Format_1a03d027c362f8e8e10a4b632c3af60c63">jam::Format::appendBytes</references>
+        <references refid="class_line_diff_1a205c6be0a4963dae7693de8e0bea352d" compoundref="_line_diff_8cpp" startline="441" endline="465">appendHunkBody</references>
+        <references refid="class_line_diff_1a285bf016ecda28c735a208ee6fdac4ec" compoundref="_line_diff_8cpp" startline="407" endline="417">appendHunkRange</references>
+        <references refid="structjam_1_1Format_1a764df6571428615011c88a96ddc542ca">jam::Format::appendUtf8</references>
+        <references refid="class_line_diff_1a337c4003fda9af5544800ade597f13fb" compoundref="_line_diff_8h" startline="242">changes</references>
+        <references refid="_line_diff_8cpp_1a75bfb5bb1d807104f75c19786669b0c5" compoundref="_line_diff_8cpp" startline="4" endline="4">contextLineCount</references>
+        <references refid="structtext_1_1_formats_1a70356fdc1a1b8e4b128deffb6cab1e06" compoundref="_text_8h" startline="142" endline="142">text::Formats::diffHunkClose</references>
+        <references refid="structtext_1_1_formats_1a1feea67bc7ff37b607ce01b50cd5fec5" compoundref="_text_8h" startline="141" endline="141">text::Formats::diffHunkNew</references>
+        <references refid="structtext_1_1_formats_1aabc90b25baa29e82a4a5f5b841fa9652" compoundref="_text_8h" startline="140" endline="140">text::Formats::diffHunkOpen</references>
+        <references refid="structtext_1_1_formats_1aaf63ecdea4509784db0c1deda62a1762" compoundref="_text_8h" startline="138" endline="138">text::Formats::diffNewHeader</references>
+        <references refid="structtext_1_1_formats_1a20a9c128d5473e174854c9ea818b1a94" compoundref="_text_8h" startline="137" endline="137">text::Formats::diffOldHeader</references>
+        <references refid="structtext_1_1_formats_1a1b87c3954e06f901e25f58e2bd3e5e55" compoundref="_text_8h" startline="139" endline="139">text::Formats::diffPlanned</references>
+        <references refid="_line_diff_8cpp_1aa4b6499ce24727b4c67e88129ac16ff4" compoundref="_line_diff_8cpp" startline="205" endline="216">getHunkDelta</references>
+        <references refid="_line_diff_8cpp_1a6cf8b7052224e0b20f06fca1095e92a6" compoundref="_line_diff_8cpp" startline="243" endline="251">getIncompleteLineNumber</references>
+        <references refid="structChars_1a4691bc69052e757e7325970098922899">Chars::newline</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_line_diff_1a0f5b2cdb36d89b7071b6915a1dd6c51a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt;</type>
+        <definition>std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt; LineDiff::getDeletion</definition>
+        <argsstring>(juce::Range&lt; int &gt; lineRange)</argsstring>
+        <name>getDeletion</name>
+        <qualifiedname>LineDiff::getDeletion</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range</ref>&lt; int &gt;</type>
+          <declname>lineRange</declname>
+        </param>
+        <briefdescription>
+<para>Builds the change shape of a deletion, for the addChange callable of the callable constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The one-based line range is converted to the zero-based start here, so that every caller uses the same arithmetic.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>lineRange</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>One-based half-open range of the original lines to delete.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The zero-based start, the number of lines, and nullopt for the text, which marks a deletion. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="99" column="23" bodyfile="LineDiff.cpp" bodystart="261" bodyend="264"/>
+        <references refid="classjuce_1_1Range_1adf20d9d78a28abf6f6190e7e05a885ee">juce::Range&lt; typename ValueType &gt;::getLength</references>
+        <references refid="classjuce_1_1Range_1a06f05db7a87b8e7e782b6c535c0c439b">juce::Range&lt; typename ValueType &gt;::getStart</references>
+        <referencedby refid="_patch_8cpp_1a20463a31308cb1ec843e1113aa9d96d1" compoundref="_patch_8cpp" startline="61" endline="67">getDeleteChange</referencedby>
+        <referencedby refid="_lines_8cpp_1a9067a0fae2dfc1e064d9da85ffa7b366" compoundref="_lines_8cpp" startline="201" endline="215">getLineMutations</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_line_diff_1a76ecc8ce43b3be96827d43624198a6ce" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt;</type>
+        <definition>std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt; LineDiff::getReplacement</definition>
+        <argsstring>(juce::Range&lt; int &gt; lineRange, std::string_view text)</argsstring>
+        <name>getReplacement</name>
+        <qualifiedname>LineDiff::getReplacement</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range</ref>&lt; int &gt;</type>
+          <declname>lineRange</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>text</declname>
+        </param>
+        <briefdescription>
+<para>Builds the change shape of a replacement, for the addChange callable of the callable constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The one-based line range is converted to the zero-based start here. The text is passed through getTextWithoutSingleTrailingNewline, so a trailing line feed of the text adds no empty line.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>lineRange</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>One-based half-open range of the original lines to replace. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>text</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The replacement text.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The zero-based start, the number of replaced lines, and the text without its trailing line ending. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="111" column="23" bodyfile="LineDiff.cpp" bodystart="266" bodyend="269"/>
+        <references refid="classjuce_1_1Range_1adf20d9d78a28abf6f6190e7e05a885ee">juce::Range&lt; typename ValueType &gt;::getLength</references>
+        <references refid="classjuce_1_1Range_1a06f05db7a87b8e7e782b6c535c0c439b">juce::Range&lt; typename ValueType &gt;::getStart</references>
+        <references refid="class_line_diff_1aa5abc67bd9169c250395e10c70009b47" compoundref="_line_diff_8cpp" startline="253" endline="259">getTextWithoutSingleTrailingNewline</references>
+        <referencedby refid="_lines_8cpp_1a9067a0fae2dfc1e064d9da85ffa7b366" compoundref="_lines_8cpp" startline="201" endline="215">getLineMutations</referencedby>
+        <referencedby refid="_patch_8cpp_1a7fa524323e577cc3bbdbf9bce8836226" compoundref="_patch_8cpp" startline="69" endline="75">getReplaceChange</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_line_diff_1aa54330d886c9c47e59906d8860e5e17e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt;</type>
+        <definition>std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt; LineDiff::getInsertion</definition>
+        <argsstring>(int start, std::string_view text)</argsstring>
+        <name>getInsertion</name>
+        <qualifiedname>LineDiff::getInsertion</qualifiedname>
+        <param>
+          <type>int</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>text</declname>
+        </param>
+        <briefdescription>
+<para>Builds the change shape of an insertion, for the addChange callable of the callable constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>start</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The zero-based index of the original line before which the text is inserted. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>text</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The inserted text. It is passed through getTextWithoutSingleTrailingNewline.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The start, zero lines replaced, and the text without its trailing line ending. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="120" column="23" bodyfile="LineDiff.cpp" bodystart="271" bodyend="274"/>
+        <references refid="class_line_diff_1aa5abc67bd9169c250395e10c70009b47" compoundref="_line_diff_8cpp" startline="253" endline="259">getTextWithoutSingleTrailingNewline</references>
+        <referencedby refid="_patch_8cpp_1aeb3ce632a6ec83cd135923d21411f8f8" compoundref="_patch_8cpp" startline="77" endline="86">getInsertChange</referencedby>
+        <referencedby refid="_lines_8cpp_1a9067a0fae2dfc1e064d9da85ffa7b366" compoundref="_lines_8cpp" startline="201" endline="215">getLineMutations</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="class_line_diff_1aa5abc67bd9169c250395e10c70009b47" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string_view</type>
+        <definition>std::string_view LineDiff::getTextWithoutSingleTrailingNewline</definition>
+        <argsstring>(std::string_view text)</argsstring>
+        <name>getTextWithoutSingleTrailingNewline</name>
+        <qualifiedname>LineDiff::getTextWithoutSingleTrailingNewline</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>text</declname>
+        </param>
+        <briefdescription>
+<para>Removes one trailing line feed from a payload text, and the carriage returns beside it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Each inserted line takes a line ending from the document. A payload that ends in a line feed would add one empty line, so the trailing line feed is removed. The carriage return before that line feed is removed too, and then one more trailing carriage return, when present.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>text</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The payload text.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The text without its trailing line feed and carriage returns. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="133" column="29" bodyfile="LineDiff.cpp" bodystart="253" bodyend="259"/>
+        <references refid="_line_diff_8cpp_1a1487d8c5ca8e176a0749dba69f4400e2" compoundref="_line_diff_8cpp" startline="6" endline="12">getLineWithoutCarriageReturn</references>
+        <references refid="structChars_1a4691bc69052e757e7325970098922899">Chars::newline</references>
+        <referencedby refid="class_line_diff_1aa54330d886c9c47e59906d8860e5e17e" compoundref="_line_diff_8cpp" startline="271" endline="274">getInsertion</referencedby>
+        <referencedby refid="class_line_diff_1a76ecc8ce43b3be96827d43624198a6ce" compoundref="_line_diff_8cpp" startline="266" endline="269">getReplacement</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_line_diff_1a285bf016ecda28c735a208ee6fdac4ec" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void LineDiff::appendHunkRange</definition>
+        <argsstring>(std::string &amp;output, int zeroBasedStart, int lineCount)</argsstring>
+        <name>appendHunkRange</name>
+        <qualifiedname>LineDiff::appendHunkRange</qualifiedname>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>zeroBasedStart</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>lineCount</declname>
+        </param>
+        <briefdescription>
+<para>Appends the line range of a unified diff hunk header. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A count of 1 is written without the count. A count of 0 writes the start as given, with <computeroutput>,0</computeroutput>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The text that receives the range. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroBasedStart</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The zero-based index of the first line of the range. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lineCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of lines in the range. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="259" column="17" bodyfile="LineDiff.cpp" bodystart="407" bodyend="417"/>
+        <references refid="structjam_1_1Format_1a6588bb82effb3fb3138073257057463f">jam::Format::appendDecimal</references>
+        <references refid="structjam_1_1Format_1a764df6571428615011c88a96ddc542ca">jam::Format::appendUtf8</references>
+        <references refid="structChars_1a5368dd1fcd5893ecf635991f9208c199">Chars::comma</references>
+        <referencedby refid="class_line_diff_1a01e2ee54a3bdda83e11823725c2894a8" compoundref="_line_diff_8cpp" startline="467" endline="512">appendUnifiedDiff</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_line_diff_1a5e276ce30da053dc0f1bec4b07347545" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::optional&lt; std::string_view &gt;</type>
+        <definition>std::optional&lt; std::string_view &gt; LineDiff::appendChange</definition>
+        <argsstring>(const TextDocument &amp;original, int start, int length, std::optional&lt; std::string_view &gt; insertedText, std::optional&lt; std::string_view &gt; lastEnding)</argsstring>
+        <name>appendChange</name>
+        <qualifiedname>LineDiff::appendChange</qualifiedname>
+        <param>
+          <type>const <ref refid="class_text_document" kindref="compound">TextDocument</ref> &amp;</type>
+          <declname>original</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; std::string_view &gt;</type>
+          <declname>insertedText</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; std::string_view &gt;</type>
+          <declname>lastEnding</declname>
+        </param>
+        <briefdescription>
+<para>Appends the original lines before a change, then the inserted lines of the change. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Each inserted line takes the line ending of the original line that it replaces, or the document line ending when it replaces none. So the line endings of the original are kept. The offset and the size of each inserted line are recorded in insertedLines.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>original</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The document before the changes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>start</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The first original line that the change replaces. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of original lines that the change replaces. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>insertedText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The inserted text, or nullopt for a deletion. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lastEnding</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line ending of the last piece that was appended, or nullopt before the first piece.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The line ending of the last piece that was appended. An empty ending is an incomplete last line. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="149" column="19" bodyfile="LineDiff.cpp" bodystart="276" bodyend="322"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="class_line_diff_1a251093d2916ce13101d750387e3ac489" compoundref="_line_diff_8cpp" startline="324" endline="338">appendOriginalRun</references>
+        <references refid="class_line_diff_1a698fbc7f1013cc6eb3bc03085a35c783" compoundref="_line_diff_8cpp" startline="340" endline="350">appendWithEnding</references>
+        <references refid="class_line_diff_1a337c4003fda9af5544800ade597f13fb" compoundref="_line_diff_8h" startline="242">changes</references>
+        <references refid="namespacejam_1_1simd_1af7acb3f0944348a1c9eb71d1e445fc07">jam::simd::findByte</references>
+        <references refid="_line_diff_8cpp_1a1487d8c5ca8e176a0749dba69f4400e2" compoundref="_line_diff_8cpp" startline="6" endline="12">getLineWithoutCarriageReturn</references>
+        <references refid="_line_diff_8cpp_1a565e4618c5960d05166a9021cdfeefa1" compoundref="_line_diff_8cpp" startline="200" endline="203">getOriginalEnding</references>
+        <references refid="class_line_diff_1a2229e228f264461bbe652eecf1281b9a" compoundref="_line_diff_8h" startline="249">insertedLines</references>
+        <references refid="structChars_1a4691bc69052e757e7325970098922899">Chars::newline</references>
+        <references refid="class_line_diff_1a6d0db1797761c80323013779b01938b5" compoundref="_line_diff_8h" startline="238">plannedText</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <referencedby refid="class_line_diff_1a6fa2cc63d5f2f9378f5ab38110a1ae0a" compoundref="_line_diff_8h" startline="47" endline="57">LineDiff</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_line_diff_1a251093d2916ce13101d750387e3ac489" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::optional&lt; std::string_view &gt;</type>
+        <definition>std::optional&lt; std::string_view &gt; LineDiff::appendOriginalRun</definition>
+        <argsstring>(const TextDocument &amp;original, int startLine, int endLine, std::optional&lt; std::string_view &gt; lastEnding)</argsstring>
+        <name>appendOriginalRun</name>
+        <qualifiedname>LineDiff::appendOriginalRun</qualifiedname>
+        <param>
+          <type>const <ref refid="class_text_document" kindref="compound">TextDocument</ref> &amp;</type>
+          <declname>original</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>startLine</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>endLine</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; std::string_view &gt;</type>
+          <declname>lastEnding</declname>
+        </param>
+        <briefdescription>
+<para>Appends the original lines from startLine up to endLine, which the changes do not touch. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The run is written with the line ending of its last line. An empty ending, which means an incomplete last line, is returned, so that the next piece can write the document line ending first.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>original</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The document before the changes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>startLine</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The zero-based index of the first line of the run. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>endLine</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The zero-based index that ends the run, exclusive. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lastEnding</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line ending of the last piece that was appended, or nullopt before the first piece.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The line ending of the last line of the run, or lastEnding when the run is empty. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="167" column="19" bodyfile="LineDiff.cpp" bodystart="324" bodyend="338"/>
+        <references refid="class_line_diff_1a698fbc7f1013cc6eb3bc03085a35c783" compoundref="_line_diff_8cpp" startline="340" endline="350">appendWithEnding</references>
+        <references refid="_line_diff_8cpp_1a565e4618c5960d05166a9021cdfeefa1" compoundref="_line_diff_8cpp" startline="200" endline="203">getOriginalEnding</references>
+        <referencedby refid="class_line_diff_1a5e276ce30da053dc0f1bec4b07347545" compoundref="_line_diff_8cpp" startline="276" endline="322">appendChange</referencedby>
+        <referencedby refid="class_line_diff_1a2a32ce02c1f9e003b40faa8d910bb2b3" compoundref="_line_diff_8cpp" startline="352" endline="395">setPlannedEnd</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_line_diff_1a698fbc7f1013cc6eb3bc03085a35c783" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void LineDiff::appendWithEnding</definition>
+        <argsstring>(const TextDocument &amp;original, std::string_view bytes, std::string_view ending, std::optional&lt; std::string_view &gt; lastEnding)</argsstring>
+        <name>appendWithEnding</name>
+        <qualifiedname>LineDiff::appendWithEnding</qualifiedname>
+        <param>
+          <type>const <ref refid="class_text_document" kindref="compound">TextDocument</ref> &amp;</type>
+          <declname>original</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>ending</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; std::string_view &gt;</type>
+          <declname>lastEnding</declname>
+        </param>
+        <briefdescription>
+<para>Appends a piece of text and its line ending to the planned bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When the previous piece had an empty line ending, the document line ending is written first. That case is an incomplete last line, which needs a line ending before more text can follow it.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>original</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The document before the changes. Its line ending is the default. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The text of the piece, without its line ending. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ending</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line ending of the piece. It may be empty. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lastEnding</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line ending of the previous piece, or nullopt before the first piece. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="182" column="10" bodyfile="LineDiff.cpp" bodystart="340" bodyend="350"/>
+        <references refid="structjam_1_1Format_1a03d027c362f8e8e10a4b632c3af60c63">jam::Format::appendBytes</references>
+        <references refid="class_line_diff_1a6d0db1797761c80323013779b01938b5" compoundref="_line_diff_8h" startline="238">plannedText</references>
+        <referencedby refid="class_line_diff_1a5e276ce30da053dc0f1bec4b07347545" compoundref="_line_diff_8cpp" startline="276" endline="322">appendChange</referencedby>
+        <referencedby refid="class_line_diff_1a251093d2916ce13101d750387e3ac489" compoundref="_line_diff_8cpp" startline="324" endline="338">appendOriginalRun</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_line_diff_1a2a32ce02c1f9e003b40faa8d910bb2b3" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void LineDiff::setPlannedEnd</definition>
+        <argsstring>(const TextDocument &amp;original, std::optional&lt; std::string_view &gt; lastEnding)</argsstring>
+        <name>setPlannedEnd</name>
+        <qualifiedname>LineDiff::setPlannedEnd</qualifiedname>
+        <param>
+          <type>const <ref refid="class_text_document" kindref="compound">TextDocument</ref> &amp;</type>
+          <declname>original</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; std::string_view &gt;</type>
+          <declname>lastEnding</declname>
+        </param>
+        <briefdescription>
+<para>Sets the end of the planned bytes after the last change, and completes an incomplete last line. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The original lines after the last change are appended. The planned bytes end with a line ending only when the original ends with one, when the last change deletes the final line, or when the document is empty. Otherwise the line ending that was appended last is removed. An insertion after an incomplete last line takes that line into the change as a replaced line, because the line gets a line ending in the planned bytes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>original</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The document before the changes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lastEnding</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line ending of the last piece that was appended. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="197" column="10" bodyfile="LineDiff.cpp" bodystart="352" bodyend="395"/>
+        <references refid="structjam_1_1Format_1a03d027c362f8e8e10a4b632c3af60c63">jam::Format::appendBytes</references>
+        <references refid="class_line_diff_1a251093d2916ce13101d750387e3ac489" compoundref="_line_diff_8cpp" startline="324" endline="338">appendOriginalRun</references>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="class_line_diff_1a337c4003fda9af5544800ade597f13fb" compoundref="_line_diff_8h" startline="242">changes</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <references refid="classjam_1_1Array_1aeb02e369586a41925dc3b14e268dba7a">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::insert</references>
+        <references refid="class_line_diff_1a2229e228f264461bbe652eecf1281b9a" compoundref="_line_diff_8h" startline="249">insertedLines</references>
+        <references refid="class_line_diff_1a6d0db1797761c80323013779b01938b5" compoundref="_line_diff_8h" startline="238">plannedText</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <referencedby refid="class_line_diff_1a6fa2cc63d5f2f9378f5ab38110a1ae0a" compoundref="_line_diff_8h" startline="47" endline="57">LineDiff</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_line_diff_1a205c6be0a4963dae7693de8e0bea352d" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void LineDiff::appendHunkBody</definition>
+        <argsstring>(std::string &amp;output, const TextDocument &amp;original, std::string_view plannedBytes, int incompletePlannedLine, juce::Range&lt; int &gt; hunkRange, int oldStart, int oldEnd, int newStart) const</argsstring>
+        <name>appendHunkBody</name>
+        <qualifiedname>LineDiff::appendHunkBody</qualifiedname>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_text_document" kindref="compound">TextDocument</ref> &amp;</type>
+          <declname>original</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>plannedBytes</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>incompletePlannedLine</declname>
+        </param>
+        <param>
+          <type><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range</ref>&lt; int &gt;</type>
+          <declname>hunkRange</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>oldStart</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>oldEnd</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>newStart</declname>
+        </param>
+        <briefdescription>
+<para>Appends the body of one hunk: the context lines between the changes, and the changes themselves. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The text that receives the body. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>original</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The document before the changes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>plannedBytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The bytes that the inserted lines index. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>incompletePlannedLine</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The one-based planned line that has no line ending, or 0 when the planned bytes end with one. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hunkRange</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Half-open range of indexes into changes that the hunk holds. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>oldStart</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The zero-based index of the first original line of the hunk. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>oldEnd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The zero-based index that ends the original lines of the hunk, exclusive. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newStart</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The zero-based index of the first planned line of the hunk. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="210" column="10" bodyfile="LineDiff.cpp" bodystart="441" bodyend="465"/>
+        <references refid="_line_diff_8cpp_1a411b5e5260f49a0e59857d2b7c79f9e1" compoundref="_line_diff_8cpp" startline="231" endline="241">appendContextLines</references>
+        <references refid="class_line_diff_1ae6c01cd3164dc9faa2eab195521b5a22" compoundref="_line_diff_8cpp" startline="419" endline="439">appendHunkChange</references>
+        <references refid="class_line_diff_1a337c4003fda9af5544800ade597f13fb" compoundref="_line_diff_8h" startline="242">changes</references>
+        <references refid="classjuce_1_1Range_1a44413a19310d5f14be8d6ece2feedc01">juce::Range&lt; typename ValueType &gt;::getEnd</references>
+        <references refid="classjuce_1_1Range_1a06f05db7a87b8e7e782b6c535c0c439b">juce::Range&lt; typename ValueType &gt;::getStart</references>
+        <referencedby refid="class_line_diff_1a01e2ee54a3bdda83e11823725c2894a8" compoundref="_line_diff_8cpp" startline="467" endline="512">appendUnifiedDiff</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_line_diff_1ae6c01cd3164dc9faa2eab195521b5a22" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void LineDiff::appendHunkChange</definition>
+        <argsstring>(std::string &amp;output, const TextDocument &amp;original, std::string_view plannedBytes, int incompletePlannedLine, const Change &amp;change, int originalLine, int plannedLine) const</argsstring>
+        <name>appendHunkChange</name>
+        <qualifiedname>LineDiff::appendHunkChange</qualifiedname>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_text_document" kindref="compound">TextDocument</ref> &amp;</type>
+          <declname>original</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>plannedBytes</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>incompletePlannedLine</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_line_diff_1_1_change" kindref="compound">Change</ref> &amp;</type>
+          <declname>change</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>originalLine</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>plannedLine</declname>
+        </param>
+        <briefdescription>
+<para>Appends the removed lines and the inserted lines of one change. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The text that receives the change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>original</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The document before the changes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>plannedBytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The bytes that the inserted lines index. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>incompletePlannedLine</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The one-based planned line that has no line ending, or 0 when the planned bytes end with one. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>change</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The change to append. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>originalLine</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The zero-based index of the first original line of the change. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>plannedLine</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The zero-based index of the first planned line of the change. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="LineDiff.h" line="229" column="10" bodyfile="LineDiff.cpp" bodystart="419" bodyend="439"/>
+        <references refid="_line_diff_8cpp_1a2c9d5cf6c3b4c48e7ffcd5ca8f17071c" compoundref="_line_diff_8cpp" startline="218" endline="229">appendDiffLine</references>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="structChars_1a9c990428f7d53d094d0d9818ec666698">Chars::dash</references>
+        <references refid="class_line_diff_1a2229e228f264461bbe652eecf1281b9a" compoundref="_line_diff_8h" startline="249">insertedLines</references>
+        <references refid="_line_diff_8cpp_1ab7586133fe0762a44ca409c72e6f64c3" compoundref="_line_diff_8cpp" startline="14" endline="17">isIncompleteLine</references>
+        <references refid="structChars_1add9c1983f5ea1a7233e6de746ff3b803">Chars::plus</references>
+        <referencedby refid="class_line_diff_1a205c6be0a4963dae7693de8e0bea352d" compoundref="_line_diff_8cpp" startline="441" endline="465">appendHunkBody</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Stores line-level edits, computes Myers diffs, and renders planned text or unified diffs. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>A diff is built in one of two ways. The callable constructor builds the planned bytes while it adds the changes. The Myers constructor computes the changes only, and its inserted lines index the bytes of the target. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>LineDiff</label>
+        <link refid="class_line_diff"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>plannedText</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>changes</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>insertedLines</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>jam::Array&lt; LineDiff::Change &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>jam::Array&lt; std::pair&lt; size_t, size_t &gt; &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>juce::DummyCriticalSection</label>
+        <link refid="classjuce_1_1DummyCriticalSection" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="3">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="2">
+        <label>std::string</label>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="LineDiff.h" line="10" column="1" bodyfile="LineDiff.h" bodystart="11" bodyend="260"/>
+    <listofallmembers>
+      <member refid="class_line_diff_1a5e276ce30da053dc0f1bec4b07347545" prot="private" virt="non-virtual"><scope>LineDiff</scope><name>appendChange</name></member>
+      <member refid="class_line_diff_1a205c6be0a4963dae7693de8e0bea352d" prot="private" virt="non-virtual"><scope>LineDiff</scope><name>appendHunkBody</name></member>
+      <member refid="class_line_diff_1ae6c01cd3164dc9faa2eab195521b5a22" prot="private" virt="non-virtual"><scope>LineDiff</scope><name>appendHunkChange</name></member>
+      <member refid="class_line_diff_1a285bf016ecda28c735a208ee6fdac4ec" prot="private" virt="non-virtual"><scope>LineDiff</scope><name>appendHunkRange</name></member>
+      <member refid="class_line_diff_1a251093d2916ce13101d750387e3ac489" prot="private" virt="non-virtual"><scope>LineDiff</scope><name>appendOriginalRun</name></member>
+      <member refid="class_line_diff_1a01e2ee54a3bdda83e11823725c2894a8" prot="public" virt="non-virtual"><scope>LineDiff</scope><name>appendUnifiedDiff</name></member>
+      <member refid="class_line_diff_1a698fbc7f1013cc6eb3bc03085a35c783" prot="private" virt="non-virtual"><scope>LineDiff</scope><name>appendWithEnding</name></member>
+      <member refid="class_line_diff_1a337c4003fda9af5544800ade597f13fb" prot="private" virt="non-virtual"><scope>LineDiff</scope><name>changes</name></member>
+      <member refid="class_line_diff_1a0f5b2cdb36d89b7071b6915a1dd6c51a" prot="public" virt="non-virtual"><scope>LineDiff</scope><name>getDeletion</name></member>
+      <member refid="class_line_diff_1aa54330d886c9c47e59906d8860e5e17e" prot="public" virt="non-virtual"><scope>LineDiff</scope><name>getInsertion</name></member>
+      <member refid="class_line_diff_1afab795e6d55b29f73b9144280f44b591" prot="public" virt="non-virtual"><scope>LineDiff</scope><name>getPlannedBytes</name></member>
+      <member refid="class_line_diff_1a76ecc8ce43b3be96827d43624198a6ce" prot="public" virt="non-virtual"><scope>LineDiff</scope><name>getReplacement</name></member>
+      <member refid="class_line_diff_1aa5abc67bd9169c250395e10c70009b47" prot="private" virt="non-virtual"><scope>LineDiff</scope><name>getTextWithoutSingleTrailingNewline</name></member>
+      <member refid="class_line_diff_1a2229e228f264461bbe652eecf1281b9a" prot="private" virt="non-virtual"><scope>LineDiff</scope><name>insertedLines</name></member>
+      <member refid="class_line_diff_1a2856900f7fc062016ce9448fc9dfaa8b" prot="public" virt="non-virtual"><scope>LineDiff</scope><name>LineDiff</name></member>
+      <member refid="class_line_diff_1a6fa2cc63d5f2f9378f5ab38110a1ae0a" prot="public" virt="non-virtual"><scope>LineDiff</scope><name>LineDiff</name></member>
+      <member refid="class_line_diff_1aa153eaa17599c7b0ef5fb07452ade27a" prot="public" virt="non-virtual"><scope>LineDiff</scope><name>LineDiff</name></member>
+      <member refid="class_line_diff_1a6d0db1797761c80323013779b01938b5" prot="private" virt="non-virtual"><scope>LineDiff</scope><name>plannedText</name></member>
+      <member refid="class_line_diff_1a2a32ce02c1f9e003b40faa8d910bb2b3" prot="private" virt="non-virtual"><scope>LineDiff</scope><name>setPlannedEnd</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

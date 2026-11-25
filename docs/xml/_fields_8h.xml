@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="_fields_8h" kind="file" language="C++">
+    <compoundname>Fields.h</compoundname>
+    <includes local="no">JuceHeader.h</includes>
+    <includes refid="_arguments_8h" local="yes">Arguments.h</includes>
+    <includes refid="_pattern_8h" local="yes">Pattern.h</includes>
+    <includes refid="_stdio_8h" local="yes">Stdio.h</includes>
+    <includedby refid="_command_line_8cpp" local="yes">CommandLine.cpp</includedby>
+    <includedby refid="_fields_8cpp" local="yes">Fields.cpp</includedby>
+    <incdepgraph>
+      <node id="3">
+        <label>Arguments.h</label>
+        <link refid="_arguments_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Fields.h</label>
+        <link refid="_fields_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Input.h</label>
+        <link refid="_input_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Pattern.h</label>
+        <link refid="_pattern_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Stdio.h</label>
+        <link refid="_stdio_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>TextDocument.h</label>
+        <link refid="_text_document_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Files.h</label>
+        <link refid="_files_8h"/>
+      </node>
+      <node id="8">
+        <label>generated/Generated.h</label>
+        <link refid="_generated_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>HashMaps.h</label>
+        <link refid="_hash_maps_8h"/>
+      </node>
+      <node id="10">
+        <label>Identifiers.h</label>
+        <link refid="_identifiers_8h"/>
+      </node>
+      <node id="9">
+        <label>ProjectInfo.h</label>
+        <link refid="_project_info_8h"/>
+      </node>
+      <node id="11">
+        <label>Text.h</label>
+        <link refid="_text_8h"/>
+      </node>
+      <node id="2">
+        <label>JuceHeader.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>CommandLine.cpp</label>
+        <link refid="_command_line_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Fields.cpp</label>
+        <link refid="_fields_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Fields.h</label>
+        <link refid="_fields_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_fields" prot="public">Fields</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;JuceHeader.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_arguments_8h" kindref="compound">Arguments.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_pattern_8h" kindref="compound">Pattern.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_stdio_8h" kindref="compound">Stdio.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9" refid="class_fields" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_fields_1a1b7745af2bd268f84c8d39a7086a5cf4" kindref="member">Fields</ref></highlight></codeline>
+<codeline lineno="10"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref><sp/><ref refid="class_fields_1aff5741070773d0809905410e55428577" kindref="member">getArguments</ref><sp/>(<ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span&lt;const std::string_view&gt;</ref><sp/>argumentList);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref><sp/><ref refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" kindref="member">run</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::optional&lt;std::string&gt;&amp;<sp/>input);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_fields_1a1b7745af2bd268f84c8d39a7086a5cf4" kindref="member">Fields</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments,<sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;int&gt;</ref><sp/>newFieldIndices,<sp/><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range&lt;int&gt;</ref><sp/>newLineRange,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>newAfterLine,<sp/>std::unique_ptr&lt;Pattern&gt;<sp/>newMatchPattern);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref><sp/><ref refid="class_fields_1a34cd865b987cf3e05cef34d3cd81ae8c" kindref="member">runStandardInput</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::optional&lt;std::string&gt;&amp;<sp/>input)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref><sp/><ref refid="class_fields_1a92822f56a6c58834da5b85f0c6ca926c" kindref="member">runFiles</ref><sp/>(<ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span&lt;const std::string_view&gt;</ref><sp/>rawPaths)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;juce::Result,<sp/>bool,<sp/>Stdio::Documents&gt;<sp/><ref refid="class_fields_1a84d812846b414e97fd2228c1335fb997" kindref="member">getFileOutput</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>file,<sp/>std::string_view<sp/>displayPath,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isExplicit)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;juce::Result,<sp/>bool,<sp/>Stdio::Documents&gt;<sp/><ref refid="class_fields_1ab28952ae0dc487874d9c2ea34de81800" kindref="member">getBytesOutput</ref><sp/>(std::string_view<sp/>bytes,<sp/>std::string_view<sp/>displayPath,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isExplicit)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>std::pair&lt;juce::Result,<sp/>bool&gt;<sp/><ref refid="class_fields_1a2fce0693371797ba5d2c50343dbccade" kindref="member">appendFields</ref><sp/>(std::string&amp;<sp/>output,<sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;std::string_view&gt;</ref>&amp;<sp/>tokens,<sp/>std::string_view<sp/>line,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lineNumber,<sp/>std::string_view<sp/>displayPath,<sp/><ref refid="classjam_1_1RegExpAutomaton" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::RegExpAutomaton</ref>&amp;<sp/>automaton)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_fields_1adc116357af92540b420808d3a292a8da" kindref="member">setLineTokens</ref><sp/>(<ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;std::string_view&gt;</ref>&amp;<sp/>tokens,<sp/>std::string_view<sp/>line)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref><sp/><ref refid="class_fields_1a886999ceb34ddbbfc30a48a466eeec11" kindref="member">appendFormattedLine</ref><sp/>(std::string&amp;<sp/>output,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;std::string_view&gt;</ref>&amp;<sp/>tokens,<sp/>std::string_view<sp/>displayPath,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lineNumber)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>std::optional&lt;std::string_view&gt;<sp/><ref refid="class_fields_1a3518ef4c553424efc49caaf9bfc5bc3d" kindref="member">getSelectedField</ref><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>requested,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;std::string_view&gt;</ref>&amp;<sp/>tokens)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131" refid="class_fields_1aef6afeda72068fb81bbf41ca348c382a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;int&gt;</ref><sp/><ref refid="class_fields_1aef6afeda72068fb81bbf41ca348c382a" kindref="member">fieldIndices</ref>;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="class_fields_1a2aac5c16dcf90ddf5bd779a23b43ac40" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::optional&lt;std::string_view&gt;<sp/><ref refid="class_fields_1a2aac5c16dcf90ddf5bd779a23b43ac40" kindref="member">delimiter</ref>;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="class_fields_1a89b674c7a4355a0fa918b9f708623fc4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string_view<sp/><ref refid="class_fields_1a89b674c7a4355a0fa918b9f708623fc4" kindref="member">outputDelimiter</ref>;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="class_fields_1a6f6e525c5f10db41244a821c55b3b3a5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range&lt;int&gt;</ref><sp/><ref refid="class_fields_1a6f6e525c5f10db41244a821c55b3b3a5" kindref="member">lineRange</ref>;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="class_fields_1aa2c1339f48e58ef5fc3eb262fc651095" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_fields_1aa2c1339f48e58ef5fc3eb262fc651095" kindref="member">afterLine</ref><sp/>{<sp/>0<sp/>};</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146" refid="class_fields_1a56a67af994b5aa18a9545cf1c38d6aa1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::unique_ptr&lt;Pattern&gt;<sp/><ref refid="class_fields_1a56a67af994b5aa18a9545cf1c38d6aa1" kindref="member">matchPattern</ref>;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149" refid="class_fields_1a4c12f9e77e3b081a50dbb9356d6d66fe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_fields_1a4c12f9e77e3b081a50dbb9356d6d66fe" kindref="member">isFirstOnly</ref><sp/>{<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152" refid="class_fields_1aa88c027578b8ef76d44da127854953a3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_fields_1aa88c027578b8ef76d44da127854953a3" kindref="member">isStrict</ref><sp/>{<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="153"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="Fields.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,402 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="_files_8h" kind="file" language="C++">
+    <compoundname>Files.h</compoundname>
+    <includedby refid="_generated_8h" local="yes">generated/Generated.h</includedby>
+    <invincdepgraph>
+      <node id="3">
+        <label>Arguments.cpp</label>
+        <link refid="_arguments_8cpp"/>
+      </node>
+      <node id="4">
+        <label>CommandLine.cpp</label>
+        <link refid="_command_line_8cpp"/>
+      </node>
+      <node id="23">
+        <label>CommandLine.h</label>
+        <link refid="_command_line_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Excerpt.cpp</label>
+        <link refid="_excerpt_8cpp"/>
+      </node>
+      <node id="25">
+        <label>Excerpt.h</label>
+        <link refid="_excerpt_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Fields.cpp</label>
+        <link refid="_fields_8cpp"/>
+      </node>
+      <node id="26">
+        <label>Fields.h</label>
+        <link refid="_fields_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Find.cpp</label>
+        <link refid="_find_8cpp"/>
+      </node>
+      <node id="27">
+        <label>Find.h</label>
+        <link refid="_find_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>FindOutcome.cpp</label>
+        <link refid="_find_outcome_8cpp"/>
+      </node>
+      <node id="29">
+        <label>FindOutcome.h</label>
+        <link refid="_find_outcome_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>IgnoreRules.cpp</label>
+        <link refid="_ignore_rules_8cpp"/>
+      </node>
+      <node id="9">
+        <label>Input.cpp</label>
+        <link refid="_input_8cpp"/>
+      </node>
+      <node id="10">
+        <label>LineDiff.cpp</label>
+        <link refid="_line_diff_8cpp"/>
+      </node>
+      <node id="11">
+        <label>Lines.cpp</label>
+        <link refid="_lines_8cpp"/>
+      </node>
+      <node id="30">
+        <label>Lines.h</label>
+        <link refid="_lines_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Main.cpp</label>
+        <link refid="_main_8cpp"/>
+      </node>
+      <node id="13">
+        <label>MatchWriter.cpp</label>
+        <link refid="_match_writer_8cpp"/>
+      </node>
+      <node id="14">
+        <label>Patch.cpp</label>
+        <link refid="_patch_8cpp"/>
+      </node>
+      <node id="31">
+        <label>Patch.h</label>
+        <link refid="_patch_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>PatchValidator.cpp</label>
+        <link refid="_patch_validator_8cpp"/>
+      </node>
+      <node id="16">
+        <label>Paths.cpp</label>
+        <link refid="_paths_8cpp"/>
+      </node>
+      <node id="17">
+        <label>Pattern.cpp</label>
+        <link refid="_pattern_8cpp"/>
+      </node>
+      <node id="18">
+        <label>Replace.cpp</label>
+        <link refid="_replace_8cpp"/>
+      </node>
+      <node id="32">
+        <label>Replace.h</label>
+        <link refid="_replace_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>Search.cpp</label>
+        <link refid="_search_8cpp"/>
+      </node>
+      <node id="33">
+        <label>Search.h</label>
+        <link refid="_search_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>StagedFile.cpp</label>
+        <link refid="_staged_file_8cpp"/>
+      </node>
+      <node id="21">
+        <label>StandardStream.cpp</label>
+        <link refid="_standard_stream_8cpp"/>
+      </node>
+      <node id="34">
+        <label>Stdio.cpp</label>
+        <link refid="_stdio_8cpp"/>
+      </node>
+      <node id="22">
+        <label>Stdio.h</label>
+        <link refid="_stdio_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>TextDocument.cpp</label>
+        <link refid="_text_document_8cpp"/>
+      </node>
+      <node id="24">
+        <label>ToolServer.cpp</label>
+        <link refid="_tool_server_8cpp"/>
+      </node>
+      <node id="42">
+        <label>ToolServer.h</label>
+        <link refid="_tool_server_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>Transaction.cpp</label>
+        <link refid="_transaction_8cpp"/>
+      </node>
+      <node id="37">
+        <label>Transaction.h</label>
+        <link refid="_transaction_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>Undo.cpp</label>
+        <link refid="_undo_8cpp"/>
+      </node>
+      <node id="39">
+        <label>Undo.h</label>
+        <link refid="_undo_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>UndoCache.cpp</label>
+        <link refid="_undo_cache_8cpp"/>
+      </node>
+      <node id="41">
+        <label>Writer.cpp</label>
+        <link refid="_writer_8cpp"/>
+      </node>
+      <node id="1">
+        <label>generated/Files.h</label>
+        <link refid="_files_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>generated/Generated.cpp</label>
+        <link refid="_generated_8cpp"/>
+      </node>
+      <node id="2">
+        <label>generated/Generated.h</label>
+        <link refid="_generated_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespacefiles">files</innernamespace>
+    <briefdescription>
+<para>saw&apos;s own file names, referenced by the program. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*******************************************************************************</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Codegen<sp/>Annotated<sp/>Source<sp/>of<sp/>Truth</highlight></codeline>
+<codeline lineno="3"><highlight class="comment">————————————————————————————————————————————————————————————————————————————————</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"></highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>░░████████████░░████████████░░████████████░░████████████</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>░░████<sp/><sp/>░░████░░████<sp/><sp/>░░████░░████<sp/><sp/>░░████<sp/><sp/><sp/><sp/>░░████</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>░░████<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>░░████<sp/><sp/>░░████░░████<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>░░████</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>░░████<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>░░████████████░░████████████<sp/><sp/><sp/><sp/>░░████</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>░░████<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>░░████<sp/><sp/>░░████<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>░░████<sp/><sp/><sp/><sp/>░░████</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>░░████<sp/><sp/>░░████░░████<sp/><sp/>░░████░░████<sp/><sp/>░░████<sp/><sp/><sp/><sp/>░░████</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>░░████████████░░████<sp/><sp/>░░████░░████████████<sp/><sp/><sp/><sp/>░░████</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"></highlight></codeline>
+<codeline lineno="13"><highlight class="comment">————————————————————————————————————————————————————————————————————————————————</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FOR<sp/>YOUR<sp/>EYES<sp/>ONLY,<sp/>DO<sp/>NOT<sp/>EDIT</highlight></codeline>
+<codeline lineno="15"><highlight class="comment">********************************************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacefiles" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">files</ref></highlight></codeline>
+<codeline lineno="25"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="comment">/*_____________________________________________________________________________*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="namespacefiles_1a6565839f9c8e5a2d5d38e27d5508f435" refkind="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>std::string_view<sp/><ref refid="namespacefiles_1a6565839f9c8e5a2d5d38e27d5508f435" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">sawHelp</ref><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="stringliteral">&quot;HELP.frame&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="31" refid="namespacefiles_1a65504d5ecfd496c4d807e4cb2751b37b" refkind="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>std::string_view<sp/><ref refid="namespacefiles_1a65504d5ecfd496c4d807e4cb2751b37b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">findHelp</ref><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="stringliteral">&quot;find.frame&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="32" refid="namespacefiles_1a67c310cafa83585f09893793331b4c79" refkind="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>std::string_view<sp/><ref refid="namespacefiles_1a67c310cafa83585f09893793331b4c79" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">replaceHelp</ref><sp/>{<sp/></highlight><highlight class="stringliteral">&quot;replace.frame&quot;</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="33" refid="namespacefiles_1a6f6bba11ab5e4e852ecd883ac44fbc3c" refkind="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>std::string_view<sp/><ref refid="namespacefiles_1a6f6bba11ab5e4e852ecd883ac44fbc3c" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">linesHelp</ref><sp/><sp/><sp/>{<sp/></highlight><highlight class="stringliteral">&quot;lines.frame&quot;</highlight><highlight class="normal"><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="34" refid="namespacefiles_1a5806623d441af30ad582b773878ccdd8" refkind="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>std::string_view<sp/><ref refid="namespacefiles_1a5806623d441af30ad582b773878ccdd8" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">fieldsHelp</ref><sp/><sp/>{<sp/></highlight><highlight class="stringliteral">&quot;fields.frame&quot;</highlight><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="35" refid="namespacefiles_1a7aa82f279510cc975acce2f32b753c77" refkind="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>std::string_view<sp/><ref refid="namespacefiles_1a7aa82f279510cc975acce2f32b753c77" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">patchHelp</ref><sp/><sp/><sp/>{<sp/></highlight><highlight class="stringliteral">&quot;patch.frame&quot;</highlight><highlight class="normal"><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="36" refid="namespacefiles_1a796675b762ec1b151af240007828ee31" refkind="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>std::string_view<sp/><ref refid="namespacefiles_1a796675b762ec1b151af240007828ee31" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">undoHelp</ref><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="stringliteral">&quot;undo.frame&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="37" refid="namespacefiles_1afd9a111df69cf787fe2b88a4e95437f3" refkind="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>std::string_view<sp/><ref refid="namespacefiles_1afd9a111df69cf787fe2b88a4e95437f3" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">excerptHelp</ref><sp/>{<sp/></highlight><highlight class="stringliteral">&quot;excerpt.frame&quot;</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="38" refid="namespacefiles_1af20793b69ab238e5c2818c473661b7e3" refkind="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>std::string_view<sp/><ref refid="namespacefiles_1af20793b69ab238e5c2818c473661b7e3" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">screenErase</ref><sp/>{<sp/></highlight><highlight class="stringliteral">&quot;erase.frame&quot;</highlight><highlight class="normal"><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="39" refid="namespacefiles_1ac658ab76c4e4618c9f73b2426d092a1a" refkind="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">constexpr</highlight><highlight class="normal"><sp/>std::string_view<sp/><ref refid="namespacefiles_1ac658ab76c4e4618c9f73b2426d092a1a" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">serverTools</ref><sp/>{<sp/></highlight><highlight class="stringliteral">&quot;tools.json&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal">}</highlight><highlight class="comment">//<sp/>namespace<sp/>files</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="generated/Files.h"/>
+  </compounddef>
+</doxygen>

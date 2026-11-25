@@ -1,0 +1,286 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="_main_8cpp" kind="file" language="C++">
+    <compoundname>Main.cpp</compoundname>
+    <includes local="no">JuceHeader.h</includes>
+    <includes refid="_arguments_8h" local="yes">Arguments.h</includes>
+    <includes refid="_command_line_8h" local="yes">CommandLine.h</includes>
+    <includes refid="_stdio_8h" local="yes">Stdio.h</includes>
+    <includes refid="_tool_server_8h" local="yes">ToolServer.h</includes>
+    <includes refid="_generated_8h" local="yes">generated/Generated.h</includes>
+    <incdepgraph>
+      <node id="3">
+        <label>Arguments.h</label>
+        <link refid="_arguments_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>CommandLine.h</label>
+        <link refid="_command_line_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Input.h</label>
+        <link refid="_input_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Main.cpp</label>
+        <link refid="_main_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Stdio.h</label>
+        <link refid="_stdio_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>TextDocument.h</label>
+        <link refid="_text_document_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>ToolServer.h</label>
+        <link refid="_tool_server_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Files.h</label>
+        <link refid="_files_8h"/>
+      </node>
+      <node id="8">
+        <label>generated/Generated.h</label>
+        <link refid="_generated_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>HashMaps.h</label>
+        <link refid="_hash_maps_8h"/>
+      </node>
+      <node id="10">
+        <label>Identifiers.h</label>
+        <link refid="_identifiers_8h"/>
+      </node>
+      <node id="9">
+        <label>ProjectInfo.h</label>
+        <link refid="_project_info_8h"/>
+      </node>
+      <node id="11">
+        <label>Text.h</label>
+        <link refid="_text_8h"/>
+      </node>
+      <node id="2">
+        <label>JuceHeader.h</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_main_8cpp_1a859ac27c3dac2f4ba8dc5402a3e94f87" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool isMcp</definition>
+        <argsstring>(juce::Span&lt; const std::string_view &gt; arguments)</argsstring>
+        <name>isMcp</name>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>arguments</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Main.cpp" line="27" column="13" bodyfile="Main.cpp" bodystart="27" bodyend="30"/>
+        <references refid="class_arguments_1a7a6b4e4e77e7747772a1c91cb7d4a29e" compoundref="_arguments_8h" startline="17" endline="17">Arguments::firstOptionIndex</references>
+        <references refid="_main_8cpp_1a859ac27c3dac2f4ba8dc5402a3e94f87" compoundref="_main_8cpp" startline="27" endline="30">isMcp</references>
+        <references refid="class_arguments_1a5a9520578f8bb3a26a8e8482a97ddb0f" compoundref="_arguments_8cpp" startline="19" endline="29">Arguments::matchesOption</references>
+        <referencedby refid="_main_8cpp_1a859ac27c3dac2f4ba8dc5402a3e94f87" compoundref="_main_8cpp" startline="27" endline="30">isMcp</referencedby>
+        <referencedby refid="_main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" compoundref="_main_8cpp" startline="45" endline="71">main</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_main_8cpp_1a16fa16977fc9ba47db25e3fe2a82021e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1JUCEApplicationBase" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::JUCEApplicationBase</ref> *</type>
+        <definition>static juce::JUCEApplicationBase * createToolServer</definition>
+        <argsstring>()</argsstring>
+        <name>createToolServer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Main.cpp" line="32" column="34" bodyfile="Main.cpp" bodystart="32" bodyend="35"/>
+        <references refid="_main_8cpp_1a16fa16977fc9ba47db25e3fe2a82021e" compoundref="_main_8cpp" startline="32" endline="35">createToolServer</references>
+        <references refid="class_tool_server_1a02fc10d9f623b0840a9828ab2b1034c2" compoundref="_tool_server_8cpp" startline="4" endline="15">ToolServer::ToolServer</references>
+        <referencedby refid="_main_8cpp_1a16fa16977fc9ba47db25e3fe2a82021e" compoundref="_main_8cpp" startline="32" endline="35">createToolServer</referencedby>
+        <referencedby refid="_main_8cpp_1a15b9b330781dca52351a68dcf0e2fbf3" compoundref="_main_8cpp" startline="37" endline="43">runToolServer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_main_8cpp_1a15b9b330781dca52351a68dcf0e2fbf3" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>static int runToolServer</definition>
+        <argsstring>(const char *programPath)</argsstring>
+        <name>runToolServer</name>
+        <param>
+          <type>const char *</type>
+          <declname>programPath</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Main.cpp" line="37" column="12" bodyfile="Main.cpp" bodystart="37" bodyend="43"/>
+        <references refid="_main_8cpp_1a16fa16977fc9ba47db25e3fe2a82021e" compoundref="_main_8cpp" startline="32" endline="35">createToolServer</references>
+        <references refid="_main_8cpp_1a15b9b330781dca52351a68dcf0e2fbf3" compoundref="_main_8cpp" startline="37" endline="43">runToolServer</references>
+        <referencedby refid="_main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" compoundref="_main_8cpp" startline="45" endline="71">main</referencedby>
+        <referencedby refid="_main_8cpp_1a15b9b330781dca52351a68dcf0e2fbf3" compoundref="_main_8cpp" startline="37" endline="43">runToolServer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int main</definition>
+        <argsstring>(int argc, char *argv[])</argsstring>
+        <name>main</name>
+        <param>
+          <type>int</type>
+          <declname>argc</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>argv</declname>
+          <array>[]</array>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Main.cpp" line="45" column="5" bodyfile="Main.cpp" bodystart="45" bodyend="71"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="classjam_1_1Array_1a96fa6f0e5a1ecbb84176758bfb7b4117">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::data</references>
+        <references refid="classjam_1_1Array_1a79e89487d47591c2c1dcceb7ba5aa61e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::ensureStorageAllocated</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <references refid="_main_8cpp_1a859ac27c3dac2f4ba8dc5402a3e94f87" compoundref="_main_8cpp" startline="27" endline="30">isMcp</references>
+        <references refid="_main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" compoundref="_main_8cpp" startline="45" endline="71">main</references>
+        <references refid="struct_command_line_1a2a6839c7ef37537c2f17b7a07db6539a" compoundref="_command_line_8cpp" startline="121" endline="133">CommandLine::run</references>
+        <references refid="_main_8cpp_1a15b9b330781dca52351a68dcf0e2fbf3" compoundref="_main_8cpp" startline="37" endline="43">runToolServer</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <references refid="struct_stdio_1a2f47d9111aa65ce8942bc5ed68e42474" compoundref="_stdio_8cpp" startline="101" endline="130">Stdio::write</references>
+        <referencedby refid="_main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" compoundref="_main_8cpp" startline="45" endline="71">main</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&lt;JuceHeader.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_arguments_8h" kindref="compound">Arguments.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_command_line_8h" kindref="compound">CommandLine.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_stdio_8h" kindref="compound">Stdio.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_tool_server_8h" kindref="compound">ToolServer.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_generated_8h" kindref="compound">generated/Generated.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>JUCE_WINDOWS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;windows.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;shellapi.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>JUCE_WINDOWS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classjam_1_1Strings" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings</ref><sp/>getCommandLineArguments()</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1Strings" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings</ref><sp/>arguments;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argumentCount<sp/>{<sp/>0<sp/>};</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::unique_ptr&lt;LPWSTR,<sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal"><sp/>(&amp;LocalFree)&gt;<sp/>wideArguments<sp/>{<sp/>CommandLineToArgvW<sp/>(GetCommandLineW(),<sp/>&amp;argumentCount),<sp/>&amp;LocalFree<sp/>};</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>assert<sp/>(wideArguments<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>index<sp/>{<sp/>1<sp/>};<sp/><ref refid="namespaceId_1ac8743bd67ed6907f9729a660fd931339" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">index</ref><sp/>&lt;<sp/>argumentCount;<sp/>++<ref refid="namespaceId_1ac8743bd67ed6907f9729a660fd931339" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">index</ref>)</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arguments.<ref refid="classjam_1_1Strings_1a9223c1bf16916a52b122ae7e9d871f50" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">add</ref><sp/>(<ref refid="classjuce_1_1String" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::String</ref><sp/>(wideArguments.get()[index]));</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>arguments;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="_main_8cpp_1a859ac27c3dac2f4ba8dc5402a3e94f87" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="_main_8cpp_1a859ac27c3dac2f4ba8dc5402a3e94f87" kindref="member">isMcp</ref><sp/>(<ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span&lt;const std::string_view&gt;</ref><sp/>arguments)</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal"><sp/>(arguments.size())<sp/>==<sp/><ref refid="class_arguments_1a7a6b4e4e77e7747772a1c91cb7d4a29e" kindref="member">Arguments::firstOptionIndex</ref><sp/>and<sp/><ref refid="class_arguments_1a5a9520578f8bb3a26a8e8482a97ddb0f" kindref="member">Arguments::matchesOption</ref><sp/>(arguments[0],<sp/>Id::mcpOption);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="_main_8cpp_1a16fa16977fc9ba47db25e3fe2a82021e" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1JUCEApplicationBase" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::JUCEApplicationBase</ref>*<sp/><ref refid="_main_8cpp_1a16fa16977fc9ba47db25e3fe2a82021e" kindref="member">createToolServer</ref>()</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="class_tool_server_1a02fc10d9f623b0840a9828ab2b1034c2" kindref="member">ToolServer</ref>();</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="_main_8cpp_1a15b9b330781dca52351a68dcf0e2fbf3" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="_main_8cpp_1a15b9b330781dca52351a68dcf0e2fbf3" kindref="member">runToolServer</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>programPath)</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>toolArguments[]<sp/>{<sp/>programPath<sp/>};</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>juce::JUCEApplicationBase::createInstance<sp/>=<sp/>&amp;<ref refid="_main_8cpp_1a16fa16977fc9ba47db25e3fe2a82021e" kindref="member">createToolServer</ref>;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>juce::JUCEApplicationBase::main<sp/>(</highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal"><sp/>(std::size<sp/>(toolArguments)),<sp/>toolArguments);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="_main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="_main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" kindref="member">main</ref><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>argv[])</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>JUCE_WINDOWS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>SetConsoleOutputCP<sp/>(CP_UTF8);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::ignoreUnused</ref><sp/>(argc);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>ownedArguments<sp/>(getCommandLineArguments());</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;std::string_view&gt;</ref><sp/>arguments;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>arguments.<ref refid="classjam_1_1Array_1a79e89487d47591c2c1dcceb7ba5aa61e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">ensureStorageAllocated</ref><sp/>(ownedArguments.size());</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>index<sp/>{<sp/>0<sp/>};<sp/>index<sp/>&lt;<sp/>ownedArguments.size();<sp/>++index)</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arguments.<ref refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">add</ref><sp/>(ownedArguments.getView<sp/>(index));</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;std::string_view&gt;</ref><sp/>arguments;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>arguments.<ref refid="classjam_1_1Array_1a79e89487d47591c2c1dcceb7ba5aa61e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">ensureStorageAllocated</ref><sp/>(argc<sp/>-<sp/>1);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>index<sp/>{<sp/>1<sp/>};<sp/>index<sp/>&lt;<sp/>argc;<sp/>++index)</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arguments.<ref refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">add</ref><sp/>(std::string_view<sp/>{<sp/>argv[index]<sp/>});</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span&lt;const std::string_view&gt;</ref><sp/>argumentSpan<sp/>{<sp/>arguments.<ref refid="classjam_1_1Array_1a96fa6f0e5a1ecbb84176758bfb7b4117" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">data</ref>(),<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">size_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal"><sp/>(arguments.<ref refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">size</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="_main_8cpp_1a859ac27c3dac2f4ba8dc5402a3e94f87" kindref="member">isMcp</ref><sp/>(argumentSpan))</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="_main_8cpp_1a15b9b330781dca52351a68dcf0e2fbf3" kindref="member">runToolServer</ref><sp/>(argv[0]);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1a2f47d9111aa65ce8942bc5ed68e42474" kindref="member">Stdio::write</ref><sp/>(<ref refid="struct_command_line_1a2a6839c7ef37537c2f17b7a07db6539a" kindref="member">CommandLine::run</ref><sp/>(argumentSpan,<sp/>std::nullopt));</highlight></codeline>
+<codeline lineno="71"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="Main.cpp"/>
+  </compounddef>
+</doxygen>

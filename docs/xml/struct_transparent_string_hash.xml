@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="struct_transparent_string_hash" kind="struct" language="C++" prot="public">
+    <compoundname>TransparentStringHash</compoundname>
+    <includes refid="_transparent_string_hash_8h" local="no">TransparentStringHash.h</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="struct_transparent_string_hash_1a86ee0c25b2ef23ca1784e4b32018876b" prot="public" static="no">
+        <type>void</type>
+        <definition>using TransparentStringHash::is_transparent = void</definition>
+        <argsstring></argsstring>
+        <name>is_transparent</name>
+        <qualifiedname>TransparentStringHash::is_transparent</qualifiedname>
+        <briefdescription>
+<para>Marks the hash as transparent, so that a container accepts keys of another type for lookup. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="TransparentStringHash.h" line="11" column="5" bodyfile="TransparentStringHash.h" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="struct_transparent_string_hash_1a20e19a4f99e9a81eca86ff66097244fd" prot="public" static="no">
+        <type>void</type>
+        <definition>using TransparentStringHash::is_avalanching = void</definition>
+        <argsstring></argsstring>
+        <name>is_avalanching</name>
+        <qualifiedname>TransparentStringHash::is_avalanching</qualifiedname>
+        <briefdescription>
+<para>Marks the hash as avalanching, so that the container adds no further mixing of the hash bits. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="TransparentStringHash.h" line="14" column="5" bodyfile="TransparentStringHash.h" bodystart="14" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_transparent_string_hash_1a9c08630d644acd8b575f97e666a798d2" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>std::uint64_t</type>
+        <definition>std::uint64_t TransparentStringHash::operator()</definition>
+        <argsstring>(std::string_view key) const noexcept</argsstring>
+        <name>operator()</name>
+        <qualifiedname>TransparentStringHash::operator()</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+<para>Hashes a string view. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The text to hash.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The 64-bit hash of the text. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="TransparentStringHash.h" line="22" column="19" bodyfile="TransparentStringHash.cpp" bodystart="3" bodyend="6"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Hashes a string key, so that a hash container finds a std::string key from a std::string_view. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The lookup needs no std::string copy of the view. </para>
+    </detaileddescription>
+    <location file="TransparentStringHash.h" line="8" column="1" bodyfile="TransparentStringHash.h" bodystart="9" bodyend="23"/>
+    <listofallmembers>
+      <member refid="struct_transparent_string_hash_1a20e19a4f99e9a81eca86ff66097244fd" prot="public" virt="non-virtual"><scope>TransparentStringHash</scope><name>is_avalanching</name></member>
+      <member refid="struct_transparent_string_hash_1a86ee0c25b2ef23ca1784e4b32018876b" prot="public" virt="non-virtual"><scope>TransparentStringHash</scope><name>is_transparent</name></member>
+      <member refid="struct_transparent_string_hash_1a9c08630d644acd8b575f97e666a798d2" prot="public" virt="non-virtual"><scope>TransparentStringHash</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

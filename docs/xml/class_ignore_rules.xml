@@ -1,0 +1,1024 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="class_ignore_rules" kind="class" language="C++" prot="public">
+    <compoundname>IgnoreRules</compoundname>
+    <includes refid="_ignore_rules_8h" local="no">IgnoreRules.h</includes>
+    <innerclass refid="struct_ignore_rules_1_1_access" prot="private">IgnoreRules::Access</innerclass>
+    <innerclass refid="struct_ignore_rules_1_1_rule" prot="private">IgnoreRules::Rule</innerclass>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="class_ignore_rules_1ae9b48ad8c61f720a76201dd18fdfa1d6" prot="private" static="no">
+        <type><ref refid="classjam_1_1HashMap" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::HashMap</ref>&lt; std::string, <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; int &gt;, <ref refid="struct_transparent_string_hash" kindref="compound">TransparentStringHash</ref>, std::equal_to&lt;&gt; &gt;</type>
+        <definition>using IgnoreRules::RuleIndexes = jam::HashMap&lt;std::string, jam::Array&lt;int&gt;, TransparentStringHash, std::equal_to&lt;&gt;&gt;</definition>
+        <argsstring></argsstring>
+        <name>RuleIndexes</name>
+        <qualifiedname>IgnoreRules::RuleIndexes</qualifiedname>
+        <briefdescription>
+<para>Maps a key to the indexes of the rules that have that key, in ascending order. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The key is a literal tail of a path, a literal path, or an extension. A lookup by key needs no regex, so the rules that have a key are one hash lookup, not a scan. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="101" column="5" bodyfile="IgnoreRules.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_ignore_rules_1ab6c309ee11408f8f565535c65ebcafc6" prot="private" static="no" mutable="no">
+        <type><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref></type>
+        <definition>juce::File IgnoreRules::topLevel</definition>
+        <argsstring></argsstring>
+        <name>topLevel</name>
+        <qualifiedname>IgnoreRules::topLevel</qualifiedname>
+        <briefdescription>
+<para>Directory that the patterns of this link are relative to. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="231" column="16" bodyfile="IgnoreRules.h" bodystart="231" bodyend="-1"/>
+        <referencedby refid="class_ignore_rules_1adb290642c69fdf8bd91bbd10f98f0e34" compoundref="_ignore_rules_8cpp" startline="441" endline="451">create</referencedby>
+        <referencedby refid="class_ignore_rules_1ab9e4e7c05544d63f465e3a9d5374ef3a" compoundref="_ignore_rules_8cpp" startline="715" endline="721">getRelativePath</referencedby>
+        <referencedby refid="class_ignore_rules_1a7b3e6f6f44407918514e58f63469035c" compoundref="_ignore_rules_8cpp" startline="434" endline="439">IgnoreRules</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_ignore_rules_1a8cf52acbefaccd704dc0e6b2680ea488" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string IgnoreRules::basePrefix</definition>
+        <argsstring></argsstring>
+        <name>basePrefix</name>
+        <qualifiedname>IgnoreRules::basePrefix</qualifiedname>
+        <briefdescription>
+<para>Relative prefix of the folder of this link, with a trailing slash, or empty. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><ref refid="struct_paths" kindref="compound">Paths</ref> outside it match nothing here. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="234" column="17" bodyfile="IgnoreRules.h" bodystart="234" bodyend="-1"/>
+        <referencedby refid="class_ignore_rules_1affc23f94d61f123189beb2e9714464b9" compoundref="_ignore_rules_8cpp" startline="505" endline="541">getLastMatch</referencedby>
+        <referencedby refid="class_ignore_rules_1a7b3e6f6f44407918514e58f63469035c" compoundref="_ignore_rules_8cpp" startline="434" endline="439">IgnoreRules</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_ignore_rules_1ae9a1864a579e36a672b345ab65bdb9dc" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; const <ref refid="class_ignore_rules" kindref="compound">IgnoreRules</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;const IgnoreRules&gt; IgnoreRules::parent</definition>
+        <argsstring></argsstring>
+        <name>parent</name>
+        <qualifiedname>IgnoreRules::parent</qualifiedname>
+        <briefdescription>
+<para>The link of the enclosing rules file, which is consulted after this link. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Null for the first link. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="237" column="21" bodyfile="IgnoreRules.h" bodystart="237" bodyend="-1"/>
+        <referencedby refid="class_ignore_rules_1a49d70d264973e8ca307728e1d13b2902" compoundref="_ignore_rules_8cpp" startline="564" endline="579">getTopLevelDirectory</referencedby>
+        <referencedby refid="class_ignore_rules_1a7b3e6f6f44407918514e58f63469035c" compoundref="_ignore_rules_8cpp" startline="434" endline="439">IgnoreRules</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_ignore_rules_1a79738f1effbf569fa93076ba99293195" prot="private" static="no" mutable="no">
+        <type><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="struct_ignore_rules_1_1_rule" kindref="compound">Rule</ref> &gt;</type>
+        <definition>jam::Array&lt;Rule&gt; IgnoreRules::rules</definition>
+        <argsstring></argsstring>
+        <name>rules</name>
+        <qualifiedname>IgnoreRules::rules</qualifiedname>
+        <briefdescription>
+<para>Every rule of this link, in file order. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The indexes of the containers below point into it. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="240" column="16" bodyfile="IgnoreRules.h" bodystart="240" bodyend="-1"/>
+        <referencedby refid="class_ignore_rules_1ad22cecf492f2e3e4fd0d15b298a231f6" compoundref="_ignore_rules_8cpp" startline="621" endline="674">addRule</referencedby>
+        <referencedby refid="class_ignore_rules_1a55f4846f30ff4185effc031176e30c23" compoundref="_ignore_rules_8cpp" startline="543" endline="562">getLastIndex</referencedby>
+        <referencedby refid="class_ignore_rules_1affc23f94d61f123189beb2e9714464b9" compoundref="_ignore_rules_8cpp" startline="505" endline="541">getLastMatch</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_ignore_rules_1a2019fe9376067b509202db01bfe9cb78" prot="private" static="no" mutable="no">
+        <type><ref refid="class_ignore_rules_1ae9b48ad8c61f720a76201dd18fdfa1d6" kindref="member">RuleIndexes</ref></type>
+        <definition>RuleIndexes IgnoreRules::suffixes</definition>
+        <argsstring></argsstring>
+        <name>suffixes</name>
+        <qualifiedname>IgnoreRules::suffixes</qualifiedname>
+        <briefdescription>
+<para>Rules whose pattern is a literal name, such as <computeroutput>build</computeroutput>, or a literal after a leading <computeroutput>**</computeroutput>, such as <computeroutput>**</computeroutput>/Builds/x64. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Keyed by that literal. Such a rule applies to an entry at any depth, so getLastMatch looks up every tail of the path that starts at a folder boundary. A walk needs no expression for these rules. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="247" column="17" bodyfile="IgnoreRules.h" bodystart="247" bodyend="-1"/>
+        <referencedby refid="class_ignore_rules_1ad22cecf492f2e3e4fd0d15b298a231f6" compoundref="_ignore_rules_8cpp" startline="621" endline="674">addRule</referencedby>
+        <referencedby refid="class_ignore_rules_1affc23f94d61f123189beb2e9714464b9" compoundref="_ignore_rules_8cpp" startline="505" endline="541">getLastMatch</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_ignore_rules_1a609eff12ee8f2c92750a64269dfcb8f6" prot="private" static="no" mutable="no">
+        <type><ref refid="class_ignore_rules_1ae9b48ad8c61f720a76201dd18fdfa1d6" kindref="member">RuleIndexes</ref></type>
+        <definition>RuleIndexes IgnoreRules::relativePaths</definition>
+        <argsstring></argsstring>
+        <name>relativePaths</name>
+        <qualifiedname>IgnoreRules::relativePaths</qualifiedname>
+        <briefdescription>
+<para>Rules whose pattern is an anchored literal path, such as <computeroutput>/docs/build</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Keyed by that path. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="250" column="17" bodyfile="IgnoreRules.h" bodystart="250" bodyend="-1"/>
+        <referencedby refid="class_ignore_rules_1ad22cecf492f2e3e4fd0d15b298a231f6" compoundref="_ignore_rules_8cpp" startline="621" endline="674">addRule</referencedby>
+        <referencedby refid="class_ignore_rules_1affc23f94d61f123189beb2e9714464b9" compoundref="_ignore_rules_8cpp" startline="505" endline="541">getLastMatch</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_ignore_rules_1aa9b511fc2aa41644f73c7d9886024211" prot="private" static="no" mutable="no">
+        <type><ref refid="class_ignore_rules_1ae9b48ad8c61f720a76201dd18fdfa1d6" kindref="member">RuleIndexes</ref></type>
+        <definition>RuleIndexes IgnoreRules::extensions</definition>
+        <argsstring></argsstring>
+        <name>extensions</name>
+        <qualifiedname>IgnoreRules::extensions</qualifiedname>
+        <briefdescription>
+<para>Rules whose pattern is an extension, such as <computeroutput>*.o</computeroutput>, or <computeroutput>**</computeroutput> followed by <computeroutput>*.o</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Keyed by the extension without the dot. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="253" column="17" bodyfile="IgnoreRules.h" bodystart="253" bodyend="-1"/>
+        <referencedby refid="class_ignore_rules_1ad22cecf492f2e3e4fd0d15b298a231f6" compoundref="_ignore_rules_8cpp" startline="621" endline="674">addRule</referencedby>
+        <referencedby refid="class_ignore_rules_1affc23f94d61f123189beb2e9714464b9" compoundref="_ignore_rules_8cpp" startline="505" endline="541">getLastMatch</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_ignore_rules_1a895cf1630f0d9b8381a7c83e22e6bd48" prot="private" static="no" mutable="no">
+        <type><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; int &gt;</type>
+        <definition>jam::Array&lt;int&gt; IgnoreRules::others</definition>
+        <argsstring></argsstring>
+        <name>others</name>
+        <qualifiedname>IgnoreRules::others</qualifiedname>
+        <briefdescription>
+<para>Indexes of the rules whose pattern needs a regex, in ascending order. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The search starts from the last one. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="256" column="16" bodyfile="IgnoreRules.h" bodystart="256" bodyend="-1"/>
+        <referencedby refid="class_ignore_rules_1ad22cecf492f2e3e4fd0d15b298a231f6" compoundref="_ignore_rules_8cpp" startline="621" endline="674">addRule</referencedby>
+        <referencedby refid="class_ignore_rules_1affc23f94d61f123189beb2e9714464b9" compoundref="_ignore_rules_8cpp" startline="505" endline="541">getLastMatch</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_ignore_rules_1a7b3e6f6f44407918514e58f63469035c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IgnoreRules::IgnoreRules</definition>
+        <argsstring>(Access, std::shared_ptr&lt; const IgnoreRules &gt; newParent, const juce::File &amp;newTopLevel, std::string newBasePrefix)</argsstring>
+        <name>IgnoreRules</name>
+        <qualifiedname>IgnoreRules::IgnoreRules</qualifiedname>
+        <param>
+          <type><ref refid="struct_ignore_rules_1_1_access" kindref="compound">Access</ref></type>
+        </param>
+        <param>
+          <type>std::shared_ptr&lt; const <ref refid="class_ignore_rules" kindref="compound">IgnoreRules</ref> &gt;</type>
+          <declname>newParent</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>newTopLevel</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>newBasePrefix</declname>
+        </param>
+        <briefdescription>
+<para>Creates one link of the rules chain. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>newParent</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The link of the enclosing rules file, or null for the first link. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newTopLevel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The directory that the patterns of this link are relative to. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newBasePrefix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The relative prefix that the patterns of this link carry, with a trailing slash, or empty. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="21" column="5" bodyfile="IgnoreRules.cpp" bodystart="434" bodyend="439"/>
+        <references refid="class_ignore_rules_1a8cf52acbefaccd704dc0e6b2680ea488" compoundref="_ignore_rules_8h" startline="234">basePrefix</references>
+        <references refid="class_ignore_rules_1ae9a1864a579e36a672b345ab65bdb9dc" compoundref="_ignore_rules_8h" startline="237">parent</references>
+        <references refid="class_ignore_rules_1ab6c309ee11408f8f565535c65ebcafc6" compoundref="_ignore_rules_8h" startline="231">topLevel</references>
+        <referencedby refid="class_ignore_rules_1ab2fc64a1fef039bf1f8e1942e33e99f1" compoundref="_ignore_rules_8cpp" startline="492" endline="503">isIgnored</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ignore_rules_1a9e2341de36fd52c6ca7af8908b2ad59d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string IgnoreRules::getRootRelativePrefix</definition>
+        <argsstring>(const juce::File &amp;rootDirectory) const</argsstring>
+        <name>getRootRelativePrefix</name>
+        <qualifiedname>IgnoreRules::getRootRelativePrefix</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>rootDirectory</declname>
+        </param>
+        <briefdescription>
+<para>Returns a slash-terminated path prefix for <computeroutput>rootDirectory</computeroutput> relative to the ignore root. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rootDirectory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Traversal root directory.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Relative prefix ending in <computeroutput>&apos;/&apos;</computeroutput>, or empty when <computeroutput>rootDirectory</computeroutput> is the top level. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="55" column="17" bodyfile="IgnoreRules.cpp" bodystart="487" bodyend="490"/>
+        <references refid="_ignore_rules_8cpp_1ada22045f39367845127dc9ca55d0f6f4" compoundref="_ignore_rules_8cpp" startline="404" endline="417">getPrefixWithSlash</references>
+        <references refid="class_ignore_rules_1ab9e4e7c05544d63f465e3a9d5374ef3a" compoundref="_ignore_rules_8cpp" startline="715" endline="721">getRelativePath</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ignore_rules_1ab2fc64a1fef039bf1f8e1942e33e99f1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool IgnoreRules::isIgnored</definition>
+        <argsstring>(std::string_view relativePath, bool isDirectory) const</argsstring>
+        <name>isIgnored</name>
+        <qualifiedname>IgnoreRules::isIgnored</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>relativePath</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isDirectory</declname>
+        </param>
+        <briefdescription>
+<para>Tests whether an entry is excluded by the loaded ignore rules. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The nearest link with a matching rule decides. Inside one link, the last matching rule wins, so a negated pattern overrides an earlier match.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>relativePath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Entry path relative to the ignore top level using <computeroutput>&apos;/&apos;</computeroutput> separators. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isDirectory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True when the candidate entry is a directory.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True when the winning rule is not negated. False when no rule matches. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="67" column="10" bodyfile="IgnoreRules.cpp" bodystart="492" bodyend="503"/>
+        <references refid="class_ignore_rules_1a7b3e6f6f44407918514e58f63469035c" compoundref="_ignore_rules_8cpp" startline="434" endline="439">IgnoreRules</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_ignore_rules_1adb290642c69fdf8bd91bbd10f98f0e34" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::shared_ptr&lt; const <ref refid="class_ignore_rules" kindref="compound">IgnoreRules</ref> &gt;</type>
+        <definition>std::shared_ptr&lt; const IgnoreRules &gt; IgnoreRules::create</definition>
+        <argsstring>(const juce::File &amp;walkRoot)</argsstring>
+        <name>create</name>
+        <qualifiedname>IgnoreRules::create</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>walkRoot</declname>
+        </param>
+        <briefdescription>
+<para>Creates the rules chain that applies to a walk. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The chain is built in this order. The global excludes file comes first, as the first link. The repository exclude file comes next, as a link, when it exists. Then the <computeroutput>.gitignore</computeroutput> of each directory from the top level down to the walk root is added as a link, when it exists.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>walkRoot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The directory where the walk starts.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The last link of the chain. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="33" column="28" bodyfile="IgnoreRules.cpp" bodystart="441" bodyend="451"/>
+        <references refid="class_ignore_rules_1aba6ad4be1de90fd515d1fcdba358444d" compoundref="_ignore_rules_8cpp" startline="453" endline="465">getAncestorRules</references>
+        <references refid="classjuce_1_1File_1a57b992aacb19e09ee5905cd0f0e9bb31">juce::File::getChildFile</references>
+        <references refid="class_ignore_rules_1a3bb45b2a5a25e25e2531a9e67bb41d4a" compoundref="_ignore_rules_8cpp" startline="581" endline="604">getGlobalExcludesFile</references>
+        <references refid="class_ignore_rules_1a5e8842abaf654c1d4d104df8d60178cc" compoundref="_ignore_rules_8cpp" startline="477" endline="485">getLinkedRules</references>
+        <references refid="class_ignore_rules_1a49d70d264973e8ca307728e1d13b2902" compoundref="_ignore_rules_8cpp" startline="564" endline="579">getTopLevelDirectory</references>
+        <references refid="class_ignore_rules_1ab6c309ee11408f8f565535c65ebcafc6" compoundref="_ignore_rules_8h" startline="231">topLevel</references>
+        <referencedby refid="_paths_8cpp_1a39d5d8d93a4ab01783ac3f580f6a76b6" compoundref="_paths_8cpp" startline="334" endline="348">getRootFolder</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ignore_rules_1a96f9ace5c7bc08b29b6eae29cea18d57" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::shared_ptr&lt; const <ref refid="class_ignore_rules" kindref="compound">IgnoreRules</ref> &gt;</type>
+        <definition>std::shared_ptr&lt; const IgnoreRules &gt; IgnoreRules::getChildRules</definition>
+        <argsstring>(const std::shared_ptr&lt; const IgnoreRules &gt; &amp;parentRules, const juce::File &amp;directory, std::string_view relativePrefix)</argsstring>
+        <name>getChildRules</name>
+        <qualifiedname>IgnoreRules::getChildRules</qualifiedname>
+        <param>
+          <type>const std::shared_ptr&lt; const <ref refid="class_ignore_rules" kindref="compound">IgnoreRules</ref> &gt; &amp;</type>
+          <declname>parentRules</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>directory</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>relativePrefix</declname>
+        </param>
+        <briefdescription>
+<para>Creates the link for the <computeroutput>.gitignore</computeroutput> of a directory, on top of the parent rules. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The new link points to parentRules, so no rule is copied.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parentRules</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The rules of the enclosing directory. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>directory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The directory whose <computeroutput>.gitignore</computeroutput> is read. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>relativePrefix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The path of the directory relative to the top level. Empty for the top level.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The new link. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="45" column="28" bodyfile="IgnoreRules.cpp" bodystart="467" bodyend="475"/>
+        <references refid="class_ignore_rules_1a5e8842abaf654c1d4d104df8d60178cc" compoundref="_ignore_rules_8cpp" startline="477" endline="485">getLinkedRules</references>
+        <references refid="_ignore_rules_8cpp_1ada22045f39367845127dc9ca55d0f6f4" compoundref="_ignore_rules_8cpp" startline="404" endline="417">getPrefixWithSlash</references>
+        <referencedby refid="class_ignore_rules_1aba6ad4be1de90fd515d1fcdba358444d" compoundref="_ignore_rules_8cpp" startline="453" endline="465">getAncestorRules</referencedby>
+        <referencedby refid="_paths_8cpp_1a62200c3a7cebbe3a17667940fe1a31b0" compoundref="_paths_8cpp" startline="184" endline="197">getListedFolder</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="class_ignore_rules_1a49d70d264973e8ca307728e1d13b2902" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref></type>
+        <definition>juce::File IgnoreRules::getTopLevelDirectory</definition>
+        <argsstring>(const juce::File &amp;walkRoot)</argsstring>
+        <name>getTopLevelDirectory</name>
+        <qualifiedname>IgnoreRules::getTopLevelDirectory</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>walkRoot</declname>
+        </param>
+        <briefdescription>
+<para>Returns the top level of the repository that holds a walk root. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The top level is the nearest directory, from walkRoot upward, that holds a <computeroutput>.git</computeroutput> entry. When no directory holds one, walkRoot is the top level.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>walkRoot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The directory where the walk starts.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The top level directory. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="112" column="23" bodyfile="IgnoreRules.cpp" bodystart="564" bodyend="579"/>
+        <references refid="class_ignore_rules_1ae9a1864a579e36a672b345ab65bdb9dc" compoundref="_ignore_rules_8h" startline="237">parent</references>
+        <referencedby refid="class_ignore_rules_1adb290642c69fdf8bd91bbd10f98f0e34" compoundref="_ignore_rules_8cpp" startline="441" endline="451">create</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ignore_rules_1aba6ad4be1de90fd515d1fcdba358444d" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::shared_ptr&lt; const <ref refid="class_ignore_rules" kindref="compound">IgnoreRules</ref> &gt;</type>
+        <definition>std::shared_ptr&lt; const IgnoreRules &gt; IgnoreRules::getAncestorRules</definition>
+        <argsstring>(const std::shared_ptr&lt; const IgnoreRules &gt; &amp;parentRules, const juce::File &amp;directory)</argsstring>
+        <name>getAncestorRules</name>
+        <qualifiedname>IgnoreRules::getAncestorRules</qualifiedname>
+        <param>
+          <type>const std::shared_ptr&lt; const <ref refid="class_ignore_rules" kindref="compound">IgnoreRules</ref> &gt; &amp;</type>
+          <declname>parentRules</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>directory</declname>
+        </param>
+        <briefdescription>
+<para>Adds the <computeroutput>.gitignore</computeroutput> link of each directory from the top level down to a directory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The recursion visits the ancestors of the directory first, so the links are added from the top level downward. A directory without a <computeroutput>.gitignore</computeroutput> adds no link.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parentRules</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The rules chain that the links are added on top of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>directory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The walk root, or an ancestor of it.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The chain with the new links, or parentRules when no directory has a <computeroutput>.gitignore</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="124" column="28" bodyfile="IgnoreRules.cpp" bodystart="453" bodyend="465"/>
+        <references refid="class_ignore_rules_1aba6ad4be1de90fd515d1fcdba358444d" compoundref="_ignore_rules_8cpp" startline="453" endline="465">getAncestorRules</references>
+        <references refid="class_ignore_rules_1a96f9ace5c7bc08b29b6eae29cea18d57" compoundref="_ignore_rules_8cpp" startline="467" endline="475">getChildRules</references>
+        <referencedby refid="class_ignore_rules_1adb290642c69fdf8bd91bbd10f98f0e34" compoundref="_ignore_rules_8cpp" startline="441" endline="451">create</referencedby>
+        <referencedby refid="class_ignore_rules_1aba6ad4be1de90fd515d1fcdba358444d" compoundref="_ignore_rules_8cpp" startline="453" endline="465">getAncestorRules</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ignore_rules_1a3bb45b2a5a25e25e2531a9e67bb41d4a" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref></type>
+        <definition>juce::File IgnoreRules::getGlobalExcludesFile</definition>
+        <argsstring>()</argsstring>
+        <name>getGlobalExcludesFile</name>
+        <qualifiedname>IgnoreRules::getGlobalExcludesFile</qualifiedname>
+        <briefdescription>
+<para>Returns the global excludes file that git would use. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The <computeroutput>core.excludesFile</computeroutput> value of the XDG git config file names the file. The user git config file takes precedence when it sets the value. A value that starts with the home prefix is relative to the home folder. Any other value is relative to the working folder. Without a value, the XDG ignore file is returned, or the ignore file of the home folder when no XDG home is set.</para>
+<para><simplesect kind="return"><para>The file. The file may not exist. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="136" column="23" bodyfile="IgnoreRules.cpp" bodystart="581" bodyend="604"/>
+        <references refid="classjam_1_1Strings_1aca02ec79e3d857bca6f9647dce6415fc">jam::Strings::fromView</references>
+        <references refid="classjuce_1_1File_1a57b992aacb19e09ee5905cd0f0e9bb31">juce::File::getChildFile</references>
+        <references refid="classjuce_1_1File_1af57a7a6e83fbd4a6b048e7d0010d7279">juce::File::getCurrentWorkingDirectory</references>
+        <references refid="classjuce_1_1SystemStats_1ab5b9f31ad95bac3f9ed955968d1dae65">juce::SystemStats::getEnvironmentVariable</references>
+        <references refid="class_ignore_rules_1a88889d032bb89ecdd3abcb48a459a5b4" compoundref="_ignore_rules_8cpp" startline="606" endline="619">getExcludesFileFromConfig</references>
+        <references refid="classjuce_1_1File_1a3e0950b0d0dbe71a8bc4a7ed3c7ab067">juce::File::getSpecialLocation</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="_ignore_rules_8cpp_1aa326dedf0a31a98d77f4014acb81c3bc" compoundref="_ignore_rules_8cpp" startline="168" endline="177">getXdgFile</references>
+        <references refid="classjuce_1_1File_1a6efe0648697f59af5952171d5e7b0317afc7a0751112d5d2a2b7a5d139e65b967">juce::File::userHomeDirectory</references>
+        <referencedby refid="class_ignore_rules_1adb290642c69fdf8bd91bbd10f98f0e34" compoundref="_ignore_rules_8cpp" startline="441" endline="451">create</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ignore_rules_1a88889d032bb89ecdd3abcb48a459a5b4" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string IgnoreRules::getExcludesFileFromConfig</definition>
+        <argsstring>(const juce::File &amp;configFile)</argsstring>
+        <name>getExcludesFileFromConfig</name>
+        <qualifiedname>IgnoreRules::getExcludesFileFromConfig</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>configFile</declname>
+        </param>
+        <briefdescription>
+<para>Reads the <computeroutput>core.excludesFile</computeroutput> value from one git config file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A file that does not exist, cannot be read, or holds binary bytes gives an empty value.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>configFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The git config file to read.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The value, or an empty string when none is set. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="146" column="24" bodyfile="IgnoreRules.cpp" bodystart="606" bodyend="619"/>
+        <references refid="classjuce_1_1File_1a37e88fbc390d78f3d79675974f53fa78">juce::File::existsAsFile</references>
+        <references refid="class_text_document_1a47358a71de9f5463532cae5fe6e3ab62" compoundref="_text_document_8cpp" startline="111" endline="124">TextDocument::fromFile</references>
+        <references refid="_ignore_rules_8cpp_1a1100094649a051f66151ebfe07889944" compoundref="_ignore_rules_8cpp" startline="135" endline="166">getExcludesFileValue</references>
+        <references refid="classjuce_1_1File_1a515fa016b189068f365cc875e241e2a1">juce::File::getFullPathName</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="class_input_1af4915b1e6f1f77beea94bc7833406f31" compoundref="_input_8h" startline="28" endline="28">Input::maxBufferedReadSize</references>
+        <referencedby refid="class_ignore_rules_1a3bb45b2a5a25e25e2531a9e67bb41d4a" compoundref="_ignore_rules_8cpp" startline="581" endline="604">getGlobalExcludesFile</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ignore_rules_1a5e8842abaf654c1d4d104df8d60178cc" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::shared_ptr&lt; const <ref refid="class_ignore_rules" kindref="compound">IgnoreRules</ref> &gt;</type>
+        <definition>std::shared_ptr&lt; const IgnoreRules &gt; IgnoreRules::getLinkedRules</definition>
+        <argsstring>(const std::shared_ptr&lt; const IgnoreRules &gt; &amp;parentRules, const juce::File &amp;file, const juce::File &amp;newTopLevel, std::string newBasePrefix)</argsstring>
+        <name>getLinkedRules</name>
+        <qualifiedname>IgnoreRules::getLinkedRules</qualifiedname>
+        <param>
+          <type>const std::shared_ptr&lt; const <ref refid="class_ignore_rules" kindref="compound">IgnoreRules</ref> &gt; &amp;</type>
+          <declname>parentRules</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>newTopLevel</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>newBasePrefix</declname>
+        </param>
+        <briefdescription>
+<para>Creates one link of the rules chain, with the rules of one file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The new link points to parentRules, so no rule is copied. A file that does not exist gives a link with no rules.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parentRules</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The link that the new link sits on. Null for the first link. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The rules file to read. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newTopLevel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The directory that the patterns of the new link are relative to. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newBasePrefix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The prefix that the patterns carry, with a trailing slash, or empty.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The new link. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="160" column="28" bodyfile="IgnoreRules.cpp" bodystart="477" bodyend="485"/>
+        <referencedby refid="class_ignore_rules_1adb290642c69fdf8bd91bbd10f98f0e34" compoundref="_ignore_rules_8cpp" startline="441" endline="451">create</referencedby>
+        <referencedby refid="class_ignore_rules_1a96f9ace5c7bc08b29b6eae29cea18d57" compoundref="_ignore_rules_8cpp" startline="467" endline="475">getChildRules</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ignore_rules_1a99af96e196bf2d3df027b0649a746729" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string IgnoreRules::getTranslatedGlobRegex</definition>
+        <argsstring>(std::string_view pattern, bool isAnchored)</argsstring>
+        <name>getTranslatedGlobRegex</name>
+        <qualifiedname>IgnoreRules::getTranslatedGlobRegex</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>pattern</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isAnchored</declname>
+        </param>
+        <briefdescription>
+<para>Translates one glob pattern of a rules file into a regular expression. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An anchored pattern matches from the start of the relative path. A floating pattern matches after any slash. A leading <computeroutput>**</computeroutput> that is followed by a slash matches any number of folders. Each other glob step is translated by appendGlobStep. The expression ends at the end of the path.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pattern</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pattern, without its negation mark, directory marker, and anchor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isAnchored</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to anchor the pattern at the top level.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The regular expression source. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="176" column="24" bodyfile="IgnoreRules.cpp" bodystart="676" bodyend="697"/>
+        <references refid="structjam_1_1Format_1a03d027c362f8e8e10a4b632c3af60c63">jam::Format::appendBytes</references>
+        <references refid="_ignore_rules_8cpp_1ae583c565b9749f6e4fc6bcf232dda64d" compoundref="_ignore_rules_8cpp" startline="382" endline="402">appendGlobStep</references>
+        <references refid="structjam_1_1Format_1a764df6571428615011c88a96ddc542ca">jam::Format::appendUtf8</references>
+        <references refid="structChars_1a7e7e3ce98e86dd589854a50ef8b97898">Chars::dollarSign</references>
+        <references refid="_ignore_rules_8cpp_1a1c2194eb911e169377d519e62bbf5262" compoundref="_ignore_rules_8cpp" startline="244" endline="250">getDoubleStarStripped</references>
+        <references refid="_ignore_rules_8cpp_1a57401ea1a16619cc405470ee499f4b72" compoundref="_ignore_rules_8cpp" startline="239" endline="242">isDoubleStarPrefix</references>
+        <referencedby refid="class_ignore_rules_1ad22cecf492f2e3e4fd0d15b298a231f6" compoundref="_ignore_rules_8cpp" startline="621" endline="674">addRule</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_ignore_rules_1a3c2f30bbb57ade5f3989572ceefd251f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void IgnoreRules::addRulesFromFile</definition>
+        <argsstring>(const juce::File &amp;file)</argsstring>
+        <name>addRulesFromFile</name>
+        <qualifiedname>IgnoreRules::addRulesFromFile</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>file</declname>
+        </param>
+        <briefdescription>
+<para>Adds the rules of each line of a rules file to this link. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A file that does not exist, cannot be read, or holds binary bytes adds no rule.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The rules file to read. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="184" column="10" bodyfile="IgnoreRules.cpp" bodystart="699" bodyend="713"/>
+        <references refid="class_ignore_rules_1ad22cecf492f2e3e4fd0d15b298a231f6" compoundref="_ignore_rules_8cpp" startline="621" endline="674">addRule</references>
+        <references refid="class_text_document_1a47358a71de9f5463532cae5fe6e3ab62" compoundref="_text_document_8cpp" startline="111" endline="124">TextDocument::fromFile</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="class_input_1af4915b1e6f1f77beea94bc7833406f31" compoundref="_input_8h" startline="28" endline="28">Input::maxBufferedReadSize</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ignore_rules_1ad22cecf492f2e3e4fd0d15b298a231f6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void IgnoreRules::addRule</definition>
+        <argsstring>(std::string_view rawLine)</argsstring>
+        <name>addRule</name>
+        <qualifiedname>IgnoreRules::addRule</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>rawLine</declname>
+        </param>
+        <briefdescription>
+<para>Adds one rule from one line of a rules file, in the family that its pattern selects. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A literal name, or a literal after a leading folder wildcard <computeroutput>**</computeroutput>, goes to suffixes. An anchored literal path goes to relativePaths. An extension, with or without a leading folder wildcard, goes to extensions. Any other glob goes to others. A glob that does not compile adds no rule. A line without a pattern adds no rule.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rawLine</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line of the rules file, without its line ending. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="195" column="10" bodyfile="IgnoreRules.cpp" bodystart="621" bodyend="674"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="classjam_1_1LiteralSet_1a91ff1a65a867136d6c1dddc195e4c8ca">jam::LiteralSet::create</references>
+        <references refid="classjam_1_1RegExpProgram_1a324c03047f3569ccb1fa0e0ac5a3df52">jam::RegExpProgram::create</references>
+        <references refid="structChars_1a3cdea51e71a29f5e7ad5a196d5b949ae">Chars::dot</references>
+        <references refid="class_ignore_rules_1aa9b511fc2aa41644f73c7d9886024211" compoundref="_ignore_rules_8h" startline="253">extensions</references>
+        <references refid="_ignore_rules_8cpp_1ab736263d74eb8729e736bdb8f443c8dd" compoundref="_ignore_rules_8cpp" startline="228" endline="237">getAnchorStripped</references>
+        <references refid="_ignore_rules_8cpp_1a28a09085a1e7938027df9c38163891a1" compoundref="_ignore_rules_8cpp" startline="220" endline="226">getDirectoryMarkerStripped</references>
+        <references refid="_ignore_rules_8cpp_1a1c2194eb911e169377d519e62bbf5262" compoundref="_ignore_rules_8cpp" startline="244" endline="250">getDoubleStarStripped</references>
+        <references refid="_ignore_rules_8cpp_1a73839429920373825eb337569c44dbb3" compoundref="_ignore_rules_8cpp" startline="202" endline="218">getNegationStripped</references>
+        <references refid="class_ignore_rules_1a99af96e196bf2d3df027b0649a746729" compoundref="_ignore_rules_8cpp" startline="676" endline="697">getTranslatedGlobRegex</references>
+        <references refid="_ignore_rules_8cpp_1a1f346daa7b73c61a0e81316200f08532" compoundref="_ignore_rules_8cpp" startline="179" endline="200">getTrimmedPattern</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <references refid="structjam_1_1Utf8_1a7bf18a0d0c8e40aa9283bbb3c4bf1c9b">jam::Utf8::isValid</references>
+        <references refid="class_ignore_rules_1a895cf1630f0d9b8381a7c83e22e6bd48" compoundref="_ignore_rules_8h" startline="256">others</references>
+        <references refid="class_ignore_rules_1a609eff12ee8f2c92750a64269dfcb8f6" compoundref="_ignore_rules_8h" startline="250">relativePaths</references>
+        <references refid="class_ignore_rules_1a79738f1effbf569fa93076ba99293195" compoundref="_ignore_rules_8h" startline="240">rules</references>
+        <references refid="structChars_1a097900705df9e65db66e013ef2a11b0d">Chars::slash</references>
+        <references refid="class_ignore_rules_1a2019fe9376067b509202db01bfe9cb78" compoundref="_ignore_rules_8h" startline="247">suffixes</references>
+        <referencedby refid="class_ignore_rules_1a3c2f30bbb57ade5f3989572ceefd251f" compoundref="_ignore_rules_8cpp" startline="699" endline="713">addRulesFromFile</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ignore_rules_1affc23f94d61f123189beb2e9714464b9" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int IgnoreRules::getLastMatch</definition>
+        <argsstring>(std::string_view relativePath, bool isDirectory) const</argsstring>
+        <name>getLastMatch</name>
+        <qualifiedname>IgnoreRules::getLastMatch</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>relativePath</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isDirectory</declname>
+        </param>
+        <briefdescription>
+<para>Returns the index of the last rule of this link that matches the entry. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The rules are looked up by key first: the literal tails of the path at each folder boundary, the literal path, and the extension. Then the regex rules that come after the best key match are tested, from the last one backward. A path outside basePrefix matches no rule of this link.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>relativePath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Entry path relative to the ignore top level using <computeroutput>&apos;/&apos;</computeroutput> separators. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isDirectory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True when the entry is a directory.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The index of the last matching rule, or -1 when no rule of this link matches. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="208" column="9" bodyfile="IgnoreRules.cpp" bodystart="505" bodyend="541"/>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="class_ignore_rules_1a8cf52acbefaccd704dc0e6b2680ea488" compoundref="_ignore_rules_8h" startline="234">basePrefix</references>
+        <references refid="structChars_1a3cdea51e71a29f5e7ad5a196d5b949ae">Chars::dot</references>
+        <references refid="class_ignore_rules_1aa9b511fc2aa41644f73c7d9886024211" compoundref="_ignore_rules_8h" startline="253">extensions</references>
+        <references refid="class_ignore_rules_1a55f4846f30ff4185effc031176e30c23" compoundref="_ignore_rules_8cpp" startline="543" endline="562">getLastIndex</references>
+        <references refid="_ignore_rules_8cpp_1a6129ab8734adde18841ce879fcf888db" compoundref="_ignore_rules_8cpp" startline="419" endline="432">isRuleMatch</references>
+        <references refid="class_ignore_rules_1a895cf1630f0d9b8381a7c83e22e6bd48" compoundref="_ignore_rules_8h" startline="256">others</references>
+        <references refid="class_ignore_rules_1a609eff12ee8f2c92750a64269dfcb8f6" compoundref="_ignore_rules_8h" startline="250">relativePaths</references>
+        <references refid="class_ignore_rules_1a79738f1effbf569fa93076ba99293195" compoundref="_ignore_rules_8h" startline="240">rules</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <references refid="structChars_1a097900705df9e65db66e013ef2a11b0d">Chars::slash</references>
+        <references refid="class_ignore_rules_1a2019fe9376067b509202db01bfe9cb78" compoundref="_ignore_rules_8h" startline="247">suffixes</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ignore_rules_1a55f4846f30ff4185effc031176e30c23" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int IgnoreRules::getLastIndex</definition>
+        <argsstring>(const RuleIndexes &amp;indexes, std::string_view key, bool isDirectory) const</argsstring>
+        <name>getLastIndex</name>
+        <qualifiedname>IgnoreRules::getLastIndex</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ignore_rules_1ae9b48ad8c61f720a76201dd18fdfa1d6" kindref="member">RuleIndexes</ref> &amp;</type>
+          <declname>indexes</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isDirectory</declname>
+        </param>
+        <briefdescription>
+<para>Returns the index of the last rule of a key that applies to the entry type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A directory-only rule applies to a directory only, so it is skipped for any other entry.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>indexes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The key map to search: suffixes, relativePaths, or extensions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The literal key to look up. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isDirectory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True when the entry is a directory.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The index of the last rule of the key that applies, or -1 when none applies. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="220" column="9" bodyfile="IgnoreRules.cpp" bodystart="543" bodyend="562"/>
+        <references refid="classjam_1_1HashMap_1aeb3706b7cb8b6a92790644ed3eb240ea">jam::HashMap&lt; typename Key, typename Mapped, typename HashFn, typename KeyEqual, typename AllocatorOrContainer, typename Bucket, typename BucketContainer, bool IsSegmented &gt;::end</references>
+        <references refid="classjam_1_1HashMap_1aa8cd30d951846463b373eb6e82d96a3d">jam::HashMap&lt; typename Key, typename Mapped, typename HashFn, typename KeyEqual, typename AllocatorOrContainer, typename Bucket, typename BucketContainer, bool IsSegmented &gt;::find</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <references refid="class_ignore_rules_1a79738f1effbf569fa93076ba99293195" compoundref="_ignore_rules_8h" startline="240">rules</references>
+        <referencedby refid="class_ignore_rules_1affc23f94d61f123189beb2e9714464b9" compoundref="_ignore_rules_8cpp" startline="505" endline="541">getLastMatch</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ignore_rules_1ab9e4e7c05544d63f465e3a9d5374ef3a" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string IgnoreRules::getRelativePath</definition>
+        <argsstring>(const juce::File &amp;entry) const</argsstring>
+        <name>getRelativePath</name>
+        <qualifiedname>IgnoreRules::getRelativePath</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <briefdescription>
+<para>Returns the path of an entry relative to the top level, in display form. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>entry</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The entry to describe.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The relative path, or empty when the entry is the top level. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="IgnoreRules.h" line="228" column="17" bodyfile="IgnoreRules.cpp" bodystart="715" bodyend="721"/>
+        <references refid="struct_paths_1a0665b4c8b5e8442a35ff1d7feacefe92" compoundref="_paths_8cpp" startline="293" endline="303">Paths::getDisplayPath</references>
+        <references refid="classjuce_1_1File_1a773feb2495cdc3472c515264f02246e2">juce::File::getRelativePathFrom</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="class_ignore_rules_1ab6c309ee11408f8f565535c65ebcafc6" compoundref="_ignore_rules_8h" startline="231">topLevel</references>
+        <referencedby refid="class_ignore_rules_1a9e2341de36fd52c6ca7af8908b2ad59d" compoundref="_ignore_rules_8cpp" startline="487" endline="490">getRootRelativePrefix</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Evaluates hierarchical <computeroutput>.gitignore</computeroutput>, repository exclude, and global exclude rules. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The rules form a chain of links. Each link holds the rules of one file and points to its parent link. A child directory therefore copies none of the rules of its parents. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>IgnoreRules</label>
+        <link refid="class_ignore_rules"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>topLevel</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>basePrefix</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>parent</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>rules</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>extensions</edgelabel>
+          <edgelabel>relativePaths</edgelabel>
+          <edgelabel>suffixes</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>others</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>jam::Array&lt; IgnoreRules::Rule &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>jam::Array&lt; int &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>jam::HashMap&lt; std::string, jam::Array&lt; int &gt;, TransparentStringHash, std::equal_to&lt;&gt; &gt;</label>
+        <link refid="classjam_1_1HashMap" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+      </node>
+      <node id="7">
+        <label>juce::DummyCriticalSection</label>
+        <link refid="classjuce_1_1DummyCriticalSection" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="2">
+        <label>juce::File</label>
+        <link refid="classjuce_1_1File" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="4">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="5">
+        <label>std::shared_ptr&lt; const IgnoreRules &gt;</label>
+        <childnode refid="1" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::string</label>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="IgnoreRules.h" line="10" column="1" bodyfile="IgnoreRules.h" bodystart="11" bodyend="257"/>
+    <listofallmembers>
+      <member refid="class_ignore_rules_1ad22cecf492f2e3e4fd0d15b298a231f6" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>addRule</name></member>
+      <member refid="class_ignore_rules_1a3c2f30bbb57ade5f3989572ceefd251f" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>addRulesFromFile</name></member>
+      <member refid="class_ignore_rules_1a8cf52acbefaccd704dc0e6b2680ea488" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>basePrefix</name></member>
+      <member refid="class_ignore_rules_1adb290642c69fdf8bd91bbd10f98f0e34" prot="public" virt="non-virtual"><scope>IgnoreRules</scope><name>create</name></member>
+      <member refid="class_ignore_rules_1aa9b511fc2aa41644f73c7d9886024211" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>extensions</name></member>
+      <member refid="class_ignore_rules_1aba6ad4be1de90fd515d1fcdba358444d" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>getAncestorRules</name></member>
+      <member refid="class_ignore_rules_1a96f9ace5c7bc08b29b6eae29cea18d57" prot="public" virt="non-virtual"><scope>IgnoreRules</scope><name>getChildRules</name></member>
+      <member refid="class_ignore_rules_1a88889d032bb89ecdd3abcb48a459a5b4" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>getExcludesFileFromConfig</name></member>
+      <member refid="class_ignore_rules_1a3bb45b2a5a25e25e2531a9e67bb41d4a" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>getGlobalExcludesFile</name></member>
+      <member refid="class_ignore_rules_1a55f4846f30ff4185effc031176e30c23" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>getLastIndex</name></member>
+      <member refid="class_ignore_rules_1affc23f94d61f123189beb2e9714464b9" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>getLastMatch</name></member>
+      <member refid="class_ignore_rules_1a5e8842abaf654c1d4d104df8d60178cc" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>getLinkedRules</name></member>
+      <member refid="class_ignore_rules_1ab9e4e7c05544d63f465e3a9d5374ef3a" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>getRelativePath</name></member>
+      <member refid="class_ignore_rules_1a9e2341de36fd52c6ca7af8908b2ad59d" prot="public" virt="non-virtual"><scope>IgnoreRules</scope><name>getRootRelativePrefix</name></member>
+      <member refid="class_ignore_rules_1a49d70d264973e8ca307728e1d13b2902" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>getTopLevelDirectory</name></member>
+      <member refid="class_ignore_rules_1a99af96e196bf2d3df027b0649a746729" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>getTranslatedGlobRegex</name></member>
+      <member refid="class_ignore_rules_1a7b3e6f6f44407918514e58f63469035c" prot="public" virt="non-virtual"><scope>IgnoreRules</scope><name>IgnoreRules</name></member>
+      <member refid="class_ignore_rules_1ab2fc64a1fef039bf1f8e1942e33e99f1" prot="public" virt="non-virtual"><scope>IgnoreRules</scope><name>isIgnored</name></member>
+      <member refid="class_ignore_rules_1a895cf1630f0d9b8381a7c83e22e6bd48" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>others</name></member>
+      <member refid="class_ignore_rules_1ae9a1864a579e36a672b345ab65bdb9dc" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>parent</name></member>
+      <member refid="class_ignore_rules_1a609eff12ee8f2c92750a64269dfcb8f6" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>relativePaths</name></member>
+      <member refid="class_ignore_rules_1ae9b48ad8c61f720a76201dd18fdfa1d6" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>RuleIndexes</name></member>
+      <member refid="class_ignore_rules_1a79738f1effbf569fa93076ba99293195" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>rules</name></member>
+      <member refid="class_ignore_rules_1a2019fe9376067b509202db01bfe9cb78" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>suffixes</name></member>
+      <member refid="class_ignore_rules_1ab6c309ee11408f8f565535c65ebcafc6" prot="private" virt="non-virtual"><scope>IgnoreRules</scope><name>topLevel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

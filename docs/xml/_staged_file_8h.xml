@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="_staged_file_8h" kind="file" language="C++">
+    <compoundname>StagedFile.h</compoundname>
+    <includes local="no">JuceHeader.h</includes>
+    <includes refid="_line_diff_8h" local="yes">LineDiff.h</includes>
+    <includes refid="_text_document_8h" local="yes">TextDocument.h</includes>
+    <includedby refid="_staged_file_8cpp" local="yes">StagedFile.cpp</includedby>
+    <includedby refid="_transaction_8h" local="yes">Transaction.h</includedby>
+    <includedby refid="_undo_8cpp" local="yes">Undo.cpp</includedby>
+    <includedby refid="_undo_cache_8h" local="yes">UndoCache.h</includedby>
+    <incdepgraph>
+      <node id="5">
+        <label>Input.h</label>
+        <link refid="_input_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>LineDiff.h</label>
+        <link refid="_line_diff_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>StagedFile.h</label>
+        <link refid="_staged_file_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>TextDocument.h</label>
+        <link refid="_text_document_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>JuceHeader.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="6">
+        <label>CommandLine.cpp</label>
+        <link refid="_command_line_8cpp"/>
+      </node>
+      <node id="4">
+        <label>Lines.cpp</label>
+        <link refid="_lines_8cpp"/>
+      </node>
+      <node id="5">
+        <label>Lines.h</label>
+        <link refid="_lines_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Patch.cpp</label>
+        <link refid="_patch_8cpp"/>
+      </node>
+      <node id="8">
+        <label>Replace.cpp</label>
+        <link refid="_replace_8cpp"/>
+      </node>
+      <node id="2">
+        <label>StagedFile.cpp</label>
+        <link refid="_staged_file_8cpp"/>
+      </node>
+      <node id="1">
+        <label>StagedFile.h</label>
+        <link refid="_staged_file_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Transaction.cpp</label>
+        <link refid="_transaction_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Transaction.h</label>
+        <link refid="_transaction_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>Undo.cpp</label>
+        <link refid="_undo_8cpp"/>
+      </node>
+      <node id="12">
+        <label>UndoCache.cpp</label>
+        <link refid="_undo_cache_8cpp"/>
+      </node>
+      <node id="11">
+        <label>UndoCache.h</label>
+        <link refid="_undo_cache_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_staged_file" prot="public">StagedFile</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;JuceHeader.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_line_diff_8h" kindref="compound">LineDiff.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_text_document_8h" kindref="compound">TextDocument.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="class_staged_file" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_staged_file_1a7ee912febde968c3925687b812da3da6" kindref="member">StagedFile</ref></highlight></codeline>
+<codeline lineno="12"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_staged_file_1a7ee912febde968c3925687b812da3da6" kindref="member">StagedFile</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>newTargetFile,<sp/>std::unique_ptr&lt;TextDocument&gt;<sp/>newOriginalDocument,<sp/><ref refid="class_line_diff" kindref="compound">LineDiff</ref><sp/>newDiff,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>newBlobIndex);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_staged_file_1a7ee912febde968c3925687b812da3da6" kindref="member">StagedFile</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>newTargetFile,<sp/>std::unique_ptr&lt;TextDocument&gt;<sp/>newOriginalDocument,<sp/>std::unique_ptr&lt;TextDocument&gt;<sp/>newPlannedDocument,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>newIsExecutable,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>newIsExisting,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>newBlobIndex);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/><ref refid="class_staged_file_1a921b90af1f1fedb842d44f120f43ed16" kindref="member">getTargetFile</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string_view<sp/><ref refid="class_staged_file_1ac28f2a57e24a8fce9a47411321ef186b" kindref="member">getDisplayPath</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string_view<sp/><ref refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" kindref="member">getOriginalBytes</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string_view<sp/><ref refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" kindref="member">getPlannedBytes</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1a661f47297b3bed8748cd40927ac9ee3c" kindref="member">isExecutable</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1ac4fbb6d9dcc5d4a5358d52dae513bcc4" kindref="member">appendUnifiedDiff</ref><sp/>(std::string&amp;<sp/>output)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>std::pair&lt;juce::Result,<sp/>bool&gt;<sp/><ref refid="class_staged_file_1a8840cb0b0fc3e37729ae39270f2effd9" kindref="member">commit</ref><sp/>(std::string_view<sp/>transactionId)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>std::pair&lt;juce::Result,<sp/>bool&gt;<sp/><ref refid="class_staged_file_1aea7f45176b058229d77e02f039ce555a" kindref="member">undo</ref><sp/>(std::string_view<sp/>transactionId)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref><sp/><ref refid="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" kindref="member">restore</ref><sp/>(std::string_view<sp/>transactionId)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref><sp/><ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">getBytesStatus</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>file,<sp/>std::string_view<sp/>expectedBytes)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/>std::optional&lt;std::pair&lt;juce::Result,<sp/>bool&gt;&gt;<sp/><ref refid="class_staged_file_1ae39bc36d572b8eafe0b21e4fca631a81" kindref="member">swap</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>blobFile)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>std::pair&lt;juce::Result,<sp/>bool&gt;<sp/><ref refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" kindref="member">replace</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148" refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref><sp/><ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151" refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::unique_ptr&lt;TextDocument&gt;<sp/><ref refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" kindref="member">originalDocument</ref>;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154" refid="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::variant&lt;LineDiff,<sp/>std::unique_ptr&lt;TextDocument&gt;&gt;<sp/><ref refid="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" kindref="member">plannedContent</ref>;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157" refid="class_staged_file_1ac8eff0c463a6245672d84df443ae130f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1ac8eff0c463a6245672d84df443ae130f" kindref="member">executable</ref><sp/>{<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160" refid="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" kindref="member">existing</ref><sp/>{<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163" refid="class_staged_file_1afe43d67cccf72cf126d5c53ff6d328ac" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1afe43d67cccf72cf126d5c53ff6d328ac" kindref="member">blobIndex</ref><sp/>{<sp/>0<sp/>};</highlight></codeline>
+<codeline lineno="164"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="StagedFile.h"/>
+  </compounddef>
+</doxygen>

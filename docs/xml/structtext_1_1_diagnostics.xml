@@ -1,0 +1,1763 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="structtext_1_1_diagnostics" kind="struct" language="C++" prot="public">
+    <compoundname>text::Diagnostics</compoundname>
+    <includes refid="_text_8h" local="no">Text.h</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1abf399fe563d0595e079e96e777e57d82" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failCommandUnknown</definition>
+        <argsstring></argsstring>
+        <name>failCommandUnknown</name>
+        <qualifiedname>text::Diagnostics::failCommandUnknown</qualifiedname>
+        <initializer>{ &quot;unknown command: &quot;                                                           }</initializer>
+        <briefdescription>
+<para>CLI received an unrecognized verb. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="31" column="39" bodyfile="generated/Text.h" bodystart="31" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a54030ad642dee1157d22d8255503812d" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failFlagUnknown</definition>
+        <argsstring></argsstring>
+        <name>failFlagUnknown</name>
+        <qualifiedname>text::Diagnostics::failFlagUnknown</qualifiedname>
+        <initializer>{ &quot;unknown flag: &quot;                                                              }</initializer>
+        <briefdescription>
+<para>CLI received an unrecognized option flag. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="32" column="39" bodyfile="generated/Text.h" bodystart="32" bodyend="32"/>
+        <referencedby refid="class_arguments_1aaa4b6cf025b2b26d2d76b8fe6229a407" compoundref="_arguments_8cpp" startline="232" endline="260">Arguments::addShortFlags</referencedby>
+        <referencedby refid="class_arguments_1aa37cbb34cccee61aab5a62770cdffde7" compoundref="_arguments_8cpp" startline="184" endline="230">Arguments::addToken</referencedby>
+        <referencedby refid="_undo_8cpp_1aec31b2cc4f8900a66374a9b9378929f9" compoundref="_undo_8cpp" startline="36" endline="52">getListArgumentStatus</referencedby>
+        <referencedby refid="_lines_8cpp_1ae83c101fceb1b98a287b6afcb7c9bdc0" compoundref="_lines_8cpp" startline="217" endline="232">getMutateModeFlagStatus</referencedby>
+        <referencedby refid="_lines_8cpp_1a62ec325cc076717945392b4abe4c1207" compoundref="_lines_8cpp" startline="27" endline="38">getReadModeFlagStatus</referencedby>
+        <referencedby refid="_command_line_8cpp_1a3e0aebc0261a00384aa7f8595a05310b" compoundref="_command_line_8cpp" startline="78" endline="87">runGlobalOption</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ae99f2c066367db343a62b3e1dfc9698b" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failFlagValueMissing</definition>
+        <argsstring></argsstring>
+        <name>failFlagValueMissing</name>
+        <qualifiedname>text::Diagnostics::failFlagValueMissing</qualifiedname>
+        <initializer>{ &quot;flag requires a value: &quot;                                                     }</initializer>
+        <briefdescription>
+<para>Value-taking flag appeared with no argument. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="33" column="39" bodyfile="generated/Text.h" bodystart="33" bodyend="33"/>
+        <referencedby refid="class_arguments_1a35c2c7d96cb484047d2ad18c7784ea18" compoundref="_arguments_8cpp" startline="262" endline="278">Arguments::addValue</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1af1d73d28b47085d0fd50b72cd5a8d731" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failUnexpectedArgument</definition>
+        <argsstring></argsstring>
+        <name>failUnexpectedArgument</name>
+        <qualifiedname>text::Diagnostics::failUnexpectedArgument</qualifiedname>
+        <initializer>{ &quot;unexpected argument: &quot;                                                       }</initializer>
+        <briefdescription>
+<para>Command received an extra positional argument. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="34" column="39" bodyfile="generated/Text.h" bodystart="34" bodyend="34"/>
+        <referencedby refid="_undo_8cpp_1aec31b2cc4f8900a66374a9b9378929f9" compoundref="_undo_8cpp" startline="36" endline="52">getListArgumentStatus</referencedby>
+        <referencedby refid="_lines_8cpp_1ab80797cbc76a24431377c7f965e6e237" compoundref="_lines_8cpp" startline="234" endline="258">getMutateValidationStatus</referencedby>
+        <referencedby refid="_undo_8cpp_1aa6b075ab0a675ebec6566b8258bc169d" compoundref="_undo_8cpp" startline="97" endline="114">getSelectedTransactionId</referencedby>
+        <referencedby refid="struct_patch_1a8a248ff325ba668ab5c784d9e48a4c8c" compoundref="_patch_8cpp" startline="346" endline="358">Patch::run</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ad86264b279fcb97550e1eeacc334a8b1" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failMissingPath</definition>
+        <argsstring></argsstring>
+        <name>failMissingPath</name>
+        <qualifiedname>text::Diagnostics::failMissingPath</qualifiedname>
+        <initializer>{ &quot;missing path argument&quot;                                                       }</initializer>
+        <briefdescription>
+<para>File path argument was omitted. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="35" column="39" bodyfile="generated/Text.h" bodystart="35" bodyend="35"/>
+        <referencedby refid="class_text_document_1aa884c7c2239bbe4d2691e58bc32d52f3" compoundref="_text_document_8cpp" startline="98" endline="109">TextDocument::getInput</referencedby>
+        <referencedby refid="_lines_8cpp_1ab80797cbc76a24431377c7f965e6e237" compoundref="_lines_8cpp" startline="234" endline="258">getMutateValidationStatus</referencedby>
+        <referencedby refid="class_replace_1a8b722fac105d282ba2b5f272eb52e01c" compoundref="_replace_8cpp" startline="359" endline="413">Replace::run</referencedby>
+        <referencedby refid="class_fields_1a34cd865b987cf3e05cef34d3cd81ae8c" compoundref="_fields_8cpp" startline="298" endline="312">Fields::runStandardInput</referencedby>
+        <referencedby refid="class_lines_1a36fe96db47b1f75442e7f3814eb221d3" compoundref="_lines_8cpp" startline="125" endline="141">Lines::runStandardInput</referencedby>
+        <referencedby refid="_find_8cpp_1a52c2a6489204abd8f7c0508cbb0c236a" compoundref="_find_8cpp" startline="148" endline="185">runStdinFind</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a614879ccbad6f4edaf1a511bf5a2fa68" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failNotFound</definition>
+        <argsstring></argsstring>
+        <name>failNotFound</name>
+        <qualifiedname>text::Diagnostics::failNotFound</qualifiedname>
+        <initializer>{ &quot;not found: &quot;                                                                 }</initializer>
+        <briefdescription>
+<para>Target file or directory does not exist. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="36" column="39" bodyfile="generated/Text.h" bodystart="36" bodyend="36"/>
+        <referencedby refid="class_text_document_1a190a015fb1df67382b28f6046b64798e" compoundref="_text_document_8cpp" startline="27" endline="33">TextDocument::getReadFailure</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ad61c43e380bbb440fb4fcdd4f1070193" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failRead</definition>
+        <argsstring></argsstring>
+        <name>failRead</name>
+        <qualifiedname>text::Diagnostics::failRead</qualifiedname>
+        <initializer>{ &quot;cannot read &quot;                                                                }</initializer>
+        <briefdescription>
+<para>Target file or directory exists but cannot be read. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="37" column="39" bodyfile="generated/Text.h" bodystart="37" bodyend="37"/>
+        <referencedby refid="class_text_document_1a190a015fb1df67382b28f6046b64798e" compoundref="_text_document_8cpp" startline="27" endline="33">TextDocument::getReadFailure</referencedby>
+        <referencedby refid="struct_writer_1a93a55c6866ec6727d06e10b8d28de8ce" compoundref="_writer_8cpp" startline="118" endline="139">Writer::getWriteStatus</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1aab2ca72b97f88268549f297b9c623144" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failBinaryFile</definition>
+        <argsstring></argsstring>
+        <name>failBinaryFile</name>
+        <qualifiedname>text::Diagnostics::failBinaryFile</qualifiedname>
+        <initializer>{ &quot;binary file: &quot;                                                               }</initializer>
+        <briefdescription>
+<para>Target file contains binary bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="38" column="39" bodyfile="generated/Text.h" bodystart="38" bodyend="38"/>
+        <referencedby refid="class_text_document_1a987c083e3e278a16bc499822f82227f3" compoundref="_text_document_8cpp" startline="35" endline="38">TextDocument::getBinaryFailure</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a3e8b0d6df75bb2da26477c2ec159b8f4" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failHardLinkedFile</definition>
+        <argsstring></argsstring>
+        <name>failHardLinkedFile</name>
+        <qualifiedname>text::Diagnostics::failHardLinkedFile</qualifiedname>
+        <initializer>{ &quot;hard-linked file: &quot;                                                          }</initializer>
+        <briefdescription>
+<para>Target file has more than one hard link. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="39" column="39" bodyfile="generated/Text.h" bodystart="39" bodyend="39"/>
+        <referencedby refid="struct_writer_1a93a55c6866ec6727d06e10b8d28de8ce" compoundref="_writer_8cpp" startline="118" endline="139">Writer::getWriteStatus</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a286e63f1a91f017a6ff7611ad2f6227b" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failReadOnlyFile</definition>
+        <argsstring></argsstring>
+        <name>failReadOnlyFile</name>
+        <qualifiedname>text::Diagnostics::failReadOnlyFile</qualifiedname>
+        <initializer>{ &quot;read-only file: &quot;                                                            }</initializer>
+        <briefdescription>
+<para>Target file cannot be written. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="40" column="39" bodyfile="generated/Text.h" bodystart="40" bodyend="40"/>
+        <referencedby refid="struct_writer_1a93a55c6866ec6727d06e10b8d28de8ce" compoundref="_writer_8cpp" startline="118" endline="139">Writer::getWriteStatus</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ac004a158de0d07a69ca7b7a48a71d420" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failStandardInput</definition>
+        <argsstring></argsstring>
+        <name>failStandardInput</name>
+        <qualifiedname>text::Diagnostics::failStandardInput</qualifiedname>
+        <initializer>{ &quot;cannot read stdin&quot;                                                           }</initializer>
+        <briefdescription>
+<para>Standard input stream could not be read. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="41" column="39" bodyfile="generated/Text.h" bodystart="41" bodyend="41"/>
+        <referencedby refid="class_input_1a3fc492d5ac07056e1c68ec5a045455cb" compoundref="_input_8cpp" startline="88" endline="102">Input::create</referencedby>
+        <referencedby refid="class_search_1a3b438e868398151582358ee066342910" compoundref="_search_8cpp" startline="136" endline="200">Search::runStream</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1aaade5963d831130950986db9515d42ab" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failStandardOutput</definition>
+        <argsstring></argsstring>
+        <name>failStandardOutput</name>
+        <qualifiedname>text::Diagnostics::failStandardOutput</qualifiedname>
+        <initializer>{ &quot;cannot write stdout&quot;                                                         }</initializer>
+        <briefdescription>
+<para>Standard output stream could not be written. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="42" column="39" bodyfile="generated/Text.h" bodystart="42" bodyend="42"/>
+        <referencedby refid="class_standard_stream_1ab24f0d29cfe498a0e1984ff34342e77f" compoundref="_standard_stream_8cpp" startline="71" endline="89">StandardStream::writeAll</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ace35e4bfbe9bb8f4ed5b827ff4f1663f" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failIntegerInvalid</definition>
+        <argsstring></argsstring>
+        <name>failIntegerInvalid</name>
+        <qualifiedname>text::Diagnostics::failIntegerInvalid</qualifiedname>
+        <initializer>{ &quot;invalid integer for &quot;                                                        }</initializer>
+        <briefdescription>
+<para>Flag value is not a valid integer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="43" column="39" bodyfile="generated/Text.h" bodystart="43" bodyend="43"/>
+        <referencedby refid="class_arguments_1a4ea5fa0bd325fac6f266cf992e21afe1" compoundref="_arguments_8cpp" startline="124" endline="140">Arguments::getInteger</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ab33e6c4c683276eee2c0c0f27db4acd1" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failFindRequiresPattern</definition>
+        <argsstring></argsstring>
+        <name>failFindRequiresPattern</name>
+        <qualifiedname>text::Diagnostics::failFindRequiresPattern</qualifiedname>
+        <initializer>{ &quot;find requires &lt;pattern&gt;&quot;                                                     }</initializer>
+        <briefdescription>
+<para><ref refid="struct_find" kindref="compound">Find</ref> verb invoked without a pattern argument. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="44" column="39" bodyfile="generated/Text.h" bodystart="44" bodyend="44"/>
+        <referencedby refid="_find_8cpp_1a668feba8bb6d008bd3e4ae89f78e6e86" compoundref="_find_8cpp" startline="241" endline="282">runWithValidatedArguments</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1aaab7e37aedeaf42acfcc170128d407a7" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failReplaceRequiresArguments</definition>
+        <argsstring></argsstring>
+        <name>failReplaceRequiresArguments</name>
+        <qualifiedname>text::Diagnostics::failReplaceRequiresArguments</qualifiedname>
+        <initializer>{ &quot;replace requires &lt;find&gt; and &lt;with&gt;&quot;                                          }</initializer>
+        <briefdescription>
+<para><ref refid="class_replace" kindref="compound">Replace</ref> verb invoked without required arguments. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="45" column="39" bodyfile="generated/Text.h" bodystart="45" bodyend="45"/>
+        <referencedby refid="class_replace_1a8b722fac105d282ba2b5f272eb52e01c" compoundref="_replace_8cpp" startline="359" endline="413">Replace::run</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a4050de0aacdd23ff99d2dfb3c560e343" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failWithSourcesConflict</definition>
+        <argsstring></argsstring>
+        <name>failWithSourcesConflict</name>
+        <qualifiedname>text::Diagnostics::failWithSourcesConflict</qualifiedname>
+        <initializer>{ &quot;specify at most one of --with-stdin, --with-file&quot;                            }</initializer>
+        <briefdescription>
+<para>Mutually exclusive replacement input flags supplied together. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="46" column="39" bodyfile="generated/Text.h" bodystart="46" bodyend="46"/>
+        <referencedby refid="class_replace_1a8b722fac105d282ba2b5f272eb52e01c" compoundref="_replace_8cpp" startline="359" endline="413">Replace::run</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1aba304b81001c4ecc9fcc7bd5573895cd" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failLinesRequiresRange</definition>
+        <argsstring></argsstring>
+        <name>failLinesRequiresRange</name>
+        <qualifiedname>text::Diagnostics::failLinesRequiresRange</qualifiedname>
+        <initializer>{ &quot;lines requires &lt;range&gt;&quot;                                                      }</initializer>
+        <briefdescription>
+<para><ref refid="class_lines" kindref="compound">Lines</ref> verb invoked without a line range argument. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="47" column="39" bodyfile="generated/Text.h" bodystart="47" bodyend="47"/>
+        <referencedby refid="_lines_8cpp_1a73c290d1b3fd041578ffcae617d7aa9e" compoundref="_lines_8cpp" startline="40" endline="51">getValidatedLineRange</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1aeffbf09840f60235f5b3777b1b40a32c" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failFieldsRequiresSpec</definition>
+        <argsstring></argsstring>
+        <name>failFieldsRequiresSpec</name>
+        <qualifiedname>text::Diagnostics::failFieldsRequiresSpec</qualifiedname>
+        <initializer>{ &quot;fields requires &lt;spec&gt;&quot;                                                      }</initializer>
+        <briefdescription>
+<para><ref refid="class_fields" kindref="compound">Fields</ref> verb invoked without a field spec argument. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="48" column="39" bodyfile="generated/Text.h" bodystart="48" bodyend="48"/>
+        <referencedby refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" compoundref="_fields_8cpp" startline="374" endline="403">Fields::run</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ab780a82af9fdb4bcf8995c0c55625a8d" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failExcerptRequiresTarget</definition>
+        <argsstring></argsstring>
+        <name>failExcerptRequiresTarget</name>
+        <qualifiedname>text::Diagnostics::failExcerptRequiresTarget</qualifiedname>
+        <initializer>{ &quot;excerpt requires &lt;target&gt;&quot;                                                   }</initializer>
+        <briefdescription>
+<para><ref refid="struct_excerpt" kindref="compound">Excerpt</ref> verb invoked without a target and without stdin lines. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="49" column="39" bodyfile="generated/Text.h" bodystart="49" bodyend="49"/>
+        <referencedby refid="_excerpt_8cpp_1a2dc1d82cae55fa07daa9c320257455f0" compoundref="_excerpt_8cpp" startline="254" endline="279">getTargets</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a570df8b5677348dc9b1432842076555a" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::excerptEscaped</definition>
+        <argsstring></argsstring>
+        <name>excerptEscaped</name>
+        <qualifiedname>text::Diagnostics::excerptEscaped</qualifiedname>
+        <initializer>{ &quot; escaped&quot;                                                                    }</initializer>
+        <briefdescription>
+<para>Block header suffix for a block with an invalid UTF-8 line. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="50" column="39" bodyfile="generated/Text.h" bodystart="50" bodyend="50"/>
+        <referencedby refid="_excerpt_8cpp_1a78ba1342c0fac4e8828c042dd016a55f" compoundref="_excerpt_8cpp" startline="54" endline="81">appendBlock</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a52e1362acba57d71d1dd3e38832daf96" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::excerptNotFound</definition>
+        <argsstring></argsstring>
+        <name>excerptNotFound</name>
+        <qualifiedname>text::Diagnostics::excerptNotFound</qualifiedname>
+        <initializer>{ &quot;NOT FOUND&quot;                                                                   }</initializer>
+        <briefdescription>
+<para><ref refid="struct_excerpt" kindref="compound">Excerpt</ref> target file does not exist. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="51" column="39" bodyfile="generated/Text.h" bodystart="51" bodyend="51"/>
+        <referencedby refid="_excerpt_8cpp_1a021a6449f73b1d4393d9efe6859af478" compoundref="_excerpt_8cpp" startline="96" endline="115">getLoadedDocument</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a9b4cfabded760f165cab88e368c33a53" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::excerptUnreadable</definition>
+        <argsstring></argsstring>
+        <name>excerptUnreadable</name>
+        <qualifiedname>text::Diagnostics::excerptUnreadable</qualifiedname>
+        <initializer>{ &quot;UNREADABLE&quot;                                                                  }</initializer>
+        <briefdescription>
+<para><ref refid="struct_excerpt" kindref="compound">Excerpt</ref> target is a folder or cannot be read. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="52" column="39" bodyfile="generated/Text.h" bodystart="52" bodyend="52"/>
+        <referencedby refid="_excerpt_8cpp_1a021a6449f73b1d4393d9efe6859af478" compoundref="_excerpt_8cpp" startline="96" endline="115">getLoadedDocument</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a4bf077e926935950dd6e124d10d0eaa6" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::excerptBinary</definition>
+        <argsstring></argsstring>
+        <name>excerptBinary</name>
+        <qualifiedname>text::Diagnostics::excerptBinary</qualifiedname>
+        <initializer>{ &quot;BINARY&quot;                                                                      }</initializer>
+        <briefdescription>
+<para><ref refid="struct_excerpt" kindref="compound">Excerpt</ref> target holds a NUL byte. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="53" column="39" bodyfile="generated/Text.h" bodystart="53" bodyend="53"/>
+        <referencedby refid="_excerpt_8cpp_1a021a6449f73b1d4393d9efe6859af478" compoundref="_excerpt_8cpp" startline="96" endline="115">getLoadedDocument</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a8f108f7fea0bde3f3b4beea32fb25004" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::excerptEmpty</definition>
+        <argsstring></argsstring>
+        <name>excerptEmpty</name>
+        <qualifiedname>text::Diagnostics::excerptEmpty</qualifiedname>
+        <initializer>{ &quot;EMPTY&quot;                                                                       }</initializer>
+        <briefdescription>
+<para><ref refid="struct_excerpt" kindref="compound">Excerpt</ref> target is a 0-byte file. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="54" column="39" bodyfile="generated/Text.h" bodystart="54" bodyend="54"/>
+        <referencedby refid="_excerpt_8cpp_1a021a6449f73b1d4393d9efe6859af478" compoundref="_excerpt_8cpp" startline="96" endline="115">getLoadedDocument</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ab87b6a56d3381351221e5cf5884b68df" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::excerptNoMatch</definition>
+        <argsstring></argsstring>
+        <name>excerptNoMatch</name>
+        <qualifiedname>text::Diagnostics::excerptNoMatch</qualifiedname>
+        <initializer>{ &quot;NO MATCH&quot;                                                                    }</initializer>
+        <briefdescription>
+<para><ref refid="struct_excerpt" kindref="compound">Excerpt</ref> literal target matches no line. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="55" column="39" bodyfile="generated/Text.h" bodystart="55" bodyend="55"/>
+        <referencedby refid="_excerpt_8cpp_1a40b7628c90fc0862cc0c73f1ec0d4205" compoundref="_excerpt_8cpp" startline="117" endline="174">getLiteralBlock</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a2efaddf41daa2cd676ea78bf0983030b" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::excerptOutOfRange</definition>
+        <argsstring></argsstring>
+        <name>excerptOutOfRange</name>
+        <qualifiedname>text::Diagnostics::excerptOutOfRange</qualifiedname>
+        <initializer>{ &quot;OUT OF RANGE&quot;                                                                }</initializer>
+        <briefdescription>
+<para><ref refid="struct_excerpt" kindref="compound">Excerpt</ref> target line range is invalid or starts past the last line. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="56" column="39" bodyfile="generated/Text.h" bodystart="56" bodyend="56"/>
+        <referencedby refid="_excerpt_8cpp_1ae3674c5bf69324a12c5dd46924b9eeec" compoundref="_excerpt_8cpp" startline="212" endline="238">getRangeBlock</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a2c7c90576762d4254120ffb11d3b4a9f" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failPatternEmpty</definition>
+        <argsstring></argsstring>
+        <name>failPatternEmpty</name>
+        <qualifiedname>text::Diagnostics::failPatternEmpty</qualifiedname>
+        <initializer>{ &quot;pattern cannot be empty&quot;                                                     }</initializer>
+        <briefdescription>
+<para><ref refid="class_search" kindref="compound">Search</ref> or match pattern is an empty string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="57" column="39" bodyfile="generated/Text.h" bodystart="57" bodyend="57"/>
+        <referencedby refid="_pattern_8cpp_1a96e942ec0fcfc96c38d54cdf839de838" compoundref="_pattern_8cpp" startline="66" endline="76">getTextsValidity</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a461616587f99e6369ded329c53ab6d27" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failPatternNewline</definition>
+        <argsstring></argsstring>
+        <name>failPatternNewline</name>
+        <qualifiedname>text::Diagnostics::failPatternNewline</qualifiedname>
+        <initializer>{ &quot;pattern cannot contain a newline&quot;                                            }</initializer>
+        <briefdescription>
+<para><ref refid="class_search" kindref="compound">Search</ref> pattern holds a line ending. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="58" column="39" bodyfile="generated/Text.h" bodystart="58" bodyend="58"/>
+        <referencedby refid="_pattern_8cpp_1a96e942ec0fcfc96c38d54cdf839de838" compoundref="_pattern_8cpp" startline="66" endline="76">getTextsValidity</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a66eb3e99d3735cd0a878b197d5a8c8f6" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failRegexInvalid</definition>
+        <argsstring></argsstring>
+        <name>failRegexInvalid</name>
+        <qualifiedname>text::Diagnostics::failRegexInvalid</qualifiedname>
+        <initializer>{ &quot;invalid regex: &quot;                                                             }</initializer>
+        <briefdescription>
+<para>Regular expression failed to compile. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="59" column="39" bodyfile="generated/Text.h" bodystart="59" bodyend="59"/>
+        <referencedby refid="class_pattern_1a260f2a20cfce10496f1ec7c89e0ca4ee" compoundref="_pattern_8cpp" startline="212" endline="246">Pattern::create</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1af097dc530aec2efb0d616b9098a6e015" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failRegexSteps</definition>
+        <argsstring></argsstring>
+        <name>failRegexSteps</name>
+        <qualifiedname>text::Diagnostics::failRegexSteps</qualifiedname>
+        <initializer>{ &quot;regex exceeded its step limit: &quot;                                             }</initializer>
+        <briefdescription>
+<para>Regular expression matching stopped at the step limit. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="60" column="39" bodyfile="generated/Text.h" bodystart="60" bodyend="60"/>
+        <referencedby refid="class_pattern_1a2d772218b5d1493ec6c110dc67f500bd" compoundref="_pattern_8cpp" startline="287" endline="297">Pattern::findBacktracked</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a869f3e254d5593bad06267f44014a989" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failApplyRequiresExpect</definition>
+        <argsstring></argsstring>
+        <name>failApplyRequiresExpect</name>
+        <qualifiedname>text::Diagnostics::failApplyRequiresExpect</qualifiedname>
+        <initializer>{ &quot;--apply requires --expect &lt;N&gt;&quot;                                               }</initializer>
+        <briefdescription>
+<para>Apply flag supplied without expected edit count. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="61" column="39" bodyfile="generated/Text.h" bodystart="61" bodyend="61"/>
+        <referencedby refid="class_transaction_1a0b22d5fa86a8cf4b366ef9c8e091992a" compoundref="_transaction_8cpp" startline="62" endline="68">Transaction::getExpectStatus</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a5ec5db28e1f37e40c93d13118ca390f6" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failApplyStandardInput</definition>
+        <argsstring></argsstring>
+        <name>failApplyStandardInput</name>
+        <qualifiedname>text::Diagnostics::failApplyStandardInput</qualifiedname>
+        <initializer>{ &quot;cannot --apply on stdin; specify file paths&quot;                                 }</initializer>
+        <briefdescription>
+<para>Apply flag combined with standard input target. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="62" column="39" bodyfile="generated/Text.h" bodystart="62" bodyend="62"/>
+        <referencedby refid="class_replace_1aac7261f40ff9097449c4ebcde25b7f6f" compoundref="_replace_8cpp" startline="266" endline="295">Replace::runStandardInput</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1aeccd04f4626b0360c8710582d7d7b829" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failExpectMismatch</definition>
+        <argsstring></argsstring>
+        <name>failExpectMismatch</name>
+        <qualifiedname>text::Diagnostics::failExpectMismatch</qualifiedname>
+        <initializer>{ &quot;expected &quot;                                                                   }</initializer>
+        <briefdescription>
+<para>Planned edit count does not match <ndash/>expect value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="63" column="39" bodyfile="generated/Text.h" bodystart="63" bodyend="63"/>
+        <referencedby refid="class_transaction_1a5800eb9b3d14bded600e4b427b0917fd" compoundref="_transaction_8cpp" startline="70" endline="79">Transaction::getExpectMismatch</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1acd3fdc75f4f5d4a95666e79812bc12ec" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::foundEdits</definition>
+        <argsstring></argsstring>
+        <name>foundEdits</name>
+        <qualifiedname>text::Diagnostics::foundEdits</qualifiedname>
+        <initializer>{ &quot; edit(s), found &quot;                                                            }</initializer>
+        <briefdescription>
+<para>Connector before the number of edits found. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="64" column="39" bodyfile="generated/Text.h" bodystart="64" bodyend="64"/>
+        <referencedby refid="class_transaction_1a5800eb9b3d14bded600e4b427b0917fd" compoundref="_transaction_8cpp" startline="70" endline="79">Transaction::getExpectMismatch</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1af4b9fed437059aa6418e96afec82fc4c" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::nothingWritten</definition>
+        <argsstring></argsstring>
+        <name>nothingWritten</name>
+        <qualifiedname>text::Diagnostics::nothingWritten</qualifiedname>
+        <initializer>{ &quot;; nothing written&quot;                                                           }</initializer>
+        <briefdescription>
+<para>Suffix that says nothing was written. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="65" column="39" bodyfile="generated/Text.h" bodystart="65" bodyend="65"/>
+        <referencedby refid="class_transaction_1a5800eb9b3d14bded600e4b427b0917fd" compoundref="_transaction_8cpp" startline="70" endline="79">Transaction::getExpectMismatch</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1af22554a209dcc229eb7139d9073d967b" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failCaptureInvalid</definition>
+        <argsstring></argsstring>
+        <name>failCaptureInvalid</name>
+        <qualifiedname>text::Diagnostics::failCaptureInvalid</qualifiedname>
+        <initializer>{ &quot;invalid capture group $&quot;                                                     }</initializer>
+        <briefdescription>
+<para>Replacement references $k where k &gt; capture group count. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="66" column="39" bodyfile="generated/Text.h" bodystart="66" bodyend="66"/>
+        <referencedby refid="_replace_8cpp_1a3a9c9c9e9e6c5ed2fa4893707cf62102" compoundref="_replace_8cpp" startline="93" endline="102">getCaptureValidationStatus</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a5f8997e6ec22852b60b55cba2d4c4c20" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::inReplacement</definition>
+        <argsstring></argsstring>
+        <name>inReplacement</name>
+        <qualifiedname>text::Diagnostics::inReplacement</qualifiedname>
+        <initializer>{ &quot; in replacement&quot;                                                             }</initializer>
+        <briefdescription>
+<para>Suffix that names the replacement text. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="67" column="39" bodyfile="generated/Text.h" bodystart="67" bodyend="67"/>
+        <referencedby refid="_replace_8cpp_1a3a9c9c9e9e6c5ed2fa4893707cf62102" compoundref="_replace_8cpp" startline="93" endline="102">getCaptureValidationStatus</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a36a20d77239a5883e3322b3f14725b82" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failWrite</definition>
+        <argsstring></argsstring>
+        <name>failWrite</name>
+        <qualifiedname>text::Diagnostics::failWrite</qualifiedname>
+        <initializer>{ &quot;write failed for &quot;                                                           }</initializer>
+        <briefdescription>
+<para>Opens the failure of a file write. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="68" column="39" bodyfile="generated/Text.h" bodystart="68" bodyend="68"/>
+        <referencedby refid="class_transaction_1a9e9e14d173c40fc4767c6ad93ca14157" compoundref="_transaction_8cpp" startline="191" endline="217">Transaction::commit</referencedby>
+        <referencedby refid="struct_writer_1a4ebe3e06a186f29366e2d37b838a48b3" compoundref="_writer_8cpp" startline="109" endline="116">Writer::getWriteFailure</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1adcc4314752e2912c0f71eb28d97febaf" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::rolledBack</definition>
+        <argsstring></argsstring>
+        <name>rolledBack</name>
+        <qualifiedname>text::Diagnostics::rolledBack</qualifiedname>
+        <initializer>{ &quot;; rolled back&quot;                                                               }</initializer>
+        <briefdescription>
+<para>Suffix that says the previous state was restored. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="69" column="39" bodyfile="generated/Text.h" bodystart="69" bodyend="69"/>
+        <referencedby refid="struct_writer_1a4ebe3e06a186f29366e2d37b838a48b3" compoundref="_writer_8cpp" startline="109" endline="116">Writer::getWriteFailure</referencedby>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a28194be32561ce1e2e6a21514825e1c6" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failOverwriteFailed</definition>
+        <argsstring></argsstring>
+        <name>failOverwriteFailed</name>
+        <qualifiedname>text::Diagnostics::failOverwriteFailed</qualifiedname>
+        <initializer>{ &quot;overwrite failed&quot;                                                            }</initializer>
+        <briefdescription>
+<para>Temporary file failed to overwrite target file. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="70" column="39" bodyfile="generated/Text.h" bodystart="70" bodyend="70"/>
+        <referencedby refid="_undo_cache_8cpp_1a86a8a5f1175771f772d06fead966c695" compoundref="_undo_cache_8cpp" startline="289" endline="318">addPendingFile</referencedby>
+        <referencedby refid="struct_undo_cache_1a7b0c9fd799188881199db848a9d98182" compoundref="_undo_cache_8cpp" startline="320" endline="395">UndoCache::addTransaction</referencedby>
+        <referencedby refid="struct_undo_cache_1a1f1a2970b6804fd009fb10e68b7dc104" compoundref="_undo_cache_8cpp" startline="263" endline="287">UndoCache::claimTransaction</referencedby>
+        <referencedby refid="struct_writer_1a93a55c6866ec6727d06e10b8d28de8ce" compoundref="_writer_8cpp" startline="118" endline="139">Writer::getWriteStatus</referencedby>
+        <referencedby refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" compoundref="_staged_file_8cpp" startline="190" endline="224">StagedFile::replace</referencedby>
+        <referencedby refid="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" compoundref="_staged_file_8cpp" startline="107" endline="153">StagedFile::restore</referencedby>
+        <referencedby refid="_writer_8cpp_1a200d3d2de740e0a706470d7d0dc7b0b6" compoundref="_writer_8cpp" startline="13" endline="30">setBytes</referencedby>
+        <referencedby refid="_writer_8cpp_1aee909f8e1cacff3b7156189a72e57c9b" compoundref="_writer_8cpp" startline="5" endline="11">setMetadata</referencedby>
+        <referencedby refid="struct_writer_1ab755b151fbb007bdc588e602f6add415" compoundref="_writer_8cpp" startline="70" endline="90">Writer::toFile</referencedby>
+        <referencedby refid="struct_writer_1a81de3ecb6a9f1096dc42d51d7979b624" compoundref="_writer_8cpp" startline="92" endline="107">Writer::toStagedFile</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ac729cc0b65d2445d1d55f0dae89524aa" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::rollbackFailed</definition>
+        <argsstring></argsstring>
+        <name>rollbackFailed</name>
+        <qualifiedname>text::Diagnostics::rollbackFailed</qualifiedname>
+        <initializer>{ &quot;; rollback failed for &quot;                                                      }</initializer>
+        <briefdescription>
+<para>Connector before a file that could not be restored. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="71" column="39" bodyfile="generated/Text.h" bodystart="71" bodyend="71"/>
+        <referencedby refid="class_transaction_1a7ad137f0b8635f5805a3e9ed15211127" compoundref="_transaction_8cpp" startline="81" endline="92">Transaction::getRollbackFailure</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1aa8c262bc6d722543a364c5db5233f2a5" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::backupKept</definition>
+        <argsstring></argsstring>
+        <name>backupKept</name>
+        <qualifiedname>text::Diagnostics::backupKept</qualifiedname>
+        <initializer>{ &quot;; backup kept in &quot;                                                           }</initializer>
+        <briefdescription>
+<para>Connector before the folder that keeps the backup. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="72" column="39" bodyfile="generated/Text.h" bodystart="72" bodyend="72"/>
+        <referencedby refid="class_transaction_1a7ad137f0b8635f5805a3e9ed15211127" compoundref="_transaction_8cpp" startline="81" endline="92">Transaction::getRollbackFailure</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1aa12254f5bf17325a381ef2ed3c305835" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failLineRangeInvalid</definition>
+        <argsstring></argsstring>
+        <name>failLineRangeInvalid</name>
+        <qualifiedname>text::Diagnostics::failLineRangeInvalid</qualifiedname>
+        <initializer>{ &quot;invalid line range: &quot;                                                        }</initializer>
+        <briefdescription>
+<para>Line range string does not parse. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="73" column="39" bodyfile="generated/Text.h" bodystart="73" bodyend="73"/>
+        <referencedby refid="class_arguments_1a23ac72ff046b511034f46422ee50d56b" compoundref="_arguments_8cpp" startline="36" endline="69">Arguments::getLineRange</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a580335f6281267563821ed5ed57580d1" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failLineRangeBounds</definition>
+        <argsstring></argsstring>
+        <name>failLineRangeBounds</name>
+        <qualifiedname>text::Diagnostics::failLineRangeBounds</qualifiedname>
+        <initializer>{ &quot;line range &quot;                                                                 }</initializer>
+        <briefdescription>
+<para>Line range exceeds file line count. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="74" column="39" bodyfile="generated/Text.h" bodystart="74" bodyend="74"/>
+        <referencedby refid="class_lines_1a6ed5ebe10e10593329f6ac4ca2729831" compoundref="_lines_8cpp" startline="260" endline="283">Lines::getEffectiveMutationRange</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1abb2b8d69b8c79c1660778c49dc90700f" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::outOfBoundsFor</definition>
+        <argsstring></argsstring>
+        <name>outOfBoundsFor</name>
+        <qualifiedname>text::Diagnostics::outOfBoundsFor</qualifiedname>
+        <initializer>{ &quot; out of bounds for &quot;                                                         }</initializer>
+        <briefdescription>
+<para>Connector between a line range and its file. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="75" column="39" bodyfile="generated/Text.h" bodystart="75" bodyend="75"/>
+        <referencedby refid="class_lines_1a6ed5ebe10e10593329f6ac4ca2729831" compoundref="_lines_8cpp" startline="260" endline="283">Lines::getEffectiveMutationRange</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ad7620da34390c7d7eadd1dfdb2db70a0" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::linesOpen</definition>
+        <argsstring></argsstring>
+        <name>linesOpen</name>
+        <qualifiedname>text::Diagnostics::linesOpen</qualifiedname>
+        <initializer>{ &quot; (&quot;                                                                          }</initializer>
+        <briefdescription>
+<para>Opens the line count of a file. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="76" column="39" bodyfile="generated/Text.h" bodystart="76" bodyend="76"/>
+        <referencedby refid="class_lines_1a6ed5ebe10e10593329f6ac4ca2729831" compoundref="_lines_8cpp" startline="260" endline="283">Lines::getEffectiveMutationRange</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a150849b3c016cb0d40cad7db115788ed" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::linesClose</definition>
+        <argsstring></argsstring>
+        <name>linesClose</name>
+        <qualifiedname>text::Diagnostics::linesClose</qualifiedname>
+        <initializer>{ &quot; lines)&quot;                                                                     }</initializer>
+        <briefdescription>
+<para>Closes the line count of a file. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="77" column="39" bodyfile="generated/Text.h" bodystart="77" bodyend="77"/>
+        <referencedby refid="class_lines_1a6ed5ebe10e10593329f6ac4ca2729831" compoundref="_lines_8cpp" startline="260" endline="283">Lines::getEffectiveMutationRange</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a0b7abc4a1785d262d26c30aec58faaef" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failInsertSingleLine</definition>
+        <argsstring></argsstring>
+        <name>failInsertSingleLine</name>
+        <qualifiedname>text::Diagnostics::failInsertSingleLine</qualifiedname>
+        <initializer>{ &quot;insert requires a single line number, got &quot;                                  }</initializer>
+        <briefdescription>
+<para>Insert operation given a range instead of a single line. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="78" column="39" bodyfile="generated/Text.h" bodystart="78" bodyend="78"/>
+        <referencedby refid="_lines_8cpp_1ab80797cbc76a24431377c7f965e6e237" compoundref="_lines_8cpp" startline="234" endline="258">getMutateValidationStatus</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a1fbb3c595fb2a0aa3548c796d98e3259" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failMutateFlagsConflict</definition>
+        <argsstring></argsstring>
+        <name>failMutateFlagsConflict</name>
+        <qualifiedname>text::Diagnostics::failMutateFlagsConflict</qualifiedname>
+        <initializer>{ &quot;specify at most one of --delete, --replace, --insert-before, --insert-after&quot; }</initializer>
+        <briefdescription>
+<para>Mutually exclusive line edit flags supplied together. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="79" column="39" bodyfile="generated/Text.h" bodystart="79" bodyend="79"/>
+        <referencedby refid="_lines_8cpp_1a73c290d1b3fd041578ffcae617d7aa9e" compoundref="_lines_8cpp" startline="40" endline="51">getValidatedLineRange</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ab990829a90ffdfd5d181820df7d4764b" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failHashMismatch</definition>
+        <argsstring></argsstring>
+        <name>failHashMismatch</name>
+        <qualifiedname>text::Diagnostics::failHashMismatch</qualifiedname>
+        <initializer>{ &quot;hash mismatch at &quot;                                                           }</initializer>
+        <briefdescription>
+<para>Observed line hash does not match <ndash/>verify-hash value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="80" column="39" bodyfile="generated/Text.h" bodystart="80" bodyend="80"/>
+        <referencedby refid="class_text_document_1a2d9d60ddb00a9f9d57178f8b65783966" compoundref="_text_document_8cpp" startline="69" endline="84">TextDocument::getLineHashStatus</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a508b6b578bcc68e907f4b0d076f54213" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::hashExpected</definition>
+        <argsstring></argsstring>
+        <name>hashExpected</name>
+        <qualifiedname>text::Diagnostics::hashExpected</qualifiedname>
+        <initializer>{ &quot;: expected &quot;                                                                 }</initializer>
+        <briefdescription>
+<para>Connector before the expected hash. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="81" column="39" bodyfile="generated/Text.h" bodystart="81" bodyend="81"/>
+        <referencedby refid="class_text_document_1a2d9d60ddb00a9f9d57178f8b65783966" compoundref="_text_document_8cpp" startline="69" endline="84">TextDocument::getLineHashStatus</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a64e335112aa8d5c05c271b4265b1a519" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::hashFound</definition>
+        <argsstring></argsstring>
+        <name>hashFound</name>
+        <qualifiedname>text::Diagnostics::hashFound</qualifiedname>
+        <initializer>{ &quot;, got &quot;                                                                      }</initializer>
+        <briefdescription>
+<para>Connector before the observed hash. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="82" column="39" bodyfile="generated/Text.h" bodystart="82" bodyend="82"/>
+        <referencedby refid="class_text_document_1a2d9d60ddb00a9f9d57178f8b65783966" compoundref="_text_document_8cpp" startline="69" endline="84">TextDocument::getLineHashStatus</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a520d6f11a20746902cc5067a2b219e8b" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failFieldSpecInvalid</definition>
+        <argsstring></argsstring>
+        <name>failFieldSpecInvalid</name>
+        <qualifiedname>text::Diagnostics::failFieldSpecInvalid</qualifiedname>
+        <initializer>{ &quot;invalid field spec: &quot;                                                        }</initializer>
+        <briefdescription>
+<para>Field spec string does not parse. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="83" column="39" bodyfile="generated/Text.h" bodystart="83" bodyend="83"/>
+        <referencedby refid="_fields_8cpp_1a887d798a9c89ca7f9bbf401df9b1aa7c" compoundref="_fields_8cpp" startline="27" endline="51">getFieldIndices</referencedby>
+        <referencedby refid="_fields_8cpp_1a263d6766a4acde093fcdfd783e930bb0" compoundref="_fields_8cpp" startline="11" endline="25">getParsedFieldIndex</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a17c58ed22e900a7e63a2c507c0d26b09" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::fieldSpecZero</definition>
+        <argsstring></argsstring>
+        <name>fieldSpecZero</name>
+        <qualifiedname>text::Diagnostics::fieldSpecZero</qualifiedname>
+        <initializer>{ &quot; (1-based or negative)&quot;                                                      }</initializer>
+        <briefdescription>
+<para>Suffix for a field index of zero. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="84" column="39" bodyfile="generated/Text.h" bodystart="84" bodyend="84"/>
+        <referencedby refid="_fields_8cpp_1a263d6766a4acde093fcdfd783e930bb0" compoundref="_fields_8cpp" startline="11" endline="25">getParsedFieldIndex</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a811d5ec116f1bd3f0bb0726881b1b91f" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failDelimiterEmpty</definition>
+        <argsstring></argsstring>
+        <name>failDelimiterEmpty</name>
+        <qualifiedname>text::Diagnostics::failDelimiterEmpty</qualifiedname>
+        <initializer>{ &quot;delimiter cannot be empty&quot;                                                   }</initializer>
+        <briefdescription>
+<para>Field delimiter string is empty. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="85" column="39" bodyfile="generated/Text.h" bodystart="85" bodyend="85"/>
+        <referencedby refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" compoundref="_fields_8cpp" startline="374" endline="403">Fields::run</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a6c44c1439626108c2dc3d9f0373de5a1" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failFieldBounds</definition>
+        <argsstring></argsstring>
+        <name>failFieldBounds</name>
+        <qualifiedname>text::Diagnostics::failFieldBounds</qualifiedname>
+        <initializer>{ &quot;field &quot;                                                                      }</initializer>
+        <briefdescription>
+<para>Requested field index exceeds line field count under <ndash/>strict. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="86" column="39" bodyfile="generated/Text.h" bodystart="86" bodyend="86"/>
+        <referencedby refid="class_fields_1a886999ceb34ddbbfc30a48a466eeec11" compoundref="_fields_8cpp" startline="192" endline="223">Fields::appendFormattedLine</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a147ded53058353df7d13078b84a426c8" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::outOfRangeAt</definition>
+        <argsstring></argsstring>
+        <name>outOfRangeAt</name>
+        <qualifiedname>text::Diagnostics::outOfRangeAt</qualifiedname>
+        <initializer>{ &quot; out of range at &quot;                                                           }</initializer>
+        <briefdescription>
+<para>Connector before the position of the field. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="87" column="39" bodyfile="generated/Text.h" bodystart="87" bodyend="87"/>
+        <referencedby refid="class_fields_1a886999ceb34ddbbfc30a48a466eeec11" compoundref="_fields_8cpp" startline="192" endline="223">Fields::appendFormattedLine</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1adc7868b710cbcd4375d2bfe35d140a30" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failPatchRequiresInput</definition>
+        <argsstring></argsstring>
+        <name>failPatchRequiresInput</name>
+        <qualifiedname>text::Diagnostics::failPatchRequiresInput</qualifiedname>
+        <initializer>{ &quot;patch requires stdin or --file &lt;path&gt;&quot;                                       }</initializer>
+        <briefdescription>
+<para><ref refid="struct_patch" kindref="compound">Patch</ref> verb invoked with neither stdin nor <ndash/>file input. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="88" column="39" bodyfile="generated/Text.h" bodystart="88" bodyend="88"/>
+        <referencedby refid="_patch_8cpp_1aaff59351be09f94c257b3fe8f4dcebeb" compoundref="_patch_8cpp" startline="328" endline="339">runStandardInput</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1af8513b441b7547a15ce75c1d839e8a20" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failPatchJsonInvalid</definition>
+        <argsstring></argsstring>
+        <name>failPatchJsonInvalid</name>
+        <qualifiedname>text::Diagnostics::failPatchJsonInvalid</qualifiedname>
+        <initializer>{ &quot;invalid patch JSON: &quot;                                                        }</initializer>
+        <briefdescription>
+<para><ref refid="struct_patch" kindref="compound">Patch</ref> payload failed JSON parsing. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="89" column="39" bodyfile="generated/Text.h" bodystart="89" bodyend="89"/>
+        <referencedby refid="_patch_8cpp_1a314a2131f149eb0296c5b465792bbe05" compoundref="_patch_8cpp" startline="12" endline="28">getValidatedJsonDocument</referencedby>
+        <referencedby refid="_patch_validator_8cpp_1ae05ebc83baea870cdb7023ed83c5406d" compoundref="_patch_validator_8cpp" startline="270" endline="293">isValidPatchSchema</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a9f7bc08d580ae5d8d4bfae21f554d971" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failPatchRootNotArray</definition>
+        <argsstring></argsstring>
+        <name>failPatchRootNotArray</name>
+        <qualifiedname>text::Diagnostics::failPatchRootNotArray</qualifiedname>
+        <initializer>{ &quot;root must be an array&quot;                                                       }</initializer>
+        <briefdescription>
+<para><ref refid="struct_patch" kindref="compound">Patch</ref> JSON root value is not an array. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="90" column="39" bodyfile="generated/Text.h" bodystart="90" bodyend="90"/>
+        <referencedby refid="_patch_validator_8cpp_1ae05ebc83baea870cdb7023ed83c5406d" compoundref="_patch_validator_8cpp" startline="270" endline="293">isValidPatchSchema</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ab7270079d5a290bb4283f555708a14f6" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failPatchEntryInvalid</definition>
+        <argsstring></argsstring>
+        <name>failPatchEntryInvalid</name>
+        <qualifiedname>text::Diagnostics::failPatchEntryInvalid</qualifiedname>
+        <initializer>{ &quot;invalid patch entry &quot;                                                        }</initializer>
+        <briefdescription>
+<para><ref refid="struct_patch" kindref="compound">Patch</ref> entry at index failed validation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="91" column="39" bodyfile="generated/Text.h" bodystart="91" bodyend="91"/>
+        <referencedby refid="_patch_validator_8cpp_1aeeeb6e2ce1a8c6fd9516705dad8b3c0d" compoundref="_patch_validator_8cpp" startline="242" endline="245">getEntryError</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a5ebbc67dd498a83bd6f886ed86037cd5" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failPatchEntryNotObject</definition>
+        <argsstring></argsstring>
+        <name>failPatchEntryNotObject</name>
+        <qualifiedname>text::Diagnostics::failPatchEntryNotObject</qualifiedname>
+        <initializer>{ &quot;entry must be an object&quot;                                                     }</initializer>
+        <briefdescription>
+<para><ref refid="struct_patch" kindref="compound">Patch</ref> array element is not a JSON object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="92" column="39" bodyfile="generated/Text.h" bodystart="92" bodyend="92"/>
+        <referencedby refid="_patch_validator_8cpp_1aca2db10445904e0e31f5eea5bf707a72" compoundref="_patch_validator_8cpp" startline="247" endline="268">getEntryFailure</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ad2cd8b4aaa2df34fd8ddf7a22ea0ba3c" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failPatchEntryShape</definition>
+        <argsstring></argsstring>
+        <name>failPatchEntryShape</name>
+        <qualifiedname>text::Diagnostics::failPatchEntryShape</qualifiedname>
+        <initializer>{ &quot;unrecognized or conflicting operation fields&quot;                                }</initializer>
+        <briefdescription>
+<para><ref refid="struct_patch" kindref="compound">Patch</ref> entry lacks a single valid operation key. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="93" column="39" bodyfile="generated/Text.h" bodystart="93" bodyend="93"/>
+        <referencedby refid="_patch_validator_8cpp_1aca2db10445904e0e31f5eea5bf707a72" compoundref="_patch_validator_8cpp" startline="247" endline="268">getEntryFailure</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a0879df246c861775a25b88873e923347" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failPatchEntryFields</definition>
+        <argsstring></argsstring>
+        <name>failPatchEntryFields</name>
+        <qualifiedname>text::Diagnostics::failPatchEntryFields</qualifiedname>
+        <initializer>{ &quot;missing or invalid required fields&quot;                                          }</initializer>
+        <briefdescription>
+<para><ref refid="struct_patch" kindref="compound">Patch</ref> entry lacks required path, line, or text fields. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="94" column="39" bodyfile="generated/Text.h" bodystart="94" bodyend="94"/>
+        <referencedby refid="_patch_validator_8cpp_1aca2db10445904e0e31f5eea5bf707a72" compoundref="_patch_validator_8cpp" startline="247" endline="268">getEntryFailure</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a6eb6a7e410da78cb437dae23123772bb" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failPatchConflict</definition>
+        <argsstring></argsstring>
+        <name>failPatchConflict</name>
+        <qualifiedname>text::Diagnostics::failPatchConflict</qualifiedname>
+        <initializer>{ &quot;conflicting edits in &quot;                                                       }</initializer>
+        <briefdescription>
+<para>Multiple patch entries target the same file and line. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="95" column="39" bodyfile="generated/Text.h" bodystart="95" bodyend="95"/>
+        <referencedby refid="_patch_validator_8cpp_1a963f25dbbf70235f61fda2ab4a031547" compoundref="_patch_validator_8cpp" startline="468" endline="471">getConflictFailure</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a04e78c83a6bbe06c15acc9c88d132b70" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::atLine</definition>
+        <argsstring></argsstring>
+        <name>atLine</name>
+        <qualifiedname>text::Diagnostics::atLine</qualifiedname>
+        <initializer>{ &quot; at line &quot;                                                                   }</initializer>
+        <briefdescription>
+<para>Connector before the line number. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="96" column="39" bodyfile="generated/Text.h" bodystart="96" bodyend="96"/>
+        <referencedby refid="_patch_validator_8cpp_1a963f25dbbf70235f61fda2ab4a031547" compoundref="_patch_validator_8cpp" startline="468" endline="471">getConflictFailure</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ad804c5ac6eafe3cc4664825c961b4d83" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failPatchBounds</definition>
+        <argsstring></argsstring>
+        <name>failPatchBounds</name>
+        <qualifiedname>text::Diagnostics::failPatchBounds</qualifiedname>
+        <initializer>{ &quot;out of bounds in &quot;                                                           }</initializer>
+        <briefdescription>
+<para><ref refid="struct_patch" kindref="compound">Patch</ref> entry line range exceeds file bounds. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="97" column="39" bodyfile="generated/Text.h" bodystart="97" bodyend="97"/>
+        <referencedby refid="_patch_validator_8cpp_1a7c65ee1acbb5a61fabc41ac62c4c4358" compoundref="_patch_validator_8cpp" startline="371" endline="399">getBoundsAndHashResult</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a3b2d529ffe2b045eb5a5d8a06d4e2f7e" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::atEntry</definition>
+        <argsstring></argsstring>
+        <name>atEntry</name>
+        <qualifiedname>text::Diagnostics::atEntry</qualifiedname>
+        <initializer>{ &quot; at entry &quot;                                                                  }</initializer>
+        <briefdescription>
+<para>Connector before the entry index. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="98" column="39" bodyfile="generated/Text.h" bodystart="98" bodyend="98"/>
+        <referencedby refid="_patch_validator_8cpp_1a7c65ee1acbb5a61fabc41ac62c4c4358" compoundref="_patch_validator_8cpp" startline="371" endline="399">getBoundsAndHashResult</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1aa5051db90641c299154e14d131d58b19" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failUndoRequiresId</definition>
+        <argsstring></argsstring>
+        <name>failUndoRequiresId</name>
+        <qualifiedname>text::Diagnostics::failUndoRequiresId</qualifiedname>
+        <initializer>{ &quot;undo requires &lt;tx-id&gt;&quot;                                                       }</initializer>
+        <briefdescription>
+<para><ref refid="struct_undo" kindref="compound">Undo</ref> invoked without a transaction id. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="99" column="39" bodyfile="generated/Text.h" bodystart="99" bodyend="99"/>
+        <referencedby refid="_undo_8cpp_1aa6b075ab0a675ebec6566b8258bc169d" compoundref="_undo_8cpp" startline="97" endline="114">getSelectedTransactionId</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a0c7cbf43a306c796daf78e4c8e25f3ed" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failUndoUnknown</definition>
+        <argsstring></argsstring>
+        <name>failUndoUnknown</name>
+        <qualifiedname>text::Diagnostics::failUndoUnknown</qualifiedname>
+        <initializer>{ &quot;unknown transaction: &quot;                                                       }</initializer>
+        <briefdescription>
+<para>Requested undo transaction id does not exist. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="100" column="39" bodyfile="generated/Text.h" bodystart="100" bodyend="100"/>
+        <referencedby refid="struct_undo_cache_1a1f1a2970b6804fd009fb10e68b7dc104" compoundref="_undo_cache_8cpp" startline="263" endline="287">UndoCache::claimTransaction</referencedby>
+        <referencedby refid="_undo_8cpp_1aa6b075ab0a675ebec6566b8258bc169d" compoundref="_undo_8cpp" startline="97" endline="114">getSelectedTransactionId</referencedby>
+        <referencedby refid="struct_undo_cache_1a31cb46a432a0f5fb05a7eefd98687544" compoundref="_undo_cache_8cpp" startline="416" endline="429">UndoCache::getTransactionDocument</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a9b544a52e82a8ea882f1e834d6f19473" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failUndoPending</definition>
+        <argsstring></argsstring>
+        <name>failUndoPending</name>
+        <qualifiedname>text::Diagnostics::failUndoPending</qualifiedname>
+        <initializer>{ &quot;transaction &quot;                                                                }</initializer>
+        <briefdescription>
+<para>Requested transaction is not published, so another process can own it. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="101" column="39" bodyfile="generated/Text.h" bodystart="101" bodyend="101"/>
+        <referencedby refid="struct_undo_cache_1a1f1a2970b6804fd009fb10e68b7dc104" compoundref="_undo_cache_8cpp" startline="263" endline="287">UndoCache::claimTransaction</referencedby>
+        <referencedby refid="struct_undo_cache_1a5fb670f0e093ed1831561a421a29bd9e" compoundref="_undo_cache_8cpp" startline="255" endline="261">UndoCache::publishTransaction</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ac6afb226d5b938277c4728993432dda4" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::undoPending</definition>
+        <argsstring></argsstring>
+        <name>undoPending</name>
+        <qualifiedname>text::Diagnostics::undoPending</qualifiedname>
+        <initializer>{ &quot; is pending (pass --force to restore it)&quot;                                    }</initializer>
+        <briefdescription>
+<para>Suffix that explains the pending transaction. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="102" column="39" bodyfile="generated/Text.h" bodystart="102" bodyend="102"/>
+        <referencedby refid="struct_undo_cache_1a1f1a2970b6804fd009fb10e68b7dc104" compoundref="_undo_cache_8cpp" startline="263" endline="287">UndoCache::claimTransaction</referencedby>
+        <referencedby refid="struct_undo_cache_1a5fb670f0e093ed1831561a421a29bd9e" compoundref="_undo_cache_8cpp" startline="255" endline="261">UndoCache::publishTransaction</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a910b6073bc5e562cfad7f4353326d883" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failUndoCorrupt</definition>
+        <argsstring></argsstring>
+        <name>failUndoCorrupt</name>
+        <qualifiedname>text::Diagnostics::failUndoCorrupt</qualifiedname>
+        <initializer>{ &quot;corrupt transaction &quot;                                                        }</initializer>
+        <briefdescription>
+<para><ref refid="struct_undo" kindref="compound">Undo</ref> transaction metadata or blob is unreadable or malformed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="103" column="39" bodyfile="generated/Text.h" bodystart="103" bodyend="103"/>
+        <referencedby refid="_undo_cache_8cpp_1a95af52622af4c1e1a5d58f2e48b2c728" compoundref="_undo_cache_8cpp" startline="203" endline="211">getCorruptResult</referencedby>
+        <referencedby refid="_undo_8cpp_1aaa64c02f106afe3353cf8dd483803581" compoundref="_undo_8cpp" startline="116" endline="136">getVerifiedOriginalDocument</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a9474e475f650ec3a80b270126463f6cf" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failUndo</definition>
+        <argsstring></argsstring>
+        <name>failUndo</name>
+        <qualifiedname>text::Diagnostics::failUndo</qualifiedname>
+        <initializer>{ &quot;cannot undo &quot;                                                                }</initializer>
+        <briefdescription>
+<para>Opens the failure of an undo for a file. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="104" column="39" bodyfile="generated/Text.h" bodystart="104" bodyend="104"/>
+        <referencedby refid="_undo_8cpp_1add7b23e9d220a302b344c0537bd5f678" compoundref="_undo_8cpp" startline="153" endline="171">getCurrentState</referencedby>
+        <referencedby refid="_undo_8cpp_1ac27a59361a0d3ade9678087f85f3cf43" compoundref="_undo_8cpp" startline="138" endline="151">getExistingCurrentDocument</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ad6f93d659cb3a4abe354d826acebbec5" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::undoDrift</definition>
+        <argsstring></argsstring>
+        <name>undoDrift</name>
+        <qualifiedname>text::Diagnostics::undoDrift</qualifiedname>
+        <initializer>{ &quot; changed since apply (pass --force to overwrite)&quot;                            }</initializer>
+        <briefdescription>
+<para>Suffix for a file whose content changed after the transaction applied. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="105" column="39" bodyfile="generated/Text.h" bodystart="105" bodyend="105"/>
+        <referencedby refid="_undo_8cpp_1ac27a59361a0d3ade9678087f85f3cf43" compoundref="_undo_8cpp" startline="138" endline="151">getExistingCurrentDocument</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a3119ac6361fba8eea6995ccc0d7a5665" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::undoMissing</definition>
+        <argsstring></argsstring>
+        <name>undoMissing</name>
+        <qualifiedname>text::Diagnostics::undoMissing</qualifiedname>
+        <initializer>{ &quot; missing since apply (pass --force to overwrite)&quot;                            }</initializer>
+        <briefdescription>
+<para>Suffix for a file that is missing after the transaction applied. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="106" column="39" bodyfile="generated/Text.h" bodystart="106" bodyend="106"/>
+        <referencedby refid="_undo_8cpp_1add7b23e9d220a302b344c0537bd5f678" compoundref="_undo_8cpp" startline="153" endline="171">getCurrentState</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a01bbec4a9098be339d3d52dbd25dc56a" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failUndoWrite</definition>
+        <argsstring></argsstring>
+        <name>failUndoWrite</name>
+        <qualifiedname>text::Diagnostics::failUndoWrite</qualifiedname>
+        <initializer>{ &quot;undo failed for &quot;                                                            }</initializer>
+        <briefdescription>
+<para>Opens the failure of an undo write. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="107" column="39" bodyfile="generated/Text.h" bodystart="107" bodyend="107"/>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a535617faa243046c7358b9c76d30de80" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failChecksumMismatch</definition>
+        <argsstring></argsstring>
+        <name>failChecksumMismatch</name>
+        <qualifiedname>text::Diagnostics::failChecksumMismatch</qualifiedname>
+        <initializer>{ &quot;checksum mismatch&quot;                                                           }</initializer>
+        <briefdescription>
+<para>Written file hash does not match recorded pre-apply hash. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="108" column="39" bodyfile="generated/Text.h" bodystart="108" bodyend="108"/>
+        <referencedby refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" compoundref="_staged_file_8cpp" startline="155" endline="158">StagedFile::getBytesStatus</referencedby>
+        <referencedby refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" compoundref="_staged_file_8cpp" startline="190" endline="224">StagedFile::replace</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a9e30ba15aa165c21345a6159415077de" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::summaryDryRun</definition>
+        <argsstring></argsstring>
+        <name>summaryDryRun</name>
+        <qualifiedname>text::Diagnostics::summaryDryRun</qualifiedname>
+        <initializer>{ &quot;dry-run \xe2\x80\x94 &quot;                                                       }</initializer>
+        <briefdescription>
+<para>Opens the summary for a non-empty dry-run edit plan. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="109" column="39" bodyfile="generated/Text.h" bodystart="109" bodyend="109"/>
+        <referencedby refid="class_transaction_1a856c5ba1594da36d25ea8717f8a65ab0" compoundref="_transaction_8cpp" startline="140" endline="158">Transaction::runDryRun</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1aabb5729c1ee5b5020ca8f6d59a4b6056" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::editsIn</definition>
+        <argsstring></argsstring>
+        <name>editsIn</name>
+        <qualifiedname>text::Diagnostics::editsIn</qualifiedname>
+        <initializer>{ &quot; edit(s) in &quot;                                                                }</initializer>
+        <briefdescription>
+<para>Connector between the edit count and the file count. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="110" column="39" bodyfile="generated/Text.h" bodystart="110" bodyend="110"/>
+        <referencedby refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">Transaction::runCommit</referencedby>
+        <referencedby refid="class_transaction_1a856c5ba1594da36d25ea8717f8a65ab0" compoundref="_transaction_8cpp" startline="140" endline="158">Transaction::runDryRun</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a76851414dfceb1ce9d52c459f6c27354" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::expectToWrite</definition>
+        <argsstring></argsstring>
+        <name>expectToWrite</name>
+        <qualifiedname>text::Diagnostics::expectToWrite</qualifiedname>
+        <initializer>{ &quot; file(s); nothing written. Pass --apply --expect &quot;                           }</initializer>
+        <briefdescription>
+<para>Suffix of a dry-run summary, before the expected edit count. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="111" column="39" bodyfile="generated/Text.h" bodystart="111" bodyend="111"/>
+        <referencedby refid="class_transaction_1a856c5ba1594da36d25ea8717f8a65ab0" compoundref="_transaction_8cpp" startline="140" endline="158">Transaction::runDryRun</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1acb7620c1bb7d8f5957c653ff295a7f37" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::toWrite</definition>
+        <argsstring></argsstring>
+        <name>toWrite</name>
+        <qualifiedname>text::Diagnostics::toWrite</qualifiedname>
+        <initializer>{ &quot; to write.&quot;                                                                  }</initializer>
+        <briefdescription>
+<para>Closes a dry-run summary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="112" column="39" bodyfile="generated/Text.h" bodystart="112" bodyend="112"/>
+        <referencedby refid="class_transaction_1a856c5ba1594da36d25ea8717f8a65ab0" compoundref="_transaction_8cpp" startline="140" endline="158">Transaction::runDryRun</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a9fae66952208d1353eccdae98bc1ffdc" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::summaryDryRunZero</definition>
+        <argsstring></argsstring>
+        <name>summaryDryRunZero</name>
+        <qualifiedname>text::Diagnostics::summaryDryRunZero</qualifiedname>
+        <initializer>{ &quot;dry-run \xe2\x80\x94 0 edits; nothing written.&quot;                              }</initializer>
+        <briefdescription>
+<para>Summary emitted when dry-run produces zero edits. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="113" column="39" bodyfile="generated/Text.h" bodystart="113" bodyend="113"/>
+        <referencedby refid="class_transaction_1a856c5ba1594da36d25ea8717f8a65ab0" compoundref="_transaction_8cpp" startline="140" endline="158">Transaction::runDryRun</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a1f13e84fa3ea21c2dc8b087e2e6345cc" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::summaryApplied</definition>
+        <argsstring></argsstring>
+        <name>summaryApplied</name>
+        <qualifiedname>text::Diagnostics::summaryApplied</qualifiedname>
+        <initializer>{ &quot;applied &quot;                                                                    }</initializer>
+        <briefdescription>
+<para>Opens the summary emitted after edits are written and recorded. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="114" column="39" bodyfile="generated/Text.h" bodystart="114" bodyend="114"/>
+        <referencedby refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">Transaction::runCommit</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ababbf64022efe9c9f3bf29d186ef95a3" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::transactionOpen</definition>
+        <argsstring></argsstring>
+        <name>transactionOpen</name>
+        <qualifiedname>text::Diagnostics::transactionOpen</qualifiedname>
+        <initializer>{ &quot; file(s) (tx: &quot;                                                              }</initializer>
+        <briefdescription>
+<para>Connector before the transaction id. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="115" column="39" bodyfile="generated/Text.h" bodystart="115" bodyend="115"/>
+        <referencedby refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">Transaction::runCommit</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a0d8afb70eb902cf4e09cbd70e6d7354d" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::summaryAppliedZero</definition>
+        <argsstring></argsstring>
+        <name>summaryAppliedZero</name>
+        <qualifiedname>text::Diagnostics::summaryAppliedZero</qualifiedname>
+        <initializer>{ &quot;applied 0 edit(s) in 0 file(s)&quot;                                              }</initializer>
+        <briefdescription>
+<para>Summary emitted when apply runs with zero edits. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="116" column="39" bodyfile="generated/Text.h" bodystart="116" bodyend="116"/>
+        <referencedby refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">Transaction::runCommit</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a7e30bb522fb773ced4b7fe746f27d288" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::summaryNoContentChanged</definition>
+        <argsstring></argsstring>
+        <name>summaryNoContentChanged</name>
+        <qualifiedname>text::Diagnostics::summaryNoContentChanged</qualifiedname>
+        <initializer>{ &quot;no content changed; nothing written&quot;                                         }</initializer>
+        <briefdescription>
+<para>Summary emitted when planned edits produce identical file content. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="117" column="39" bodyfile="generated/Text.h" bodystart="117" bodyend="117"/>
+        <referencedby refid="class_transaction_1a38bd92e4b3ad03c10c31062880893ed3" compoundref="_transaction_8cpp" startline="160" endline="189">Transaction::runCommit</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a2969e1d3a39d0551d5624e7384988367" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::summaryDryRunUndo</definition>
+        <argsstring></argsstring>
+        <name>summaryDryRunUndo</name>
+        <qualifiedname>text::Diagnostics::summaryDryRunUndo</qualifiedname>
+        <initializer>{ &quot;dry-run undo (&quot;                                                              }</initializer>
+        <briefdescription>
+<para>Opens the summary emitted for dry-run undo preview. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="118" column="39" bodyfile="generated/Text.h" bodystart="118" bodyend="118"/>
+        <referencedby refid="_undo_8cpp_1a18d805b7b51c03251496e676125cdba6" compoundref="_undo_8cpp" startline="225" endline="234">runDryRun</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1aad9be415d0f921939bd60394e1ddea8c" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::undoFiles</definition>
+        <argsstring></argsstring>
+        <name>undoFiles</name>
+        <qualifiedname>text::Diagnostics::undoFiles</qualifiedname>
+        <initializer>{ &quot;) \xe2\x80\x94 &quot;                                                             }</initializer>
+        <briefdescription>
+<para>Connector between the transaction id and the file count. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="119" column="39" bodyfile="generated/Text.h" bodystart="119" bodyend="119"/>
+        <referencedby refid="_undo_8cpp_1a18d805b7b51c03251496e676125cdba6" compoundref="_undo_8cpp" startline="225" endline="234">runDryRun</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ac54a3d4c431cd2e8a4fce34e272dc388" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::applyToRestore</definition>
+        <argsstring></argsstring>
+        <name>applyToRestore</name>
+        <qualifiedname>text::Diagnostics::applyToRestore</qualifiedname>
+        <initializer>{ &quot; file(s); nothing written. Pass --apply to restore.&quot;                         }</initializer>
+        <briefdescription>
+<para>Suffix of a dry-run undo summary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="120" column="39" bodyfile="generated/Text.h" bodystart="120" bodyend="120"/>
+        <referencedby refid="_undo_8cpp_1a18d805b7b51c03251496e676125cdba6" compoundref="_undo_8cpp" startline="225" endline="234">runDryRun</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a196bd19b6c96bf6b66b055a04b229bd4" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::summaryUndone</definition>
+        <argsstring></argsstring>
+        <name>summaryUndone</name>
+        <qualifiedname>text::Diagnostics::summaryUndone</qualifiedname>
+        <initializer>{ &quot;undone &quot;                                                                     }</initializer>
+        <briefdescription>
+<para>Opens the summary emitted after undo restores recorded files. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="121" column="39" bodyfile="generated/Text.h" bodystart="121" bodyend="121"/>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ae6b799b0b3720d5d226d472af4fae374" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::undoneFiles</definition>
+        <argsstring></argsstring>
+        <name>undoneFiles</name>
+        <qualifiedname>text::Diagnostics::undoneFiles</qualifiedname>
+        <initializer>{ &quot; \xe2\x80\x94 restored &quot;                                                     }</initializer>
+        <briefdescription>
+<para>Connector before the restored file count. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="122" column="39" bodyfile="generated/Text.h" bodystart="122" bodyend="122"/>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a0ab5e40e09ad2d53f121a7e4ab64592d" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::files</definition>
+        <argsstring></argsstring>
+        <name>files</name>
+        <qualifiedname>text::Diagnostics::files</qualifiedname>
+        <initializer>{ &quot; file(s)&quot;                                                                    }</initializer>
+        <briefdescription>
+<para>Unit suffix for a file count. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="123" column="39" bodyfile="generated/Text.h" bodystart="123" bodyend="123"/>
+        <referencedby refid="_undo_8cpp_1aaf7040cae505958e7678e9ef21d77165" compoundref="_undo_8cpp" startline="54" endline="70">appendTransactionSummary</referencedby>
+        <referencedby refid="_undo_8cpp_1a98f763cca1c95ed515fb7f896d98831b" compoundref="_undo_8cpp" startline="236" endline="264">runApply</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1a0e3911825e9bcef7fc44cf737dc97180" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::diffNoNewline</definition>
+        <argsstring></argsstring>
+        <name>diffNoNewline</name>
+        <qualifiedname>text::Diagnostics::diffNoNewline</qualifiedname>
+        <initializer>{ &quot;\\ No newline at end of file\n&quot;                                              }</initializer>
+        <briefdescription>
+<para>Unified diff marker for missing trailing newline. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="124" column="39" bodyfile="generated/Text.h" bodystart="124" bodyend="124"/>
+        <referencedby refid="_line_diff_8cpp_1a2c9d5cf6c3b4c48e7ffcd5ca8f17071c" compoundref="_line_diff_8cpp" startline="218" endline="229">appendDiffLine</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structtext_1_1_diagnostics_1ab512eb088d69c58bf446dc0b815685dc" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>const char *const</type>
+        <definition>const char* const text::Diagnostics::failDirectory</definition>
+        <argsstring></argsstring>
+        <name>failDirectory</name>
+        <qualifiedname>text::Diagnostics::failDirectory</qualifiedname>
+        <initializer>{ &quot;directory is not an absolute folder path&quot;                                    }</initializer>
+        <briefdescription>
+<para>MCP call gave a folder that cannot be set as working folder. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="generated/Text.h" line="125" column="39" bodyfile="generated/Text.h" bodystart="125" bodyend="125"/>
+        <referencedby refid="class_tool_server_1a5f2b9b19c86c8ca77a47154adc5e7f50" compoundref="_tool_server_8cpp" startline="79" endline="127">ToolServer::runTool</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>saw message texts — errors, summaries, undo messages, and diff marker. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="generated/Text.h" line="29" column="1" bodyfile="generated/Text.h" bodystart="30" bodyend="126"/>
+    <listofallmembers>
+      <member refid="structtext_1_1_diagnostics_1ac54a3d4c431cd2e8a4fce34e272dc388" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>applyToRestore</name></member>
+      <member refid="structtext_1_1_diagnostics_1a3b2d529ffe2b045eb5a5d8a06d4e2f7e" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>atEntry</name></member>
+      <member refid="structtext_1_1_diagnostics_1a04e78c83a6bbe06c15acc9c88d132b70" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>atLine</name></member>
+      <member refid="structtext_1_1_diagnostics_1aa8c262bc6d722543a364c5db5233f2a5" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>backupKept</name></member>
+      <member refid="structtext_1_1_diagnostics_1a0e3911825e9bcef7fc44cf737dc97180" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>diffNoNewline</name></member>
+      <member refid="structtext_1_1_diagnostics_1aabb5729c1ee5b5020ca8f6d59a4b6056" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>editsIn</name></member>
+      <member refid="structtext_1_1_diagnostics_1a4bf077e926935950dd6e124d10d0eaa6" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>excerptBinary</name></member>
+      <member refid="structtext_1_1_diagnostics_1a8f108f7fea0bde3f3b4beea32fb25004" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>excerptEmpty</name></member>
+      <member refid="structtext_1_1_diagnostics_1a570df8b5677348dc9b1432842076555a" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>excerptEscaped</name></member>
+      <member refid="structtext_1_1_diagnostics_1ab87b6a56d3381351221e5cf5884b68df" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>excerptNoMatch</name></member>
+      <member refid="structtext_1_1_diagnostics_1a52e1362acba57d71d1dd3e38832daf96" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>excerptNotFound</name></member>
+      <member refid="structtext_1_1_diagnostics_1a2efaddf41daa2cd676ea78bf0983030b" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>excerptOutOfRange</name></member>
+      <member refid="structtext_1_1_diagnostics_1a9b4cfabded760f165cab88e368c33a53" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>excerptUnreadable</name></member>
+      <member refid="structtext_1_1_diagnostics_1a76851414dfceb1ce9d52c459f6c27354" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>expectToWrite</name></member>
+      <member refid="structtext_1_1_diagnostics_1a869f3e254d5593bad06267f44014a989" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failApplyRequiresExpect</name></member>
+      <member refid="structtext_1_1_diagnostics_1a5ec5db28e1f37e40c93d13118ca390f6" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failApplyStandardInput</name></member>
+      <member refid="structtext_1_1_diagnostics_1aab2ca72b97f88268549f297b9c623144" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failBinaryFile</name></member>
+      <member refid="structtext_1_1_diagnostics_1af22554a209dcc229eb7139d9073d967b" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failCaptureInvalid</name></member>
+      <member refid="structtext_1_1_diagnostics_1a535617faa243046c7358b9c76d30de80" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failChecksumMismatch</name></member>
+      <member refid="structtext_1_1_diagnostics_1abf399fe563d0595e079e96e777e57d82" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failCommandUnknown</name></member>
+      <member refid="structtext_1_1_diagnostics_1a811d5ec116f1bd3f0bb0726881b1b91f" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failDelimiterEmpty</name></member>
+      <member refid="structtext_1_1_diagnostics_1ab512eb088d69c58bf446dc0b815685dc" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failDirectory</name></member>
+      <member refid="structtext_1_1_diagnostics_1ab780a82af9fdb4bcf8995c0c55625a8d" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failExcerptRequiresTarget</name></member>
+      <member refid="structtext_1_1_diagnostics_1aeccd04f4626b0360c8710582d7d7b829" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failExpectMismatch</name></member>
+      <member refid="structtext_1_1_diagnostics_1a6c44c1439626108c2dc3d9f0373de5a1" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failFieldBounds</name></member>
+      <member refid="structtext_1_1_diagnostics_1a520d6f11a20746902cc5067a2b219e8b" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failFieldSpecInvalid</name></member>
+      <member refid="structtext_1_1_diagnostics_1aeffbf09840f60235f5b3777b1b40a32c" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failFieldsRequiresSpec</name></member>
+      <member refid="structtext_1_1_diagnostics_1ab33e6c4c683276eee2c0c0f27db4acd1" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failFindRequiresPattern</name></member>
+      <member refid="structtext_1_1_diagnostics_1a54030ad642dee1157d22d8255503812d" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failFlagUnknown</name></member>
+      <member refid="structtext_1_1_diagnostics_1ae99f2c066367db343a62b3e1dfc9698b" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failFlagValueMissing</name></member>
+      <member refid="structtext_1_1_diagnostics_1a3e8b0d6df75bb2da26477c2ec159b8f4" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failHardLinkedFile</name></member>
+      <member refid="structtext_1_1_diagnostics_1ab990829a90ffdfd5d181820df7d4764b" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failHashMismatch</name></member>
+      <member refid="structtext_1_1_diagnostics_1a0b7abc4a1785d262d26c30aec58faaef" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failInsertSingleLine</name></member>
+      <member refid="structtext_1_1_diagnostics_1ace35e4bfbe9bb8f4ed5b827ff4f1663f" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failIntegerInvalid</name></member>
+      <member refid="structtext_1_1_diagnostics_1a580335f6281267563821ed5ed57580d1" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failLineRangeBounds</name></member>
+      <member refid="structtext_1_1_diagnostics_1aa12254f5bf17325a381ef2ed3c305835" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failLineRangeInvalid</name></member>
+      <member refid="structtext_1_1_diagnostics_1aba304b81001c4ecc9fcc7bd5573895cd" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failLinesRequiresRange</name></member>
+      <member refid="structtext_1_1_diagnostics_1ad86264b279fcb97550e1eeacc334a8b1" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failMissingPath</name></member>
+      <member refid="structtext_1_1_diagnostics_1a1fbb3c595fb2a0aa3548c796d98e3259" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failMutateFlagsConflict</name></member>
+      <member refid="structtext_1_1_diagnostics_1a614879ccbad6f4edaf1a511bf5a2fa68" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failNotFound</name></member>
+      <member refid="structtext_1_1_diagnostics_1a28194be32561ce1e2e6a21514825e1c6" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failOverwriteFailed</name></member>
+      <member refid="structtext_1_1_diagnostics_1ad804c5ac6eafe3cc4664825c961b4d83" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failPatchBounds</name></member>
+      <member refid="structtext_1_1_diagnostics_1a6eb6a7e410da78cb437dae23123772bb" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failPatchConflict</name></member>
+      <member refid="structtext_1_1_diagnostics_1a0879df246c861775a25b88873e923347" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failPatchEntryFields</name></member>
+      <member refid="structtext_1_1_diagnostics_1ab7270079d5a290bb4283f555708a14f6" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failPatchEntryInvalid</name></member>
+      <member refid="structtext_1_1_diagnostics_1a5ebbc67dd498a83bd6f886ed86037cd5" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failPatchEntryNotObject</name></member>
+      <member refid="structtext_1_1_diagnostics_1ad2cd8b4aaa2df34fd8ddf7a22ea0ba3c" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failPatchEntryShape</name></member>
+      <member refid="structtext_1_1_diagnostics_1af8513b441b7547a15ce75c1d839e8a20" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failPatchJsonInvalid</name></member>
+      <member refid="structtext_1_1_diagnostics_1adc7868b710cbcd4375d2bfe35d140a30" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failPatchRequiresInput</name></member>
+      <member refid="structtext_1_1_diagnostics_1a9f7bc08d580ae5d8d4bfae21f554d971" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failPatchRootNotArray</name></member>
+      <member refid="structtext_1_1_diagnostics_1a2c7c90576762d4254120ffb11d3b4a9f" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failPatternEmpty</name></member>
+      <member refid="structtext_1_1_diagnostics_1a461616587f99e6369ded329c53ab6d27" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failPatternNewline</name></member>
+      <member refid="structtext_1_1_diagnostics_1ad61c43e380bbb440fb4fcdd4f1070193" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failRead</name></member>
+      <member refid="structtext_1_1_diagnostics_1a286e63f1a91f017a6ff7611ad2f6227b" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failReadOnlyFile</name></member>
+      <member refid="structtext_1_1_diagnostics_1a66eb3e99d3735cd0a878b197d5a8c8f6" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failRegexInvalid</name></member>
+      <member refid="structtext_1_1_diagnostics_1af097dc530aec2efb0d616b9098a6e015" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failRegexSteps</name></member>
+      <member refid="structtext_1_1_diagnostics_1aaab7e37aedeaf42acfcc170128d407a7" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failReplaceRequiresArguments</name></member>
+      <member refid="structtext_1_1_diagnostics_1ac004a158de0d07a69ca7b7a48a71d420" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failStandardInput</name></member>
+      <member refid="structtext_1_1_diagnostics_1aaade5963d831130950986db9515d42ab" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failStandardOutput</name></member>
+      <member refid="structtext_1_1_diagnostics_1a9474e475f650ec3a80b270126463f6cf" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failUndo</name></member>
+      <member refid="structtext_1_1_diagnostics_1a910b6073bc5e562cfad7f4353326d883" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failUndoCorrupt</name></member>
+      <member refid="structtext_1_1_diagnostics_1a9b544a52e82a8ea882f1e834d6f19473" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failUndoPending</name></member>
+      <member refid="structtext_1_1_diagnostics_1aa5051db90641c299154e14d131d58b19" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failUndoRequiresId</name></member>
+      <member refid="structtext_1_1_diagnostics_1a0c7cbf43a306c796daf78e4c8e25f3ed" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failUndoUnknown</name></member>
+      <member refid="structtext_1_1_diagnostics_1a01bbec4a9098be339d3d52dbd25dc56a" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failUndoWrite</name></member>
+      <member refid="structtext_1_1_diagnostics_1af1d73d28b47085d0fd50b72cd5a8d731" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failUnexpectedArgument</name></member>
+      <member refid="structtext_1_1_diagnostics_1a4050de0aacdd23ff99d2dfb3c560e343" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failWithSourcesConflict</name></member>
+      <member refid="structtext_1_1_diagnostics_1a36a20d77239a5883e3322b3f14725b82" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>failWrite</name></member>
+      <member refid="structtext_1_1_diagnostics_1a17c58ed22e900a7e63a2c507c0d26b09" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>fieldSpecZero</name></member>
+      <member refid="structtext_1_1_diagnostics_1a0ab5e40e09ad2d53f121a7e4ab64592d" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>files</name></member>
+      <member refid="structtext_1_1_diagnostics_1acd3fdc75f4f5d4a95666e79812bc12ec" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>foundEdits</name></member>
+      <member refid="structtext_1_1_diagnostics_1a508b6b578bcc68e907f4b0d076f54213" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>hashExpected</name></member>
+      <member refid="structtext_1_1_diagnostics_1a64e335112aa8d5c05c271b4265b1a519" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>hashFound</name></member>
+      <member refid="structtext_1_1_diagnostics_1a5f8997e6ec22852b60b55cba2d4c4c20" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>inReplacement</name></member>
+      <member refid="structtext_1_1_diagnostics_1a150849b3c016cb0d40cad7db115788ed" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>linesClose</name></member>
+      <member refid="structtext_1_1_diagnostics_1ad7620da34390c7d7eadd1dfdb2db70a0" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>linesOpen</name></member>
+      <member refid="structtext_1_1_diagnostics_1af4b9fed437059aa6418e96afec82fc4c" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>nothingWritten</name></member>
+      <member refid="structtext_1_1_diagnostics_1abb2b8d69b8c79c1660778c49dc90700f" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>outOfBoundsFor</name></member>
+      <member refid="structtext_1_1_diagnostics_1a147ded53058353df7d13078b84a426c8" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>outOfRangeAt</name></member>
+      <member refid="structtext_1_1_diagnostics_1ac729cc0b65d2445d1d55f0dae89524aa" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>rollbackFailed</name></member>
+      <member refid="structtext_1_1_diagnostics_1adcc4314752e2912c0f71eb28d97febaf" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>rolledBack</name></member>
+      <member refid="structtext_1_1_diagnostics_1a1f13e84fa3ea21c2dc8b087e2e6345cc" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>summaryApplied</name></member>
+      <member refid="structtext_1_1_diagnostics_1a0d8afb70eb902cf4e09cbd70e6d7354d" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>summaryAppliedZero</name></member>
+      <member refid="structtext_1_1_diagnostics_1a9e30ba15aa165c21345a6159415077de" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>summaryDryRun</name></member>
+      <member refid="structtext_1_1_diagnostics_1a2969e1d3a39d0551d5624e7384988367" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>summaryDryRunUndo</name></member>
+      <member refid="structtext_1_1_diagnostics_1a9fae66952208d1353eccdae98bc1ffdc" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>summaryDryRunZero</name></member>
+      <member refid="structtext_1_1_diagnostics_1a7e30bb522fb773ced4b7fe746f27d288" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>summaryNoContentChanged</name></member>
+      <member refid="structtext_1_1_diagnostics_1a196bd19b6c96bf6b66b055a04b229bd4" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>summaryUndone</name></member>
+      <member refid="structtext_1_1_diagnostics_1acb7620c1bb7d8f5957c653ff295a7f37" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>toWrite</name></member>
+      <member refid="structtext_1_1_diagnostics_1ababbf64022efe9c9f3bf29d186ef95a3" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>transactionOpen</name></member>
+      <member refid="structtext_1_1_diagnostics_1ad6f93d659cb3a4abe354d826acebbec5" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>undoDrift</name></member>
+      <member refid="structtext_1_1_diagnostics_1aad9be415d0f921939bd60394e1ddea8c" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>undoFiles</name></member>
+      <member refid="structtext_1_1_diagnostics_1a3119ac6361fba8eea6995ccc0d7a5665" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>undoMissing</name></member>
+      <member refid="structtext_1_1_diagnostics_1ae6b799b0b3720d5d226d472af4fae374" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>undoneFiles</name></member>
+      <member refid="structtext_1_1_diagnostics_1ac6afb226d5b938277c4728993432dda4" prot="public" virt="non-virtual"><scope>text::Diagnostics</scope><name>undoPending</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="struct_excerpt" kind="struct" language="C++" prot="public">
+    <compoundname>Excerpt</compoundname>
+    <includes refid="_excerpt_8h" local="no">Excerpt.h</includes>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="struct_excerpt_1a6bdbed64788f868c7abafe55a4386b0c" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_arguments" kindref="compound">Arguments</ref></type>
+        <definition>Arguments Excerpt::getArguments</definition>
+        <argsstring>(juce::Span&lt; const std::string_view &gt; argumentList)</argsstring>
+        <name>getArguments</name>
+        <qualifiedname>Excerpt::getArguments</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>argumentList</declname>
+        </param>
+        <briefdescription>
+<para>Parses the argument list of excerpt, with its value option. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>argumentList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The argument list, with the verb name at index 0.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The parsed arguments. Their status holds any parse failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Excerpt.h" line="18" column="22" bodyfile="Excerpt.cpp" bodystart="322" bodyend="325"/>
+      </memberdef>
+      <memberdef kind="function" id="struct_excerpt_1a3043ff600f0329d81b00cf9f3a08cbc0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref></type>
+        <definition>Stdio::Output Excerpt::run</definition>
+        <argsstring>(const Arguments &amp;arguments, const std::optional&lt; std::string &gt; &amp;input)</argsstring>
+        <name>run</name>
+        <qualifiedname>Excerpt::run</qualifiedname>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>const std::optional&lt; std::string &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+<para>Runs excerpt on parsed arguments. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A failed parse, an invalid context count, or no target is returned as a failure. A target that gives no lines prints its state in its own text, so one bad target does not hide the others.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>arguments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parsed arguments from getArguments. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The supplied input text, or nullopt for the process standard input. It holds one target per line when the arguments name none.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The exit code, the output documents, and the failures. The exit code is 0 when every target gives lines, 1 when one does not, and 2 on a failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Excerpt.h" line="32" column="26" bodyfile="Excerpt.cpp" bodystart="327" bodyend="348"/>
+        <references refid="classjuce_1_1Result_1ae932f12129866251b1136f1629255f1c">juce::Result::failed</references>
+        <references refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">Stdio::getFailure</references>
+        <references refid="class_arguments_1acf274eaba4f4163f63edb3057b110a97" compoundref="_arguments_8cpp" startline="113" endline="122">Arguments::getInteger</references>
+        <references refid="_excerpt_8cpp_1a588b070d25e6efc0b4fa3f9dd26a9c05" compoundref="_excerpt_8cpp" startline="281" endline="320">getOutput</references>
+        <references refid="class_arguments_1aafc4f159b8d3a4fed87eed8db972f472" compoundref="_arguments_8cpp" startline="101" endline="104">Arguments::getPositionals</references>
+        <references refid="class_arguments_1a46db95dfc7cc4ce7e8e7af84ceaaebf7" compoundref="_arguments_8cpp" startline="71" endline="74">Arguments::getStatus</references>
+        <references refid="_excerpt_8cpp_1a2dc1d82cae55fa07daa9c320257455f0" compoundref="_excerpt_8cpp" startline="254" endline="279">getTargets</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Prints verbatim lines of many targets in one call. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Each target is read in parallel, so one call replaces one command per target. </para>
+    </detaileddescription>
+    <location file="Excerpt.h" line="10" column="1" bodyfile="Excerpt.h" bodystart="11" bodyend="33"/>
+    <listofallmembers>
+      <member refid="struct_excerpt_1a6bdbed64788f868c7abafe55a4386b0c" prot="public" virt="non-virtual"><scope>Excerpt</scope><name>getArguments</name></member>
+      <member refid="struct_excerpt_1a3043ff600f0329d81b00cf9f3a08cbc0" prot="public" virt="non-virtual"><scope>Excerpt</scope><name>run</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

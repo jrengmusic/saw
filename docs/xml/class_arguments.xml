@@ -1,0 +1,1300 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="class_arguments" kind="class" language="C++" prot="public">
+    <compoundname>Arguments</compoundname>
+    <includes refid="_arguments_8h" local="no">Arguments.h</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_arguments_1a50ed1aff24255f1f80d6f9453af7d627" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>int</type>
+        <definition>int Arguments::openRangeEnd</definition>
+        <argsstring></argsstring>
+        <name>openRangeEnd</name>
+        <qualifiedname>Arguments::openRangeEnd</qualifiedname>
+        <initializer>{ std::numeric_limits&lt;int&gt;::max() }</initializer>
+        <briefdescription>
+<para>Sentinel exclusive end value representing an open-ended line range. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="11" column="26" bodyfile="Arguments.h" bodystart="11" bodyend="11"/>
+        <referencedby refid="class_lines_1a6ed5ebe10e10593329f6ac4ca2729831" compoundref="_lines_8cpp" startline="260" endline="283">Lines::getEffectiveMutationRange</referencedby>
+        <referencedby refid="_patch_validator_8cpp_1a4f80dd2365569eb5784f3a385796affb" compoundref="_patch_validator_8cpp" startline="13" endline="32">getIntValue</referencedby>
+        <referencedby refid="class_arguments_1a23ac72ff046b511034f46422ee50d56b" compoundref="_arguments_8cpp" startline="36" endline="69">getLineRange</referencedby>
+        <referencedby refid="class_arguments_1a86c8250e062cb76f8cacffc60aa35fed" compoundref="_arguments_8cpp" startline="142" endline="148">getLineRangeFilter</referencedby>
+        <referencedby refid="class_lines_1a018c05bb56412083e4c72a12a78ed1c2" compoundref="_lines_8cpp" startline="60" endline="111">Lines::getOutputDocuments</referencedby>
+        <referencedby refid="_excerpt_8cpp_1a7baff429000509135fc6882d37e6adfb" compoundref="_excerpt_8cpp" startline="197" endline="210">getSpan</referencedby>
+        <referencedby refid="class_search_1ae18d5f84e2075fb4e462fee9c33d8e6e" compoundref="_search_8cpp" startline="395" endline="408">Search::isChunkedSearch</referencedby>
+        <referencedby refid="class_search_1a996ee99c13776c969e03cc1f81d36df4" compoundref="_search_8cpp" startline="91" endline="116">Search::run</referencedby>
+        <referencedby refid="class_search_1a0c0e0860f414ba38bb3439d1d69dbf60" compoundref="_search_8cpp" startline="202" endline="297">Search::runLines</referencedby>
+        <referencedby refid="class_search_1a3b438e868398151582358ee066342910" compoundref="_search_8cpp" startline="136" endline="200">Search::runStream</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_arguments_1a7a6b4e4e77e7747772a1c91cb7d4a29e" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>int</type>
+        <definition>int Arguments::firstOptionIndex</definition>
+        <argsstring></argsstring>
+        <name>firstOptionIndex</name>
+        <qualifiedname>Arguments::firstOptionIndex</qualifiedname>
+        <initializer>{ 1 }</initializer>
+        <briefdescription>
+<para>Index of the first argument after the verb. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The verb name is at index 0 of a verb&apos;s argument list, so the options start at index 1. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="17" column="26" bodyfile="Arguments.h" bodystart="17" bodyend="17"/>
+        <referencedby refid="class_arguments_1aeb430274c48bc074aae86bd0ddd92250" compoundref="_arguments_8cpp" startline="5" endline="17">Arguments</referencedby>
+        <referencedby refid="_main_8cpp_1a859ac27c3dac2f4ba8dc5402a3e94f87" compoundref="_main_8cpp" startline="27" endline="30">isMcp</referencedby>
+        <referencedby refid="_command_line_8cpp_1a3e0aebc0261a00384aa7f8595a05310b" compoundref="_command_line_8cpp" startline="78" endline="87">runGlobalOption</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_arguments_1a84a1486aad2d066c8d254a83584f8085" prot="private" static="no" mutable="no">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result Arguments::status</definition>
+        <argsstring></argsstring>
+        <name>status</name>
+        <qualifiedname>Arguments::status</qualifiedname>
+        <initializer>{ <ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>() }</initializer>
+        <briefdescription>
+<para>The first parse failure, or ok. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Later failures do not replace it. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="257" column="18" bodyfile="Arguments.h" bodystart="257" bodyend="257"/>
+        <referencedby refid="class_arguments_1a86a916f7746417cb727c596d68ff0b0b" compoundref="_arguments_8cpp" startline="280" endline="286">addFailure</referencedby>
+        <referencedby refid="class_arguments_1a46db95dfc7cc4ce7e8e7af84ceaaebf7" compoundref="_arguments_8cpp" startline="71" endline="74">getStatus</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_arguments_1a86be8c1db2e04d6f6862a10d1b2baafd" prot="private" static="no" mutable="no">
+        <type><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; std::string_view &gt;</type>
+        <definition>jam::Array&lt;std::string_view&gt; Arguments::matchedFlags</definition>
+        <argsstring></argsstring>
+        <name>matchedFlags</name>
+        <qualifiedname>Arguments::matchedFlags</qualifiedname>
+        <briefdescription>
+<para>The option texts of the flags that were matched, in the order matched. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="260" column="16" bodyfile="Arguments.h" bodystart="260" bodyend="-1"/>
+        <referencedby refid="class_arguments_1aa37cbb34cccee61aab5a62770cdffde7" compoundref="_arguments_8cpp" startline="184" endline="230">addToken</referencedby>
+        <referencedby refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">contains</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_arguments_1ac177a0d2e5442b61d078300ebf979d43" prot="private" static="no" mutable="no">
+        <type><ref refid="classjam_1_1HashMap" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::HashMap</ref>&lt; std::string_view, <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; std::string_view &gt; &gt;</type>
+        <definition>jam::HashMap&lt;std::string_view, jam::Array&lt;std::string_view&gt; &gt; Arguments::matchedValues</definition>
+        <argsstring></argsstring>
+        <name>matchedValues</name>
+        <qualifiedname>Arguments::matchedValues</qualifiedname>
+        <briefdescription>
+<para>The values of each value option, keyed by the option text. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Every value is kept, in order. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="263" column="18" bodyfile="Arguments.h" bodystart="263" bodyend="-1"/>
+        <referencedby refid="class_arguments_1a35c2c7d96cb484047d2ad18c7784ea18" compoundref="_arguments_8cpp" startline="262" endline="278">addValue</referencedby>
+        <referencedby refid="class_arguments_1a08e73bda40a9285c711101ab7b1ff024" compoundref="_arguments_8cpp" startline="87" endline="99">getValues</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_arguments_1af777619e4b30d02292bd06b4fe9d507b" prot="private" static="no" mutable="no">
+        <type><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; std::string_view &gt;</type>
+        <definition>jam::Array&lt;std::string_view&gt; Arguments::positionals</definition>
+        <argsstring></argsstring>
+        <name>positionals</name>
+        <qualifiedname>Arguments::positionals</qualifiedname>
+        <briefdescription>
+<para>The arguments that are neither options nor option values, in order, including those after <computeroutput>--</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="266" column="16" bodyfile="Arguments.h" bodystart="266" bodyend="-1"/>
+        <referencedby refid="class_arguments_1aa37cbb34cccee61aab5a62770cdffde7" compoundref="_arguments_8cpp" startline="184" endline="230">addToken</referencedby>
+        <referencedby refid="class_arguments_1aeb430274c48bc074aae86bd0ddd92250" compoundref="_arguments_8cpp" startline="5" endline="17">Arguments</referencedby>
+        <referencedby refid="class_arguments_1aafc4f159b8d3a4fed87eed8db972f472" compoundref="_arguments_8cpp" startline="101" endline="104">getPositionals</referencedby>
+        <referencedby refid="class_arguments_1aed4d3b9589aa76a3670c86f8565bd4ad" compoundref="_arguments_8cpp" startline="106" endline="111">getPositionals</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_arguments_1aeb430274c48bc074aae86bd0ddd92250" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Arguments::Arguments</definition>
+        <argsstring>(juce::Span&lt; const std::string_view &gt; arguments, std::initializer_list&lt; std::string_view &gt; flagOptions, std::initializer_list&lt; std::string_view &gt; valueOptions, std::initializer_list&lt; std::string_view &gt; optionalValueOptions)</argsstring>
+        <name>Arguments</name>
+        <qualifiedname>Arguments::Arguments</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>std::initializer_list&lt; std::string_view &gt;</type>
+          <declname>flagOptions</declname>
+        </param>
+        <param>
+          <type>std::initializer_list&lt; std::string_view &gt;</type>
+          <declname>valueOptions</declname>
+        </param>
+        <param>
+          <type>std::initializer_list&lt; std::string_view &gt;</type>
+          <declname>optionalValueOptions</declname>
+        </param>
+        <briefdescription>
+<para>Parses the argument list from firstOptionIndex into flags, values, and positionals. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A <computeroutput>--</computeroutput> argument ends the options. Each argument after it is positional. An unknown flag or a missing value is recorded in <ref refid="class_arguments_1a46db95dfc7cc4ce7e8e7af84ceaaebf7" kindref="member">getStatus()</ref>. An optional-value option takes the next argument. When <computeroutput>--stdin</computeroutput> is the next argument, or was already matched, the optional-value option acts as a flag.</para>
+<para>Every stored value and positional is a view into the argument list, or into an option text. The argument list must outlive this object.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>arguments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The argument list, with the verb name at index 0. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>flagOptions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Options that take no value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>valueOptions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Options that take the next argument as their value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>optionalValueOptions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Options that take the next argument as their value, unless <computeroutput>--stdin</computeroutput> applies. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="34" column="5" bodyfile="Arguments.cpp" bodystart="5" bodyend="17"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="class_arguments_1aa37cbb34cccee61aab5a62770cdffde7" compoundref="_arguments_8cpp" startline="184" endline="230">addToken</references>
+        <references refid="structChars_1a375464038832537822fff69be3285e32">Chars::doubleDash</references>
+        <references refid="class_arguments_1a7a6b4e4e77e7747772a1c91cb7d4a29e" compoundref="_arguments_8h" startline="17" endline="17">firstOptionIndex</references>
+        <references refid="class_arguments_1af777619e4b30d02292bd06b4fe9d507b" compoundref="_arguments_8h" startline="266">positionals</references>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1a46db95dfc7cc4ce7e8e7af84ceaaebf7" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>const <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref> &amp;</type>
+        <definition>const juce::Result &amp; Arguments::getStatus</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>getStatus</name>
+        <qualifiedname>Arguments::getStatus</qualifiedname>
+        <briefdescription>
+<para>Returns the parse status recorded during construction. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Result indicating success, unknown flag, or missing option value. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="72" column="24" bodyfile="Arguments.cpp" bodystart="71" bodyend="74"/>
+        <references refid="class_arguments_1a84a1486aad2d066c8d254a83584f8085" compoundref="_arguments_8h" startline="257" endline="257">status</references>
+        <referencedby refid="struct_excerpt_1a3043ff600f0329d81b00cf9f3a08cbc0" compoundref="_excerpt_8cpp" startline="327" endline="348">Excerpt::run</referencedby>
+        <referencedby refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" compoundref="_fields_8cpp" startline="374" endline="403">Fields::run</referencedby>
+        <referencedby refid="struct_find_1a348ebb7eb765dc533fbfcbd6d2bfe2e6" compoundref="_find_8cpp" startline="296" endline="302">Find::run</referencedby>
+        <referencedby refid="class_lines_1a663396cf130926669d431d2b98ea5418" compoundref="_lines_8cpp" startline="366" endline="405">Lines::run</referencedby>
+        <referencedby refid="struct_patch_1a8a248ff325ba668ab5c784d9e48a4c8c" compoundref="_patch_8cpp" startline="346" endline="358">Patch::run</referencedby>
+        <referencedby refid="class_replace_1a8b722fac105d282ba2b5f272eb52e01c" compoundref="_replace_8cpp" startline="359" endline="413">Replace::run</referencedby>
+        <referencedby refid="struct_undo_1ad0a9a3ee8d81743fd7ae88f936eff0f6" compoundref="_undo_8cpp" startline="310" endline="319">Undo::run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1a16e02d082e3c502be80194a47e907535" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Arguments::contains</definition>
+        <argsstring>(std::string_view option) const</argsstring>
+        <name>contains</name>
+        <qualifiedname>Arguments::contains</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>option</declname>
+        </param>
+        <briefdescription>
+<para>Tests whether an option was matched as a flag or as a value option. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>option</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The option text, with its aliases separated by <computeroutput>|</computeroutput>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True when the option was matched. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="80" column="10" bodyfile="Arguments.cpp" bodystart="76" bodyend="79"/>
+        <references refid="class_arguments_1a148502c5af3df32797442396cc5fcd26" compoundref="_arguments_8cpp" startline="150" endline="155">containsOption</references>
+        <references refid="classjuce_1_1Span_1a87ae101005a8b283a00d9322deaf73ab">juce::Span&lt; typename Value, size_t Extent &gt;::empty</references>
+        <references refid="class_arguments_1a08e73bda40a9285c711101ab7b1ff024" compoundref="_arguments_8cpp" startline="87" endline="99">getValues</references>
+        <references refid="class_arguments_1a86be8c1db2e04d6f6862a10d1b2baafd" compoundref="_arguments_8h" startline="260">matchedFlags</references>
+        <referencedby refid="class_arguments_1aa37cbb34cccee61aab5a62770cdffde7" compoundref="_arguments_8cpp" startline="184" endline="230">addToken</referencedby>
+        <referencedby refid="_lines_8cpp_1aada541219732c0d5e13bfd35858b0371" compoundref="_lines_8cpp" startline="178" endline="187">getActiveMutationOption</referencedby>
+        <referencedby refid="_find_8cpp_1a24a12af3c583529f0eca4e5da165cc08" compoundref="_find_8cpp" startline="58" endline="93">getDirectoriesOutcome</referencedby>
+        <referencedby refid="class_transaction_1a0b22d5fa86a8cf4b366ef9c8e091992a" compoundref="_transaction_8cpp" startline="62" endline="68">Transaction::getExpectStatus</referencedby>
+        <referencedby refid="class_arguments_1a4ea5fa0bd325fac6f266cf992e21afe1" compoundref="_arguments_8cpp" startline="124" endline="140">getInteger</referencedby>
+        <referencedby refid="class_arguments_1a86c8250e062cb76f8cacffc60aa35fed" compoundref="_arguments_8cpp" startline="142" endline="148">getLineRangeFilter</referencedby>
+        <referencedby refid="_undo_8cpp_1aec31b2cc4f8900a66374a9b9378929f9" compoundref="_undo_8cpp" startline="36" endline="52">getListArgumentStatus</referencedby>
+        <referencedby refid="_fields_8cpp_1a3221f5f69fd3ac6f313946688fc48dd3" compoundref="_fields_8cpp" startline="66" endline="75">getMatchPattern</referencedby>
+        <referencedby refid="_lines_8cpp_1a71e653b8d28aade7ed4fe639d4dd4c81" compoundref="_lines_8cpp" startline="14" endline="25">getMutateFlagCount</referencedby>
+        <referencedby refid="_lines_8cpp_1ae83c101fceb1b98a287b6afcb7c9bdc0" compoundref="_lines_8cpp" startline="217" endline="232">getMutateModeFlagStatus</referencedby>
+        <referencedby refid="_lines_8cpp_1ab80797cbc76a24431377c7f965e6e237" compoundref="_lines_8cpp" startline="234" endline="258">getMutateValidationStatus</referencedby>
+        <referencedby refid="_fields_8cpp_1a7e1a9e525777ec0997e8d28db821812a" compoundref="_fields_8cpp" startline="53" endline="64">getOutputDelimiter</referencedby>
+        <referencedby refid="_lines_8cpp_1aedacbbd493784099c1d02833532682fc" compoundref="_lines_8cpp" startline="340" endline="356">getPayloadText</referencedby>
+        <referencedby refid="_lines_8cpp_1a62ec325cc076717945392b4abe4c1207" compoundref="_lines_8cpp" startline="27" endline="38">getReadModeFlagStatus</referencedby>
+        <referencedby refid="_replace_8cpp_1ac6d8ff610e30ea4b6823a17a4d149ca5" compoundref="_replace_8cpp" startline="104" endline="131">getReplacementText</referencedby>
+        <referencedby refid="_lines_8cpp_1a73c290d1b3fd041578ffcae617d7aa9e" compoundref="_lines_8cpp" startline="40" endline="51">getValidatedLineRange</referencedby>
+        <referencedby refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" compoundref="_fields_8cpp" startline="374" endline="403">Fields::run</referencedby>
+        <referencedby refid="struct_patch_1a8a248ff325ba668ab5c784d9e48a4c8c" compoundref="_patch_8cpp" startline="346" endline="358">Patch::run</referencedby>
+        <referencedby refid="class_replace_1a8b722fac105d282ba2b5f272eb52e01c" compoundref="_replace_8cpp" startline="359" endline="413">Replace::run</referencedby>
+        <referencedby refid="class_transaction_1ab1e959e59ca6ad3115550892d0d7fa8a" compoundref="_transaction_8cpp" startline="44" endline="60">Transaction::run</referencedby>
+        <referencedby refid="struct_undo_1ad0a9a3ee8d81743fd7ae88f936eff0f6" compoundref="_undo_8cpp" startline="310" endline="319">Undo::run</referencedby>
+        <referencedby refid="class_replace_1a06e837582d0faf325f061a6dda278a2d" compoundref="_replace_8cpp" startline="297" endline="349">Replace::runFiles</referencedby>
+        <referencedby refid="_find_8cpp_1aee6c2a289aa8ded9609e73746c945e12" compoundref="_find_8cpp" startline="114" endline="146">runFilesFind</referencedby>
+        <referencedby refid="_find_8cpp_1af3cc5ec6e84dd907c9c1a0e3d4891e13" compoundref="_find_8cpp" startline="187" endline="213">runListFiles</referencedby>
+        <referencedby refid="class_replace_1aac7261f40ff9097449c4ebcde25b7f6f" compoundref="_replace_8cpp" startline="266" endline="295">Replace::runStandardInput</referencedby>
+        <referencedby refid="_undo_8cpp_1a4e56a80b73bd7335140b412aa7b94863" compoundref="_undo_8cpp" startline="266" endline="303">runTransaction</referencedby>
+        <referencedby refid="_patch_8cpp_1ae0389f55a6ababa8838cb4920cce60a1" compoundref="_patch_8cpp" startline="285" endline="304">runTransaction</referencedby>
+        <referencedby refid="_find_8cpp_1a668feba8bb6d008bd3e4ae89f78e6e86" compoundref="_find_8cpp" startline="241" endline="282">runWithValidatedArguments</referencedby>
+        <referencedby refid="_find_8cpp_1acf15a94402e370871c870d3b4ea6a8e4" compoundref="_find_8cpp" startline="215" endline="239">runWithValidatedOptions</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1adade09c248ed8b06f65a73e1c133b47e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string_view</type>
+        <definition>std::string_view Arguments::getValueView</definition>
+        <argsstring>(std::string_view option) const</argsstring>
+        <name>getValueView</name>
+        <qualifiedname>Arguments::getValueView</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>option</declname>
+        </param>
+        <briefdescription>
+<para>Returns the value of an option as a view. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An option may repeat, so the last value wins.</para>
+<para>The view points into the argument list, so it stays valid while that list lives.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>option</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The option text, with its aliases separated by <computeroutput>|</computeroutput>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The last value of the option, or an empty view when the option is absent. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="90" column="22" bodyfile="Arguments.cpp" bodystart="81" bodyend="85"/>
+        <references refid="class_arguments_1a08e73bda40a9285c711101ab7b1ff024" compoundref="_arguments_8cpp" startline="87" endline="99">getValues</references>
+        <referencedby refid="class_fields_1a1b7745af2bd268f84c8d39a7086a5cf4" compoundref="_fields_8cpp" startline="350" endline="364">Fields::Fields</referencedby>
+        <referencedby refid="class_arguments_1a4ea5fa0bd325fac6f266cf992e21afe1" compoundref="_arguments_8cpp" startline="124" endline="140">getInteger</referencedby>
+        <referencedby refid="class_arguments_1a86c8250e062cb76f8cacffc60aa35fed" compoundref="_arguments_8cpp" startline="142" endline="148">getLineRangeFilter</referencedby>
+        <referencedby refid="_fields_8cpp_1a3221f5f69fd3ac6f313946688fc48dd3" compoundref="_fields_8cpp" startline="66" endline="75">getMatchPattern</referencedby>
+        <referencedby refid="_lines_8cpp_1ab80797cbc76a24431377c7f965e6e237" compoundref="_lines_8cpp" startline="234" endline="258">getMutateValidationStatus</referencedby>
+        <referencedby refid="_fields_8cpp_1a7e1a9e525777ec0997e8d28db821812a" compoundref="_fields_8cpp" startline="53" endline="64">getOutputDelimiter</referencedby>
+        <referencedby refid="_lines_8cpp_1aedacbbd493784099c1d02833532682fc" compoundref="_lines_8cpp" startline="340" endline="356">getPayloadText</referencedby>
+        <referencedby refid="_replace_8cpp_1ac6d8ff610e30ea4b6823a17a4d149ca5" compoundref="_replace_8cpp" startline="104" endline="131">getReplacementText</referencedby>
+        <referencedby refid="class_lines_1a271a082c3fb97cadcb1b662be43e81cb" compoundref="_lines_8cpp" startline="189" endline="199">Lines::Lines</referencedby>
+        <referencedby refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" compoundref="_fields_8cpp" startline="374" endline="403">Fields::run</referencedby>
+        <referencedby refid="_patch_8cpp_1a90cf7bf24224586469772abae6c95d98" compoundref="_patch_8cpp" startline="316" endline="326">runFile</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1a08e73bda40a9285c711101ab7b1ff024" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+        <definition>juce::Span&lt; const std::string_view &gt; Arguments::getValues</definition>
+        <argsstring>(std::string_view option) const</argsstring>
+        <name>getValues</name>
+        <qualifiedname>Arguments::getValues</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>option</declname>
+        </param>
+        <briefdescription>
+<para>Returns every value of an option, in the order given. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The span is valid while this <ref refid="class_arguments" kindref="compound">Arguments</ref> object and the argument list live.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>option</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The option text, with its aliases separated by <computeroutput>|</computeroutput>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>All values of the option. The list is empty when the option is absent. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="100" column="16" bodyfile="Arguments.cpp" bodystart="87" bodyend="99"/>
+        <references refid="classjam_1_1HashMap_1aeb3706b7cb8b6a92790644ed3eb240ea">jam::HashMap&lt; typename Key, typename Mapped, typename HashFn, typename KeyEqual, typename AllocatorOrContainer, typename Bucket, typename BucketContainer, bool IsSegmented &gt;::end</references>
+        <references refid="classjam_1_1HashMap_1aa8cd30d951846463b373eb6e82d96a3d">jam::HashMap&lt; typename Key, typename Mapped, typename HashFn, typename KeyEqual, typename AllocatorOrContainer, typename Bucket, typename BucketContainer, bool IsSegmented &gt;::find</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <references refid="class_arguments_1ac177a0d2e5442b61d078300ebf979d43" compoundref="_arguments_8h" startline="263">matchedValues</references>
+        <referencedby refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">contains</referencedby>
+        <referencedby refid="_find_8cpp_1a24a12af3c583529f0eca4e5da165cc08" compoundref="_find_8cpp" startline="58" endline="93">getDirectoriesOutcome</referencedby>
+        <referencedby refid="class_arguments_1adade09c248ed8b06f65a73e1c133b47e" compoundref="_arguments_8cpp" startline="81" endline="85">getValueView</referencedby>
+        <referencedby refid="class_replace_1a06e837582d0faf325f061a6dda278a2d" compoundref="_replace_8cpp" startline="297" endline="349">Replace::runFiles</referencedby>
+        <referencedby refid="_find_8cpp_1af3cc5ec6e84dd907c9c1a0e3d4891e13" compoundref="_find_8cpp" startline="187" endline="213">runListFiles</referencedby>
+        <referencedby refid="_find_8cpp_1acf15a94402e370871c870d3b4ea6a8e4" compoundref="_find_8cpp" startline="215" endline="239">runWithValidatedOptions</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1aafc4f159b8d3a4fed87eed8db972f472" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>const <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; std::string_view &gt; &amp;</type>
+        <definition>const jam::Array&lt; std::string_view &gt; &amp; Arguments::getPositionals</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>getPositionals</name>
+        <qualifiedname>Arguments::getPositionals</qualifiedname>
+        <briefdescription>
+<para>Returns positional arguments in order, including all tokens after <computeroutput>--</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The views point into the argument list.</para>
+<para><simplesect kind="return"><para>Reference to the parsed positional argument list. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="108" column="22" bodyfile="Arguments.cpp" bodystart="101" bodyend="104"/>
+        <references refid="class_arguments_1af777619e4b30d02292bd06b4fe9d507b" compoundref="_arguments_8h" startline="266">positionals</references>
+        <referencedby refid="_undo_8cpp_1aec31b2cc4f8900a66374a9b9378929f9" compoundref="_undo_8cpp" startline="36" endline="52">getListArgumentStatus</referencedby>
+        <referencedby refid="_lines_8cpp_1ab80797cbc76a24431377c7f965e6e237" compoundref="_lines_8cpp" startline="234" endline="258">getMutateValidationStatus</referencedby>
+        <referencedby refid="_replace_8cpp_1ac6d8ff610e30ea4b6823a17a4d149ca5" compoundref="_replace_8cpp" startline="104" endline="131">getReplacementText</referencedby>
+        <referencedby refid="_lines_8cpp_1a73c290d1b3fd041578ffcae617d7aa9e" compoundref="_lines_8cpp" startline="40" endline="51">getValidatedLineRange</referencedby>
+        <referencedby refid="struct_excerpt_1a3043ff600f0329d81b00cf9f3a08cbc0" compoundref="_excerpt_8cpp" startline="327" endline="348">Excerpt::run</referencedby>
+        <referencedby refid="class_fields_1a2ee50044e730fa68816471b8af7c69e0" compoundref="_fields_8cpp" startline="374" endline="403">Fields::run</referencedby>
+        <referencedby refid="class_lines_1a663396cf130926669d431d2b98ea5418" compoundref="_lines_8cpp" startline="366" endline="405">Lines::run</referencedby>
+        <referencedby refid="struct_patch_1a8a248ff325ba668ab5c784d9e48a4c8c" compoundref="_patch_8cpp" startline="346" endline="358">Patch::run</referencedby>
+        <referencedby refid="class_replace_1a8b722fac105d282ba2b5f272eb52e01c" compoundref="_replace_8cpp" startline="359" endline="413">Replace::run</referencedby>
+        <referencedby refid="_find_8cpp_1af3cc5ec6e84dd907c9c1a0e3d4891e13" compoundref="_find_8cpp" startline="187" endline="213">runListFiles</referencedby>
+        <referencedby refid="class_lines_1a483aab1f3731243163a1e7a470d1b026" compoundref="_lines_8cpp" startline="315" endline="338">Lines::runMutation</referencedby>
+        <referencedby refid="_undo_8cpp_1a4e56a80b73bd7335140b412aa7b94863" compoundref="_undo_8cpp" startline="266" endline="303">runTransaction</referencedby>
+        <referencedby refid="_find_8cpp_1a668feba8bb6d008bd3e4ae89f78e6e86" compoundref="_find_8cpp" startline="241" endline="282">runWithValidatedArguments</referencedby>
+        <referencedby refid="_find_8cpp_1acf15a94402e370871c870d3b4ea6a8e4" compoundref="_find_8cpp" startline="215" endline="239">runWithValidatedOptions</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1aed4d3b9589aa76a3670c86f8565bd4ad" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+        <definition>juce::Span&lt; const std::string_view &gt; Arguments::getPositionals</definition>
+        <argsstring>(int firstIndex) const noexcept</argsstring>
+        <name>getPositionals</name>
+        <qualifiedname>Arguments::getPositionals</qualifiedname>
+        <param>
+          <type>int</type>
+          <declname>firstIndex</declname>
+        </param>
+        <briefdescription>
+<para>Returns the positional arguments from an index to the end. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The span is valid while this <ref refid="class_arguments" kindref="compound">Arguments</ref> object lives.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>firstIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the first positional to return. It must be in [0, size].</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The positionals from firstIndex to the end. The span is empty when firstIndex equals the size. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="118" column="16" bodyfile="Arguments.cpp" bodystart="106" bodyend="111"/>
+        <references refid="class_arguments_1af777619e4b30d02292bd06b4fe9d507b" compoundref="_arguments_8h" startline="266">positionals</references>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1a4ea5fa0bd325fac6f266cf992e21afe1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, int &gt;</type>
+        <definition>std::pair&lt; juce::Result, int &gt; Arguments::getInteger</definition>
+        <argsstring>(std::string_view option, int minimumValue, int defaultValue) const</argsstring>
+        <name>getInteger</name>
+        <qualifiedname>Arguments::getInteger</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>option</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>minimumValue</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>defaultValue</declname>
+        </param>
+        <briefdescription>
+<para>Returns the integer value of an option, with a minimum. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The value must be a canonical decimal integer, so text such as <computeroutput>007</computeroutput> or <computeroutput>+5</computeroutput> fails. The status fails when the text is not such an integer, or when it is below the minimum. The value is 0 when the status fails.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>option</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The option text, with its aliases separated by <computeroutput>|</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The smallest accepted value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>defaultValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value returned when the option is absent.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result paired with the parsed value, or with the default when the option is absent. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="143" column="15" bodyfile="Arguments.cpp" bodystart="124" bodyend="140"/>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">contains</references>
+        <references refid="namespaceId_1a5e729b9864fd096462b3f08ef1eb4b1a">Id::diagnosticSeparator</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1ace35e4bfbe9bb8f4ed5b827ff4f1663f" compoundref="_text_8h" startline="43" endline="43">text::Diagnostics::failIntegerInvalid</references>
+        <references refid="class_arguments_1a22766bdf309e7f6aee01aea6ecc324a0" compoundref="_arguments_8cpp" startline="31" endline="34">getOptionName</references>
+        <references refid="class_arguments_1aade34633095a0bc32157f1c1d594f595" compoundref="_arguments_8cpp" startline="176" endline="182">getParsedLineNumber</references>
+        <references refid="class_arguments_1adade09c248ed8b06f65a73e1c133b47e" compoundref="_arguments_8cpp" startline="81" endline="85">getValueView</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1a86c8250e062cb76f8cacffc60aa35fed" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, <ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range</ref>&lt; int &gt; &gt;</type>
+        <definition>std::pair&lt; juce::Result, juce::Range&lt; int &gt; &gt; Arguments::getLineRangeFilter</definition>
+        <argsstring>() const</argsstring>
+        <name>getLineRangeFilter</name>
+        <qualifiedname>Arguments::getLineRangeFilter</qualifiedname>
+        <briefdescription>
+<para>Resolves the <computeroutput>--lines</computeroutput> option or returns <computeroutput>[1, <ref refid="class_arguments_1a50ed1aff24255f1f80d6f9453af7d627" kindref="member">openRangeEnd</ref>)</computeroutput> when omitted. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Status result paired with the half-open line filter range. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="149" column="15" bodyfile="Arguments.cpp" bodystart="142" bodyend="148"/>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">contains</references>
+        <references refid="class_arguments_1a23ac72ff046b511034f46422ee50d56b" compoundref="_arguments_8cpp" startline="36" endline="69">getLineRange</references>
+        <references refid="class_arguments_1adade09c248ed8b06f65a73e1c133b47e" compoundref="_arguments_8cpp" startline="81" endline="85">getValueView</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="class_arguments_1a50ed1aff24255f1f80d6f9453af7d627" compoundref="_arguments_8h" startline="11" endline="11">openRangeEnd</references>
+        <referencedby refid="_fields_8cpp_1a4ce981ec200e63a56a5c94891ce65fb2" compoundref="_fields_8cpp" startline="77" endline="95">getFilterSettings</referencedby>
+        <referencedby refid="class_replace_1a8b722fac105d282ba2b5f272eb52e01c" compoundref="_replace_8cpp" startline="359" endline="413">Replace::run</referencedby>
+        <referencedby refid="_find_8cpp_1a668feba8bb6d008bd3e4ae89f78e6e86" compoundref="_find_8cpp" startline="241" endline="282">runWithValidatedArguments</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_arguments_1a5a9520578f8bb3a26a8e8482a97ddb0f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Arguments::matchesOption</definition>
+        <argsstring>(std::string_view argument, std::string_view option)</argsstring>
+        <name>matchesOption</name>
+        <qualifiedname>Arguments::matchesOption</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>argument</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>option</declname>
+        </param>
+        <briefdescription>
+<para>Tests whether an argument matches an option text. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An option text holds its aliases separated by <computeroutput>|</computeroutput>. A match with any alias is a match.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The argument text to test. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>option</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The option text, with its aliases separated by <computeroutput>|</computeroutput>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True when the argument equals one of the aliases. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="48" column="17" bodyfile="Arguments.cpp" bodystart="19" bodyend="29"/>
+        <references refid="class_arguments_1a5a9520578f8bb3a26a8e8482a97ddb0f" compoundref="_arguments_8cpp" startline="19" endline="29">matchesOption</references>
+        <references refid="structChars_1a55da75188a0096dda0dc59d958cae540">Chars::pipe</references>
+        <referencedby refid="class_arguments_1aaa4b6cf025b2b26d2d76b8fe6229a407" compoundref="_arguments_8cpp" startline="232" endline="260">addShortFlags</referencedby>
+        <referencedby refid="class_arguments_1aa37cbb34cccee61aab5a62770cdffde7" compoundref="_arguments_8cpp" startline="184" endline="230">addToken</referencedby>
+        <referencedby refid="class_arguments_1ae3327bfe907cd45b89e19a785924418d" compoundref="_arguments_8cpp" startline="157" endline="167">getMatchingOptionIndex</referencedby>
+        <referencedby refid="_main_8cpp_1a859ac27c3dac2f4ba8dc5402a3e94f87" compoundref="_main_8cpp" startline="27" endline="30">isMcp</referencedby>
+        <referencedby refid="class_arguments_1a5a9520578f8bb3a26a8e8482a97ddb0f" compoundref="_arguments_8cpp" startline="19" endline="29">matchesOption</referencedby>
+        <referencedby refid="struct_command_line_1a2a6839c7ef37537c2f17b7a07db6539a" compoundref="_command_line_8cpp" startline="121" endline="133">CommandLine::run</referencedby>
+        <referencedby refid="_command_line_8cpp_1a3e0aebc0261a00384aa7f8595a05310b" compoundref="_command_line_8cpp" startline="78" endline="87">runGlobalOption</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1a22766bdf309e7f6aee01aea6ecc324a0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string_view</type>
+        <definition>std::string_view Arguments::getOptionName</definition>
+        <argsstring>(std::string_view option)</argsstring>
+        <name>getOptionName</name>
+        <qualifiedname>Arguments::getOptionName</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>option</declname>
+        </param>
+        <briefdescription>
+<para>Returns the name of an option, which is its first alias. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>option</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The option text, with its aliases separated by <computeroutput>|</computeroutput>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The first alias of the option text. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="56" column="29" bodyfile="Arguments.cpp" bodystart="31" bodyend="34"/>
+        <references refid="structChars_1a55da75188a0096dda0dc59d958cae540">Chars::pipe</references>
+        <referencedby refid="class_arguments_1a4ea5fa0bd325fac6f266cf992e21afe1" compoundref="_arguments_8cpp" startline="124" endline="140">getInteger</referencedby>
+        <referencedby refid="_undo_8cpp_1aec31b2cc4f8900a66374a9b9378929f9" compoundref="_undo_8cpp" startline="36" endline="52">getListArgumentStatus</referencedby>
+        <referencedby refid="_lines_8cpp_1ae83c101fceb1b98a287b6afcb7c9bdc0" compoundref="_lines_8cpp" startline="217" endline="232">getMutateModeFlagStatus</referencedby>
+        <referencedby refid="_lines_8cpp_1a62ec325cc076717945392b4abe4c1207" compoundref="_lines_8cpp" startline="27" endline="38">getReadModeFlagStatus</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1a23ac72ff046b511034f46422ee50d56b" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, <ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range</ref>&lt; int &gt; &gt;</type>
+        <definition>std::pair&lt; juce::Result, juce::Range&lt; int &gt; &gt; Arguments::getLineRange</definition>
+        <argsstring>(std::string_view rangeText, bool allowZeroStart)</argsstring>
+        <name>getLineRange</name>
+        <qualifiedname>Arguments::getLineRange</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>rangeText</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>allowZeroStart</declname>
+        </param>
+        <briefdescription>
+<para>Parses a line or <computeroutput>start:end</computeroutput> range specification into a half-open range. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rangeText</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Line spec (<computeroutput>N</computeroutput>, <computeroutput>N:M</computeroutput>, <computeroutput>N:</computeroutput>, or <computeroutput>:M</computeroutput>). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>allowZeroStart</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to allow line <computeroutput>0</computeroutput> for single-line specs without a colon.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status result paired with an exclusive-end line range. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="65" column="22" bodyfile="Arguments.cpp" bodystart="36" bodyend="69"/>
+        <references refid="structChars_1ab0e6e951a85086a81e11533c0bcfc422">Chars::colon</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1aa12254f5bf17325a381ef2ed3c305835" compoundref="_text_8h" startline="73" endline="73">text::Diagnostics::failLineRangeInvalid</references>
+        <references refid="class_arguments_1aade34633095a0bc32157f1c1d594f595" compoundref="_arguments_8cpp" startline="176" endline="182">getParsedLineNumber</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="class_arguments_1a50ed1aff24255f1f80d6f9453af7d627" compoundref="_arguments_8h" startline="11" endline="11">openRangeEnd</references>
+        <references refid="structjam_1_1Format_1aed58602be7a0a5e46dab6c7f2c23b6e5">jam::Format::trim</references>
+        <referencedby refid="class_arguments_1a86c8250e062cb76f8cacffc60aa35fed" compoundref="_arguments_8cpp" startline="142" endline="148">getLineRangeFilter</referencedby>
+        <referencedby refid="_lines_8cpp_1a73c290d1b3fd041578ffcae617d7aa9e" compoundref="_lines_8cpp" startline="40" endline="51">getValidatedLineRange</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1acf274eaba4f4163f63edb3057b110a97" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::optional&lt; int &gt;</type>
+        <definition>std::optional&lt; int &gt; Arguments::getInteger</definition>
+        <argsstring>(std::string_view text)</argsstring>
+        <name>getInteger</name>
+        <qualifiedname>Arguments::getInteger</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>text</declname>
+        </param>
+        <briefdescription>
+<para>Parses the whole text as a signed decimal integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The text is read by std::from_chars. A plus sign fails. Leading zeros are accepted here, so a caller that needs the canonical form checks it after the parse.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>text</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The text to parse.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The integer, or an empty optional when the text is not a whole integer. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="129" column="26" bodyfile="Arguments.cpp" bodystart="113" bodyend="122"/>
+        <referencedby refid="_replace_8cpp_1a3add7f6b84172b368855e4bb4ab1f3a6" compoundref="_replace_8cpp" startline="15" endline="32">getBracedReference</referencedby>
+        <referencedby refid="class_transaction_1a0b22d5fa86a8cf4b366ef9c8e091992a" compoundref="_transaction_8cpp" startline="62" endline="68">Transaction::getExpectStatus</referencedby>
+        <referencedby refid="_fields_8cpp_1a4ce981ec200e63a56a5c94891ce65fb2" compoundref="_fields_8cpp" startline="77" endline="95">getFilterSettings</referencedby>
+        <referencedby refid="_patch_validator_8cpp_1a4f80dd2365569eb5784f3a385796affb" compoundref="_patch_validator_8cpp" startline="13" endline="32">getIntValue</referencedby>
+        <referencedby refid="_fields_8cpp_1a263d6766a4acde093fcdfd783e930bb0" compoundref="_fields_8cpp" startline="11" endline="25">getParsedFieldIndex</referencedby>
+        <referencedby refid="class_arguments_1aade34633095a0bc32157f1c1d594f595" compoundref="_arguments_8cpp" startline="176" endline="182">getParsedLineNumber</referencedby>
+        <referencedby refid="_excerpt_8cpp_1a7baff429000509135fc6882d37e6adfb" compoundref="_excerpt_8cpp" startline="197" endline="210">getSpan</referencedby>
+        <referencedby refid="struct_excerpt_1a3043ff600f0329d81b00cf9f3a08cbc0" compoundref="_excerpt_8cpp" startline="327" endline="348">Excerpt::run</referencedby>
+        <referencedby refid="_find_8cpp_1a668feba8bb6d008bd3e4ae89f78e6e86" compoundref="_find_8cpp" startline="241" endline="282">runWithValidatedArguments</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="class_arguments_1a148502c5af3df32797442396cc5fcd26" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Arguments::containsOption</definition>
+        <argsstring>(const jam::Array&lt; std::string_view &gt; &amp;matchedOptions, std::string_view option)</argsstring>
+        <name>containsOption</name>
+        <qualifiedname>Arguments::containsOption</qualifiedname>
+        <param>
+          <type>const <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; std::string_view &gt; &amp;</type>
+          <declname>matchedOptions</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>option</declname>
+        </param>
+        <briefdescription>
+<para>Tests whether a list of matched option texts holds the option text. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>matchedOptions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The option texts that were matched. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>option</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The option text to find.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True when the list holds the option text. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="159" column="17" bodyfile="Arguments.cpp" bodystart="150" bodyend="155"/>
+        <references refid="classjam_1_1Array_1aa5240327dd94267390aefa03215033e1">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::begin</references>
+        <references refid="classjam_1_1Array_1a7336e35022c8a66e55217a273f0b8808">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::end</references>
+        <referencedby refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">contains</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1ae3327bfe907cd45b89e19a785924418d" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int Arguments::getMatchingOptionIndex</definition>
+        <argsstring>(std::string_view argument, std::initializer_list&lt; std::string_view &gt; optionList)</argsstring>
+        <name>getMatchingOptionIndex</name>
+        <qualifiedname>Arguments::getMatchingOptionIndex</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>argument</declname>
+        </param>
+        <param>
+          <type>std::initializer_list&lt; std::string_view &gt;</type>
+          <declname>optionList</declname>
+        </param>
+        <briefdescription>
+<para>Finds the first option text in a list that the argument matches, through any of its aliases. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The argument text to test. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>optionList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The option texts to test, in priority order.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The index of the first matching option text, or -1 when none matches. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="168" column="16" bodyfile="Arguments.cpp" bodystart="157" bodyend="167"/>
+        <references refid="class_arguments_1a5a9520578f8bb3a26a8e8482a97ddb0f" compoundref="_arguments_8cpp" startline="19" endline="29">matchesOption</references>
+        <referencedby refid="class_arguments_1aaa4b6cf025b2b26d2d76b8fe6229a407" compoundref="_arguments_8cpp" startline="232" endline="260">addShortFlags</referencedby>
+        <referencedby refid="class_arguments_1aa37cbb34cccee61aab5a62770cdffde7" compoundref="_arguments_8cpp" startline="184" endline="230">addToken</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1a8655c56c7c0db7f2d350dbf52a157a2e" prot="private" static="yes" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Arguments::isOptionArgument</definition>
+        <argsstring>(std::string_view argument) noexcept</argsstring>
+        <name>isOptionArgument</name>
+        <qualifiedname>Arguments::isOptionArgument</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>argument</declname>
+        </param>
+        <briefdescription>
+<para>Reports whether an argument is an option: a leading dash followed by a character that is not a digit. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A lone dash and a negative number are positionals.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The argument text to test.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True when the argument is an option. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="179" column="17" bodyfile="Arguments.cpp" bodystart="169" bodyend="174"/>
+        <references refid="structChars_1a9c990428f7d53d094d0d9818ec666698">Chars::dash</references>
+        <references refid="structjam_1_1Document_1a4e2d39346edd803eb0f25ab34525ef59">jam::Document::isDigit</references>
+        <referencedby refid="class_arguments_1aa37cbb34cccee61aab5a62770cdffde7" compoundref="_arguments_8cpp" startline="184" endline="230">addToken</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1aade34633095a0bc32157f1c1d594f595" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; bool, int &gt;</type>
+        <definition>std::pair&lt; bool, int &gt; Arguments::getParsedLineNumber</definition>
+        <argsstring>(std::string_view token, int minimumValue)</argsstring>
+        <name>getParsedLineNumber</name>
+        <qualifiedname>Arguments::getParsedLineNumber</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>token</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>minimumValue</declname>
+        </param>
+        <briefdescription>
+<para>Parses a line number in canonical decimal form, with a minimum. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Only the canonical form is accepted: a single digit, or a number without leading zeros and without a sign.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>token</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The text to parse. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The smallest accepted value.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True and the value when the text is a canonical integer at or above the minimum, otherwise false and 0. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="190" column="22" bodyfile="Arguments.cpp" bodystart="176" bodyend="182"/>
+        <references refid="class_arguments_1acf274eaba4f4163f63edb3057b110a97" compoundref="_arguments_8cpp" startline="113" endline="122">getInteger</references>
+        <references refid="structjam_1_1Document_1a4e2d39346edd803eb0f25ab34525ef59">jam::Document::isDigit</references>
+        <references refid="structChars_1ad439eeb908a1cae7c0b2fe0e0e389937">Chars::zero</references>
+        <referencedby refid="class_arguments_1a4ea5fa0bd325fac6f266cf992e21afe1" compoundref="_arguments_8cpp" startline="124" endline="140">getInteger</referencedby>
+        <referencedby refid="class_arguments_1a23ac72ff046b511034f46422ee50d56b" compoundref="_arguments_8cpp" startline="36" endline="69">getLineRange</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_arguments_1aa37cbb34cccee61aab5a62770cdffde7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int Arguments::addToken</definition>
+        <argsstring>(juce::Span&lt; const std::string_view &gt; arguments, int index, std::string_view token, std::initializer_list&lt; std::string_view &gt; flagOptions, std::initializer_list&lt; std::string_view &gt; valueOptions, std::initializer_list&lt; std::string_view &gt; optionalValueOptions)</argsstring>
+        <name>addToken</name>
+        <qualifiedname>Arguments::addToken</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>token</declname>
+        </param>
+        <param>
+          <type>std::initializer_list&lt; std::string_view &gt;</type>
+          <declname>flagOptions</declname>
+        </param>
+        <param>
+          <type>std::initializer_list&lt; std::string_view &gt;</type>
+          <declname>valueOptions</declname>
+        </param>
+        <param>
+          <type>std::initializer_list&lt; std::string_view &gt;</type>
+          <declname>optionalValueOptions</declname>
+        </param>
+        <briefdescription>
+<para>Parses one argument: a flag, a value option with its value, a short-flag group, or a positional. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>arguments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The whole argument list, with the verb name at index 0. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the argument to parse. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>token</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The argument text, or the single-letter option of a short-flag group. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>flagOptions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Options that take no value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>valueOptions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Options that take the next argument as their value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>optionalValueOptions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Options that take the next argument as their value, unless <ndash/>stdin applies.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The index of the next argument to parse. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="203" column="9" bodyfile="Arguments.cpp" bodystart="184" bodyend="230"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="class_arguments_1a86a916f7746417cb727c596d68ff0b0b" compoundref="_arguments_8cpp" startline="280" endline="286">addFailure</references>
+        <references refid="class_arguments_1aaa4b6cf025b2b26d2d76b8fe6229a407" compoundref="_arguments_8cpp" startline="232" endline="260">addShortFlags</references>
+        <references refid="class_arguments_1a35c2c7d96cb484047d2ad18c7784ea18" compoundref="_arguments_8cpp" startline="262" endline="278">addValue</references>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">contains</references>
+        <references refid="structChars_1a9c990428f7d53d094d0d9818ec666698">Chars::dash</references>
+        <references refid="structtext_1_1_diagnostics_1a54030ad642dee1157d22d8255503812d" compoundref="_text_8h" startline="32" endline="32">text::Diagnostics::failFlagUnknown</references>
+        <references refid="class_arguments_1ae3327bfe907cd45b89e19a785924418d" compoundref="_arguments_8cpp" startline="157" endline="167">getMatchingOptionIndex</references>
+        <references refid="class_arguments_1a8655c56c7c0db7f2d350dbf52a157a2e" compoundref="_arguments_8cpp" startline="169" endline="174">isOptionArgument</references>
+        <references refid="class_arguments_1a86be8c1db2e04d6f6862a10d1b2baafd" compoundref="_arguments_8h" startline="260">matchedFlags</references>
+        <references refid="class_arguments_1a5a9520578f8bb3a26a8e8482a97ddb0f" compoundref="_arguments_8cpp" startline="19" endline="29">matchesOption</references>
+        <references refid="class_arguments_1af777619e4b30d02292bd06b4fe9d507b" compoundref="_arguments_8h" startline="266">positionals</references>
+        <referencedby refid="class_arguments_1aaa4b6cf025b2b26d2d76b8fe6229a407" compoundref="_arguments_8cpp" startline="232" endline="260">addShortFlags</referencedby>
+        <referencedby refid="class_arguments_1aeb430274c48bc074aae86bd0ddd92250" compoundref="_arguments_8cpp" startline="5" endline="17">Arguments</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1aaa4b6cf025b2b26d2d76b8fe6229a407" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int Arguments::addShortFlags</definition>
+        <argsstring>(juce::Span&lt; const std::string_view &gt; arguments, int index, std::initializer_list&lt; std::string_view &gt; flagOptions, std::initializer_list&lt; std::string_view &gt; valueOptions, std::initializer_list&lt; std::string_view &gt; optionalValueOptions)</argsstring>
+        <name>addShortFlags</name>
+        <qualifiedname>Arguments::addShortFlags</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>std::initializer_list&lt; std::string_view &gt;</type>
+          <declname>flagOptions</declname>
+        </param>
+        <param>
+          <type>std::initializer_list&lt; std::string_view &gt;</type>
+          <declname>valueOptions</declname>
+        </param>
+        <param>
+          <type>std::initializer_list&lt; std::string_view &gt;</type>
+          <declname>optionalValueOptions</declname>
+        </param>
+        <briefdescription>
+<para>Parses a group of single-letter flags, such as <computeroutput>-abc</computeroutput>, where a value letter may end the group. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>An unknown letter is a failure, and the group ends at it.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>arguments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The whole argument list, with the verb name at index 0. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the group argument. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>flagOptions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Options that take no value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>valueOptions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Options that take the next argument as their value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>optionalValueOptions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Options that take the next argument as their value, unless <ndash/>stdin applies.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The index of the next argument to parse. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="222" column="9" bodyfile="Arguments.cpp" bodystart="232" bodyend="260"/>
+        <references refid="class_arguments_1a86a916f7746417cb727c596d68ff0b0b" compoundref="_arguments_8cpp" startline="280" endline="286">addFailure</references>
+        <references refid="class_arguments_1aa37cbb34cccee61aab5a62770cdffde7" compoundref="_arguments_8cpp" startline="184" endline="230">addToken</references>
+        <references refid="structChars_1a9c990428f7d53d094d0d9818ec666698">Chars::dash</references>
+        <references refid="structtext_1_1_diagnostics_1a54030ad642dee1157d22d8255503812d" compoundref="_text_8h" startline="32" endline="32">text::Diagnostics::failFlagUnknown</references>
+        <references refid="class_arguments_1ae3327bfe907cd45b89e19a785924418d" compoundref="_arguments_8cpp" startline="157" endline="167">getMatchingOptionIndex</references>
+        <references refid="class_arguments_1a5a9520578f8bb3a26a8e8482a97ddb0f" compoundref="_arguments_8cpp" startline="19" endline="29">matchesOption</references>
+        <referencedby refid="class_arguments_1aa37cbb34cccee61aab5a62770cdffde7" compoundref="_arguments_8cpp" startline="184" endline="230">addToken</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1a35c2c7d96cb484047d2ad18c7784ea18" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int Arguments::addValue</definition>
+        <argsstring>(juce::Span&lt; const std::string_view &gt; arguments, int index, std::string_view option, std::string_view token)</argsstring>
+        <name>addValue</name>
+        <qualifiedname>Arguments::addValue</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>option</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>token</declname>
+        </param>
+        <briefdescription>
+<para>Records the next argument as the value of an option, keyed by the option text. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A value option at the end of the list is a failure.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>arguments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The whole argument list, with the verb name at index 0. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the option argument. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>option</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The option text, with its aliases, that keys the value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>token</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The option argument as the user typed it, named in the failure.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The index of the argument after the value. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="239" column="9" bodyfile="Arguments.cpp" bodystart="262" bodyend="278"/>
+        <references refid="class_arguments_1a86a916f7746417cb727c596d68ff0b0b" compoundref="_arguments_8cpp" startline="280" endline="286">addFailure</references>
+        <references refid="structtext_1_1_diagnostics_1ae99f2c066367db343a62b3e1dfc9698b" compoundref="_text_8h" startline="33" endline="33">text::Diagnostics::failFlagValueMissing</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <references refid="class_arguments_1ac177a0d2e5442b61d078300ebf979d43" compoundref="_arguments_8h" startline="263">matchedValues</references>
+        <references refid="classjam_1_1HashMap_1af3ef015438ac55ee2401cb66441ae4f5">jam::HashMap&lt; typename Key, typename Mapped, typename HashFn, typename KeyEqual, typename AllocatorOrContainer, typename Bucket, typename BucketContainer, bool IsSegmented &gt;::try_emplace</references>
+        <referencedby refid="class_arguments_1aa37cbb34cccee61aab5a62770cdffde7" compoundref="_arguments_8cpp" startline="184" endline="230">addToken</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_arguments_1a86a916f7746417cb727c596d68ff0b0b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int Arguments::addFailure</definition>
+        <argsstring>(std::string_view failure, std::string_view token, int nextIndex)</argsstring>
+        <name>addFailure</name>
+        <qualifiedname>Arguments::addFailure</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>failure</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>token</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nextIndex</declname>
+        </param>
+        <briefdescription>
+<para>Records a parse failure when none is recorded yet, and returns the index of the next argument. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Only the first failure is kept in the status. A later failure leaves the status unchanged.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>failure</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The failure text that the status reports. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>token</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The argument text that the failure names. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>nextIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the next argument to parse.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>nextIndex. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Arguments.h" line="254" column="9" bodyfile="Arguments.cpp" bodystart="280" bodyend="286"/>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="class_arguments_1a84a1486aad2d066c8d254a83584f8085" compoundref="_arguments_8h" startline="257" endline="257">status</references>
+        <references refid="classjuce_1_1Result_1a204ba5a9124544a89a5b0565672ef5f3">juce::Result::wasOk</references>
+        <referencedby refid="class_arguments_1aaa4b6cf025b2b26d2d76b8fe6229a407" compoundref="_arguments_8cpp" startline="232" endline="260">addShortFlags</referencedby>
+        <referencedby refid="class_arguments_1aa37cbb34cccee61aab5a62770cdffde7" compoundref="_arguments_8cpp" startline="184" endline="230">addToken</referencedby>
+        <referencedby refid="class_arguments_1a35c2c7d96cb484047d2ad18c7784ea18" compoundref="_arguments_8cpp" startline="262" endline="278">addValue</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Parses command-line flags, value options, <computeroutput>--</computeroutput> terminator, and positional arguments. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Arguments</label>
+        <link refid="class_arguments"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>status</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>matchedFlags</edgelabel>
+          <edgelabel>positionals</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>matchedValues</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>jam::Array&lt; std::string_view &gt;</label>
+        <link refid="classjam_1_1Array" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>jam::HashMap&lt; std::string_view, jam::Array&lt; std::string_view &gt; &gt;</label>
+        <link refid="classjam_1_1HashMap" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml"/>
+      </node>
+      <node id="4">
+        <label>juce::DummyCriticalSection</label>
+        <link refid="classjuce_1_1DummyCriticalSection" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+      <node id="2">
+        <label>juce::Result</label>
+        <link refid="classjuce_1_1Result" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml"/>
+      </node>
+    </collaborationgraph>
+    <location file="Arguments.h" line="6" column="1" bodyfile="Arguments.h" bodystart="7" bodyend="267"/>
+    <listofallmembers>
+      <member refid="class_arguments_1a86a916f7746417cb727c596d68ff0b0b" prot="private" virt="non-virtual"><scope>Arguments</scope><name>addFailure</name></member>
+      <member refid="class_arguments_1aaa4b6cf025b2b26d2d76b8fe6229a407" prot="private" virt="non-virtual"><scope>Arguments</scope><name>addShortFlags</name></member>
+      <member refid="class_arguments_1aa37cbb34cccee61aab5a62770cdffde7" prot="private" virt="non-virtual"><scope>Arguments</scope><name>addToken</name></member>
+      <member refid="class_arguments_1a35c2c7d96cb484047d2ad18c7784ea18" prot="private" virt="non-virtual"><scope>Arguments</scope><name>addValue</name></member>
+      <member refid="class_arguments_1aeb430274c48bc074aae86bd0ddd92250" prot="public" virt="non-virtual"><scope>Arguments</scope><name>Arguments</name></member>
+      <member refid="class_arguments_1a16e02d082e3c502be80194a47e907535" prot="public" virt="non-virtual"><scope>Arguments</scope><name>contains</name></member>
+      <member refid="class_arguments_1a148502c5af3df32797442396cc5fcd26" prot="private" virt="non-virtual"><scope>Arguments</scope><name>containsOption</name></member>
+      <member refid="class_arguments_1a7a6b4e4e77e7747772a1c91cb7d4a29e" prot="public" virt="non-virtual"><scope>Arguments</scope><name>firstOptionIndex</name></member>
+      <member refid="class_arguments_1acf274eaba4f4163f63edb3057b110a97" prot="public" virt="non-virtual"><scope>Arguments</scope><name>getInteger</name></member>
+      <member refid="class_arguments_1a4ea5fa0bd325fac6f266cf992e21afe1" prot="public" virt="non-virtual"><scope>Arguments</scope><name>getInteger</name></member>
+      <member refid="class_arguments_1a23ac72ff046b511034f46422ee50d56b" prot="public" virt="non-virtual"><scope>Arguments</scope><name>getLineRange</name></member>
+      <member refid="class_arguments_1a86c8250e062cb76f8cacffc60aa35fed" prot="public" virt="non-virtual"><scope>Arguments</scope><name>getLineRangeFilter</name></member>
+      <member refid="class_arguments_1ae3327bfe907cd45b89e19a785924418d" prot="private" virt="non-virtual"><scope>Arguments</scope><name>getMatchingOptionIndex</name></member>
+      <member refid="class_arguments_1a22766bdf309e7f6aee01aea6ecc324a0" prot="public" virt="non-virtual"><scope>Arguments</scope><name>getOptionName</name></member>
+      <member refid="class_arguments_1aade34633095a0bc32157f1c1d594f595" prot="private" virt="non-virtual"><scope>Arguments</scope><name>getParsedLineNumber</name></member>
+      <member refid="class_arguments_1aafc4f159b8d3a4fed87eed8db972f472" prot="public" virt="non-virtual"><scope>Arguments</scope><name>getPositionals</name></member>
+      <member refid="class_arguments_1aed4d3b9589aa76a3670c86f8565bd4ad" prot="public" virt="non-virtual"><scope>Arguments</scope><name>getPositionals</name></member>
+      <member refid="class_arguments_1a46db95dfc7cc4ce7e8e7af84ceaaebf7" prot="public" virt="non-virtual"><scope>Arguments</scope><name>getStatus</name></member>
+      <member refid="class_arguments_1a08e73bda40a9285c711101ab7b1ff024" prot="public" virt="non-virtual"><scope>Arguments</scope><name>getValues</name></member>
+      <member refid="class_arguments_1adade09c248ed8b06f65a73e1c133b47e" prot="public" virt="non-virtual"><scope>Arguments</scope><name>getValueView</name></member>
+      <member refid="class_arguments_1a8655c56c7c0db7f2d350dbf52a157a2e" prot="private" virt="non-virtual"><scope>Arguments</scope><name>isOptionArgument</name></member>
+      <member refid="class_arguments_1a86be8c1db2e04d6f6862a10d1b2baafd" prot="private" virt="non-virtual"><scope>Arguments</scope><name>matchedFlags</name></member>
+      <member refid="class_arguments_1ac177a0d2e5442b61d078300ebf979d43" prot="private" virt="non-virtual"><scope>Arguments</scope><name>matchedValues</name></member>
+      <member refid="class_arguments_1a5a9520578f8bb3a26a8e8482a97ddb0f" prot="public" virt="non-virtual"><scope>Arguments</scope><name>matchesOption</name></member>
+      <member refid="class_arguments_1a50ed1aff24255f1f80d6f9453af7d627" prot="public" virt="non-virtual"><scope>Arguments</scope><name>openRangeEnd</name></member>
+      <member refid="class_arguments_1af777619e4b30d02292bd06b4fe9d507b" prot="private" virt="non-virtual"><scope>Arguments</scope><name>positionals</name></member>
+      <member refid="class_arguments_1a84a1486aad2d066c8d254a83584f8085" prot="private" virt="non-virtual"><scope>Arguments</scope><name>status</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

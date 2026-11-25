@@ -1,0 +1,578 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="struct_paths" kind="struct" language="C++" prot="public">
+    <compoundname>Paths</compoundname>
+    <includes refid="_paths_8h" local="no">Paths.h</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="struct_paths_1a7d608458f9dbff3a5645b164eece0283" prot="public" static="no">
+        <type>std::tuple&lt; std::string, <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>, bool &gt;</type>
+        <definition>using Paths::Entry = std::tuple&lt;std::string, juce::File, bool&gt;</definition>
+        <argsstring></argsstring>
+        <name>Entry</name>
+        <qualifiedname>Paths::Entry</qualifiedname>
+        <briefdescription>
+<para>One file to read: its display path, the file it resolves to, and its explicit flag. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The explicit flag is true when the user named the file on the command line. A file found by a walk has false. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Paths.h" line="12" column="5" bodyfile="Paths.h" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="struct_paths_1a35d9d2802de3450fab354291dd47f09b" prot="public" static="no">
+        <type>std::pair&lt; <ref refid="classjam_1_1Strings" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings</ref>, <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref> &gt; &gt;</type>
+        <definition>using Paths::Failures = std::pair&lt;jam::Strings, jam::Array&lt;juce::Result&gt;&gt;</definition>
+        <argsstring></argsstring>
+        <name>Failures</name>
+        <qualifiedname>Paths::Failures</qualifiedname>
+        <briefdescription>
+<para><ref refid="struct_paths" kindref="compound">Paths</ref> that could not be read, each with the result that describes the failure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The path is the raw path that the user gave, or the display path of a folder that could not be read. The two lists have the same length, and the path at each index is paired with the result at that index. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Paths.h" line="19" column="5" bodyfile="Paths.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="struct_paths_1a174c77ae0901bcbb191f629e92e824e4" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="struct_paths_1a35d9d2802de3450fab354291dd47f09b" kindref="member">Failures</ref>, <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="struct_paths_1a7d608458f9dbff3a5645b164eece0283" kindref="member">Entry</ref> &gt; &gt;</type>
+        <definition>std::pair&lt; Paths::Failures, jam::Array&lt; Paths::Entry &gt; &gt; Paths::getFiles</definition>
+        <argsstring>(juce::Span&lt; const std::string_view &gt; rawPaths, juce::Span&lt; const std::string_view &gt; includeGlobs, juce::Span&lt; const std::string_view &gt; excludeGlobs, bool isIncludingHidden, bool isIgnoringRules)</argsstring>
+        <name>getFiles</name>
+        <qualifiedname>Paths::getFiles</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>rawPaths</declname>
+        </param>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>includeGlobs</declname>
+        </param>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>excludeGlobs</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isIncludingHidden</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isIgnoringRules</declname>
+        </param>
+        <briefdescription>
+<para>Expands file and directory paths into sorted entries. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Each path is resolved one time here, so that a verb reads the file it receives and resolves nothing again.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rawPaths</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="class_input" kindref="compound">Input</ref> file or directory paths. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>includeGlobs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Wildcard patterns (<computeroutput>*</computeroutput>, <computeroutput>?</computeroutput>) a file name or path must match when non-empty. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>excludeGlobs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Wildcard patterns that exclude matching files. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isIncludingHidden</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to include dot-prefixed entries. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isIgnoringRules</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to bypass <computeroutput>.gitignore</computeroutput> and global exclude rules.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pair of: the failures, each with its failure result, in the order found: first the failures of the raw paths, in the order given, then the failures of the folder walk, by worker index; and the entries, one per file, sorted by display path, each with its display path, its resolved file, and its explicit flag, true when the file was named on the command line.</para>
+</simplesect>
+A file named on the command line wins over the same file found by the walk. The sort puts the explicit entry first among entries with the same display path, and the duplicate removal keeps the first entry. The duplicate removal runs only when more than one raw path is given. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Paths.h" line="40" column="22" bodyfile="Paths.cpp" bodystart="447" bodyend="513"/>
+        <references refid="struct_paths_1afb5406fa93f60d3236b2be8bffe90afc" compoundref="_paths_8cpp" startline="277" endline="291">addFailures</references>
+        <references refid="struct_paths_1ac210add3c94383baf9dfefe6d06a259e" compoundref="_paths_8cpp" startline="350" endline="416">applyToDirectories</references>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="classjam_1_1Strings_1aca02ec79e3d857bca6f9647dce6415fc">jam::Strings::fromView</references>
+        <references refid="struct_paths_1acc938797fda01992a4b0f9796b67c7fa" compoundref="_paths_8cpp" startline="418" endline="445">getClassifiedPaths</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <references refid="classjam_1_1Array_1a5011ae5f02af2593d783611891ae64f0">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::resize</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <referencedby refid="struct_paths_1a5314f36d3b5852db454cb13f26e1f6be" compoundref="_paths_8cpp" startline="515" endline="538">getReadableFiles</referencedby>
+        <referencedby refid="_find_8cpp_1af3cc5ec6e84dd907c9c1a0e3d4891e13" compoundref="_find_8cpp" startline="187" endline="213">runListFiles</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_paths_1a5314f36d3b5852db454cb13f26e1f6be" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="struct_paths_1a7d608458f9dbff3a5645b164eece0283" kindref="member">Entry</ref> &gt; &gt;</type>
+        <definition>std::pair&lt; juce::Result, jam::Array&lt; Paths::Entry &gt; &gt; Paths::getReadableFiles</definition>
+        <argsstring>(juce::Span&lt; const std::string_view &gt; rawPaths, juce::Span&lt; const std::string_view &gt; includeGlobs, juce::Span&lt; const std::string_view &gt; excludeGlobs, bool isIncludingHidden, bool isIgnoringRules)</argsstring>
+        <name>getReadableFiles</name>
+        <qualifiedname>Paths::getReadableFiles</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>rawPaths</declname>
+        </param>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>includeGlobs</declname>
+        </param>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>excludeGlobs</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isIncludingHidden</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isIgnoringRules</declname>
+        </param>
+        <briefdescription>
+<para>Expands the paths like getFiles, and stops at the first failure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rawPaths</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="class_input" kindref="compound">Input</ref> file or directory paths. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>includeGlobs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Wildcard patterns (<computeroutput>*</computeroutput>, <computeroutput>?</computeroutput>) a file name or path must match when non-empty. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>excludeGlobs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Wildcard patterns that exclude matching files. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isIncludingHidden</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to include dot-prefixed entries. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isIgnoringRules</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to bypass <computeroutput>.gitignore</computeroutput> and global exclude rules.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pair of: the result of the first failure in path order, or ok; and the entries, sorted by display path. The entries are empty when a failure exists. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Paths.h" line="57" column="22" bodyfile="Paths.cpp" bodystart="515" bodyend="538"/>
+        <references refid="struct_paths_1a174c77ae0901bcbb191f629e92e824e4" compoundref="_paths_8cpp" startline="447" endline="513">getFiles</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <referencedby refid="class_fields_1a92822f56a6c58834da5b85f0c6ca926c" compoundref="_fields_8cpp" startline="314" endline="348">Fields::runFiles</referencedby>
+        <referencedby refid="class_lines_1afd2f1bd0b2ed2e7413eb4133a1c9a776" compoundref="_lines_8cpp" startline="143" endline="176">Lines::runFiles</referencedby>
+        <referencedby refid="class_replace_1a06e837582d0faf325f061a6dda278a2d" compoundref="_replace_8cpp" startline="297" endline="349">Replace::runFiles</referencedby>
+        <referencedby refid="class_lines_1a483aab1f3731243163a1e7a470d1b026" compoundref="_lines_8cpp" startline="315" endline="338">Lines::runMutation</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_paths_1acc938797fda01992a4b0f9796b67c7fa" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; <ref refid="struct_paths_1a35d9d2802de3450fab354291dd47f09b" kindref="member">Failures</ref>, <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="struct_paths_1a7d608458f9dbff3a5645b164eece0283" kindref="member">Entry</ref> &gt;, <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; std::pair&lt; std::string_view, <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &gt; &gt; &gt;</type>
+        <definition>std::tuple&lt; Paths::Failures, jam::Array&lt; Paths::Entry &gt;, jam::Array&lt; std::pair&lt; std::string_view, juce::File &gt; &gt; &gt; Paths::getClassifiedPaths</definition>
+        <argsstring>(juce::Span&lt; const std::string_view &gt; rawPaths)</argsstring>
+        <name>getClassifiedPaths</name>
+        <qualifiedname>Paths::getClassifiedPaths</qualifiedname>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>rawPaths</declname>
+        </param>
+        <briefdescription>
+<para>Sorts the raw paths into failures, named files, and folders to walk. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A path that does not exist is a failure. A file is an explicit entry, because the user named it. A folder keeps its raw path, which becomes the prefix of the display paths of the files under it.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rawPaths</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The paths as the user gave them.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Tuple of: the failures; the explicit entries of the named files; and the folders, each as a pair of its raw path and its resolved folder. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Paths.h" line="73" column="23" bodyfile="Paths.cpp" bodystart="418" bodyend="445"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="struct_paths_1a0665b4c8b5e8442a35ff1d7feacefe92" compoundref="_paths_8cpp" startline="293" endline="303">getDisplayPath</references>
+        <references refid="struct_paths_1acd07be51ce7def54cd71d235f777df74" compoundref="_paths_8cpp" startline="305" endline="314">getLinkedTarget</references>
+        <references refid="class_text_document_1a190a015fb1df67382b28f6046b64798e" compoundref="_text_document_8cpp" startline="27" endline="33">TextDocument::getReadFailure</references>
+        <referencedby refid="struct_paths_1a174c77ae0901bcbb191f629e92e824e4" compoundref="_paths_8cpp" startline="447" endline="513">getFiles</referencedby>
+        <referencedby refid="_find_8cpp_1aee6c2a289aa8ded9609e73746c945e12" compoundref="_find_8cpp" startline="114" endline="146">runFilesFind</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_paths_1a0665b4c8b5e8442a35ff1d7feacefe92" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string Paths::getDisplayPath</definition>
+        <argsstring>(std::string_view rawPath)</argsstring>
+        <name>getDisplayPath</name>
+        <qualifiedname>Paths::getDisplayPath</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>rawPath</declname>
+        </param>
+        <briefdescription>
+<para>Converts a raw path to the form that is shown to the user. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>On Windows, backslash separators become slash separators. Other platforms keep the path as it is.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rawPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The path as the user gave it.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The display path. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Paths.h" line="83" column="24" bodyfile="Paths.cpp" bodystart="293" bodyend="303"/>
+        <references refid="structChars_1a0f20d271957cf41dde37f5ddc9deaf76">Chars::backslash</references>
+        <references refid="structChars_1a097900705df9e65db66e013ef2a11b0d">Chars::slash</references>
+        <referencedby refid="struct_paths_1acc938797fda01992a4b0f9796b67c7fa" compoundref="_paths_8cpp" startline="418" endline="445">getClassifiedPaths</referencedby>
+        <referencedby refid="_patch_8cpp_1a6a73fba80efadcccfbe1d490552baaa9" compoundref="_patch_8cpp" startline="30" endline="59">getGroupedEntries</referencedby>
+        <referencedby refid="_paths_8cpp_1a109373e462e5fa34b51f6562ab76dd40" compoundref="_paths_8cpp" startline="7" endline="15">getNormalizedPath</referencedby>
+        <referencedby refid="class_ignore_rules_1ab9e4e7c05544d63f465e3a9d5374ef3a" compoundref="_ignore_rules_8cpp" startline="715" endline="721">IgnoreRules::getRelativePath</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_paths_1acd07be51ce7def54cd71d235f777df74" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref></type>
+        <definition>juce::File Paths::getLinkedTarget</definition>
+        <argsstring>(std::string_view rawPath)</argsstring>
+        <name>getLinkedTarget</name>
+        <qualifiedname>Paths::getLinkedTarget</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>rawPath</declname>
+        </param>
+        <briefdescription>
+<para>Resolves a raw path to its physical target, following symbolic links. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>std::filesystem::canonical follows each link before it applies a &quot;..&quot; after it. A text removal of &quot;..&quot; would name another file. When canonical fails, for example on a missing path, a broken link, or a closed folder, the result is the raw path against the working folder, so that the caller reports it.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rawPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The path as the user gave it.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The physical target, or the raw path against the working folder when it cannot be resolved. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Paths.h" line="96" column="23" bodyfile="Paths.cpp" bodystart="305" bodyend="314"/>
+        <references refid="classjam_1_1Strings_1aca02ec79e3d857bca6f9647dce6415fc">jam::Strings::fromView</references>
+        <references refid="classjuce_1_1File_1a57b992aacb19e09ee5905cd0f0e9bb31">juce::File::getChildFile</references>
+        <references refid="classjuce_1_1File_1af57a7a6e83fbd4a6b048e7d0010d7279">juce::File::getCurrentWorkingDirectory</references>
+        <referencedby refid="struct_paths_1acc938797fda01992a4b0f9796b67c7fa" compoundref="_paths_8cpp" startline="418" endline="445">getClassifiedPaths</referencedby>
+        <referencedby refid="_patch_8cpp_1a6a73fba80efadcccfbe1d490552baaa9" compoundref="_patch_8cpp" startline="30" endline="59">getGroupedEntries</referencedby>
+        <referencedby refid="_excerpt_8cpp_1a021a6449f73b1d4393d9efe6859af478" compoundref="_excerpt_8cpp" startline="96" endline="115">getLoadedDocument</referencedby>
+        <referencedby refid="_replace_8cpp_1ac6d8ff610e30ea4b6823a17a4d149ca5" compoundref="_replace_8cpp" startline="104" endline="131">getReplacementText</referencedby>
+        <referencedby refid="_patch_8cpp_1a90cf7bf24224586469772abae6c95d98" compoundref="_patch_8cpp" startline="316" endline="326">runFile</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_paths_1a70de3c3f965b35959c461a0bf8c60725" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Paths::applyToFileNames</definition>
+        <argsstring>(const juce::File &amp;directory, const std::function&lt; void(std::string_view)&gt; &amp;function)</argsstring>
+        <name>applyToFileNames</name>
+        <qualifiedname>Paths::applyToFileNames</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>directory</declname>
+        </param>
+        <param>
+          <type>const std::function&lt; void(std::string_view)&gt; &amp;</type>
+          <declname>function</declname>
+        </param>
+        <briefdescription>
+<para>Calls a function with the name of each regular file in one folder. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The walk does not recurse.</para>
+<para>Folders, symbolic links, and dot-prefixed names are skipped. No ignore rules apply. A folder that cannot be listed gives no call.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>directory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The folder to list. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>function</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The function that receives each file name. The view is valid only during the call. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Paths.h" line="106" column="17" bodyfile="Paths.cpp" bodystart="316" bodyend="332"/>
+        <references refid="_paths_8cpp_1a27ec3a393b85f6e8676a67afe83d0351" compoundref="_paths_8cpp" startline="146" endline="182">getDirectoryListing</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <referencedby refid="_undo_cache_8cpp_1aa12fefcd3b2e22872dc22e5917c5f667" compoundref="_undo_cache_8cpp" startline="17" endline="29">getSortedIds</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_paths_1afb5406fa93f60d3236b2be8bffe90afc" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Paths::addFailures</definition>
+        <argsstring>(Failures &amp;failures, Failures &amp;&amp;addedFailures)</argsstring>
+        <name>addFailures</name>
+        <qualifiedname>Paths::addFailures</qualifiedname>
+        <param>
+          <type><ref refid="struct_paths_1a35d9d2802de3450fab354291dd47f09b" kindref="member">Failures</ref> &amp;</type>
+          <declname>failures</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_paths_1a35d9d2802de3450fab354291dd47f09b" kindref="member">Failures</ref> &amp;&amp;</type>
+          <declname>addedFailures</declname>
+        </param>
+        <briefdescription>
+<para>Appends the failures of addedFailures to failures, keeping each path paired with its result. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>failures</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The failures that receive the added entries. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>addedFailures</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The failures to append, in their order. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Paths.h" line="113" column="17" bodyfile="Paths.cpp" bodystart="277" bodyend="291"/>
+        <referencedby refid="struct_paths_1ac210add3c94383baf9dfefe6d06a259e" compoundref="_paths_8cpp" startline="350" endline="416">applyToDirectories</referencedby>
+        <referencedby refid="struct_paths_1a174c77ae0901bcbb191f629e92e824e4" compoundref="_paths_8cpp" startline="447" endline="513">getFiles</referencedby>
+        <referencedby refid="_find_8cpp_1aee6c2a289aa8ded9609e73746c945e12" compoundref="_find_8cpp" startline="114" endline="146">runFilesFind</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_paths_1ac210add3c94383baf9dfefe6d06a259e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_paths_1a35d9d2802de3450fab354291dd47f09b" kindref="member">Failures</ref></type>
+        <definition>Paths::Failures Paths::applyToDirectories</definition>
+        <argsstring>(const jam::Array&lt; std::pair&lt; std::string_view, juce::File &gt; &gt; &amp;roots, juce::Span&lt; const std::string_view &gt; includeGlobs, juce::Span&lt; const std::string_view &gt; excludeGlobs, bool isIncludingHidden, bool isIgnoringRules, const std::function&lt; void(int)&gt; &amp;onWorkerCount, const std::function&lt; void(int, const std::string &amp;, std::string_view)&gt; &amp;onFile, const std::atomic&lt; bool &gt; &amp;shouldStop)</argsstring>
+        <name>applyToDirectories</name>
+        <qualifiedname>Paths::applyToDirectories</qualifiedname>
+        <param>
+          <type>const <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; std::pair&lt; std::string_view, <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &gt; &gt; &amp;</type>
+          <declname>roots</declname>
+        </param>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>includeGlobs</declname>
+        </param>
+        <param>
+          <type><ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span</ref>&lt; const std::string_view &gt;</type>
+          <declname>excludeGlobs</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isIncludingHidden</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isIgnoringRules</declname>
+        </param>
+        <param>
+          <type>const std::function&lt; void(int)&gt; &amp;</type>
+          <declname>onWorkerCount</declname>
+        </param>
+        <param>
+          <type>const std::function&lt; void(int, const std::string &amp;, std::string_view)&gt; &amp;</type>
+          <declname>onFile</declname>
+        </param>
+        <param>
+          <type>const std::atomic&lt; bool &gt; &amp;</type>
+          <declname>shouldStop</declname>
+        </param>
+        <briefdescription>
+<para>Walks each root and reports each included file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns each unreadable folder.</para>
+<para>Each root is one item of one walk, so that many small roots do not each start and join threads. A folder item reads its listing once and publishes that listing. The folder item then walks the first 64 entries of the listing. Each further range of 64 entries of the same listing is one more item. Symbolic links and Windows junctions are neither walked nor reported. A folder that cannot be read, or whose listing fails part-way, is unreadable. It is returned, not reported through onFile. The walk runs on worker threads. Each callback receives the index of its worker. One thread uses one worker index at a time, so a caller keeps one slot per worker and needs no lock. The order of the callbacks is not defined.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>roots</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pairs of the caller-supplied root path prefix, used in display paths, and the resolved directory to walk. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>includeGlobs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Wildcard patterns (<computeroutput>*</computeroutput>, <computeroutput>?</computeroutput>) a file must match when non-empty. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>excludeGlobs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Wildcard patterns that exclude matching files. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isIncludingHidden</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to include dot-prefixed entries. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>isIgnoringRules</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True to bypass <computeroutput>.gitignore</computeroutput> and global exclude rules. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>onWorkerCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback invoked once before the walk, with the number of workers. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>onFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback invoked per matching file with <computeroutput>(workerIndex, fullPath, displayPath)</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shouldStop</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Atomic cancellation flag polled during the walk.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The unreadable folders, each with its display path and its read failure. The order depends on the walk, so it is not defined. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Paths.h" line="138" column="21" bodyfile="Paths.cpp" bodystart="350" bodyend="416"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="struct_paths_1afb5406fa93f60d3236b2be8bffe90afc" compoundref="_paths_8cpp" startline="277" endline="291">addFailures</references>
+        <references refid="_paths_8cpp_1af54a196bbb03bd49ced2835272e40e59" compoundref="_paths_8cpp" startline="200" endline="209">addFolderRanges</references>
+        <references refid="_paths_8cpp_1aa19266452b5f4ba0c3f1b3cfd854bbd8" compoundref="_paths_8cpp" startline="212" endline="269">applyToListing</references>
+        <references refid="_paths_8cpp_1a6d80f0df859e5f1db105d183e62fb34b" compoundref="_paths_8cpp" startline="118" endline="118">entriesPerItem</references>
+        <references refid="classjam_1_1Strings_1aca02ec79e3d857bca6f9647dce6415fc">jam::Strings::fromView</references>
+        <references refid="classjuce_1_1File_1af57a7a6e83fbd4a6b048e7d0010d7279">juce::File::getCurrentWorkingDirectory</references>
+        <references refid="_paths_8cpp_1ab3d61f66405cd084c818c4f65f7413ff" compoundref="_paths_8cpp" startline="271" endline="275">getDirectoryDisplayPath</references>
+        <references refid="_paths_8cpp_1a27ec3a393b85f6e8676a67afe83d0351" compoundref="_paths_8cpp" startline="146" endline="182">getDirectoryListing</references>
+        <references refid="_paths_8cpp_1a62200c3a7cebbe3a17667940fe1a31b0" compoundref="_paths_8cpp" startline="184" endline="197">getListedFolder</references>
+        <references refid="classjuce_1_1SystemStats_1a1646a8a6072534168d2a7f07b0121b44">juce::SystemStats::getNumCpus</references>
+        <references refid="class_text_document_1a190a015fb1df67382b28f6046b64798e" compoundref="_text_document_8cpp" startline="27" endline="33">TextDocument::getReadFailure</references>
+        <references refid="_paths_8cpp_1a39d5d8d93a4ab01783ac3f580f6a76b6" compoundref="_paths_8cpp" startline="334" endline="348">getRootFolder</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <references refid="classjam_1_1Array_1a5011ae5f02af2593d783611891ae64f0">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::resize</references>
+        <references refid="struct_jobs_1a7af6cc99379ddf0a5e4e7cfbff308af5" compoundref="_jobs_8h" startline="267" endline="280">Jobs::runRecursive</references>
+        <referencedby refid="_find_8cpp_1a24a12af3c583529f0eca4e5da165cc08" compoundref="_find_8cpp" startline="58" endline="93">getDirectoriesOutcome</referencedby>
+        <referencedby refid="struct_paths_1a174c77ae0901bcbb191f629e92e824e4" compoundref="_paths_8cpp" startline="447" endline="513">getFiles</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Resolves file and directory inputs with glob, hidden, and ignore filtering. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="Paths.h" line="6" column="1" bodyfile="Paths.h" bodystart="7" bodyend="146"/>
+    <listofallmembers>
+      <member refid="struct_paths_1afb5406fa93f60d3236b2be8bffe90afc" prot="public" virt="non-virtual"><scope>Paths</scope><name>addFailures</name></member>
+      <member refid="struct_paths_1ac210add3c94383baf9dfefe6d06a259e" prot="public" virt="non-virtual"><scope>Paths</scope><name>applyToDirectories</name></member>
+      <member refid="struct_paths_1a70de3c3f965b35959c461a0bf8c60725" prot="public" virt="non-virtual"><scope>Paths</scope><name>applyToFileNames</name></member>
+      <member refid="struct_paths_1a7d608458f9dbff3a5645b164eece0283" prot="public" virt="non-virtual"><scope>Paths</scope><name>Entry</name></member>
+      <member refid="struct_paths_1a35d9d2802de3450fab354291dd47f09b" prot="public" virt="non-virtual"><scope>Paths</scope><name>Failures</name></member>
+      <member refid="struct_paths_1acc938797fda01992a4b0f9796b67c7fa" prot="public" virt="non-virtual"><scope>Paths</scope><name>getClassifiedPaths</name></member>
+      <member refid="struct_paths_1a0665b4c8b5e8442a35ff1d7feacefe92" prot="public" virt="non-virtual"><scope>Paths</scope><name>getDisplayPath</name></member>
+      <member refid="struct_paths_1a174c77ae0901bcbb191f629e92e824e4" prot="public" virt="non-virtual"><scope>Paths</scope><name>getFiles</name></member>
+      <member refid="struct_paths_1acd07be51ce7def54cd71d235f777df74" prot="public" virt="non-virtual"><scope>Paths</scope><name>getLinkedTarget</name></member>
+      <member refid="struct_paths_1a5314f36d3b5852db454cb13f26e1f6be" prot="public" virt="non-virtual"><scope>Paths</scope><name>getReadableFiles</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

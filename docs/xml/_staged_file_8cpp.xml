@@ -1,0 +1,351 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="_staged_file_8cpp" kind="file" language="C++">
+    <compoundname>StagedFile.cpp</compoundname>
+    <includes refid="_staged_file_8h" local="yes">StagedFile.h</includes>
+    <includes refid="_stdio_8h" local="yes">Stdio.h</includes>
+    <includes refid="_undo_cache_8h" local="yes">UndoCache.h</includes>
+    <includes refid="_writer_8h" local="yes">Writer.h</includes>
+    <includes refid="_generated_8h" local="yes">generated/Generated.h</includes>
+    <incdepgraph>
+      <node id="6">
+        <label>Input.h</label>
+        <link refid="_input_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>LineDiff.h</label>
+        <link refid="_line_diff_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>StagedFile.cpp</label>
+        <link refid="_staged_file_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>StagedFile.h</label>
+        <link refid="_staged_file_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Stdio.h</label>
+        <link refid="_stdio_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>TextDocument.h</label>
+        <link refid="_text_document_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>UndoCache.h</label>
+        <link refid="_undo_cache_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Writer.h</label>
+        <link refid="_writer_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Files.h</label>
+        <link refid="_files_8h"/>
+      </node>
+      <node id="8">
+        <label>generated/Generated.h</label>
+        <link refid="_generated_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>HashMaps.h</label>
+        <link refid="_hash_maps_8h"/>
+      </node>
+      <node id="10">
+        <label>Identifiers.h</label>
+        <link refid="_identifiers_8h"/>
+      </node>
+      <node id="9">
+        <label>ProjectInfo.h</label>
+        <link refid="_project_info_8h"/>
+      </node>
+      <node id="11">
+        <label>Text.h</label>
+        <link refid="_text_8h"/>
+      </node>
+      <node id="3">
+        <label>JuceHeader.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_staged_file_8h" kindref="compound">StagedFile.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_stdio_8h" kindref="compound">Stdio.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_undo_cache_8h" kindref="compound">UndoCache.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_writer_8h" kindref="compound">Writer.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_generated_8h" kindref="compound">generated/Generated.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7" refid="class_staged_file_1a7ee912febde968c3925687b812da3da6" refkind="member"><highlight class="normal"><ref refid="class_staged_file_1a7ee912febde968c3925687b812da3da6" kindref="member">StagedFile::StagedFile</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>newTargetFile,<sp/>std::unique_ptr&lt;TextDocument&gt;<sp/>newOriginalDocument,<sp/><ref refid="class_line_diff" kindref="compound">LineDiff</ref><sp/>newDiff,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>newBlobIndex)</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/><ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref><sp/>(newTargetFile),</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" kindref="member">originalDocument</ref><sp/>(<ref refid="namespacestd" kindref="compound">std</ref>::move<sp/>(newOriginalDocument)),</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" kindref="member">plannedContent</ref><sp/>(<ref refid="namespacestd" kindref="compound">std</ref>::move<sp/>(newDiff)),</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_staged_file_1ac8eff0c463a6245672d84df443ae130f" kindref="member">executable</ref><sp/>(<ref refid="namespacejam" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam</ref>::File::<ref refid="class_staged_file_1a661f47297b3bed8748cd40927ac9ee3c" kindref="member">isExecutable</ref><sp/>(newTargetFile)),</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_staged_file_1afe43d67cccf72cf126d5c53ff6d328ac" kindref="member">blobIndex</ref><sp/>(newBlobIndex)</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>assert<sp/>(<ref refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" kindref="member">originalDocument</ref><sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="class_staged_file_1a8b8d934a843c8fc77a11d92c98bd0647" refkind="member"><highlight class="normal"><ref refid="class_staged_file_1a7ee912febde968c3925687b812da3da6" kindref="member">StagedFile::StagedFile</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>newTargetFile,<sp/>std::unique_ptr&lt;TextDocument&gt;<sp/>newOriginalDocument,<sp/>std::unique_ptr&lt;TextDocument&gt;<sp/>newPlannedDocument,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>newIsExecutable,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>newIsExisting,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>newBlobIndex)</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/><ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref><sp/>(newTargetFile),</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" kindref="member">originalDocument</ref><sp/>(<ref refid="namespacestd" kindref="compound">std</ref>::move<sp/>(newOriginalDocument)),</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" kindref="member">plannedContent</ref><sp/>(<ref refid="namespacestd" kindref="compound">std</ref>::move<sp/>(newPlannedDocument)),</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_staged_file_1ac8eff0c463a6245672d84df443ae130f" kindref="member">executable</ref><sp/>(newIsExecutable),</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" kindref="member">existing</ref><sp/>(newIsExisting),</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_staged_file_1afe43d67cccf72cf126d5c53ff6d328ac" kindref="member">blobIndex</ref><sp/>(newBlobIndex)</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">*<sp/>plannedDocument<sp/>{<sp/>std::get_if&lt;std::unique_ptr&lt;TextDocument&gt;&gt;<sp/>(&amp;<ref refid="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" kindref="member">plannedContent</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>assert<sp/>(<ref refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" kindref="member">originalDocument</ref><sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>assert<sp/>(plannedDocument<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal"><sp/>and<sp/>*plannedDocument<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="class_staged_file_1a921b90af1f1fedb842d44f120f43ed16" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/><ref refid="class_staged_file_1a921b90af1f1fedb842d44f120f43ed16" kindref="member">StagedFile::getTargetFile</ref>()<sp/>const<sp/>noexcept</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="class_staged_file_1ac28f2a57e24a8fce9a47411321ef186b" refkind="member"><highlight class="normal">std::string_view<sp/><ref refid="class_staged_file_1ac28f2a57e24a8fce9a47411321ef186b" kindref="member">StagedFile::getDisplayPath</ref>()<sp/>const<sp/>noexcept</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" kindref="member">originalDocument</ref>-&gt;<ref refid="class_text_document_1a427fbb6c2b72d36e5c6251dc95319875" kindref="member">getDisplayPath</ref>();</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" refkind="member"><highlight class="normal">std::string_view<sp/><ref refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" kindref="member">StagedFile::getOriginalBytes</ref>()<sp/>const<sp/>noexcept</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" kindref="member">originalDocument</ref>-&gt;<ref refid="class_text_document_1aaac207e0e885695583d01c2cb72c4136" kindref="member">getBytes</ref>();</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" refkind="member"><highlight class="normal">std::string_view<sp/><ref refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" kindref="member">StagedFile::getPlannedBytes</ref>()<sp/>const<sp/>noexcept</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">*<sp/>plannedDiff<sp/>{<sp/>std::get_if&lt;LineDiff&gt;<sp/>(&amp;<ref refid="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" kindref="member">plannedContent</ref>)<sp/>})</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>plannedDiff-&gt;getPlannedBytes();</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>plannedDocument<sp/>{<sp/>std::get&lt;std::unique_ptr&lt;TextDocument&gt;&gt;<sp/>(<ref refid="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" kindref="member">plannedContent</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>plannedDocument-&gt;getBytes();</highlight></codeline>
+<codeline lineno="52"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="class_staged_file_1a661f47297b3bed8748cd40927ac9ee3c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1a661f47297b3bed8748cd40927ac9ee3c" kindref="member">StagedFile::isExecutable</ref>()<sp/>const<sp/>noexcept</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1ac8eff0c463a6245672d84df443ae130f" kindref="member">executable</ref>;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="class_staged_file_1ac4fbb6d9dcc5d4a5358d52dae513bcc4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1ac4fbb6d9dcc5d4a5358d52dae513bcc4" kindref="member">StagedFile::appendUnifiedDiff</ref><sp/>(std::string&amp;<sp/>output)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="60"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">*<sp/>plannedDiff<sp/>{<sp/>std::get_if&lt;LineDiff&gt;<sp/>(&amp;<ref refid="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" kindref="member">plannedContent</ref>)<sp/>})</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>plannedDiff-&gt;appendUnifiedDiff<sp/>(output,<sp/>*<ref refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" kindref="member">originalDocument</ref>,<sp/>plannedDiff-&gt;getPlannedBytes());</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>plannedDocument<sp/>{<sp/>std::get&lt;std::unique_ptr&lt;TextDocument&gt;&gt;<sp/>(<ref refid="class_staged_file_1aa59263cef90315002946bbfe9c0abc03" kindref="member">plannedContent</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_line_diff_1a2856900f7fc062016ce9448fc9dfaa8b" kindref="member">LineDiff</ref><sp/>(*<ref refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" kindref="member">originalDocument</ref>,<sp/>*plannedDocument).appendUnifiedDiff<sp/>(output,<sp/>*<ref refid="class_staged_file_1ace5ac4c5800f1d48f2616d713e0395cf" kindref="member">originalDocument</ref>,<sp/>plannedDocument-&gt;<ref refid="class_text_document_1aaac207e0e885695583d01c2cb72c4136" kindref="member">getBytes</ref>());</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="70"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="class_staged_file_1a8840cb0b0fc3e37729ae39270f2effd9" refkind="member"><highlight class="normal">std::pair&lt;juce::Result,<sp/>bool&gt;<sp/><ref refid="class_staged_file_1a8840cb0b0fc3e37729ae39270f2effd9" kindref="member">StagedFile::commit</ref><sp/>(std::string_view<sp/>transactionId)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="73"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>blobFile<sp/>{<sp/><ref refid="struct_undo_cache_1a9406f020dc3e3e1d856f3358966bea8c" kindref="member">UndoCache::getBlobFile</ref><sp/>(transactionId,<sp/><ref refid="class_staged_file_1afe43d67cccf72cf126d5c53ff6d328ac" kindref="member">blobIndex</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="structjam_1_1File_1aad54bb339f3243cf682682ecc19afe12" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::File::isSwappable</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/>blobFile))</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>swapped<sp/>{<sp/><ref refid="class_staged_file_1ae39bc36d572b8eafe0b21e4fca631a81" kindref="member">swap</ref><sp/>(blobFile)<sp/>})</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*swapped;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>backupStatus<sp/>{<sp/><ref refid="struct_writer_1ab755b151fbb007bdc588e602f6add415" kindref="member">Writer::toFile</ref><sp/>(blobFile,<sp/><ref refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" kindref="member">getOriginalBytes</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(backupStatus.failed())</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/>backupStatus,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" kindref="member">replace</ref>();</highlight></codeline>
+<codeline lineno="88"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="class_staged_file_1aea7f45176b058229d77e02f039ce555a" refkind="member"><highlight class="normal">std::pair&lt;juce::Result,<sp/>bool&gt;<sp/><ref refid="class_staged_file_1aea7f45176b058229d77e02f039ce555a" kindref="member">StagedFile::undo</ref><sp/>(std::string_view<sp/>transactionId)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="91"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>blobFile<sp/>{<sp/><ref refid="struct_undo_cache_1a9406f020dc3e3e1d856f3358966bea8c" kindref="member">UndoCache::getBlobFile</ref><sp/>(transactionId,<sp/><ref refid="class_staged_file_1afe43d67cccf72cf126d5c53ff6d328ac" kindref="member">blobIndex</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isSwappable<sp/>{<sp/><ref refid="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" kindref="member">existing</ref></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/><ref refid="structjam_1_1File_1aad54bb339f3243cf682682ecc19afe12" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::File::isSwappable</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/>blobFile)</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/><ref refid="structjam_1_1File_1a1a7f31af88aff263e46c6255c1b6cb10" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::File::setMetadata</ref><sp/>(blobFile,<sp/><ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>)</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/>blobFile.setLastModificationTime<sp/>(<ref refid="classjuce_1_1Time_1ad8306070f7b89d416fe8dabaa5a2abc2" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Time::getCurrentTime</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(isSwappable)</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>swapped<sp/>{<sp/><ref refid="class_staged_file_1ae39bc36d572b8eafe0b21e4fca631a81" kindref="member">swap</ref><sp/>(blobFile)<sp/>})</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*swapped;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" kindref="member">replace</ref>();</highlight></codeline>
+<codeline lineno="105"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" refkind="member"><highlight class="normal"><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref><sp/><ref refid="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" kindref="member">StagedFile::restore</ref><sp/>(std::string_view<sp/>transactionId)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="108"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/><ref refid="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" kindref="member">existing</ref>)</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>plannedStatus<sp/>{<sp/><ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">getBytesStatus</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/><ref refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" kindref="member">getPlannedBytes</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(plannedStatus.failed())</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>plannedStatus;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>.<ref refid="classjuce_1_1File_1ae0058be6d755ac686b4b1becf63183ef" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">deleteFile</ref>()<sp/>?<sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>()<sp/>:<sp/><ref refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" kindref="member">Stdio::fail</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1a28194be32561ce1e2e6a21514825e1c6" kindref="member">text::Diagnostics::failOverwriteFailed</ref>);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>blobFile<sp/>{<sp/><ref refid="struct_undo_cache_1a9406f020dc3e3e1d856f3358966bea8c" kindref="member">UndoCache::getBlobFile</ref><sp/>(transactionId,<sp/><ref refid="class_staged_file_1afe43d67cccf72cf126d5c53ff6d328ac" kindref="member">blobIndex</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">getBytesStatus</ref><sp/>(blobFile,<sp/><ref refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" kindref="member">getPlannedBytes</ref>()).failed())</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>blobStatus<sp/>{<sp/><ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">getBytesStatus</ref><sp/>(blobFile,<sp/><ref refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" kindref="member">getOriginalBytes</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(blobStatus.failed())</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>blobStatus;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="structjam_1_1File_1ab20decc5bba706804de00b6b43bdccea" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::File::swapFiles</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/>blobFile))</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>swapStatus<sp/>{<sp/><ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">getBytesStatus</ref><sp/>(blobFile,<sp/><ref refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" kindref="member">getPlannedBytes</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(swapStatus.failed())</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structjam_1_1File_1ab20decc5bba706804de00b6b43bdccea" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::File::swapFiles</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/>blobFile);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>swapStatus;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">getBytesStatus</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/><ref refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" kindref="member">getOriginalBytes</ref>());</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>plannedStatus<sp/>{<sp/><ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">getBytesStatus</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/><ref refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" kindref="member">getPlannedBytes</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(plannedStatus.failed())</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>plannedStatus;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>writeStatus<sp/>{<sp/><ref refid="struct_writer_1ab755b151fbb007bdc588e602f6add415" kindref="member">Writer::toFile</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/><ref refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" kindref="member">getOriginalBytes</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(writeStatus.failed())</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>writeStatus;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">getBytesStatus</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/><ref refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" kindref="member">getOriginalBytes</ref>());</highlight></codeline>
+<codeline lineno="153"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155" refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" refkind="member"><highlight class="normal"><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref><sp/><ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">StagedFile::getBytesStatus</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>file,<sp/>std::string_view<sp/>expectedBytes)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="156"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_text_document_1a96201f667cad98f5a7725570f7d39de1" kindref="member">TextDocument::getBytesStatus</ref><sp/>(file,<sp/><ref refid="class_staged_file_1ac28f2a57e24a8fce9a47411321ef186b" kindref="member">getDisplayPath</ref>(),<sp/>expectedBytes,<sp/><ref refid="structtext_1_1_diagnostics_1a535617faa243046c7358b9c76d30de80" kindref="member">text::Diagnostics::failChecksumMismatch</ref>);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160" refid="class_staged_file_1ae39bc36d572b8eafe0b21e4fca631a81" refkind="member"><highlight class="normal">std::optional&lt;std::pair&lt;juce::Result,<sp/>bool&gt;&gt;<sp/><ref refid="class_staged_file_1ae39bc36d572b8eafe0b21e4fca631a81" kindref="member">StagedFile::swap</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>blobFile)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="161"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="structjam_1_1File_1ab20decc5bba706804de00b6b43bdccea" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::File::swapFiles</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/>blobFile))</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>preStatus<sp/>{<sp/><ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">getBytesStatus</ref><sp/>(blobFile,<sp/><ref refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" kindref="member">getOriginalBytes</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(preStatus.failed())</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isSwappedBack<sp/>{<sp/><ref refid="structjam_1_1File_1ab20decc5bba706804de00b6b43bdccea" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::File::swapFiles</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/>blobFile)<sp/>};</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(isSwappedBack<sp/>and<sp/><ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">getBytesStatus</ref><sp/>(blobFile,<sp/><ref refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" kindref="member">getPlannedBytes</ref>()).wasOk())</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::pair&lt;juce::Result,<sp/>bool&gt;<sp/>{<sp/>preStatus,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(isSwappedBack)</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structjam_1_1File_1ab20decc5bba706804de00b6b43bdccea" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::File::swapFiles</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/>blobFile);</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::pair&lt;juce::Result,<sp/>bool&gt;<sp/>{<sp/>preStatus,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>postStatus<sp/>{<sp/><ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">getBytesStatus</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/><ref refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" kindref="member">getPlannedBytes</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(postStatus.failed())</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::pair&lt;juce::Result,<sp/>bool&gt;<sp/>{<sp/>postStatus,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::pair&lt;juce::Result,<sp/>bool&gt;<sp/>{<sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>(),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::nullopt;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190" refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" refkind="member"><highlight class="normal">std::pair&lt;juce::Result,<sp/>bool&gt;<sp/><ref refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" kindref="member">StagedFile::replace</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="191"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" kindref="member">existing</ref>)</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>originalStatus<sp/>{<sp/><ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">getBytesStatus</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/><ref refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" kindref="member">getOriginalBytes</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(originalStatus.failed())</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/>originalStatus,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/><ref refid="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" kindref="member">existing</ref><sp/>and<sp/><ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>.<ref refid="classjuce_1_1File_1aec22e75cf76048360e1dda14d724d06d" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">exists</ref>())</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" kindref="member">Stdio::fail</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1a535617faa243046c7358b9c76d30de80" kindref="member">text::Diagnostics::failChecksumMismatch</ref>),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>writeStatus<sp/>{<sp/><ref refid="struct_writer_1ab755b151fbb007bdc588e602f6add415" kindref="member">Writer::toFile</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/><ref refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" kindref="member">getPlannedBytes</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(writeStatus.failed())</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isUnchanged<sp/>{<sp/><ref refid="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" kindref="member">existing</ref><sp/>?<sp/><ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">getBytesStatus</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/><ref refid="class_staged_file_1a7cecaeefdc0ababb65ad60fa06871570" kindref="member">getOriginalBytes</ref>()).<ref refid="classjuce_1_1Result_1a204ba5a9124544a89a5b0565672ef5f3" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">wasOk</ref>()</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>not<sp/><ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>.<ref refid="classjuce_1_1File_1a37e88fbc390d78f3d79675974f53fa78" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">existsAsFile</ref>()<sp/>};</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/>writeStatus,<sp/>not<sp/>isUnchanged<sp/>};</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/><ref refid="class_staged_file_1afc25d0f10d33f8574c54af530ee69681" kindref="member">existing</ref><sp/>and<sp/><ref refid="structjam_1_1File_1af5f98c17223ef2bde077738646b5262b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::File::isExecutable</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>)<sp/>!=<sp/><ref refid="class_staged_file_1ac8eff0c463a6245672d84df443ae130f" kindref="member">executable</ref>)</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/><ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>.<ref refid="classjuce_1_1File_1ac1705ac78060b59917abf6700ecc4c4f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">setExecutePermission</ref><sp/>(<ref refid="class_staged_file_1ac8eff0c463a6245672d84df443ae130f" kindref="member">executable</ref>))</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" kindref="member">Stdio::fail</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1a28194be32561ce1e2e6a21514825e1c6" kindref="member">text::Diagnostics::failOverwriteFailed</ref>),<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>plannedStatus<sp/>{<sp/><ref refid="class_staged_file_1a79eedf3a0800dc6bbc0d8191b0ce83cc" kindref="member">getBytesStatus</ref><sp/>(<ref refid="class_staged_file_1a047677fbeb36e1757536134211dbcd40" kindref="member">targetFile</ref>,<sp/><ref refid="class_staged_file_1a6932549b18ef051b73aa16c4ebe493ef" kindref="member">getPlannedBytes</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(plannedStatus.failed())</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/>plannedStatus,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>(),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="224"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="StagedFile.cpp"/>
+  </compounddef>
+</doxygen>

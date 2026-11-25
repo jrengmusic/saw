@@ -1,0 +1,349 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="struct_writer" kind="struct" language="C++" prot="public">
+    <compoundname>Writer</compoundname>
+    <includes refid="_writer_8h" local="no">Writer.h</includes>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="struct_writer_1ab755b151fbb007bdc588e602f6add415" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result Writer::toFile</definition>
+        <argsstring>(const juce::File &amp;targetFile, std::string_view bytes)</argsstring>
+        <name>toFile</name>
+        <qualifiedname>Writer::toFile</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>targetFile</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>bytes</declname>
+        </param>
+        <briefdescription>
+<para>Replaces a file with new bytes, through a hidden temporary file in the same folder. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When the target exists, the temporary file takes the metadata of the target. The final step is one replace, so a reader sees the old bytes or the new bytes.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>targetFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Destination file to create or overwrite. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Raw bytes to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Result indicating write and replace success or failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Writer.h" line="18" column="25" bodyfile="Writer.cpp" bodystart="70" bodyend="90"/>
+        <references refid="classjuce_1_1File_1a37e88fbc390d78f3d79675974f53fa78">juce::File::existsAsFile</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1a28194be32561ce1e2e6a21514825e1c6" compoundref="_text_8h" startline="70" endline="70">text::Diagnostics::failOverwriteFailed</references>
+        <references refid="classjuce_1_1TemporaryFile_1ac9edf1f88c565071b1bc84b99b33d9a0">juce::TemporaryFile::getFile</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="structjam_1_1File_1a20a8bfbe8a3d48819a627066e227d29f">jam::File::replaceFileIn</references>
+        <references refid="_writer_8cpp_1aee909f8e1cacff3b7156189a72e57c9b" compoundref="_writer_8cpp" startline="5" endline="11">setMetadata</references>
+        <references refid="struct_writer_1a83eaf99ea4087382f7a0c141ba37a025" compoundref="_writer_8cpp" startline="42" endline="62">toNewFile</references>
+        <references refid="classjuce_1_1TemporaryFile_1a09bdd60ad81f00992f2b59eb2a0519e3afb9942ba2271eafe51c70d0f4a708a91">juce::TemporaryFile::useHiddenFile</references>
+        <referencedby refid="class_staged_file_1a8840cb0b0fc3e37729ae39270f2effd9" compoundref="_staged_file_8cpp" startline="72" endline="88">StagedFile::commit</referencedby>
+        <referencedby refid="class_staged_file_1ae4ee5b4024808944c3990370ebfe46f5" compoundref="_staged_file_8cpp" startline="190" endline="224">StagedFile::replace</referencedby>
+        <referencedby refid="class_staged_file_1a0b6fff795f99ffde7dd996f3f128c595" compoundref="_staged_file_8cpp" startline="107" endline="153">StagedFile::restore</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_writer_1a83eaf99ea4087382f7a0c141ba37a025" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result Writer::toNewFile</definition>
+        <argsstring>(const juce::File &amp;newFile, std::string_view bytes)</argsstring>
+        <name>toNewFile</name>
+        <qualifiedname>Writer::toNewFile</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>newFile</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>bytes</declname>
+        </param>
+        <briefdescription>
+<para>Writes bytes to a file that is absent or empty. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>newFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The file to write. It must be absent or empty. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Raw bytes to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Result indicating write success or failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Writer.h" line="27" column="25" bodyfile="Writer.cpp" bodystart="42" bodyend="62"/>
+        <references refid="classjuce_1_1File_1a398e2a96b04991d8d5885a473afd59c3">juce::File::getSize</references>
+        <references refid="_writer_8cpp_1a200d3d2de740e0a706470d7d0dc7b0b6" compoundref="_writer_8cpp" startline="13" endline="30">setBytes</references>
+        <references refid="classjuce_1_1OutputStream_1a22f9d3fa2137798e99cd135b04b0f1f9">juce::OutputStream::write</references>
+        <referencedby refid="struct_undo_cache_1a7b0c9fd799188881199db848a9d98182" compoundref="_undo_cache_8cpp" startline="320" endline="395">UndoCache::addTransaction</referencedby>
+        <referencedby refid="_writer_8cpp_1acd5910d2c6875b7d272415749caf2a39" compoundref="_writer_8cpp" startline="32" endline="40">setPlannedFile</referencedby>
+        <referencedby refid="struct_writer_1ab755b151fbb007bdc588e602f6add415" compoundref="_writer_8cpp" startline="70" endline="90">toFile</referencedby>
+        <referencedby refid="_undo_cache_8cpp_1a3c2d735259e1208ed9a9cca7b357572e" compoundref="_undo_cache_8cpp" startline="31" endline="37">writeBlob</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_writer_1a2901bf1fe428f88ec21f4e064315a686" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result Writer::toNewFile</definition>
+        <argsstring>(const juce::File &amp;newFile, const std::function&lt; bool(juce::OutputStream &amp;)&gt; &amp;writeBytes)</argsstring>
+        <name>toNewFile</name>
+        <qualifiedname>Writer::toNewFile</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>newFile</declname>
+        </param>
+        <param>
+          <type>const std::function&lt; bool(<ref refid="classjuce_1_1OutputStream" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::OutputStream</ref> &amp;)&gt; &amp;</type>
+          <declname>writeBytes</declname>
+        </param>
+        <briefdescription>
+<para>Writes a file that is absent or empty through a stream that the function fills. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The function returns false when a write fails. The size of the file is compared with the stream position after the flush, because a short write of the OS leaves the status of <ref refid="classjuce_1_1FileOutputStream" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::FileOutputStream</ref> ok, and its flush ignores the buffered write.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>newFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The file to write. It must be absent or empty. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>writeBytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Writes the bytes to the stream. Returns false when a write fails.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Result indicating write success or failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Writer.h" line="40" column="25" bodyfile="Writer.cpp" bodystart="64" bodyend="68"/>
+        <references refid="classjuce_1_1File_1a398e2a96b04991d8d5885a473afd59c3">juce::File::getSize</references>
+        <references refid="_writer_8cpp_1a200d3d2de740e0a706470d7d0dc7b0b6" compoundref="_writer_8cpp" startline="13" endline="30">setBytes</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_writer_1a81de3ecb6a9f1096dc42d51d7979b624" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result Writer::toStagedFile</definition>
+        <argsstring>(const juce::File &amp;stagedFile, const juce::File &amp;targetFile, std::string_view bytes)</argsstring>
+        <name>toStagedFile</name>
+        <qualifiedname>Writer::toStagedFile</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>stagedFile</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>targetFile</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>bytes</declname>
+        </param>
+        <briefdescription>
+<para>Writes the planned bytes to a staged file, with the metadata of the target, ready for an exchange. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When the staging folder has the same group as the target folder, the staged file is written directly. Otherwise a temporary file is written in the folder of the target, so it takes the group of that folder, and then it is moved to the staged file.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>stagedFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The file to write in the staging folder. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>targetFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The file that the staged file will be exchanged with. Its metadata is copied. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The planned bytes to write.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Result indicating write success or failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Writer.h" line="54" column="25" bodyfile="Writer.cpp" bodystart="92" bodyend="107"/>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1a28194be32561ce1e2e6a21514825e1c6" compoundref="_text_8h" startline="70" endline="70">text::Diagnostics::failOverwriteFailed</references>
+        <references refid="classjuce_1_1TemporaryFile_1ac9edf1f88c565071b1bc84b99b33d9a0">juce::TemporaryFile::getFile</references>
+        <references refid="classjuce_1_1File_1ab6bec65fbcf19ce10e38cf9d1015770d">juce::File::getParentDirectory</references>
+        <references refid="structjam_1_1File_1af96853dfc8c7a83aea5f720f491e5b98">jam::File::hasSameGroup</references>
+        <references refid="structjam_1_1File_1a8417b42a7426d43b899080e1f73ab3ec">jam::File::moveFileTo</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="_writer_8cpp_1acd5910d2c6875b7d272415749caf2a39" compoundref="_writer_8cpp" startline="32" endline="40">setPlannedFile</references>
+        <references refid="classjuce_1_1TemporaryFile_1a09bdd60ad81f00992f2b59eb2a0519e3afb9942ba2271eafe51c70d0f4a708a91">juce::TemporaryFile::useHiddenFile</references>
+        <referencedby refid="_undo_cache_8cpp_1a3c2d735259e1208ed9a9cca7b357572e" compoundref="_undo_cache_8cpp" startline="31" endline="37">writeBlob</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_writer_1a4ebe3e06a186f29366e2d37b838a48b3" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result Writer::getWriteFailure</definition>
+        <argsstring>(std::string_view displayPath, std::string_view reason)</argsstring>
+        <name>getWriteFailure</name>
+        <qualifiedname>Writer::getWriteFailure</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>displayPath</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>reason</declname>
+        </param>
+        <briefdescription>
+<para>Builds the failure of a write that did not complete. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>displayPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The path of the file, as the user sees it. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>reason</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The reason that the write failed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Failure that names the path and the reason, and ends with the rolled-back text (<ref refid="structtext_1_1_diagnostics_1adcc4314752e2912c0f71eb28d97febaf" kindref="member">text::Diagnostics::rolledBack</ref>). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Writer.h" line="63" column="25" bodyfile="Writer.cpp" bodystart="109" bodyend="116"/>
+        <references refid="namespaceId_1a5e729b9864fd096462b3f08ef1eb4b1a">Id::diagnosticSeparator</references>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1a36a20d77239a5883e3322b3f14725b82" compoundref="_text_8h" startline="68" endline="68">text::Diagnostics::failWrite</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="structtext_1_1_diagnostics_1adcc4314752e2912c0f71eb28d97febaf" compoundref="_text_8h" startline="69" endline="69">text::Diagnostics::rolledBack</references>
+        <referencedby refid="_undo_cache_8cpp_1a86a8a5f1175771f772d06fead966c695" compoundref="_undo_cache_8cpp" startline="289" endline="318">addPendingFile</referencedby>
+        <referencedby refid="struct_undo_cache_1a7b0c9fd799188881199db848a9d98182" compoundref="_undo_cache_8cpp" startline="320" endline="395">UndoCache::addTransaction</referencedby>
+        <referencedby refid="struct_undo_cache_1a1f1a2970b6804fd009fb10e68b7dc104" compoundref="_undo_cache_8cpp" startline="263" endline="287">UndoCache::claimTransaction</referencedby>
+        <referencedby refid="class_transaction_1a9e9e14d173c40fc4767c6ad93ca14157" compoundref="_transaction_8cpp" startline="191" endline="217">Transaction::commit</referencedby>
+        <referencedby refid="struct_writer_1a93a55c6866ec6727d06e10b8d28de8ce" compoundref="_writer_8cpp" startline="118" endline="139">getWriteStatus</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_writer_1a93a55c6866ec6727d06e10b8d28de8ce" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>juce::Result Writer::getWriteStatus</definition>
+        <argsstring>(const juce::File &amp;file, std::string_view displayPath)</argsstring>
+        <name>getWriteStatus</name>
+        <qualifiedname>Writer::getWriteStatus</qualifiedname>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>displayPath</declname>
+        </param>
+        <briefdescription>
+<para>Checks that a file can be replaced by a write. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A file that does not exist passes. A file with more than one hard link, or without write access, is refused. A file that cannot be deleted from a writable folder is refused too, because the write replaces the file. A file whose link count cannot be read is refused with the read failure.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>file</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The file to check. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>displayPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Path string used in the diagnostic.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Ok when the file can be written, otherwise a failure that names the file. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Writer.h" line="76" column="25" bodyfile="Writer.cpp" bodystart="118" bodyend="139"/>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1a3e8b0d6df75bb2da26477c2ec159b8f4" compoundref="_text_8h" startline="39" endline="39">text::Diagnostics::failHardLinkedFile</references>
+        <references refid="structtext_1_1_diagnostics_1a28194be32561ce1e2e6a21514825e1c6" compoundref="_text_8h" startline="70" endline="70">text::Diagnostics::failOverwriteFailed</references>
+        <references refid="structtext_1_1_diagnostics_1ad61c43e380bbb440fb4fcdd4f1070193" compoundref="_text_8h" startline="37" endline="37">text::Diagnostics::failRead</references>
+        <references refid="structtext_1_1_diagnostics_1a286e63f1a91f017a6ff7611ad2f6227b" compoundref="_text_8h" startline="40" endline="40">text::Diagnostics::failReadOnlyFile</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="struct_writer_1a4ebe3e06a186f29366e2d37b838a48b3" compoundref="_writer_8cpp" startline="109" endline="116">getWriteFailure</references>
+        <references refid="structjam_1_1File_1af237c352e47b40c7ceea9496a3dea010">jam::File::hasDeleteAccess</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <referencedby refid="class_transaction_1ace7cab528daf25ccbb7e6042cbb4b25e" compoundref="_transaction_8cpp" startline="19" endline="42">Transaction::addFile</referencedby>
+        <referencedby refid="_undo_8cpp_1aaaf63f385e4d48474c25821a8f5bb8bc" compoundref="_undo_8cpp" startline="173" endline="201">getVerifiedEntry</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Writes files through hidden temporary files, and checks that a file can be replaced. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="Writer.h" line="6" column="1" bodyfile="Writer.h" bodystart="7" bodyend="77"/>
+    <listofallmembers>
+      <member refid="struct_writer_1a4ebe3e06a186f29366e2d37b838a48b3" prot="public" virt="non-virtual"><scope>Writer</scope><name>getWriteFailure</name></member>
+      <member refid="struct_writer_1a93a55c6866ec6727d06e10b8d28de8ce" prot="public" virt="non-virtual"><scope>Writer</scope><name>getWriteStatus</name></member>
+      <member refid="struct_writer_1ab755b151fbb007bdc588e602f6add415" prot="public" virt="non-virtual"><scope>Writer</scope><name>toFile</name></member>
+      <member refid="struct_writer_1a83eaf99ea4087382f7a0c141ba37a025" prot="public" virt="non-virtual"><scope>Writer</scope><name>toNewFile</name></member>
+      <member refid="struct_writer_1a2901bf1fe428f88ec21f4e064315a686" prot="public" virt="non-virtual"><scope>Writer</scope><name>toNewFile</name></member>
+      <member refid="struct_writer_1a81de3ecb6a9f1096dc42d51d7979b624" prot="public" virt="non-virtual"><scope>Writer</scope><name>toStagedFile</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

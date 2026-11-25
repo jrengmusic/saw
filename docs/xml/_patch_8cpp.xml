@@ -1,0 +1,1224 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="_patch_8cpp" kind="file" language="C++">
+    <compoundname>Patch.cpp</compoundname>
+    <includes refid="_patch_8h" local="yes">Patch.h</includes>
+    <includes refid="_arguments_8h" local="yes">Arguments.h</includes>
+    <includes refid="_input_8h" local="yes">Input.h</includes>
+    <includes refid="_line_diff_8h" local="yes">LineDiff.h</includes>
+    <includes refid="_paths_8h" local="yes">Paths.h</includes>
+    <includes refid="_patch_validator_8h" local="yes">PatchValidator.h</includes>
+    <includes refid="_stdio_8h" local="yes">Stdio.h</includes>
+    <includes refid="_text_document_8h" local="yes">TextDocument.h</includes>
+    <includes refid="_transaction_8h" local="yes">Transaction.h</includes>
+    <includes refid="_generated_8h" local="yes">generated/Generated.h</includes>
+    <incdepgraph>
+      <node id="4">
+        <label>Arguments.h</label>
+        <link refid="_arguments_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Input.h</label>
+        <link refid="_input_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>LineDiff.h</label>
+        <link refid="_line_diff_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Patch.cpp</label>
+        <link refid="_patch_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Patch.h</label>
+        <link refid="_patch_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>PatchValidator.h</label>
+        <link refid="_patch_validator_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Paths.h</label>
+        <link refid="_paths_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>StagedFile.h</label>
+        <link refid="_staged_file_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Stdio.h</label>
+        <link refid="_stdio_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>TextDocument.h</label>
+        <link refid="_text_document_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>Transaction.h</label>
+        <link refid="_transaction_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Files.h</label>
+        <link refid="_files_8h"/>
+      </node>
+      <node id="8">
+        <label>generated/Generated.h</label>
+        <link refid="_generated_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>HashMaps.h</label>
+        <link refid="_hash_maps_8h"/>
+      </node>
+      <node id="10">
+        <label>Identifiers.h</label>
+        <link refid="_identifiers_8h"/>
+      </node>
+      <node id="9">
+        <label>ProjectInfo.h</label>
+        <link refid="_project_info_8h"/>
+      </node>
+      <node id="11">
+        <label>Text.h</label>
+        <link refid="_text_8h"/>
+      </node>
+      <node id="3">
+        <label>JuceHeader.h</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_patch_8cpp_1a314a2131f149eb0296c5b465792bbe05" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref>, std::unique_ptr&lt; <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &gt; &gt;</type>
+        <definition>static std::pair&lt; juce::Result, std::unique_ptr&lt; jam::JsonDocument &gt; &gt; getValidatedJsonDocument</definition>
+        <argsstring>(std::string_view jsonBytes)</argsstring>
+        <name>getValidatedJsonDocument</name>
+        <param>
+          <type>std::string_view</type>
+          <declname>jsonBytes</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="12" column="18" bodyfile="Patch.cpp" bodystart="12" bodyend="28"/>
+        <references refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" compoundref="_stdio_8h" startline="115" endline="120">Stdio::fail</references>
+        <references refid="structtext_1_1_diagnostics_1af8513b441b7547a15ce75c1d839e8a20" compoundref="_text_8h" startline="89" endline="89">text::Diagnostics::failPatchJsonInvalid</references>
+        <references refid="_patch_8cpp_1a314a2131f149eb0296c5b465792bbe05" compoundref="_patch_8cpp" startline="12" endline="28">getValidatedJsonDocument</references>
+        <references refid="structjam_1_1Document_1_1Validator_1a1275a95db9c777fcceff5c574c561ae0">jam::Document::Validator::isValid</references>
+        <references refid="structjam_1_1JsonDocument_1ab4d7d11cde11cacec4a5b4c016453a63">jam::JsonDocument::isValid</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="structjam_1_1JsonDocument_1a90799dd13771233d118011eb2f2fdf85">jam::JsonDocument::read</references>
+        <referencedby refid="_patch_8cpp_1a314a2131f149eb0296c5b465792bbe05" compoundref="_patch_8cpp" startline="12" endline="28">getValidatedJsonDocument</referencedby>
+        <referencedby refid="_patch_8cpp_1a4a61f046ffdf8e6ab3b1252bd28f94a8" compoundref="_patch_8cpp" startline="306" endline="314">runJson</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1a6a73fba80efadcccfbe1d490552baaa9" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; <ref refid="classjam_1_1Strings" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings</ref>, <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &gt;, <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; int &gt; &gt; &gt;</type>
+        <definition>static std::tuple&lt; jam::Strings, jam::Array&lt; juce::File &gt;, jam::Array&lt; jam::Array&lt; int &gt; &gt; &gt; getGroupedEntries</definition>
+        <argsstring>(const jam::JsonDocument &amp;jsonDoc, const jam::Document::Element &amp;rootArray, const jam::Document::Tokens &amp;entryTokens)</argsstring>
+        <name>getGroupedEntries</name>
+        <param>
+          <type>const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;</type>
+          <declname>jsonDoc</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;</type>
+          <declname>rootArray</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1a805d84a9511bbac7e123e95c20c6c32b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Tokens</ref> &amp;</type>
+          <declname>entryTokens</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="30" column="19" bodyfile="Patch.cpp" bodystart="30" bodyend="59"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="classjam_1_1Strings_1a9223c1bf16916a52b122ae7e9d871f50">jam::Strings::add</references>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="namespaceId_1a5d963020f2ab66034cf12eef33500c62">Id::file</references>
+        <references refid="structjam_1_1JsonDocument_1a0dd2a6e56f40f9f1a2e8378ae1aa9f53">jam::JsonDocument::get</references>
+        <references refid="structjam_1_1JsonDocument_1a85465831699f14d38b99629de0b1a713">jam::JsonDocument::getChildByToken</references>
+        <references refid="struct_paths_1a0665b4c8b5e8442a35ff1d7feacefe92" compoundref="_paths_8cpp" startline="293" endline="303">Paths::getDisplayPath</references>
+        <references refid="_patch_8cpp_1a6a73fba80efadcccfbe1d490552baaa9" compoundref="_patch_8cpp" startline="30" endline="59">getGroupedEntries</references>
+        <references refid="struct_paths_1acd07be51ce7def54cd71d235f777df74" compoundref="_paths_8cpp" startline="305" endline="314">Paths::getLinkedTarget</references>
+        <references refid="structjam_1_1JsonDocument_1abd07e9da20184aa266aa577b11a0408d">jam::JsonDocument::getString</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <references refid="classjuce_1_1Identifier_1ab6f0db1de2c36cacd1a9d7280f73aeeb">juce::Identifier::toString</references>
+        <references refid="classjam_1_1HashMap_1af3ef015438ac55ee2401cb66441ae4f5">jam::HashMap&lt; typename Key, typename Mapped, typename HashFn, typename KeyEqual, typename AllocatorOrContainer, typename Bucket, typename BucketContainer, bool IsSegmented &gt;::try_emplace</references>
+        <referencedby refid="_patch_8cpp_1ad5126978f16e49219c82610a78a266a0" compoundref="_patch_8cpp" startline="256" endline="283">addGroupedFiles</referencedby>
+        <referencedby refid="_patch_8cpp_1a6a73fba80efadcccfbe1d490552baaa9" compoundref="_patch_8cpp" startline="30" endline="59">getGroupedEntries</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1a20463a31308cb1ec843e1113aa9d96d1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt;</type>
+        <definition>static std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt; getDeleteChange</definition>
+        <argsstring>(const juce::Identifier &amp;, const jam::JsonDocument &amp;jsonDoc, const jam::Document::Element &amp;entry, std::string_view)</argsstring>
+        <name>getDeleteChange</name>
+        <param>
+          <type>const <ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;</type>
+          <declname>jsonDoc</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="61" column="19" bodyfile="Patch.cpp" bodystart="61" bodyend="67"/>
+        <references refid="_patch_8cpp_1a20463a31308cb1ec843e1113aa9d96d1" compoundref="_patch_8cpp" startline="61" endline="67">getDeleteChange</references>
+        <references refid="class_line_diff_1a0f5b2cdb36d89b7071b6915a1dd6c51a" compoundref="_line_diff_8cpp" startline="261" endline="264">LineDiff::getDeletion</references>
+        <references refid="struct_patch_validator_1a01bef73c004af99eb9c911c07b5ec63f" compoundref="_patch_validator_8cpp" startline="295" endline="307">PatchValidator::getEntryLineRange</references>
+        <referencedby refid="_patch_8cpp_1a20463a31308cb1ec843e1113aa9d96d1" compoundref="_patch_8cpp" startline="61" endline="67">getDeleteChange</referencedby>
+        <referencedby refid="_patch_8cpp_1a1946d54b2dee02dd0e7453e83c7b6df5" compoundref="_patch_8cpp" startline="91" endline="107">getEntryChanges</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1a7fa524323e577cc3bbdbf9bce8836226" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt;</type>
+        <definition>static std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt; getReplaceChange</definition>
+        <argsstring>(const juce::Identifier &amp;, const jam::JsonDocument &amp;jsonDoc, const jam::Document::Element &amp;entry, std::string_view text)</argsstring>
+        <name>getReplaceChange</name>
+        <param>
+          <type>const <ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;</type>
+          <declname>jsonDoc</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>text</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="69" column="19" bodyfile="Patch.cpp" bodystart="69" bodyend="75"/>
+        <references refid="struct_patch_validator_1a01bef73c004af99eb9c911c07b5ec63f" compoundref="_patch_validator_8cpp" startline="295" endline="307">PatchValidator::getEntryLineRange</references>
+        <references refid="_patch_8cpp_1a7fa524323e577cc3bbdbf9bce8836226" compoundref="_patch_8cpp" startline="69" endline="75">getReplaceChange</references>
+        <references refid="class_line_diff_1a76ecc8ce43b3be96827d43624198a6ce" compoundref="_line_diff_8cpp" startline="266" endline="269">LineDiff::getReplacement</references>
+        <referencedby refid="_patch_8cpp_1a1946d54b2dee02dd0e7453e83c7b6df5" compoundref="_patch_8cpp" startline="91" endline="107">getEntryChanges</referencedby>
+        <referencedby refid="_patch_8cpp_1a7fa524323e577cc3bbdbf9bce8836226" compoundref="_patch_8cpp" startline="69" endline="75">getReplaceChange</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1aeb3ce632a6ec83cd135923d21411f8f8" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt;</type>
+        <definition>static std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt; getInsertChange</definition>
+        <argsstring>(const juce::Identifier &amp;key, const jam::JsonDocument &amp;jsonDoc, const jam::Document::Element &amp;entry, std::string_view text)</argsstring>
+        <name>getInsertChange</name>
+        <param>
+          <type>const <ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;</type>
+          <declname>jsonDoc</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>text</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="77" column="19" bodyfile="Patch.cpp" bodystart="77" bodyend="86"/>
+        <references refid="classjam_1_1Strings_1aca02ec79e3d857bca6f9647dce6415fc">jam::Strings::fromView</references>
+        <references refid="_patch_8cpp_1aeb3ce632a6ec83cd135923d21411f8f8" compoundref="_patch_8cpp" startline="77" endline="86">getInsertChange</references>
+        <references refid="class_line_diff_1aa54330d886c9c47e59906d8860e5e17e" compoundref="_line_diff_8cpp" startline="271" endline="274">LineDiff::getInsertion</references>
+        <references refid="struct_patch_validator_1a8cedf0e088ad280aece3c21f77bb6f14" compoundref="_patch_validator_8cpp" startline="6" endline="11">PatchValidator::getIntMember</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="namespaceId_1a025dc4173da0b7523a688d1fa4e0d282">Id::insertBefore</references>
+        <references refid="classjuce_1_1Identifier_1ab6f0db1de2c36cacd1a9d7280f73aeeb">juce::Identifier::toString</references>
+        <referencedby refid="_patch_8cpp_1a1946d54b2dee02dd0e7453e83c7b6df5" compoundref="_patch_8cpp" startline="91" endline="107">getEntryChanges</referencedby>
+        <referencedby refid="_patch_8cpp_1aeb3ce632a6ec83cd135923d21411f8f8" compoundref="_patch_8cpp" startline="77" endline="86">getInsertChange</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1a1946d54b2dee02dd0e7453e83c7b6df5" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="structjam_1_1Function_1_1Map" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Function::Map</ref>&lt; <ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>, <ref refid="structjam_1_1Function_1ae0c82daeeeb7f4c4eaf062d55601f5cd" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Function::pointerCapacity</ref>, std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt;(const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;, const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;, std::string_view)&gt; &amp;</type>
+        <definition>static const jam::Function::Map&lt; juce::Identifier, jam::Function::pointerCapacity, std::tuple&lt; int, int, std::optional&lt; std::string_view &gt; &gt;(const jam::JsonDocument &amp;, const jam::Document::Element &amp;, std::string_view)&gt; &amp; getEntryChanges</definition>
+        <argsstring>()</argsstring>
+        <name>getEntryChanges</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="91" column="1" bodyfile="Patch.cpp" bodystart="91" bodyend="107"/>
+        <references refid="classjam_1_1Strings_1aca02ec79e3d857bca6f9647dce6415fc">jam::Strings::fromView</references>
+        <references refid="_patch_8cpp_1a20463a31308cb1ec843e1113aa9d96d1" compoundref="_patch_8cpp" startline="61" endline="67">getDeleteChange</references>
+        <references refid="_patch_8cpp_1a1946d54b2dee02dd0e7453e83c7b6df5" compoundref="_patch_8cpp" startline="91" endline="107">getEntryChanges</references>
+        <references refid="_patch_8cpp_1aeb3ce632a6ec83cd135923d21411f8f8" compoundref="_patch_8cpp" startline="77" endline="86">getInsertChange</references>
+        <references refid="_patch_8cpp_1a7fa524323e577cc3bbdbf9bce8836226" compoundref="_patch_8cpp" startline="69" endline="75">getReplaceChange</references>
+        <references refid="namespaceId_1a7d7d87fe4a4dbe264c66140c6de22777">Id::insertAfter</references>
+        <references refid="namespaceId_1a025dc4173da0b7523a688d1fa4e0d282">Id::insertBefore</references>
+        <references refid="structjam_1_1Function_1ae0c82daeeeb7f4c4eaf062d55601f5cd">jam::Function::pointerCapacity</references>
+        <referencedby refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" compoundref="_patch_8cpp" startline="192" endline="254">addTargetFile</referencedby>
+        <referencedby refid="_patch_8cpp_1a1946d54b2dee02dd0e7453e83c7b6df5" compoundref="_patch_8cpp" startline="91" endline="107">getEntryChanges</referencedby>
+        <referencedby refid="_patch_8cpp_1ab0bb2f889a49e84a4c7171086e7bbe97" compoundref="_patch_8cpp" startline="182" endline="190">getEntryOrder</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1a0cfdc4c90babea749eed9a722059d7f6" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>static std::string getEntryText</definition>
+        <argsstring>(const jam::JsonDocument &amp;jsonDoc, const jam::Document::Element &amp;entry)</argsstring>
+        <name>getEntryText</name>
+        <param>
+          <type>const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;</type>
+          <declname>jsonDoc</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="109" column="20" bodyfile="Patch.cpp" bodystart="109" bodyend="114"/>
+        <references refid="structjam_1_1JsonDocument_1ae74fbd4b7b71ef17ce0ffb9cf8306a61">jam::JsonDocument::contains</references>
+        <references refid="structjam_1_1JsonDocument_1a0dd2a6e56f40f9f1a2e8378ae1aa9f53">jam::JsonDocument::get</references>
+        <references refid="_patch_8cpp_1a0cfdc4c90babea749eed9a722059d7f6" compoundref="_patch_8cpp" startline="109" endline="114">getEntryText</references>
+        <references refid="structjam_1_1JsonDocument_1abd07e9da20184aa266aa577b11a0408d">jam::JsonDocument::getString</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="namespaceId_1a287c150cdfda5a8e2deb30b6d987d638">Id::text</references>
+        <references refid="classjuce_1_1Identifier_1ab6f0db1de2c36cacd1a9d7280f73aeeb">juce::Identifier::toString</references>
+        <referencedby refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" compoundref="_patch_8cpp" startline="192" endline="254">addTargetFile</referencedby>
+        <referencedby refid="_patch_8cpp_1a0cfdc4c90babea749eed9a722059d7f6" compoundref="_patch_8cpp" startline="109" endline="114">getEntryText</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1ad250370b498ea83e023a85d0f5ddab16" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;</type>
+        <definition>static const jam::Document::Element &amp; getEntryAt</definition>
+        <argsstring>(const jam::JsonDocument &amp;jsonDoc, const jam::Document::Element &amp;rootArray, const jam::Document::Tokens &amp;entryTokens, const jam::Array&lt; int &gt; &amp;entryIndices, int position)</argsstring>
+        <name>getEntryAt</name>
+        <param>
+          <type>const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;</type>
+          <declname>jsonDoc</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;</type>
+          <declname>rootArray</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1a805d84a9511bbac7e123e95c20c6c32b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Tokens</ref> &amp;</type>
+          <declname>entryTokens</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; int &gt; &amp;</type>
+          <declname>entryIndices</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>position</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="116" column="37" bodyfile="Patch.cpp" bodystart="116" bodyend="123"/>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="structjam_1_1JsonDocument_1a85465831699f14d38b99629de0b1a713">jam::JsonDocument::getChildByToken</references>
+        <references refid="_patch_8cpp_1ad250370b498ea83e023a85d0f5ddab16" compoundref="_patch_8cpp" startline="116" endline="123">getEntryAt</references>
+        <referencedby refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" compoundref="_patch_8cpp" startline="192" endline="254">addTargetFile</referencedby>
+        <referencedby refid="_patch_8cpp_1afe17b0694556785d2c121fe5072066dc" compoundref="_patch_8cpp" startline="142" endline="155">getColumnGroupEnd</referencedby>
+        <referencedby refid="_patch_8cpp_1ad250370b498ea83e023a85d0f5ddab16" compoundref="_patch_8cpp" startline="116" endline="123">getEntryAt</referencedby>
+        <referencedby refid="_patch_8cpp_1a54feb2fef6512bb4ca481b4340faaa4f" compoundref="_patch_8cpp" startline="157" endline="180">setColumnLineText</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1aae8c0996b425f86c78135831ee68de15" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>static int getColumnLineNumber</definition>
+        <argsstring>(const jam::JsonDocument &amp;jsonDoc, const jam::Document::Element &amp;entry)</argsstring>
+        <name>getColumnLineNumber</name>
+        <param>
+          <type>const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;</type>
+          <declname>jsonDoc</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="125" column="12" bodyfile="Patch.cpp" bodystart="125" bodyend="128"/>
+        <references refid="_patch_8cpp_1aae8c0996b425f86c78135831ee68de15" compoundref="_patch_8cpp" startline="125" endline="128">getColumnLineNumber</references>
+        <references refid="struct_patch_validator_1a8cedf0e088ad280aece3c21f77bb6f14" compoundref="_patch_validator_8cpp" startline="6" endline="11">PatchValidator::getIntMember</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="namespaceId_1a9acf3e231e632c1b02ad3a0d4c0fc008">Id::line</references>
+        <referencedby refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" compoundref="_patch_8cpp" startline="192" endline="254">addTargetFile</referencedby>
+        <referencedby refid="_patch_8cpp_1afe17b0694556785d2c121fe5072066dc" compoundref="_patch_8cpp" startline="142" endline="155">getColumnGroupEnd</referencedby>
+        <referencedby refid="_patch_8cpp_1aae8c0996b425f86c78135831ee68de15" compoundref="_patch_8cpp" startline="125" endline="128">getColumnLineNumber</referencedby>
+        <referencedby refid="_patch_8cpp_1ab0bb2f889a49e84a4c7171086e7bbe97" compoundref="_patch_8cpp" startline="182" endline="190">getEntryOrder</referencedby>
+        <referencedby refid="_patch_8cpp_1aae906a53b678d911aa8ca5206309aa38" compoundref="_patch_8cpp" startline="136" endline="140">isColumnOfLine</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1a444eb0ea503e803eebaba81373acce66" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref> &amp;</type>
+        <definition>static const juce::Identifier &amp; getStartColKey</definition>
+        <argsstring>()</argsstring>
+        <name>getStartColKey</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="130" column="31" bodyfile="Patch.cpp" bodystart="130" bodyend="134"/>
+        <references refid="classjam_1_1Strings_1aca02ec79e3d857bca6f9647dce6415fc">jam::Strings::fromView</references>
+        <references refid="_patch_8cpp_1a444eb0ea503e803eebaba81373acce66" compoundref="_patch_8cpp" startline="130" endline="134">getStartColKey</references>
+        <referencedby refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" compoundref="_patch_8cpp" startline="192" endline="254">addTargetFile</referencedby>
+        <referencedby refid="_patch_8cpp_1ab0bb2f889a49e84a4c7171086e7bbe97" compoundref="_patch_8cpp" startline="182" endline="190">getEntryOrder</referencedby>
+        <referencedby refid="_patch_8cpp_1a444eb0ea503e803eebaba81373acce66" compoundref="_patch_8cpp" startline="130" endline="134">getStartColKey</referencedby>
+        <referencedby refid="_patch_8cpp_1aae906a53b678d911aa8ca5206309aa38" compoundref="_patch_8cpp" startline="136" endline="140">isColumnOfLine</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1aae906a53b678d911aa8ca5206309aa38" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool isColumnOfLine</definition>
+        <argsstring>(const jam::JsonDocument &amp;jsonDoc, const jam::Document::Element &amp;entry, int lineNumber)</argsstring>
+        <name>isColumnOfLine</name>
+        <param>
+          <type>const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;</type>
+          <declname>jsonDoc</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>lineNumber</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="136" column="13" bodyfile="Patch.cpp" bodystart="136" bodyend="140"/>
+        <references refid="_patch_8cpp_1aae8c0996b425f86c78135831ee68de15" compoundref="_patch_8cpp" startline="125" endline="128">getColumnLineNumber</references>
+        <references refid="struct_patch_validator_1a2451acddcdc417c3c70833251a31913e" compoundref="_patch_validator_8cpp" startline="214" endline="240">PatchValidator::getEntryShapeKey</references>
+        <references refid="_patch_8cpp_1a444eb0ea503e803eebaba81373acce66" compoundref="_patch_8cpp" startline="130" endline="134">getStartColKey</references>
+        <references refid="_patch_8cpp_1aae906a53b678d911aa8ca5206309aa38" compoundref="_patch_8cpp" startline="136" endline="140">isColumnOfLine</references>
+        <referencedby refid="_patch_8cpp_1afe17b0694556785d2c121fe5072066dc" compoundref="_patch_8cpp" startline="142" endline="155">getColumnGroupEnd</referencedby>
+        <referencedby refid="_patch_8cpp_1aae906a53b678d911aa8ca5206309aa38" compoundref="_patch_8cpp" startline="136" endline="140">isColumnOfLine</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1afe17b0694556785d2c121fe5072066dc" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>static int getColumnGroupEnd</definition>
+        <argsstring>(const jam::JsonDocument &amp;jsonDoc, const jam::Document::Element &amp;rootArray, const jam::Document::Tokens &amp;entryTokens, const jam::Array&lt; int &gt; &amp;entryIndices, int groupStart)</argsstring>
+        <name>getColumnGroupEnd</name>
+        <param>
+          <type>const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;</type>
+          <declname>jsonDoc</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;</type>
+          <declname>rootArray</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1a805d84a9511bbac7e123e95c20c6c32b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Tokens</ref> &amp;</type>
+          <declname>entryTokens</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; int &gt; &amp;</type>
+          <declname>entryIndices</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>groupStart</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="142" column="12" bodyfile="Patch.cpp" bodystart="142" bodyend="155"/>
+        <references refid="_patch_8cpp_1afe17b0694556785d2c121fe5072066dc" compoundref="_patch_8cpp" startline="142" endline="155">getColumnGroupEnd</references>
+        <references refid="_patch_8cpp_1aae8c0996b425f86c78135831ee68de15" compoundref="_patch_8cpp" startline="125" endline="128">getColumnLineNumber</references>
+        <references refid="_patch_8cpp_1ad250370b498ea83e023a85d0f5ddab16" compoundref="_patch_8cpp" startline="116" endline="123">getEntryAt</references>
+        <references refid="_patch_8cpp_1aae906a53b678d911aa8ca5206309aa38" compoundref="_patch_8cpp" startline="136" endline="140">isColumnOfLine</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <referencedby refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" compoundref="_patch_8cpp" startline="192" endline="254">addTargetFile</referencedby>
+        <referencedby refid="_patch_8cpp_1afe17b0694556785d2c121fe5072066dc" compoundref="_patch_8cpp" startline="142" endline="155">getColumnGroupEnd</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1a54feb2fef6512bb4ca481b4340faaa4f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void setColumnLineText</definition>
+        <argsstring>(std::string &amp;lineText, const jam::JsonDocument &amp;jsonDoc, const jam::Document::Element &amp;rootArray, const jam::Document::Tokens &amp;entryTokens, const jam::Array&lt; int &gt; &amp;entryIndices, juce::Range&lt; int &gt; groupRange, std::string_view line)</argsstring>
+        <name>setColumnLineText</name>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>lineText</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;</type>
+          <declname>jsonDoc</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;</type>
+          <declname>rootArray</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1a805d84a9511bbac7e123e95c20c6c32b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Tokens</ref> &amp;</type>
+          <declname>entryTokens</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; int &gt; &amp;</type>
+          <declname>entryIndices</declname>
+        </param>
+        <param>
+          <type><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range</ref>&lt; int &gt;</type>
+          <declname>groupRange</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>line</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="157" column="13" bodyfile="Patch.cpp" bodystart="157" bodyend="180"/>
+        <references refid="structjam_1_1Format_1a03d027c362f8e8e10a4b632c3af60c63">jam::Format::appendBytes</references>
+        <references refid="structjam_1_1JsonDocument_1a0dd2a6e56f40f9f1a2e8378ae1aa9f53">jam::JsonDocument::get</references>
+        <references refid="classjuce_1_1Range_1a44413a19310d5f14be8d6ece2feedc01">juce::Range&lt; typename ValueType &gt;::getEnd</references>
+        <references refid="_patch_8cpp_1ad250370b498ea83e023a85d0f5ddab16" compoundref="_patch_8cpp" startline="116" endline="123">getEntryAt</references>
+        <references refid="struct_patch_validator_1a8cedf0e088ad280aece3c21f77bb6f14" compoundref="_patch_validator_8cpp" startline="6" endline="11">PatchValidator::getIntMember</references>
+        <references refid="classjuce_1_1Range_1a06f05db7a87b8e7e782b6c535c0c439b">juce::Range&lt; typename ValueType &gt;::getStart</references>
+        <references refid="structjam_1_1JsonDocument_1abd07e9da20184aa266aa577b11a0408d">jam::JsonDocument::getString</references>
+        <references refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c">jam::Strings::getView</references>
+        <references refid="_patch_8cpp_1a54feb2fef6512bb4ca481b4340faaa4f" compoundref="_patch_8cpp" startline="157" endline="180">setColumnLineText</references>
+        <references refid="namespaceId_1a287c150cdfda5a8e2deb30b6d987d638">Id::text</references>
+        <references refid="classjuce_1_1Identifier_1ab6f0db1de2c36cacd1a9d7280f73aeeb">juce::Identifier::toString</references>
+        <referencedby refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" compoundref="_patch_8cpp" startline="192" endline="254">addTargetFile</referencedby>
+        <referencedby refid="_patch_8cpp_1a54feb2fef6512bb4ca481b4340faaa4f" compoundref="_patch_8cpp" startline="157" endline="180">setColumnLineText</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1ab0bb2f889a49e84a4c7171086e7bbe97" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; int, int, int &gt;</type>
+        <definition>static std::tuple&lt; int, int, int &gt; getEntryOrder</definition>
+        <argsstring>(const jam::JsonDocument &amp;jsonDoc, const jam::Document::Element &amp;entry)</argsstring>
+        <name>getEntryOrder</name>
+        <param>
+          <type>const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;</type>
+          <declname>jsonDoc</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="182" column="19" bodyfile="Patch.cpp" bodystart="182" bodyend="190"/>
+        <references refid="_patch_8cpp_1aae8c0996b425f86c78135831ee68de15" compoundref="_patch_8cpp" startline="125" endline="128">getColumnLineNumber</references>
+        <references refid="_patch_8cpp_1a1946d54b2dee02dd0e7453e83c7b6df5" compoundref="_patch_8cpp" startline="91" endline="107">getEntryChanges</references>
+        <references refid="_patch_8cpp_1ab0bb2f889a49e84a4c7171086e7bbe97" compoundref="_patch_8cpp" startline="182" endline="190">getEntryOrder</references>
+        <references refid="struct_patch_validator_1a2451acddcdc417c3c70833251a31913e" compoundref="_patch_validator_8cpp" startline="214" endline="240">PatchValidator::getEntryShapeKey</references>
+        <references refid="struct_patch_validator_1a8cedf0e088ad280aece3c21f77bb6f14" compoundref="_patch_validator_8cpp" startline="6" endline="11">PatchValidator::getIntMember</references>
+        <references refid="_patch_8cpp_1a444eb0ea503e803eebaba81373acce66" compoundref="_patch_8cpp" startline="130" endline="134">getStartColKey</references>
+        <references refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0">juce::ignoreUnused</references>
+        <referencedby refid="_patch_8cpp_1ab0bb2f889a49e84a4c7171086e7bbe97" compoundref="_patch_8cpp" startline="182" endline="190">getEntryOrder</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>static juce::Result addTargetFile</definition>
+        <argsstring>(Transaction &amp;transaction, const jam::JsonDocument &amp;jsonDoc, const jam::Document::Element &amp;rootArray, const jam::Document::Tokens &amp;entryTokens, const juce::File &amp;targetFile, std::string_view displayPath, const jam::Array&lt; int &gt; &amp;entryIndices)</argsstring>
+        <name>addTargetFile</name>
+        <param>
+          <type><ref refid="class_transaction" kindref="compound">Transaction</ref> &amp;</type>
+          <declname>transaction</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;</type>
+          <declname>jsonDoc</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;</type>
+          <declname>rootArray</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1a805d84a9511bbac7e123e95c20c6c32b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Tokens</ref> &amp;</type>
+          <declname>entryTokens</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref> &amp;</type>
+          <declname>targetFile</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>displayPath</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array</ref>&lt; int &gt; &amp;</type>
+          <declname>entryIndices</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="192" column="21" bodyfile="Patch.cpp" bodystart="192" bodyend="254"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="class_transaction_1ace7cab528daf25ccbb7e6042cbb4b25e" compoundref="_transaction_8cpp" startline="19" endline="42">Transaction::addFile</references>
+        <references refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" compoundref="_patch_8cpp" startline="192" endline="254">addTargetFile</references>
+        <references refid="class_input_1adfde65e6955a7f1c62782df59cb6cf0a" compoundref="_input_8h" startline="22" endline="22">Input::allBytes</references>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="classjam_1_1Array_1aa5240327dd94267390aefa03215033e1">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::begin</references>
+        <references refid="classjam_1_1Array_1a7336e35022c8a66e55217a273f0b8808">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::end</references>
+        <references refid="classjam_1_1Array_1a79e89487d47591c2c1dcceb7ba5aa61e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::ensureStorageAllocated</references>
+        <references refid="class_text_document_1a368b7c5d829df5e20f76c11c0a6463e6" compoundref="_text_document_8cpp" startline="126" endline="139">TextDocument::fromTextFile</references>
+        <references refid="_patch_8cpp_1afe17b0694556785d2c121fe5072066dc" compoundref="_patch_8cpp" startline="142" endline="155">getColumnGroupEnd</references>
+        <references refid="_patch_8cpp_1aae8c0996b425f86c78135831ee68de15" compoundref="_patch_8cpp" startline="125" endline="128">getColumnLineNumber</references>
+        <references refid="_patch_8cpp_1ad250370b498ea83e023a85d0f5ddab16" compoundref="_patch_8cpp" startline="116" endline="123">getEntryAt</references>
+        <references refid="_patch_8cpp_1a1946d54b2dee02dd0e7453e83c7b6df5" compoundref="_patch_8cpp" startline="91" endline="107">getEntryChanges</references>
+        <references refid="struct_patch_validator_1a2451acddcdc417c3c70833251a31913e" compoundref="_patch_validator_8cpp" startline="214" endline="240">PatchValidator::getEntryShapeKey</references>
+        <references refid="_patch_8cpp_1a0cfdc4c90babea749eed9a722059d7f6" compoundref="_patch_8cpp" startline="109" endline="114">getEntryText</references>
+        <references refid="class_text_document_1aa8879ac99053ef5518cb783062a4b8c2" compoundref="_text_document_8cpp" startline="216" endline="222">TextDocument::getLine</references>
+        <references refid="_patch_8cpp_1a444eb0ea503e803eebaba81373acce66" compoundref="_patch_8cpp" startline="130" endline="134">getStartColKey</references>
+        <references refid="struct_patch_validator_1ac999f9dd45743443312cdbaca2140057" compoundref="_patch_validator_8cpp" startline="556" endline="584">PatchValidator::isValidForFile</references>
+        <references refid="_patch_8cpp_1a54feb2fef6512bb4ca481b4340faaa4f" compoundref="_patch_8cpp" startline="157" endline="180">setColumnLineText</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <referencedby refid="_patch_8cpp_1ad5126978f16e49219c82610a78a266a0" compoundref="_patch_8cpp" startline="256" endline="283">addGroupedFiles</referencedby>
+        <referencedby refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" compoundref="_patch_8cpp" startline="192" endline="254">addTargetFile</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1ad5126978f16e49219c82610a78a266a0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref></type>
+        <definition>static juce::Result addGroupedFiles</definition>
+        <argsstring>(Transaction &amp;transaction, const jam::JsonDocument &amp;jsonDoc, const jam::Document::Element &amp;rootArray, const jam::Document::Tokens &amp;entryTokens)</argsstring>
+        <name>addGroupedFiles</name>
+        <param>
+          <type><ref refid="class_transaction" kindref="compound">Transaction</ref> &amp;</type>
+          <declname>transaction</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;</type>
+          <declname>jsonDoc</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref> &amp;</type>
+          <declname>rootArray</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1Document_1a805d84a9511bbac7e123e95c20c6c32b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Tokens</ref> &amp;</type>
+          <declname>entryTokens</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="256" column="21" bodyfile="Patch.cpp" bodystart="256" bodyend="283"/>
+        <references refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::add</references>
+        <references refid="_patch_8cpp_1ad5126978f16e49219c82610a78a266a0" compoundref="_patch_8cpp" startline="256" endline="283">addGroupedFiles</references>
+        <references refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" compoundref="_patch_8cpp" startline="192" endline="254">addTargetFile</references>
+        <references refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::at</references>
+        <references refid="classjam_1_1Array_1aa5240327dd94267390aefa03215033e1">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::begin</references>
+        <references refid="classjam_1_1Array_1a7336e35022c8a66e55217a273f0b8808">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::end</references>
+        <references refid="_patch_8cpp_1a6a73fba80efadcccfbe1d490552baaa9" compoundref="_patch_8cpp" startline="30" endline="59">getGroupedEntries</references>
+        <references refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f">juce::Result::ok</references>
+        <references refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e">jam::Array&lt; typename ElementType, typename TypeOfCriticalSectionToUse &gt;::size</references>
+        <referencedby refid="_patch_8cpp_1ad5126978f16e49219c82610a78a266a0" compoundref="_patch_8cpp" startline="256" endline="283">addGroupedFiles</referencedby>
+        <referencedby refid="_patch_8cpp_1ae0389f55a6ababa8838cb4920cce60a1" compoundref="_patch_8cpp" startline="285" endline="304">runTransaction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1ae0389f55a6ababa8838cb4920cce60a1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref></type>
+        <definition>static Stdio::Output runTransaction</definition>
+        <argsstring>(const Arguments &amp;arguments, const jam::JsonDocument &amp;jsonDoc)</argsstring>
+        <name>runTransaction</name>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref> &amp;</type>
+          <declname>jsonDoc</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="285" column="22" bodyfile="Patch.cpp" bodystart="285" bodyend="304"/>
+        <references refid="_patch_8cpp_1ad5126978f16e49219c82610a78a266a0" compoundref="_patch_8cpp" startline="256" endline="283">addGroupedFiles</references>
+        <references refid="class_arguments_1a16e02d082e3c502be80194a47e907535" compoundref="_arguments_8cpp" startline="76" endline="79">Arguments::contains</references>
+        <references refid="structjam_1_1JsonDocument_1a85465831699f14d38b99629de0b1a713">jam::JsonDocument::getChildByToken</references>
+        <references refid="class_transaction_1a5800eb9b3d14bded600e4b427b0917fd" compoundref="_transaction_8cpp" startline="70" endline="79">Transaction::getExpectMismatch</references>
+        <references refid="class_transaction_1a0b22d5fa86a8cf4b366ef9c8e091992a" compoundref="_transaction_8cpp" startline="62" endline="68">Transaction::getExpectStatus</references>
+        <references refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">Stdio::getFailure</references>
+        <references refid="structjam_1_1Document_1afa15c06a56937a7195814a2aa2c7521d">jam::Document::getRoot</references>
+        <references refid="structjam_1_1JsonDocument_1ad84256d417d92277a97b7ea6d36199b1">jam::JsonDocument::getValue</references>
+        <references refid="class_transaction_1ab1e959e59ca6ad3115550892d0d7fa8a" compoundref="_transaction_8cpp" startline="44" endline="60">Transaction::run</references>
+        <references refid="_patch_8cpp_1ae0389f55a6ababa8838cb4920cce60a1" compoundref="_patch_8cpp" startline="285" endline="304">runTransaction</references>
+        <references refid="namespaceId_1a852b83817f32504602a384b9091ed9fb">Id::tokens</references>
+        <referencedby refid="_patch_8cpp_1a4a61f046ffdf8e6ab3b1252bd28f94a8" compoundref="_patch_8cpp" startline="306" endline="314">runJson</referencedby>
+        <referencedby refid="_undo_8cpp_1a4e56a80b73bd7335140b412aa7b94863" compoundref="_undo_8cpp" startline="266" endline="303">runTransaction</referencedby>
+        <referencedby refid="_patch_8cpp_1ae0389f55a6ababa8838cb4920cce60a1" compoundref="_patch_8cpp" startline="285" endline="304">runTransaction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1a4a61f046ffdf8e6ab3b1252bd28f94a8" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref></type>
+        <definition>static Stdio::Output runJson</definition>
+        <argsstring>(const Arguments &amp;arguments, std::string_view jsonBytes)</argsstring>
+        <name>runJson</name>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>std::string_view</type>
+          <declname>jsonBytes</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="306" column="22" bodyfile="Patch.cpp" bodystart="306" bodyend="314"/>
+        <references refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">Stdio::getFailure</references>
+        <references refid="_patch_8cpp_1a314a2131f149eb0296c5b465792bbe05" compoundref="_patch_8cpp" startline="12" endline="28">getValidatedJsonDocument</references>
+        <references refid="_patch_8cpp_1a4a61f046ffdf8e6ab3b1252bd28f94a8" compoundref="_patch_8cpp" startline="306" endline="314">runJson</references>
+        <references refid="_patch_8cpp_1ae0389f55a6ababa8838cb4920cce60a1" compoundref="_patch_8cpp" startline="285" endline="304">runTransaction</references>
+        <referencedby refid="_patch_8cpp_1a90cf7bf24224586469772abae6c95d98" compoundref="_patch_8cpp" startline="316" endline="326">runFile</referencedby>
+        <referencedby refid="_patch_8cpp_1a4a61f046ffdf8e6ab3b1252bd28f94a8" compoundref="_patch_8cpp" startline="306" endline="314">runJson</referencedby>
+        <referencedby refid="_patch_8cpp_1aaff59351be09f94c257b3fe8f4dcebeb" compoundref="_patch_8cpp" startline="328" endline="339">runStandardInput</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1a90cf7bf24224586469772abae6c95d98" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref></type>
+        <definition>static Stdio::Output runFile</definition>
+        <argsstring>(const Arguments &amp;arguments)</argsstring>
+        <name>runFile</name>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="316" column="22" bodyfile="Patch.cpp" bodystart="316" bodyend="326"/>
+        <references refid="class_text_document_1a368b7c5d829df5e20f76c11c0a6463e6" compoundref="_text_document_8cpp" startline="126" endline="139">TextDocument::fromTextFile</references>
+        <references refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">Stdio::getFailure</references>
+        <references refid="struct_paths_1acd07be51ce7def54cd71d235f777df74" compoundref="_paths_8cpp" startline="305" endline="314">Paths::getLinkedTarget</references>
+        <references refid="class_arguments_1adade09c248ed8b06f65a73e1c133b47e" compoundref="_arguments_8cpp" startline="81" endline="85">Arguments::getValueView</references>
+        <references refid="class_input_1af4915b1e6f1f77beea94bc7833406f31" compoundref="_input_8h" startline="28" endline="28">Input::maxBufferedReadSize</references>
+        <references refid="_patch_8cpp_1a90cf7bf24224586469772abae6c95d98" compoundref="_patch_8cpp" startline="316" endline="326">runFile</references>
+        <references refid="_patch_8cpp_1a4a61f046ffdf8e6ab3b1252bd28f94a8" compoundref="_patch_8cpp" startline="306" endline="314">runJson</references>
+        <referencedby refid="struct_patch_1a8a248ff325ba668ab5c784d9e48a4c8c" compoundref="_patch_8cpp" startline="346" endline="358">Patch::run</referencedby>
+        <referencedby refid="_patch_8cpp_1a90cf7bf24224586469772abae6c95d98" compoundref="_patch_8cpp" startline="316" endline="326">runFile</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_patch_8cpp_1aaff59351be09f94c257b3fe8f4dcebeb" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref></type>
+        <definition>static Stdio::Output runStandardInput</definition>
+        <argsstring>(const Arguments &amp;arguments, const std::optional&lt; std::string &gt; &amp;input)</argsstring>
+        <name>runStandardInput</name>
+        <param>
+          <type>const <ref refid="class_arguments" kindref="compound">Arguments</ref> &amp;</type>
+          <declname>arguments</declname>
+        </param>
+        <param>
+          <type>const std::optional&lt; std::string &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Patch.cpp" line="328" column="22" bodyfile="Patch.cpp" bodystart="328" bodyend="339"/>
+        <references refid="class_input_1a95071d83755879d3c0d4b2bcbb37e6f2" compoundref="_input_8h" startline="16" endline="16">Input::allLines</references>
+        <references refid="class_input_1a3fc492d5ac07056e1c68ec5a045455cb" compoundref="_input_8cpp" startline="88" endline="102">Input::create</references>
+        <references refid="structtext_1_1_diagnostics_1adc7868b710cbcd4375d2bfe35d140a30" compoundref="_text_8h" startline="88" endline="88">text::Diagnostics::failPatchRequiresInput</references>
+        <references refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" compoundref="_stdio_8cpp" startline="42" endline="47">Stdio::getFailure</references>
+        <references refid="struct_stdio_1a28994562faa0223a49215d05f819a20a" compoundref="_stdio_8cpp" startline="4" endline="7">Stdio::isTerminalInput</references>
+        <references refid="_patch_8cpp_1a4a61f046ffdf8e6ab3b1252bd28f94a8" compoundref="_patch_8cpp" startline="306" endline="314">runJson</references>
+        <references refid="_patch_8cpp_1aaff59351be09f94c257b3fe8f4dcebeb" compoundref="_patch_8cpp" startline="328" endline="339">runStandardInput</references>
+        <referencedby refid="struct_patch_1a8a248ff325ba668ab5c784d9e48a4c8c" compoundref="_patch_8cpp" startline="346" endline="358">Patch::run</referencedby>
+        <referencedby refid="_patch_8cpp_1aaff59351be09f94c257b3fe8f4dcebeb" compoundref="_patch_8cpp" startline="328" endline="339">runStandardInput</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_patch_8h" kindref="compound">Patch.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_arguments_8h" kindref="compound">Arguments.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_input_8h" kindref="compound">Input.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_line_diff_8h" kindref="compound">LineDiff.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_paths_8h" kindref="compound">Paths.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_patch_validator_8h" kindref="compound">PatchValidator.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_stdio_8h" kindref="compound">Stdio.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_text_document_8h" kindref="compound">TextDocument.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_transaction_8h" kindref="compound">Transaction.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_generated_8h" kindref="compound">generated/Generated.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="_patch_8cpp_1a314a2131f149eb0296c5b465792bbe05" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::pair&lt;juce::Result,<sp/>std::unique_ptr&lt;jam::JsonDocument&gt;&gt;<sp/><ref refid="_patch_8cpp_1a314a2131f149eb0296c5b465792bbe05" kindref="member">getValidatedJsonDocument</ref><sp/>(std::string_view<sp/>jsonBytes)</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>jsonDoc<sp/>{<sp/><ref refid="structjam_1_1JsonDocument_1a90799dd13771233d118011eb2f2fdf85" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument::read</ref><sp/>(jsonBytes)<sp/>};</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(jsonDoc<sp/>==<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>syntaxStatus<sp/>{<sp/><ref refid="structjam_1_1JsonDocument_1ab4d7d11cde11cacec4a5b4c016453a63" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument::isValid</ref><sp/>(jsonBytes)<sp/>};</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="struct_stdio_1a81dc54fa37525d25f1f8282d500322ec" kindref="member">Stdio::fail</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1af8513b441b7547a15ce75c1d839e8a20" kindref="member">text::Diagnostics::failPatchJsonInvalid</ref>,<sp/>syntaxStatus),<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>validationStatus<sp/>{<sp/><ref refid="struct_patch_validator" kindref="compound">PatchValidator</ref><sp/>{}.<ref refid="structjam_1_1Document_1_1Validator_1a1275a95db9c777fcceff5c574c561ae0" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">isValid</ref><sp/>(*jsonDoc)<sp/>};</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(validationStatus.failed())</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/>validationStatus,<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal"><sp/>};</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>(),<sp/>std::move<sp/>(jsonDoc)<sp/>};</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="_patch_8cpp_1a6a73fba80efadcccfbe1d490552baaa9" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::tuple&lt;jam::Strings,<sp/>jam::Array&lt;juce::File&gt;,<sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;jam::Array&lt;int&gt;</ref>&gt;&gt;<sp/><ref refid="_patch_8cpp_1a6a73fba80efadcccfbe1d490552baaa9" kindref="member">getGroupedEntries</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;<sp/>jsonDoc,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;<sp/>rootArray,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1a805d84a9511bbac7e123e95c20c6c32b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Tokens</ref>&amp;<sp/>entryTokens)</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1Strings" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings</ref><sp/>groupDisplayPaths;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;juce::File&gt;</ref><sp/>groupFiles;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;jam::Array&lt;int&gt;</ref>&gt;<sp/>groupEntryIndices;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1HashMap" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::HashMap&lt;juce::String, int&gt;</ref><sp/>groupIndexByCanonicalPath;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>entryIndex<sp/>{<sp/>0<sp/>};<sp/>entryIndex<sp/>&lt;<sp/>entryTokens.<ref refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">size</ref>();<sp/>++entryIndex)</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">*<sp/>entry<sp/>{<sp/>jsonDoc.<ref refid="structjam_1_1JsonDocument_1a85465831699f14d38b99629de0b1a713" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">getChildByToken</ref><sp/>(rootArray,<sp/>entryTokens.<ref refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">at</ref><sp/>(entryIndex))<sp/>};</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>filePath<sp/>{<sp/>jsonDoc.<ref refid="structjam_1_1JsonDocument_1abd07e9da20184aa266aa577b11a0408d" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">getString</ref><sp/>(jsonDoc.<ref refid="structjam_1_1JsonDocument_1a0dd2a6e56f40f9f1a2e8378ae1aa9f53" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">get</ref><sp/>(*entry,<sp/><ref refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings::getView</ref><sp/>(<ref refid="namespaceId_1a5d963020f2ab66034cf12eef33500c62" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Id::file</ref>.<ref refid="classjuce_1_1Identifier_1ab6f0db1de2c36cacd1a9d7280f73aeeb" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">toString</ref>())))<sp/>};</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>targetFile<sp/>{<sp/><ref refid="struct_paths_1acd07be51ce7def54cd71d235f777df74" kindref="member">Paths::getLinkedTarget</ref><sp/>(filePath)<sp/>};</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[groupEntry,<sp/>isInserted]<sp/>{<sp/>groupIndexByCanonicalPath.<ref refid="classjam_1_1HashMap_1af3ef015438ac55ee2401cb66441ae4f5" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">try_emplace</ref><sp/>(targetFile.getFullPathName(),<sp/>groupFiles.<ref refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">size</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(isInserted)</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>groupDisplayPaths.<ref refid="classjam_1_1Strings_1a9223c1bf16916a52b122ae7e9d871f50" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">add</ref><sp/>(<ref refid="struct_paths_1a0665b4c8b5e8442a35ff1d7feacefe92" kindref="member">Paths::getDisplayPath</ref><sp/>(filePath));</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>groupFiles.<ref refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">add</ref><sp/>(targetFile);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>groupEntryIndices.<ref refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">add</ref><sp/>(<ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;int&gt;</ref><sp/>{});</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>[groupCanonicalPath,<sp/>groupIndex]<sp/>{<sp/>*groupEntry<sp/>};</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::ignoreUnused</ref><sp/>(groupCanonicalPath);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>groupEntryIndices.<ref refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">at</ref><sp/>(groupIndex).add<sp/>(entryIndex);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/>std::move<sp/>(groupDisplayPaths),<sp/>std::move<sp/>(groupFiles),<sp/>std::move<sp/>(groupEntryIndices)<sp/>};</highlight></codeline>
+<codeline lineno="59"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="_patch_8cpp_1a20463a31308cb1ec843e1113aa9d96d1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::tuple&lt;int,<sp/>int,<sp/>std::optional&lt;std::string_view&gt;&gt;<sp/><ref refid="_patch_8cpp_1a20463a31308cb1ec843e1113aa9d96d1" kindref="member">getDeleteChange</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>&amp;,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;<sp/>jsonDoc,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;<sp/>entry,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string_view)</highlight></codeline>
+<codeline lineno="65"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_line_diff_1a0f5b2cdb36d89b7071b6915a1dd6c51a" kindref="member">LineDiff::getDeletion</ref><sp/>(<ref refid="struct_patch_validator_1a01bef73c004af99eb9c911c07b5ec63f" kindref="member">PatchValidator::getEntryLineRange</ref><sp/>(jsonDoc,<sp/>entry));</highlight></codeline>
+<codeline lineno="67"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="_patch_8cpp_1a7fa524323e577cc3bbdbf9bce8836226" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::tuple&lt;int,<sp/>int,<sp/>std::optional&lt;std::string_view&gt;&gt;<sp/><ref refid="_patch_8cpp_1a7fa524323e577cc3bbdbf9bce8836226" kindref="member">getReplaceChange</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>&amp;,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;<sp/>jsonDoc,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;<sp/>entry,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string_view<sp/><ref refid="namespacetext" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">text</ref>)</highlight></codeline>
+<codeline lineno="73"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_line_diff_1a76ecc8ce43b3be96827d43624198a6ce" kindref="member">LineDiff::getReplacement</ref><sp/>(<ref refid="struct_patch_validator_1a01bef73c004af99eb9c911c07b5ec63f" kindref="member">PatchValidator::getEntryLineRange</ref><sp/>(jsonDoc,<sp/>entry),<sp/><ref refid="namespacetext" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">text</ref>);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="_patch_8cpp_1aeb3ce632a6ec83cd135923d21411f8f8" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::tuple&lt;int,<sp/>int,<sp/>std::optional&lt;std::string_view&gt;&gt;<sp/><ref refid="_patch_8cpp_1aeb3ce632a6ec83cd135923d21411f8f8" kindref="member">getInsertChange</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>&amp;<sp/>key,</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;<sp/>jsonDoc,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;<sp/>entry,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string_view<sp/><ref refid="namespacetext" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">text</ref>)</highlight></codeline>
+<codeline lineno="81"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>insertBeforeKey<sp/>{<sp/><ref refid="classjam_1_1Strings_1aca02ec79e3d857bca6f9647dce6415fc" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings::fromView</ref><sp/>(<ref refid="namespaceId_1a025dc4173da0b7523a688d1fa4e0d282" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Id::insertBefore</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>line<sp/>{<sp/><ref refid="struct_patch_validator_1a8cedf0e088ad280aece3c21f77bb6f14" kindref="member">PatchValidator::getIntMember</ref><sp/>(jsonDoc,<sp/>entry,<sp/><ref refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings::getView</ref><sp/>(key.<ref refid="classjuce_1_1Identifier_1ab6f0db1de2c36cacd1a9d7280f73aeeb" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">toString</ref>()))<sp/>};</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>changeStart<sp/>{<sp/>key<sp/>==<sp/>insertBeforeKey<sp/>?<sp/>line<sp/>-<sp/>1<sp/>:<sp/>line<sp/>};</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_line_diff_1aa54330d886c9c47e59906d8860e5e17e" kindref="member">LineDiff::getInsertion</ref><sp/>(changeStart,<sp/><ref refid="namespacetext" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">text</ref>);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Function_1_1Map" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Function::Map</ref>&lt;<ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>,</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structjam_1_1Function_1ae0c82daeeeb7f4c4eaf062d55601f5cd" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Function::pointerCapacity</ref>,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::tuple&lt;int,<sp/>int,<sp/>std::optional&lt;std::string_view&gt;&gt;<sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;,<sp/>std::string_view)&gt;&amp;</highlight></codeline>
+<codeline lineno="91" refid="_patch_8cpp_1a1946d54b2dee02dd0e7453e83c7b6df5" refkind="member"><highlight class="normal"><ref refid="_patch_8cpp_1a1946d54b2dee02dd0e7453e83c7b6df5" kindref="member">getEntryChanges</ref>()</highlight></codeline>
+<codeline lineno="92"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>entryChanges<sp/>(</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[]</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structjam_1_1Function_1_1Map" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Function::Map</ref>&lt;<ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>,</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structjam_1_1Function_1ae0c82daeeeb7f4c4eaf062d55601f5cd" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Function::pointerCapacity</ref>,</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::tuple&lt;int,<sp/>int,<sp/>std::optional&lt;std::string_view&gt;&gt;<sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;,<sp/>std::string_view)&gt;<sp/>entryChanges;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>entryChanges.add<sp/>(<ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>(<ref refid="classjam_1_1Strings_1aca02ec79e3d857bca6f9647dce6415fc" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings::fromView</ref><sp/>(Id::deletion)),<sp/>&amp;<ref refid="_patch_8cpp_1a20463a31308cb1ec843e1113aa9d96d1" kindref="member">getDeleteChange</ref>);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>entryChanges.add<sp/>(<ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>(<ref refid="classjam_1_1Strings_1aca02ec79e3d857bca6f9647dce6415fc" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings::fromView</ref><sp/>(Id::startLine)),<sp/>&amp;<ref refid="_patch_8cpp_1a7fa524323e577cc3bbdbf9bce8836226" kindref="member">getReplaceChange</ref>);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>entryChanges.add<sp/>(<ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>(<ref refid="classjam_1_1Strings_1aca02ec79e3d857bca6f9647dce6415fc" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings::fromView</ref><sp/>(<ref refid="namespaceId_1a025dc4173da0b7523a688d1fa4e0d282" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Id::insertBefore</ref>)),<sp/>&amp;<ref refid="_patch_8cpp_1aeb3ce632a6ec83cd135923d21411f8f8" kindref="member">getInsertChange</ref>);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>entryChanges.add<sp/>(<ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>(<ref refid="classjam_1_1Strings_1aca02ec79e3d857bca6f9647dce6415fc" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings::fromView</ref><sp/>(<ref refid="namespaceId_1a7d7d87fe4a4dbe264c66140c6de22777" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Id::insertAfter</ref>)),<sp/>&amp;<ref refid="_patch_8cpp_1aeb3ce632a6ec83cd135923d21411f8f8" kindref="member">getInsertChange</ref>);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>entryChanges;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}());</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>entryChanges;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109" refid="_patch_8cpp_1a0cfdc4c90babea749eed9a722059d7f6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="_patch_8cpp_1a0cfdc4c90babea749eed9a722059d7f6" kindref="member">getEntryText</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;<sp/>jsonDoc,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;<sp/>entry)</highlight></codeline>
+<codeline lineno="110"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>jsonDoc.<ref refid="structjam_1_1JsonDocument_1ae74fbd4b7b71ef17ce0ffb9cf8306a61" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">contains</ref><sp/>(entry,<sp/><ref refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings::getView</ref><sp/>(<ref refid="namespaceId_1a287c150cdfda5a8e2deb30b6d987d638" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Id::text</ref>.toString()))</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>?<sp/>jsonDoc.<ref refid="structjam_1_1JsonDocument_1abd07e9da20184aa266aa577b11a0408d" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">getString</ref><sp/>(jsonDoc.<ref refid="structjam_1_1JsonDocument_1a0dd2a6e56f40f9f1a2e8378ae1aa9f53" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">get</ref><sp/>(entry,<sp/><ref refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings::getView</ref><sp/>(<ref refid="namespaceId_1a287c150cdfda5a8e2deb30b6d987d638" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Id::text</ref>.<ref refid="classjuce_1_1Identifier_1ab6f0db1de2c36cacd1a9d7280f73aeeb" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">toString</ref>())))</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>std::string<sp/>{};</highlight></codeline>
+<codeline lineno="114"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116" refid="_patch_8cpp_1ad250370b498ea83e023a85d0f5ddab16" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;<sp/><ref refid="_patch_8cpp_1ad250370b498ea83e023a85d0f5ddab16" kindref="member">getEntryAt</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;<sp/>jsonDoc,</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;<sp/>rootArray,</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1a805d84a9511bbac7e123e95c20c6c32b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Tokens</ref>&amp;<sp/>entryTokens,</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;int&gt;</ref>&amp;<sp/>entryIndices,</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>position)</highlight></codeline>
+<codeline lineno="121"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*jsonDoc.<ref refid="structjam_1_1JsonDocument_1a85465831699f14d38b99629de0b1a713" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">getChildByToken</ref><sp/>(rootArray,<sp/>entryTokens.<ref refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">at</ref><sp/>(entryIndices.<ref refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">at</ref><sp/>(position)));</highlight></codeline>
+<codeline lineno="123"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="_patch_8cpp_1aae8c0996b425f86c78135831ee68de15" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="_patch_8cpp_1aae8c0996b425f86c78135831ee68de15" kindref="member">getColumnLineNumber</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;<sp/>jsonDoc,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;<sp/>entry)</highlight></codeline>
+<codeline lineno="126"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_patch_validator_1a8cedf0e088ad280aece3c21f77bb6f14" kindref="member">PatchValidator::getIntMember</ref><sp/>(jsonDoc,<sp/>entry,<sp/><ref refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings::getView</ref><sp/>(<ref refid="namespaceId_1a9acf3e231e632c1b02ad3a0d4c0fc008" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Id::line</ref>.toString()));</highlight></codeline>
+<codeline lineno="128"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="_patch_8cpp_1a444eb0ea503e803eebaba81373acce66" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref>&amp;<sp/><ref refid="_patch_8cpp_1a444eb0ea503e803eebaba81373acce66" kindref="member">getStartColKey</ref>()</highlight></codeline>
+<codeline lineno="131"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Identifier" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Identifier</ref><sp/>startColKey<sp/>{<sp/><ref refid="classjam_1_1Strings_1aca02ec79e3d857bca6f9647dce6415fc" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings::fromView</ref><sp/>(Id::startCol)<sp/>};</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>startColKey;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136" refid="_patch_8cpp_1aae906a53b678d911aa8ca5206309aa38" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="_patch_8cpp_1aae906a53b678d911aa8ca5206309aa38" kindref="member">isColumnOfLine</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;<sp/>jsonDoc,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;<sp/>entry,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lineNumber)</highlight></codeline>
+<codeline lineno="137"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_patch_validator_1a2451acddcdc417c3c70833251a31913e" kindref="member">PatchValidator::getEntryShapeKey</ref><sp/>(jsonDoc,<sp/>entry)<sp/>==<sp/><ref refid="_patch_8cpp_1a444eb0ea503e803eebaba81373acce66" kindref="member">getStartColKey</ref>()</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/><ref refid="_patch_8cpp_1aae8c0996b425f86c78135831ee68de15" kindref="member">getColumnLineNumber</ref><sp/>(jsonDoc,<sp/>entry)<sp/>==<sp/>lineNumber;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142" refid="_patch_8cpp_1afe17b0694556785d2c121fe5072066dc" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="_patch_8cpp_1afe17b0694556785d2c121fe5072066dc" kindref="member">getColumnGroupEnd</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;<sp/>jsonDoc,</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;<sp/>rootArray,</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1a805d84a9511bbac7e123e95c20c6c32b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Tokens</ref>&amp;<sp/>entryTokens,</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;int&gt;</ref>&amp;<sp/>entryIndices,</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>groupStart)</highlight></codeline>
+<codeline lineno="147"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lineNumber<sp/>{<sp/><ref refid="_patch_8cpp_1aae8c0996b425f86c78135831ee68de15" kindref="member">getColumnLineNumber</ref><sp/>(jsonDoc,<sp/><ref refid="_patch_8cpp_1ad250370b498ea83e023a85d0f5ddab16" kindref="member">getEntryAt</ref><sp/>(jsonDoc,<sp/>rootArray,<sp/>entryTokens,<sp/>entryIndices,<sp/>groupStart))<sp/>};</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>groupEnd<sp/>{<sp/>groupStart<sp/>+<sp/>1<sp/>};</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(groupEnd<sp/>&lt;<sp/>entryIndices.<ref refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">size</ref>()<sp/>and<sp/><ref refid="_patch_8cpp_1aae906a53b678d911aa8ca5206309aa38" kindref="member">isColumnOfLine</ref><sp/>(jsonDoc,<sp/><ref refid="_patch_8cpp_1ad250370b498ea83e023a85d0f5ddab16" kindref="member">getEntryAt</ref><sp/>(jsonDoc,<sp/>rootArray,<sp/>entryTokens,<sp/>entryIndices,<sp/>groupEnd),<sp/>lineNumber))</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>++groupEnd;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>groupEnd;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157" refid="_patch_8cpp_1a54feb2fef6512bb4ca481b4340faaa4f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="_patch_8cpp_1a54feb2fef6512bb4ca481b4340faaa4f" kindref="member">setColumnLineText</ref><sp/>(std::string&amp;<sp/>lineText,</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;<sp/>jsonDoc,</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;<sp/>rootArray,</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1a805d84a9511bbac7e123e95c20c6c32b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Tokens</ref>&amp;<sp/>entryTokens,</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;int&gt;</ref>&amp;<sp/>entryIndices,</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range&lt;int&gt;</ref><sp/>groupRange,</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string_view<sp/>line)</highlight></codeline>
+<codeline lineno="164"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/>lineText.clear();</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>cursor<sp/>{<sp/>0<sp/>};</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>position<sp/>{<sp/>groupRange.<ref refid="classjuce_1_1Range_1a06f05db7a87b8e7e782b6c535c0c439b" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">getStart</ref>()<sp/>};<sp/>position<sp/>&lt;<sp/>groupRange.<ref refid="classjuce_1_1Range_1a44413a19310d5f14be8d6ece2feedc01" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">getEnd</ref>();<sp/>++position)</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>entry<sp/>{<sp/><ref refid="_patch_8cpp_1ad250370b498ea83e023a85d0f5ddab16" kindref="member">getEntryAt</ref><sp/>(jsonDoc,<sp/>rootArray,<sp/>entryTokens,<sp/>entryIndices,<sp/>position)<sp/>};</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>startCol<sp/>{<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">size_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal"><sp/>(<ref refid="struct_patch_validator_1a8cedf0e088ad280aece3c21f77bb6f14" kindref="member">PatchValidator::getIntMember</ref><sp/>(jsonDoc,<sp/>entry,<sp/>Id::startCol))<sp/>};</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>endCol<sp/>{<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">size_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal"><sp/>(<ref refid="struct_patch_validator_1a8cedf0e088ad280aece3c21f77bb6f14" kindref="member">PatchValidator::getIntMember</ref><sp/>(jsonDoc,<sp/>entry,<sp/>Id::endCol))<sp/>};</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>replacement<sp/>{<sp/>jsonDoc.<ref refid="structjam_1_1JsonDocument_1abd07e9da20184aa266aa577b11a0408d" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">getString</ref><sp/>(jsonDoc.<ref refid="structjam_1_1JsonDocument_1a0dd2a6e56f40f9f1a2e8378ae1aa9f53" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">get</ref><sp/>(entry,<sp/><ref refid="classjam_1_1Strings_1adfb32d159be94dc4a4004c50be876e3c" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Strings::getView</ref><sp/>(<ref refid="namespaceId_1a287c150cdfda5a8e2deb30b6d987d638" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Id::text</ref>.<ref refid="classjuce_1_1Identifier_1ab6f0db1de2c36cacd1a9d7280f73aeeb" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">toString</ref>())))<sp/>};</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structjam_1_1Format_1a03d027c362f8e8e10a4b632c3af60c63" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Format::appendBytes</ref><sp/>(lineText,<sp/>line.substr<sp/>(cursor,<sp/>startCol<sp/>-<sp/>cursor));</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structjam_1_1Format_1a03d027c362f8e8e10a4b632c3af60c63" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Format::appendBytes</ref><sp/>(lineText,<sp/>replacement);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cursor<sp/>=<sp/>endCol;</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structjam_1_1Format_1a03d027c362f8e8e10a4b632c3af60c63" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Format::appendBytes</ref><sp/>(lineText,<sp/>line.substr<sp/>(cursor));</highlight></codeline>
+<codeline lineno="180"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="182" refid="_patch_8cpp_1ab0bb2f889a49e84a4c7171086e7bbe97" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::tuple&lt;int,<sp/>int,<sp/>int&gt;<sp/><ref refid="_patch_8cpp_1ab0bb2f889a49e84a4c7171086e7bbe97" kindref="member">getEntryOrder</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;<sp/>jsonDoc,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;<sp/>entry)</highlight></codeline>
+<codeline lineno="183"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="struct_patch_validator_1a2451acddcdc417c3c70833251a31913e" kindref="member">PatchValidator::getEntryShapeKey</ref><sp/>(jsonDoc,<sp/>entry)<sp/>==<sp/><ref refid="_patch_8cpp_1a444eb0ea503e803eebaba81373acce66" kindref="member">getStartColKey</ref>())</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/><ref refid="_patch_8cpp_1aae8c0996b425f86c78135831ee68de15" kindref="member">getColumnLineNumber</ref><sp/>(jsonDoc,<sp/>entry)<sp/>-<sp/>1,<sp/>1,<sp/><ref refid="struct_patch_validator_1a8cedf0e088ad280aece3c21f77bb6f14" kindref="member">PatchValidator::getIntMember</ref><sp/>(jsonDoc,<sp/>entry,<sp/>Id::startCol)<sp/>};</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[start,<sp/>length,<sp/>insertedText]<sp/>{<sp/><ref refid="_patch_8cpp_1a1946d54b2dee02dd0e7453e83c7b6df5" kindref="member">getEntryChanges</ref>().get<sp/>(<ref refid="struct_patch_validator_1a2451acddcdc417c3c70833251a31913e" kindref="member">PatchValidator::getEntryShapeKey</ref><sp/>(jsonDoc,<sp/>entry),<sp/>jsonDoc,<sp/>entry,<sp/>std::string_view<sp/>{})<sp/>};</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacejuce_1a86deae84ff8b95d7e40214a493b3dfe0" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::ignoreUnused</ref><sp/>(insertedText);</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{<sp/>start,<sp/>length<sp/>&gt;<sp/>0<sp/>?<sp/>1<sp/>:<sp/>0,<sp/>0<sp/>};</highlight></codeline>
+<codeline lineno="190"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192" refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref><sp/><ref refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" kindref="member">addTargetFile</ref><sp/>(<ref refid="class_transaction" kindref="compound">Transaction</ref>&amp;<sp/>transaction,</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;<sp/>jsonDoc,</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;<sp/>rootArray,</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1a805d84a9511bbac7e123e95c20c6c32b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Tokens</ref>&amp;<sp/>entryTokens,</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1File" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::File</ref>&amp;<sp/>targetFile,</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string_view<sp/>displayPath,</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;int&gt;</ref>&amp;<sp/>entryIndices)</highlight></codeline>
+<codeline lineno="199"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[readStatus,<sp/>targetDoc]<sp/>{<sp/><ref refid="class_text_document_1a368b7c5d829df5e20f76c11c0a6463e6" kindref="member">TextDocument::fromTextFile</ref><sp/>(targetFile,<sp/>displayPath,<sp/><ref refid="class_input_1adfde65e6955a7f1c62782df59cb6cf0a" kindref="member">Input::allBytes</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(readStatus.failed())</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>readStatus;</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>fileStatus<sp/>{<sp/><ref refid="struct_patch_validator_1ac999f9dd45743443312cdbaca2140057" kindref="member">PatchValidator::isValidForFile</ref><sp/>(jsonDoc,<sp/>entryIndices,<sp/>*targetDoc)<sp/>};</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(fileStatus.failed())</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fileStatus;</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;std::pair&lt;std::tuple&lt;int, int, int&gt;</ref>,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&gt;&gt;<sp/>entryOrder;</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/>entryOrder.<ref refid="classjam_1_1Array_1a79e89487d47591c2c1dcceb7ba5aa61e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">ensureStorageAllocated</ref><sp/>(entryIndices.<ref refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">size</ref>());</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>position<sp/>{<sp/>0<sp/>};<sp/>position<sp/>&lt;<sp/>entryIndices.<ref refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">size</ref>();<sp/>++position)</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>entryOrder.<ref refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">add</ref><sp/>({<sp/>getEntryOrder<sp/>(jsonDoc,<sp/>getEntryAt<sp/>(jsonDoc,<sp/>rootArray,<sp/>entryTokens,<sp/>entryIndices,<sp/>position)),<sp/>position<sp/>});</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/>std::sort<sp/>(entryOrder.<ref refid="classjam_1_1Array_1aa5240327dd94267390aefa03215033e1" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">begin</ref>(),<sp/>entryOrder.<ref refid="classjam_1_1Array_1a7336e35022c8a66e55217a273f0b8808" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">end</ref>());</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;int&gt;</ref><sp/>sortedIndices;</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/>sortedIndices.<ref refid="classjam_1_1Array_1a79e89487d47591c2c1dcceb7ba5aa61e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">ensureStorageAllocated</ref><sp/>(entryIndices.<ref refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">size</ref>());</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>[sortKey,<sp/>position]<sp/>:<sp/>entryOrder)</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sortedIndices.<ref refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">add</ref><sp/>(entryIndices.<ref refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">at</ref><sp/>(position));</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_text_document" kindref="compound">TextDocument</ref>&amp;<sp/>targetDocument<sp/>{<sp/>*targetDoc<sp/>};</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_line_diff" kindref="compound">LineDiff</ref><sp/>diff<sp/>(targetDocument,<sp/>[&amp;jsonDoc,<sp/>&amp;rootArray,<sp/>&amp;entryTokens,<sp/>&amp;sortedIndices,<sp/>&amp;targetDocument]<sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>addChange)</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>lineText;</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>position<sp/>{<sp/>0<sp/>};</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(position<sp/>&lt;<sp/>sortedIndices.<ref refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">size</ref>())</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>entry<sp/>{<sp/><ref refid="_patch_8cpp_1ad250370b498ea83e023a85d0f5ddab16" kindref="member">getEntryAt</ref><sp/>(jsonDoc,<sp/>rootArray,<sp/>entryTokens,<sp/>sortedIndices,<sp/>position)<sp/>};</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>key<sp/>{<sp/><ref refid="struct_patch_validator_1a2451acddcdc417c3c70833251a31913e" kindref="member">PatchValidator::getEntryShapeKey</ref><sp/>(jsonDoc,<sp/>entry)<sp/>};</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(key<sp/>==<sp/><ref refid="_patch_8cpp_1a444eb0ea503e803eebaba81373acce66" kindref="member">getStartColKey</ref>())</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>groupEnd<sp/>{<sp/><ref refid="_patch_8cpp_1afe17b0694556785d2c121fe5072066dc" kindref="member">getColumnGroupEnd</ref><sp/>(jsonDoc,<sp/>rootArray,<sp/>entryTokens,<sp/>sortedIndices,<sp/>position)<sp/>};</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lineNumber<sp/>{<sp/><ref refid="_patch_8cpp_1aae8c0996b425f86c78135831ee68de15" kindref="member">getColumnLineNumber</ref><sp/>(jsonDoc,<sp/>entry)<sp/>};</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="_patch_8cpp_1a54feb2fef6512bb4ca481b4340faaa4f" kindref="member">setColumnLineText</ref><sp/>(lineText,<sp/>jsonDoc,<sp/>rootArray,<sp/>entryTokens,<sp/>sortedIndices,<sp/><ref refid="classjuce_1_1Range" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Range&lt;int&gt;</ref><sp/>(position,<sp/>groupEnd),<sp/>targetDocument.<ref refid="class_text_document_1aa8879ac99053ef5518cb783062a4b8c2" kindref="member">getLine</ref><sp/>(lineNumber));</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>addChange<sp/>(lineNumber<sp/>-<sp/>1,<sp/>1,<sp/>std::string_view<sp/>{<sp/>lineText<sp/>});</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>position<sp/>=<sp/>groupEnd;</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="namespacetext" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">text</ref><sp/>{<sp/><ref refid="_patch_8cpp_1a0cfdc4c90babea749eed9a722059d7f6" kindref="member">getEntryText</ref><sp/>(jsonDoc,<sp/>entry)<sp/>};</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[start,<sp/>length,<sp/>insertedText]<sp/>{<sp/><ref refid="_patch_8cpp_1a1946d54b2dee02dd0e7453e83c7b6df5" kindref="member">getEntryChanges</ref>().get<sp/>(key,<sp/>jsonDoc,<sp/>entry,<sp/><ref refid="namespacetext" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">text</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>addChange<sp/>(start,<sp/>length,<sp/>insertedText);</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>++position;</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/>});</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"></highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>transaction.<ref refid="class_transaction_1ace7cab528daf25ccbb7e6042cbb4b25e" kindref="member">addFile</ref><sp/>(targetFile,<sp/>std::move<sp/>(targetDoc),<sp/>std::move<sp/>(diff),<sp/>entryIndices.<ref refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">size</ref>());</highlight></codeline>
+<codeline lineno="254"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight></codeline>
+<codeline lineno="256" refid="_patch_8cpp_1ad5126978f16e49219c82610a78a266a0" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Result" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result</ref><sp/><ref refid="_patch_8cpp_1ad5126978f16e49219c82610a78a266a0" kindref="member">addGroupedFiles</ref><sp/>(<ref refid="class_transaction" kindref="compound">Transaction</ref>&amp;<sp/>transaction,</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;<sp/>jsonDoc,</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1_1Element" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Element</ref>&amp;<sp/>rootArray,</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1Document_1a805d84a9511bbac7e123e95c20c6c32b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Tokens</ref>&amp;<sp/>entryTokens)</highlight></codeline>
+<codeline lineno="260"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[groupDisplayPaths,<sp/>groupFiles,<sp/>groupEntryIndices]<sp/>{<sp/><ref refid="_patch_8cpp_1a6a73fba80efadcccfbe1d490552baaa9" kindref="member">getGroupedEntries</ref><sp/>(jsonDoc,<sp/>rootArray,<sp/>entryTokens)<sp/>};</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classjam_1_1Array" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Array&lt;int&gt;</ref><sp/>groupOrder;</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"></highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>groupIndex<sp/>{<sp/>0<sp/>};<sp/>groupIndex<sp/>&lt;<sp/>groupDisplayPaths.size();<sp/>++groupIndex)</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>groupOrder.<ref refid="classjam_1_1Array_1a11f82d383b72419d9e9624cbe63f7767" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">add</ref><sp/>(groupIndex);</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/>std::sort<sp/>(groupOrder.<ref refid="classjam_1_1Array_1aa5240327dd94267390aefa03215033e1" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">begin</ref>(),<sp/>groupOrder.<ref refid="classjam_1_1Array_1a7336e35022c8a66e55217a273f0b8808" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">end</ref>(),</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[&amp;groupDisplayPaths<sp/>=<sp/>groupDisplayPaths]<sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>leftGroup,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rightGroup)</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>groupDisplayPaths.getView<sp/>(leftGroup)<sp/>&lt;<sp/>groupDisplayPaths.getView<sp/>(rightGroup);</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>position<sp/>{<sp/>0<sp/>};<sp/>position<sp/>&lt;<sp/>groupOrder.<ref refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">size</ref>();<sp/>++position)</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>groupIndex<sp/>{<sp/>groupOrder.<ref refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">at</ref><sp/>(position)<sp/>};</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>fileStatus<sp/>{<sp/><ref refid="_patch_8cpp_1a07c91e5d1704a8d100a3edc8beff6e75" kindref="member">addTargetFile</ref><sp/>(transaction,<sp/>jsonDoc,<sp/>rootArray,<sp/>entryTokens,<sp/>groupFiles.<ref refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">at</ref><sp/>(groupIndex),<sp/>groupDisplayPaths.getView<sp/>(groupIndex),<sp/>groupEntryIndices.at<sp/>(groupIndex))<sp/>};</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"></highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(fileStatus.failed())</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fileStatus;</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"></highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classjuce_1_1Result_1ac2133128eeba510367bfe1b83383ae0f" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Result::ok</ref>();</highlight></codeline>
+<codeline lineno="283"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"></highlight></codeline>
+<codeline lineno="285" refid="_patch_8cpp_1ae0389f55a6ababa8838cb4920cce60a1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref><sp/><ref refid="_patch_8cpp_1ae0389f55a6ababa8838cb4920cce60a1" kindref="member">runTransaction</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structjam_1_1JsonDocument" kindref="compound" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::JsonDocument</ref>&amp;<sp/>jsonDoc)</highlight></codeline>
+<codeline lineno="286"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">*<sp/>rootArray<sp/>{<sp/>jsonDoc.<ref refid="structjam_1_1JsonDocument_1a85465831699f14d38b99629de0b1a713" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">getChildByToken</ref><sp/>(*jsonDoc.<ref refid="structjam_1_1Document_1afa15c06a56937a7195814a2aa2c7521d" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">getRoot</ref>(),<sp/>jsonDoc.<ref refid="structjam_1_1JsonDocument_1ad84256d417d92277a97b7ea6d36199b1" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">getValue</ref>())<sp/>};</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>entryTokens<sp/>{<sp/>*rootArray-&gt;get&lt;<ref refid="structjam_1_1Document_1a805d84a9511bbac7e123e95c20c6c32b" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">jam::Document::Tokens</ref>&gt;<sp/>(<ref refid="namespaceId_1a852b83817f32504602a384b9091ed9fb" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">Id::tokens</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[expectStatus,<sp/>expectedCount]<sp/>{<sp/><ref refid="class_transaction_1a0b22d5fa86a8cf4b366ef9c8e091992a" kindref="member">Transaction::getExpectStatus</ref><sp/>(arguments)<sp/>};</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"></highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(expectStatus.failed())</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(expectStatus);</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"></highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arguments.<ref refid="class_arguments_1a16e02d082e3c502be80194a47e907535" kindref="member">contains</ref><sp/>(Id::expectOption)<sp/>and<sp/>expectedCount<sp/>!=<sp/>entryTokens.size())</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_transaction_1a5800eb9b3d14bded600e4b427b0917fd" kindref="member">Transaction::getExpectMismatch</ref><sp/>({},<sp/>expectedCount,<sp/>entryTokens.size());</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"></highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_transaction" kindref="compound">Transaction</ref><sp/>transaction<sp/>{<sp/>Id::patch<sp/>};</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>addStatus<sp/>{<sp/><ref refid="_patch_8cpp_1ad5126978f16e49219c82610a78a266a0" kindref="member">addGroupedFiles</ref><sp/>(transaction,<sp/>jsonDoc,<sp/>*rootArray,<sp/>entryTokens)<sp/>};</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(addStatus.failed())</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(addStatus);</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"></highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>transaction.<ref refid="class_transaction_1ab1e959e59ca6ad3115550892d0d7fa8a" kindref="member">run</ref><sp/>(arguments);</highlight></codeline>
+<codeline lineno="304"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight></codeline>
+<codeline lineno="306" refid="_patch_8cpp_1a4a61f046ffdf8e6ab3b1252bd28f94a8" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref><sp/><ref refid="_patch_8cpp_1a4a61f046ffdf8e6ab3b1252bd28f94a8" kindref="member">runJson</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments,<sp/>std::string_view<sp/>jsonBytes)</highlight></codeline>
+<codeline lineno="307"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[docStatus,<sp/>jsonDoc]<sp/>{<sp/><ref refid="_patch_8cpp_1a314a2131f149eb0296c5b465792bbe05" kindref="member">getValidatedJsonDocument</ref><sp/>(jsonBytes)<sp/>};</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"></highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(docStatus.failed())</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(docStatus);</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="_patch_8cpp_1ae0389f55a6ababa8838cb4920cce60a1" kindref="member">runTransaction</ref><sp/>(arguments,<sp/>*jsonDoc);</highlight></codeline>
+<codeline lineno="314"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"></highlight></codeline>
+<codeline lineno="316" refid="_patch_8cpp_1a90cf7bf24224586469772abae6c95d98" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref><sp/><ref refid="_patch_8cpp_1a90cf7bf24224586469772abae6c95d98" kindref="member">runFile</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments)</highlight></codeline>
+<codeline lineno="317"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>filePath<sp/>{<sp/>arguments.<ref refid="class_arguments_1adade09c248ed8b06f65a73e1c133b47e" kindref="member">getValueView</ref><sp/>(Id::fileOption)<sp/>};</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>targetFile<sp/>{<sp/><ref refid="struct_paths_1acd07be51ce7def54cd71d235f777df74" kindref="member">Paths::getLinkedTarget</ref><sp/>(filePath)<sp/>};</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[readStatus,<sp/>document]<sp/>{<sp/><ref refid="class_text_document_1a368b7c5d829df5e20f76c11c0a6463e6" kindref="member">TextDocument::fromTextFile</ref><sp/>(targetFile,<sp/>filePath,<sp/><ref refid="class_input_1af4915b1e6f1f77beea94bc7833406f31" kindref="member">Input::maxBufferedReadSize</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"></highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(readStatus.failed())</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(readStatus);</highlight></codeline>
+<codeline lineno="324"><highlight class="normal"></highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="_patch_8cpp_1a4a61f046ffdf8e6ab3b1252bd28f94a8" kindref="member">runJson</ref><sp/>(arguments,<sp/>document-&gt;getBytes());</highlight></codeline>
+<codeline lineno="326"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="327"><highlight class="normal"></highlight></codeline>
+<codeline lineno="328" refid="_patch_8cpp_1aaff59351be09f94c257b3fe8f4dcebeb" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref><sp/><ref refid="_patch_8cpp_1aaff59351be09f94c257b3fe8f4dcebeb" kindref="member">runStandardInput</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::optional&lt;std::string&gt;&amp;<sp/>input)</highlight></codeline>
+<codeline lineno="329"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="struct_stdio_1a28994562faa0223a49215d05f819a20a" kindref="member">Stdio::isTerminalInput</ref><sp/>(input))</highlight></codeline>
+<codeline lineno="331"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1adc7868b710cbcd4375d2bfe35d140a30" kindref="member">text::Diagnostics::failPatchRequiresInput</ref>);</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"></highlight></codeline>
+<codeline lineno="333"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[inputStatus,<sp/>standardInput]<sp/>{<sp/><ref refid="class_input_1a3fc492d5ac07056e1c68ec5a045455cb" kindref="member">Input::create</ref><sp/>(input,<sp/><ref refid="class_input_1a95071d83755879d3c0d4b2bcbb37e6f2" kindref="member">Input::allLines</ref>)<sp/>};</highlight></codeline>
+<codeline lineno="334"><highlight class="normal"></highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(inputStatus.failed())</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(inputStatus);</highlight></codeline>
+<codeline lineno="337"><highlight class="normal"></highlight></codeline>
+<codeline lineno="338"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="_patch_8cpp_1a4a61f046ffdf8e6ab3b1252bd28f94a8" kindref="member">runJson</ref><sp/>(arguments,<sp/>standardInput-&gt;getBytes());</highlight></codeline>
+<codeline lineno="339"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="340"><highlight class="normal"></highlight></codeline>
+<codeline lineno="341" refid="struct_patch_1a61c2ae36b1a1ea8c3c193ff2caaade47" refkind="member"><highlight class="normal"><ref refid="class_arguments" kindref="compound">Arguments</ref><sp/><ref refid="struct_patch_1a61c2ae36b1a1ea8c3c193ff2caaade47" kindref="member">Patch::getArguments</ref><sp/>(<ref refid="classjuce_1_1Span" kindref="compound" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">juce::Span&lt;const std::string_view&gt;</ref><sp/>argumentList)</highlight></codeline>
+<codeline lineno="342"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="343"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref><sp/>{<sp/>argumentList,<sp/>{<sp/>Id::applyOption<sp/>},<sp/>{<sp/>Id::fileOption,<sp/>Id::expectOption<sp/>},<sp/>{}<sp/>};</highlight></codeline>
+<codeline lineno="344"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="345"><highlight class="normal"></highlight></codeline>
+<codeline lineno="346" refid="struct_patch_1a8a248ff325ba668ab5c784d9e48a4c8c" refkind="member"><highlight class="normal"><ref refid="struct_stdio_1a572ad1d647a4ff7f516c3c426be584ae" kindref="member">Stdio::Output</ref><sp/><ref refid="struct_patch_1a8a248ff325ba668ab5c784d9e48a4c8c" kindref="member">Patch::run</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_arguments" kindref="compound">Arguments</ref>&amp;<sp/>arguments,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::optional&lt;std::string&gt;&amp;<sp/>input)</highlight></codeline>
+<codeline lineno="347"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arguments.<ref refid="class_arguments_1a46db95dfc7cc4ce7e8e7af84ceaaebf7" kindref="member">getStatus</ref>().<ref refid="classjuce_1_1Result_1ae932f12129866251b1136f1629255f1c" kindref="member" external="/Users/jreng/Documents/Poems/JUCE/docs/tagfile.xml">failed</ref>())</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(arguments.<ref refid="class_arguments_1a46db95dfc7cc4ce7e8e7af84ceaaebf7" kindref="member">getStatus</ref>());</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"></highlight></codeline>
+<codeline lineno="351"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arguments.<ref refid="class_arguments_1aafc4f159b8d3a4fed87eed8db972f472" kindref="member">getPositionals</ref>().<ref refid="classjam_1_1Array_1a15af995542610b93595677080ed7672e" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">size</ref>()<sp/>&gt;<sp/>0)</highlight></codeline>
+<codeline lineno="352"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_stdio_1ae85986622c8d462e34ed65747a38d9c2" kindref="member">Stdio::getFailure</ref><sp/>(<ref refid="structtext_1_1_diagnostics_1af1d73d28b47085d0fd50b72cd5a8d731" kindref="member">text::Diagnostics::failUnexpectedArgument</ref>,<sp/>arguments.<ref refid="class_arguments_1aafc4f159b8d3a4fed87eed8db972f472" kindref="member">getPositionals</ref>().<ref refid="classjam_1_1Array_1a24ad4d6d1444205b79eff834a15e39c7" kindref="member" external="/Users/jreng/Documents/Poems/dev/jam/docs/tagfile.xml">at</ref><sp/>(0));</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"></highlight></codeline>
+<codeline lineno="354"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arguments.<ref refid="class_arguments_1a16e02d082e3c502be80194a47e907535" kindref="member">contains</ref><sp/>(Id::fileOption))</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="_patch_8cpp_1a90cf7bf24224586469772abae6c95d98" kindref="member">runFile</ref><sp/>(arguments);</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"></highlight></codeline>
+<codeline lineno="357"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="_patch_8cpp_1aaff59351be09f94c257b3fe8f4dcebeb" kindref="member">runStandardInput</ref><sp/>(arguments,<sp/>input);</highlight></codeline>
+<codeline lineno="358"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="Patch.cpp"/>
+  </compounddef>
+</doxygen>
