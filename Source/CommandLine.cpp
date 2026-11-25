@@ -6,6 +6,7 @@
 #include "Lines.h"
 #include "Patch.h"
 #include "Replace.h"
+#include "TextDocument.h"
 #include "Undo.h"
 #include "generated/Generated.h"
 
@@ -22,83 +23,107 @@ static constexpr std::array verbs
     std::make_tuple (Id::excerpt, files::excerptHelp, &Excerpt::getArguments, &Excerpt::run)
 };
 
-static std::string getFrame (std::string_view resourceFileName)
+static std::string_view getFrame (std::string_view resourceFileName)
 {
     const auto [data, size] { BinaryData::fetcher (resourceFileName.data()) };
     assert (data != nullptr);
     return { static_cast<const char*> (data), static_cast<size_t> (size) };
 }
 
-static std::string getScreenErase()
+static Stdio::Documents getScreenErase()
 {
-    return Stdio::isTerminalOutput() ? getFrame (files::screenErase) : std::string {};
+    Stdio::Documents screenErase;
+    const auto frame { Stdio::isTerminalOutput() ? getFrame (files::screenErase) : std::string_view {} };
+
+    if (not frame.empty())
+        screenErase.add (TextDocument::fromView (frame, {}));
+
+    return screenErase;
 }
 
-static std::string getBanner()
+static void appendBanner (std::string& output)
 {
-    std::string banner;
-
     for (const auto text : map::banner)
-        banner += Stdio::getLine (jam::Strings::fromView (text));
-
-    return banner;
+    {
+        jam::Format::appendBytes (output, text);
+        jam::Format::appendUtf8 (output, Chars::newline);
+    }
 }
 
-static juce::String getVersionLine()
+static std::string getVersionLine()
 {
-    return ProjectInfo::projectName
-           + juce::String::charToString (Chars::space)
-           + ProjectInfo::versionString
-           + Chars::space
-           + Chars::openParen + CAST_COMMIT
-           + Chars::closeParen;
+    std::string line;
+    jam::Format::appendBytes (line, ProjectInfo::projectName);
+    jam::Format::appendUtf8 (line, Chars::space);
+    jam::Format::appendBytes (line, ProjectInfo::versionString);
+    jam::Format::appendUtf8 (line, Chars::space);
+    jam::Format::appendUtf8 (line, Chars::openParen);
+    jam::Format::appendBytes (line, CAST_COMMIT);
+    jam::Format::appendUtf8 (line, Chars::closeParen);
+    jam::Format::appendUtf8 (line, Chars::newline);
+    return line;
 }
 
 static Stdio::Output getBannerAndHelp()
 {
-    return { Stdio::exitSuccess, getScreenErase() + getBanner() + Stdio::getLine ({}) + getFrame (files::sawHelp), {} };
+    auto documents (getScreenErase());
+    std::string banner;
+    appendBanner (banner);
+    jam::Format::appendUtf8 (banner, Chars::newline);
+    documents.add (TextDocument::fromText (std::move (banner), {}));
+    documents.add (TextDocument::fromView (getFrame (files::sawHelp), {}));
+    return Stdio::getOutput (Stdio::exitSuccess, std::move (documents));
 }
 
-static Stdio::Output runGlobalOption (const jam::Strings& arguments)
+static Stdio::Output runGlobalOption (juce::Span<const std::string_view> arguments)
 {
-    if (arguments.size() > Arguments::firstOptionIndex)
-        return Stdio::getFailure (Stdio::getFormatted (text::Diagnostics::failFlagUnknown, arguments.at (Arguments::firstOptionIndex).toRawUTF8()));
+    if (static_cast<int> (arguments.size()) > Arguments::firstOptionIndex)
+        return Stdio::getFailure (text::Diagnostics::failFlagUnknown, arguments[static_cast<size_t> (Arguments::firstOptionIndex)]);
 
-    if (Arguments::matchesOption (arguments.getView (verbArgumentIndex), Id::versionOption))
-        return { Stdio::exitSuccess, Stdio::getLine (getVersionLine()), {} };
+    if (Arguments::matchesOption (arguments[static_cast<size_t> (verbArgumentIndex)], Id::versionOption))
+        return Stdio::getOutput (Stdio::exitSuccess, Stdio::getDocuments (getVersionLine()));
 
     return getBannerAndHelp();
 }
 
-static Stdio::Output runVerb (const jam::Strings& arguments, const std::optional<std::string>& input)
+static Stdio::Output runVerb (juce::Span<const std::string_view> arguments, const std::optional<std::string>& input)
 {
-    const auto verbArgument { arguments.at (verbArgumentIndex) };
+    const auto verbArgument { arguments[static_cast<size_t> (verbArgumentIndex)] };
     const auto verb { std::find_if (verbs.begin(), verbs.end(),
                                     [&verbArgument] (const auto& entry)
                                     {
-                                        return std::get<0> (entry).compare (jam::Strings::getView (verbArgument)) == 0;
+                                        const auto& [verbName, helpFileName, getVerbArguments, runVerbArguments] { entry };
+                                        juce::ignoreUnused (helpFileName, getVerbArguments, runVerbArguments);
+                                        return verbName.compare (verbArgument) == 0;
                                     }) };
 
     if (verb == verbs.end())
     {
-        const auto* format { verbArgument.startsWithChar (Chars::dash) ? text::Diagnostics::failFlagUnknown : text::Diagnostics::failCommandUnknown };
-        return Stdio::getFailure (Stdio::getFormatted (format, verbArgument.toRawUTF8()));
+        const auto isFlag { not verbArgument.empty() and verbArgument.at (0) == static_cast<char> (Chars::dash) };
+        const auto* failure { isFlag ? text::Diagnostics::failFlagUnknown : text::Diagnostics::failCommandUnknown };
+        return Stdio::getFailure (failure, verbArgument);
     }
 
-    const auto verbArguments { std::get<2> (*verb) (arguments) };
+    const auto& [verbName, helpFileName, getVerbArguments, runVerbArguments] { *verb };
+    juce::ignoreUnused (verbName);
+    const auto verbArguments { getVerbArguments (arguments) };
 
     if (verbArguments.contains (Id::helpOption))
-        return { Stdio::exitSuccess, getScreenErase() + getFrame (std::get<1> (*verb)), {} };
+    {
+        auto documents (getScreenErase());
+        documents.add (TextDocument::fromView (getFrame (helpFileName), {}));
+        return Stdio::getOutput (Stdio::exitSuccess, std::move (documents));
+    }
 
-    return std::get<3> (*verb) (verbArguments, input);
+    return runVerbArguments (verbArguments, input);
 }
 
-Stdio::Output CommandLine::run (const jam::Strings& arguments, const std::optional<std::string>& input)
+Stdio::Output CommandLine::run (juce::Span<const std::string_view> arguments, const std::optional<std::string>& input)
 {
-    if (arguments.size() <= verbArgumentIndex)
+    if (static_cast<int> (arguments.size()) <= verbArgumentIndex)
         return getBannerAndHelp();
 
-    const auto firstArgument { arguments.getView (verbArgumentIndex) };
+    const auto firstArgument { arguments[static_cast<size_t> (verbArgumentIndex)] };
 
     if (Arguments::matchesOption (firstArgument, Id::helpOption)
         or Arguments::matchesOption (firstArgument, Id::versionOption))

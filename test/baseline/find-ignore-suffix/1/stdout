@@ -1,0 +1,3 @@
+./a/only/top.log:1:needle
+./deepskip.log:1:needle
+./xdeep/skip.log:1:needle

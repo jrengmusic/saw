@@ -1,6 +1,6 @@
 # RFC — SAW must live to its premise
 Date: 2026-11-24
-Status: Ready for COUNSELOR handoff
+Status: Implemented. `PLAN-native-mcp.md` continues it.
 Author: MACHINIST
 Targets: `saw` v0.0.1 (`7a7039f`), and `jam_core` where this document names it
 

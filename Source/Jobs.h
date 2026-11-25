@@ -43,9 +43,10 @@ struct Jobs
             else
             {
                 std::atomic<int> nextIndex { 0 };
-                std::vector<std::exception_ptr> failures (static_cast<size_t> (workerCount));
+                jam::Array<std::exception_ptr> failures;
+                failures.resize (workerCount);
 
-                auto worker = [&nextIndex, &function, &failures, count] (int workerIndex)
+                auto worker { [&nextIndex, &function, &failures, count] (int workerIndex)
                 {
                     try
                     {
@@ -58,18 +59,18 @@ struct Jobs
                     }
                     catch (...)
                     {
-                        failures.at (static_cast<size_t> (workerIndex)) = std::current_exception();
+                        failures.at (workerIndex) = std::current_exception();
                     }
-                };
+                } };
 
-                std::vector<std::thread> workers;
-                workers.reserve (static_cast<size_t> (workerCount - 1));
+                jam::Array<std::thread> workers;
+                workers.ensureStorageAllocated (workerCount - 1);
 
                 for (int index { 0 }; index < workerCount - 1; ++index)
                 {
                     try
                     {
-                        workers.emplace_back (worker, index + 1);
+                        workers.add (std::thread { worker, index + 1 });
                     }
                     catch (const std::system_error&)
                     {
@@ -111,7 +112,7 @@ struct Jobs
          *
          *  @param item The item to add. It is moved into the slot.
          */
-        void add (Item item)
+        void add (Item item) noexcept
         {
             numPending.fetch_add (1, std::memory_order_relaxed);
             const auto [segment, offset] { getPosition (numAdded.fetch_add (1, std::memory_order_relaxed)) };
@@ -174,6 +175,11 @@ struct Jobs
         }
 
     private:
+        /** @brief One position of the list: the published flag and the item.
+         *
+         *  The flag is set with a release store after the item is written, so a reader that loads the
+         *  flag with acquire sees the whole item.
+         */
         struct Slot
         {
             /** @brief Set with a release store when item is published. */
@@ -183,9 +189,20 @@ struct Jobs
             Item item {};
         };
 
+        /** @brief Number of slots in the first segment. Each later segment has twice the slots of the one before. */
         static constexpr size_t firstSegmentSize { 64 };
+
+        /** @brief Number of segments. The bound fixes the array of segment pointers, so it never resizes. */
         static constexpr size_t maximumSegments { 32 };
 
+        /** @brief Maps a flat index to its segment and its offset in that segment.
+         *
+         *  The segments double in size, so the segment is found by subtracting each segment size in turn.
+         *
+         *  @param index The flat index of the position.
+         *
+         *  @return The segment number and the offset of the position in that segment.
+         */
         static std::pair<size_t, size_t> getPosition (size_t index) noexcept
         {
             size_t segment { 0 };
@@ -201,28 +218,41 @@ struct Jobs
             return { segment, index };
         }
 
+        /** @brief Allocates the slots of one segment, and publishes the pointer with a release store.
+         *
+         *  @param segment The number of the segment. Its size is firstSegmentSize doubled segment times.
+         */
         void addSegment (size_t segment)
         {
             storage.at (segment) = std::make_unique<Slot[]> (firstSegmentSize << segment);
             segments.at (segment).store (storage.at (segment).get(), std::memory_order_release);
         }
 
+        /** @brief Owns the slots of each segment. A segment is allocated once and never moves. */
         std::array<std::unique_ptr<Slot[]>, maximumSegments> storage;
+
+        /** @brief Published pointers to the segments, read by other threads with acquire loads. */
         std::array<std::atomic<Slot*>, maximumSegments> segments {};
+
+        /** @brief Number of positions claimed by add, so that each add owns one position. */
         std::atomic<size_t> numAdded { 0 };
+
+        /** @brief Number of positions claimed by removeNext, so that each removal owns one position. */
         std::atomic<size_t> numClaimed { 0 };
+
+        /** @brief Items added and not yet marked done. removeNext ends when it reaches zero. */
         std::atomic<size_t> numPending { 0 };
     };
 
     /** @brief Runs work whose items add further items, with at most workerCount threads.
      *
-     *  The first item starts the work. Each call of function may add items through addItem. A
+     *  The first items start the work. Each call of function may add items through addItem. A
      *  worker starts a further worker when items are waiting and a worker index is free. Each
      *  workerIndex is used by one thread at a time, so a caller keeps one slot per worker and
      *  needs no lock.
      *
      *  The failures are held in one slot per worker. Each worker writes only its own slot, and
-     *  the vector never resizes, so no lock is needed. A failed item is caught. Its worker keeps
+     *  the array never resizes, so no lock is needed. A failed item is caught. Its worker keeps
      *  the last failure in its slot and takes the next item. After all workers join, the failure of
      *  the lowest-numbered failed worker is thrown again in the calling thread.
      *
@@ -230,24 +260,28 @@ struct Jobs
      *  @tparam Function Callable accepting `(int workerIndex, Item item, addItem)`, where addItem
      *                   takes an Item and adds it to the work.
      *  @param workerCount The maximum number of threads. Must be positive.
-     *  @param firstItem  The item that starts the work.
+     *  @param firstItems The items that start the work.
      *  @param function   Callable invoked from worker threads for each item.
      */
     template <typename Item, typename Function>
-    static void runRecursive (int workerCount, Item firstItem, const Function& function)
+    static void runRecursive (int workerCount, jam::Array<Item> firstItems, const Function& function)
     {
         jassert (workerCount > 0);
         Items<Item> items;
-        items.add (std::move (firstItem));
+
+        for (auto& item : firstItems)
+            items.add (std::move (item));
+
         std::atomic<int> numWorkers { 1 };
-        std::vector<std::exception_ptr> failures (static_cast<size_t> (workerCount));
+        jam::Array<std::exception_ptr> failures;
+        failures.resize (workerCount);
         runWorker (items, numWorkers, failures, 0, function);
         rethrowFailure (failures);
     }
 
 private:
     /** @brief Rethrows the failure of the lowest-numbered failed worker, when any worker failed. */
-    static void rethrowFailure (const std::vector<std::exception_ptr>& failures)
+    static void rethrowFailure (const jam::Array<std::exception_ptr>& failures)
     {
         for (const auto& failure : failures)
         {
@@ -258,43 +292,50 @@ private:
 
     /** @brief Takes items until none is pending, and starts further workers while items are waiting. */
     template <typename Item, typename Function>
-    static void runWorker (Items<Item>& items, std::atomic<int>& numWorkers, std::vector<std::exception_ptr>& failures, int workerIndex, const Function& function)
+    static void runWorker (Items<Item>& items, std::atomic<int>& numWorkers, jam::Array<std::exception_ptr>& failures, int workerIndex, const Function& function)
     {
-        std::vector<std::thread> workerThreads;
+        jam::Array<std::thread> workerThreads;
+        workerThreads.ensureStorageAllocated (failures.size());
 
-        auto addItem = [&items, &numWorkers, &workerThreads, &failures, &function] (Item newItem)
+        auto startWorker { [&items, &numWorkers, &workerThreads, &failures, &function]
         {
-            items.add (std::move (newItem));
-
-            if (items.hasBacklog() and numWorkers.load (std::memory_order_relaxed) < static_cast<int> (failures.size()))
+            if (items.hasBacklog() and numWorkers.load (std::memory_order_relaxed) < failures.size())
             {
                 const int claimedIndex { numWorkers.fetch_add (1) };
 
-                if (claimedIndex < static_cast<int> (failures.size()))
+                if (claimedIndex < failures.size())
                 {
                     try
                     {
-                        workerThreads.emplace_back ([&items, &numWorkers, &failures, &function, claimedIndex]
+                        workerThreads.add (std::thread { [&items, &numWorkers, &failures, &function, claimedIndex]
                         {
                             runWorker (items, numWorkers, failures, claimedIndex, function);
-                        });
+                        } });
                     }
                     catch (const std::system_error&)
                     {
                     }
                 }
             }
-        };
+        } };
+
+        auto addItem { [&items, &startWorker] (Item newItem)
+        {
+            items.add (std::move (newItem));
+            startWorker();
+        } };
 
         for (auto item { items.removeNext() }; item.has_value(); item = items.removeNext())
         {
+            startWorker();
+
             try
             {
                 function (workerIndex, *item, addItem);
             }
             catch (...)
             {
-                failures.at (static_cast<size_t> (workerIndex)) = std::current_exception();
+                failures.at (workerIndex) = std::current_exception();
             }
 
             items.setDone();

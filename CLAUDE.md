@@ -9,16 +9,15 @@
 
 SAW is a command-line tool, written in C++17 with JUCE and JAM. It replaces `sed`, `grep`, and file-oriented `awk`. It runs on macOS and Windows.
 
-Every mutating command previews its changes by default. A write needs `--apply --expect N`. `saw undo <tx-id>` reverses an applied transaction.
+Every mutating command previews its changes by default. A write needs `--apply --expect N`. `saw undo <tx-id>` previews the reverse of an applied transaction, and `--apply` restores it.
 
 `SPEC.md` holds the behavior. `Source/` holds the program.
 
 ## Contents
 
 - `SPEC.md`: the specification of saw v0.0.1.
-- `RFC-live-to-premise.md`, `PLAN-live-to-premise.md`: the defects against the premise, and the plan that fixes them.
+- `RFC-live-to-premise.md`, `PLAN-native-mcp.md`: the defects against the premise, and the plan that fixes them.
 - `Source/`: the program, its help documents, and the generated headers (`Source/generated/`, written by cast).
-- `server/`: the `saw_ToolServer` target, an MCP server on stdio that runs saw command lines (SPEC.md §5.8).
 - `help/HelpFrames.cpp`: the `saw_HelpFrames` target, which renders the help frames at build time.
 - `cast/`, `project-info.md`: the vocabulary, texts, and build tables that cast reads.
 - `test/`: the runner `run.lua`, the case table `cases.md`, fixtures, and baselines.
@@ -31,7 +30,7 @@ Every mutating command previews its changes by default. A write needs `--apply -
 | Document | Purpose |
 |---|---|
 | `SPEC.md` | Behavior, commands, exit codes, and undo model of saw. |
-| `PLAN-live-to-premise.md` | Execution plan of the premise sprint, with its framework inventory. |
+| `PLAN-native-mcp.md` | Execution plan of the native MCP and the clean-up. |
 | `AGENTS.md` | CAROL project instructions. |
 | `carol/SPRINT-LOG.md` | Sprint log. |
 | `carol/config.yml` | CAROL configuration. |

@@ -8,39 +8,37 @@
 #include "TextDocument.h"
 #include "generated/Generated.h"
 
-static std::pair<juce::Result, int> getParsedFieldIndex (std::string_view tokenView, const juce::String& specText)
+static std::pair<juce::Result, int> getParsedFieldIndex (std::string_view tokenView, std::string_view specText)
 {
     if (tokenView.empty())
-        return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failFieldSpecInvalid, specText.toRawUTF8())), 0 };
+        return { Stdio::fail (text::Diagnostics::failFieldSpecInvalid, specText), 0 };
 
-    int value { 0 };
-    const auto [endPointer, errorCode] { std::from_chars (tokenView.data(), tokenView.data() + tokenView.size(), value) };
+    const auto value { Arguments::getInteger (tokenView) };
 
-    if (errorCode != std::errc {} or endPointer != tokenView.data() + tokenView.size())
-        return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failFieldSpecInvalid, specText.toRawUTF8())), 0 };
+    if (not value.has_value())
+        return { Stdio::fail (text::Diagnostics::failFieldSpecInvalid, specText), 0 };
 
-    if (value == 0)
-        return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failFieldSpecZero, specText.toRawUTF8())), 0 };
+    if (*value == 0)
+        return { Stdio::fail (text::Diagnostics::failFieldSpecInvalid, specText, text::Diagnostics::fieldSpecZero), 0 };
 
-    return { juce::Result::ok(), value };
+    return { juce::Result::ok(), *value };
 }
 
-static std::pair<juce::Result, jam::Array<int>> getFieldIndices (const juce::String& specText)
+static std::pair<juce::Result, jam::Array<int>> getFieldIndices (std::string_view specText)
 {
-    const std::string_view spec { specText.toRawUTF8() };
     constexpr auto comma { static_cast<char> (Chars::comma) };
 
-    if (spec.empty() or spec.at (0) == comma or spec.at (spec.size() - 1) == comma)
-        return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failFieldSpecInvalid, specText.toRawUTF8())), jam::Array<int> {} };
+    if (specText.empty() or specText.at (0) == comma or specText.at (specText.size() - 1) == comma)
+        return { Stdio::fail (text::Diagnostics::failFieldSpecInvalid, specText), jam::Array<int> {} };
 
     jam::Array<int> indices;
     size_t cursor { 0 };
 
-    while (cursor < spec.size())
+    while (cursor < specText.size())
     {
-        const auto commaIndex { spec.find (comma, cursor) };
-        const auto tokenEnd { commaIndex == std::string_view::npos ? spec.size() : commaIndex };
-        const auto [status, indexValue] { getParsedFieldIndex (spec.substr (cursor, tokenEnd - cursor), specText) };
+        const auto commaIndex { specText.find (comma, cursor) };
+        const auto tokenEnd { commaIndex == std::string_view::npos ? specText.size() : commaIndex };
+        const auto [status, indexValue] { getParsedFieldIndex (specText.substr (cursor, tokenEnd - cursor), specText) };
 
         if (status.failed())
             return { status, jam::Array<int> {} };
@@ -52,49 +50,25 @@ static std::pair<juce::Result, jam::Array<int>> getFieldIndices (const juce::Str
     return { juce::Result::ok(), std::move (indices) };
 }
 
-static std::string getOutputDelimiter (const Arguments& arguments, bool hasCustomDelimiter, const std::string& delimiter)
+static std::string_view getOutputDelimiter (const Arguments& arguments)
 {
+    static constexpr std::string_view singleSpace { " " };
+
     if (arguments.contains (Id::outputDelimiterOption))
-        return std::string { arguments.getValueView (Id::outputDelimiterOption) };
+        return arguments.getValueView (Id::outputDelimiterOption);
 
-    if (hasCustomDelimiter)
-        return delimiter;
+    if (arguments.contains (Id::delimiterOption))
+        return arguments.getValueView (Id::delimiterOption);
 
-    return std::string { static_cast<char> (Chars::space) };
-}
-
-static std::tuple<juce::Result, jam::Array<int>, bool, std::string, std::string> getFieldSettings (const Arguments& arguments)
-{
-    const auto& positionals { arguments.getPositionals() };
-
-    if (positionals.size() == 0)
-        return { juce::Result::fail (text::Diagnostics::failFieldsRequiresSpec), jam::Array<int> {}, false, std::string {}, std::string {} };
-
-    auto [indexStatus, fieldIndices] { getFieldIndices (positionals.at (0)) };
-
-    if (indexStatus.failed())
-        return { indexStatus, jam::Array<int> {}, false, std::string {}, std::string {} };
-
-    const bool hasCustomDelimiter { arguments.contains (Id::delimiterOption) };
-    const std::string delimiter { arguments.getValueView (Id::delimiterOption) };
-
-    if (hasCustomDelimiter and delimiter.empty())
-        return { juce::Result::fail (text::Diagnostics::failDelimiterEmpty), jam::Array<int> {}, false, std::string {}, std::string {} };
-
-    return { juce::Result::ok(),
-             std::move (fieldIndices),
-             hasCustomDelimiter,
-             delimiter,
-             getOutputDelimiter (arguments, hasCustomDelimiter, delimiter) };
+    return singleSpace;
 }
 
 static std::pair<juce::Result, std::unique_ptr<Pattern>> getMatchPattern (const Arguments& arguments)
 {
     if (arguments.contains (Id::matchOption))
     {
-        jam::Strings patternTexts;
-        patternTexts.add (arguments.getValueView (Id::matchOption));
-        return Pattern::create (patternTexts, arguments.contains (Id::regexOption), false, false);
+        const std::string_view patternText { arguments.getValueView (Id::matchOption) };
+        return Pattern::create (juce::Span<const std::string_view> { &patternText, 1 }, arguments.contains (Id::regexOption), false, false);
     }
 
     return { juce::Result::ok(), nullptr };
@@ -120,25 +94,20 @@ static std::tuple<juce::Result, int, juce::Range<int>, std::unique_ptr<Pattern>>
     return { juce::Result::ok(), afterLine, lineRange, std::move (matchPattern) };
 }
 
-static bool isFieldWhitespace (char byte) noexcept
-{
-    return byte == static_cast<char> (Chars::space) or byte == static_cast<char> (Chars::tab);
-}
-
 static void setWhitespaceTokens (jam::Array<std::string_view>& tokens, std::string_view line)
 {
     size_t cursor { 0 };
 
     while (cursor < line.size())
     {
-        while (cursor < line.size() and isFieldWhitespace (line.at (cursor)))
+        while (cursor < line.size() and jam::Document::isWhitespace (static_cast<unsigned char> (line.at (cursor))))
             ++cursor;
 
         if (cursor < line.size())
         {
             const size_t start { cursor };
 
-            while (cursor < line.size() and not isFieldWhitespace (line.at (cursor)))
+            while (cursor < line.size() and not jam::Document::isWhitespace (static_cast<unsigned char> (line.at (cursor))))
                 ++cursor;
 
             tokens.add (line.substr (start, cursor - start));
@@ -182,51 +151,52 @@ static void setDelimitedTokens (jam::Array<std::string_view>& tokens, std::strin
     }
 }
 
-static void setLineTokens (jam::Array<std::string_view>& tokens, std::string_view line, bool hasCustomDelimiter, std::string_view delimiter)
+static Stdio::Output getDocumentsOutput (const juce::Result& formatStatus, bool anyLineMatched, bool hasMatchFilter, Stdio::Documents documents)
+{
+    if (formatStatus.failed())
+        return Stdio::getFailure (formatStatus);
+
+    if (hasMatchFilter and not anyLineMatched)
+        return Stdio::getOutput (Stdio::exitMismatch);
+
+    return Stdio::getOutput (Stdio::exitSuccess, std::move (documents));
+}
+
+void Fields::setLineTokens (jam::Array<std::string_view>& tokens, std::string_view line) const
 {
     tokens.clear();
 
     if (not line.empty())
     {
-        if (hasCustomDelimiter)
-            setDelimitedTokens (tokens, line, delimiter);
+        if (delimiter.has_value())
+            setDelimitedTokens (tokens, line, *delimiter);
         else
             setWhitespaceTokens (tokens, line);
     }
 }
 
-static std::pair<juce::Result, std::string_view> getSelectedField (int requested,
-                                                                   const jam::Array<std::string_view>& tokens,
-                                                                   std::string_view displayPath,
-                                                                   int lineNumber,
-                                                                   bool isStrict)
+std::optional<std::string_view> Fields::getSelectedField (int requested,
+                                                          const jam::Array<std::string_view>& tokens) const
 {
     const int slotIndex { requested > 0 ? requested - 1 : tokens.size() + requested };
 
     if (slotIndex >= 0 and slotIndex < tokens.size())
-        return { juce::Result::ok(), tokens.at (slotIndex) };
+        return tokens.at (slotIndex);
 
     if (isStrict)
-        return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failFieldBounds,
-                                                          requested,
-                                                          jam::Strings::fromView (displayPath).toRawUTF8(),
-                                                          lineNumber)),
-                 {} };
+        return std::nullopt;
 
-    return { juce::Result::ok(), {} };
+    return std::string_view {};
 }
 
-static juce::Result appendFormattedLine (std::string& output,
-                                         const jam::Array<int>& fieldIndices,
-                                         const jam::Array<std::string_view>& tokens,
-                                         std::string_view outputDelimiter,
-                                         std::string_view displayPath,
-                                         int lineNumber,
-                                         bool isStrict)
+juce::Result Fields::appendFormattedLine (std::string& output,
+                                          const jam::Array<std::string_view>& tokens,
+                                          std::string_view displayPath,
+                                          int lineNumber) const
 {
     if (tokens.isEmpty() and not isStrict)
     {
-        output.push_back (static_cast<char> (Chars::newline));
+        jam::Format::appendUtf8 (output, Chars::newline);
         return juce::Result::ok();
     }
 
@@ -235,66 +205,50 @@ static juce::Result appendFormattedLine (std::string& output,
         if (index > 0)
             jam::Format::appendBytes (output, outputDelimiter);
 
-        const auto [status, field] { getSelectedField (fieldIndices.at (index), tokens, displayPath, lineNumber, isStrict) };
+        const auto field { getSelectedField (fieldIndices.at (index), tokens) };
 
-        if (status.failed())
-            return status;
+        if (not field.has_value())
+            return Stdio::fail (text::Diagnostics::failFieldBounds,
+                                fieldIndices.at (index),
+                                text::Diagnostics::outOfRangeAt,
+                                displayPath,
+                                Chars::colon,
+                                lineNumber);
 
-        jam::Format::appendBytes (output, field);
+        jam::Format::appendBytes (output, *field);
     }
 
-    output.push_back (static_cast<char> (Chars::newline));
+    jam::Format::appendUtf8 (output, Chars::newline);
     return juce::Result::ok();
 }
 
-static std::pair<juce::Result, bool> getMatchStatus (const Pattern* matchPattern,
-                                                       std::string_view line,
-                                                       jam::RegExpAutomaton& automaton)
+std::pair<juce::Result, bool> Fields::appendFields (std::string& output,
+                                                    jam::Array<std::string_view>& tokens,
+                                                    std::string_view line,
+                                                    int lineNumber,
+                                                    std::string_view displayPath,
+                                                    jam::RegExpAutomaton& automaton) const
 {
-    if (matchPattern == nullptr) return { juce::Result::ok(), true };
-
-    return matchPattern->hasMatch (line, automaton);
-}
-
-static std::pair<juce::Result, bool> processLine (std::string& output,
-                                                  jam::Array<std::string_view>& tokens,
-                                                  std::string_view line,
-                                                  const jam::Array<int>& fieldIndices,
-                                                  bool hasCustomDelimiter,
-                                                  std::string_view delimiter,
-                                                  std::string_view outputDelimiter,
-                                                  const Pattern* matchPattern,
-                                                  std::string_view displayPath,
-                                                  int lineNumber,
-                                                  bool isStrict,
-                                                  jam::RegExpAutomaton& automaton)
-{
-    const auto [matchStatus, isMatched] { getMatchStatus (matchPattern, line, automaton) };
+    const auto [matchStatus, isMatched] { matchPattern == nullptr
+                                              ? std::pair<juce::Result, bool> { juce::Result::ok(), true }
+                                              : matchPattern->hasMatch (line, automaton) };
 
     if (matchStatus.failed())
         return { matchStatus, false };
 
     if (isMatched)
     {
-        setLineTokens (tokens, line, hasCustomDelimiter, delimiter);
-        const auto status { appendFormattedLine (output, fieldIndices, tokens, outputDelimiter, displayPath, lineNumber, isStrict) };
+        setLineTokens (tokens, line);
+        const auto status { appendFormattedLine (output, tokens, displayPath, lineNumber) };
         return { status, status.wasOk() };
     }
 
     return { juce::Result::ok(), false };
 }
 
-static std::tuple<juce::Result, bool, std::string, size_t> processLines (std::string_view bytes,
+std::tuple<juce::Result, bool, Stdio::Documents> Fields::getBytesOutput (std::string_view bytes,
                                                                          std::string_view displayPath,
-                                                                         const jam::Array<int>& fieldIndices,
-                                                                         bool hasCustomDelimiter,
-                                                                         std::string_view delimiter,
-                                                                         std::string_view outputDelimiter,
-                                                                         const Pattern* matchPattern,
-                                                                         juce::Range<int> lineRange,
-                                                                         int afterLine,
-                                                                         bool isFirstOnly,
-                                                                         bool isStrict)
+                                                                         bool isExplicit) const
 {
     static constexpr size_t maxInitialReserve { 65536 };
 
@@ -303,231 +257,147 @@ static std::tuple<juce::Result, bool, std::string, size_t> processLines (std::st
     jam::Array<std::string_view> tokens;
     jam::RegExpAutomaton automaton;
     bool anyLineMatched { false };
-    const char* data { bytes.data() };
-    const size_t size { bytes.size() };
-    size_t cursor { 0 };
-    int lineNumber { 1 };
+    juce::Result status { juce::Result::ok() };
 
-    while (cursor < size and lineNumber < lineRange.getEnd())
-    {
-        const auto newlineIndex { jam::simd::findByte (data, size, cursor, static_cast<char> (Chars::newline)) };
-        const size_t nextCursor { newlineIndex < size ? newlineIndex + 1 : size };
+    const size_t readSize { TextDocument::applyToLines (bytes,
+                                                        lineRange,
+                                                        [this, displayPath, &output, &tokens, &automaton, &anyLineMatched, &status] (int lineNumber, std::string_view line)
+                                                        {
+                                                            if (lineNumber > afterLine)
+                                                            {
+                                                                const auto [lineStatus, isMatched] { appendFields (output, tokens, line, lineNumber, displayPath, automaton) };
+                                                                status = lineStatus;
+                                                                anyLineMatched = anyLineMatched or isMatched;
+                                                                return lineStatus.wasOk() and not (isMatched and isFirstOnly);
+                                                            }
 
-        if (lineNumber > afterLine and lineNumber >= lineRange.getStart())
-        {
-            const auto line { TextDocument::getLine (bytes, cursor, newlineIndex) };
-
-            const auto [status, matched] { processLine (output, tokens, line, fieldIndices, hasCustomDelimiter, delimiter, outputDelimiter, matchPattern, displayPath, lineNumber, isStrict, automaton) };
-
-            if (status.failed())
-                return { status, false, {}, nextCursor };
-
-            if (matched)
-            {
-                anyLineMatched = true;
-
-                if (isFirstOnly)
-                    return { juce::Result::ok(), true, std::move (output), nextCursor };
-            }
-        }
-
-        cursor = nextCursor;
-        ++lineNumber;
-    }
-
-    return { juce::Result::ok(), anyLineMatched, std::move (output), cursor };
-}
-
-static std::tuple<juce::Result, bool, std::string> processBytes (std::string_view bytes,
-                                                                 std::string_view displayPath,
-                                                                 bool isExplicit,
-                                                                 const jam::Array<int>& fieldIndices,
-                                                                 bool hasCustomDelimiter,
-                                                                 std::string_view delimiter,
-                                                                 std::string_view outputDelimiter,
-                                                                 const Pattern* matchPattern,
-                                                                 juce::Range<int> lineRange,
-                                                                 int afterLine,
-                                                                 bool isFirstOnly,
-                                                                 bool isStrict)
-{
-    if (bytes.empty() or lineRange.getStart() >= lineRange.getEnd())
-        return { juce::Result::ok(), false, {} };
-
-    auto [status, anyLineMatched, output, readSize] { processLines (bytes, displayPath, fieldIndices, hasCustomDelimiter, delimiter, outputDelimiter, matchPattern, lineRange, afterLine, isFirstOnly, isStrict) };
+                                                            return true;
+                                                        }) };
 
     if (TextDocument::isBinary (bytes.substr (0, readSize)))
-    {
-        if (isExplicit)
-            return { TextDocument::getBinaryFailure (jam::Strings::fromView (displayPath)), false, {} };
+        return { TextDocument::getBinaryStatus (displayPath, isExplicit), false, Stdio::Documents {} };
 
-        return { juce::Result::ok(), false, {} };
-    }
-
-    return { std::move (status), anyLineMatched, std::move (output) };
+    return { std::move (status), anyLineMatched, Stdio::getDocuments (std::move (output), displayPath) };
 }
 
-static Stdio::Output getSingleOutput (const juce::Result& formatStatus, bool anyLineMatched, bool hasMatchFilter, std::string output)
+std::tuple<juce::Result, bool, Stdio::Documents> Fields::getFileOutput (const juce::File& file,
+                                                                        std::string_view displayPath,
+                                                                        bool isExplicit) const
 {
-    if (formatStatus.failed())
-        return Stdio::getFailure (formatStatus.getErrorMessage());
+    const auto [inputStatus, input] { TextDocument::getInput (file, displayPath, Input::maxBufferedReadSize) };
 
-    if (hasMatchFilter and not anyLineMatched)
-        return { Stdio::exitMismatch, {}, {} };
+    if (inputStatus.failed())
+        return { inputStatus, false, Stdio::Documents {} };
 
-    return { Stdio::exitSuccess, std::move (output), {} };
+    if (input->getBytes().empty())
+        return { juce::Result::ok(), false, Stdio::Documents {} };
+
+    return getBytesOutput (input->getBytes(), displayPath, isExplicit);
 }
 
-static Stdio::Output runStandardInput (const jam::Array<int>& fieldIndices, bool hasCustomDelimiter, std::string_view delimiter,
-                                       std::string_view outputDelimiter, const Pattern* matchPattern, juce::Range<int> lineRange,
-                                       int afterLine, bool isFirstOnly, bool isStrict, const std::optional<std::string>& input)
+Stdio::Output Fields::runStandardInput (const std::optional<std::string>& input) const
 {
     if (Stdio::isTerminalInput (input))
         return Stdio::getFailure (text::Diagnostics::failMissingPath);
 
-    const auto [inputStatus, standardInput] { Input::create (input, lineRange.getEnd() - 1) };
+    const auto [inputStatus, standardInput] { TextDocument::getInput (input, lineRange.getEnd() - 1) };
 
     if (inputStatus.failed())
-        return Stdio::getFailure (inputStatus.getErrorMessage());
+        return Stdio::getFailure (inputStatus);
 
     const auto inputText { standardInput->getBytes() };
 
-    if (inputText.empty())
-        return Stdio::getFailure (text::Diagnostics::failMissingPath);
-
-    auto [formatStatus, anyLineMatched, output] { processBytes (inputText,
-                                                                      Id::stdinPath,
-                                                                      true,
-                                                                      fieldIndices,
-                                                                      hasCustomDelimiter,
-                                                                      delimiter,
-                                                                      outputDelimiter,
-                                                                      matchPattern,
-                                                                      lineRange,
-                                                                      afterLine,
-                                                                      isFirstOnly,
-                                                                      isStrict) };
-    return getSingleOutput (formatStatus, anyLineMatched, matchPattern != nullptr, std::move (output));
+    auto [formatStatus, anyLineMatched, documents] { getBytesOutput (inputText, Id::stdinPath, true) };
+    return getDocumentsOutput (formatStatus, anyLineMatched, matchPattern != nullptr, std::move (documents));
 }
 
-static std::tuple<juce::Result, bool, std::string> getFormattedFileResult (const juce::File& targetFile,
-                                                                           std::string_view displayPath,
-                                                                           bool isExplicit,
-                                                                           const jam::Array<int>& fieldIndices,
-                                                                           bool hasCustomDelimiter,
-                                                                           std::string_view delimiter,
-                                                                           std::string_view outputDelimiter,
-                                                                           const Pattern* matchPattern,
-                                                                           juce::Range<int> lineRange,
-                                                                           int afterLine,
-                                                                           bool isFirstOnly,
-                                                                           bool isStrict)
+Stdio::Output Fields::runFiles (juce::Span<const std::string_view> rawPaths) const
 {
-    const auto [inputStatus, input] { TextDocument::getInput (targetFile, jam::Strings::fromView (displayPath), Input::maxBufferedReadSize) };
+    const auto [readStatus, files] { Paths::getReadableFiles (rawPaths, {}, {}, false, false) };
 
-    if (inputStatus.failed())
-        return { inputStatus, false, {} };
+    if (readStatus.failed())
+        return Stdio::getFailure (readStatus);
 
-    if (input->getBytes().empty())
-        return { juce::Result::ok(), false, {} };
-
-    return processBytes (input->getBytes(), displayPath, isExplicit, fieldIndices, hasCustomDelimiter, delimiter, outputDelimiter, matchPattern, lineRange, afterLine, isFirstOnly, isStrict);
-}
-
-static Stdio::Output getFileOutputs (const jam::Array<juce::Result>& statuses, const jam::Array<bool>& matchedFlags,
-                                     const jam::Array<std::string>& outputs, bool hasMatchFilter)
-{
-    bool anyMatched { false };
-
-    for (int index { 0 }; index < statuses.size(); ++index)
-    {
-        if (statuses.at (index).failed())
-            return Stdio::getFailure (statuses.at (index).getErrorMessage());
-
-        anyMatched = anyMatched or matchedFlags.at (index);
-    }
-
-    if (hasMatchFilter and not anyMatched)
-        return { Stdio::exitMismatch, {}, {} };
-
-    return { Stdio::exitSuccess, Stdio::getJoinedOutput (outputs), {} };
-}
-
-static Stdio::Output runParallelFilesFields (const std::vector<std::pair<std::string, juce::File>>& files, const jam::Array<bool>& isExplicitFlags,
-                                   const jam::Array<int>& fieldIndices, bool hasCustomDelimiter,
-                                   std::string_view delimiter, std::string_view outputDelimiter, const Pattern* matchPattern,
-                                   juce::Range<int> lineRange, int afterLine, bool isFirstOnly, bool isStrict)
-{
-    const auto fileCount { static_cast<int> (files.size()) };
+    const auto fileCount { files.size() };
     jam::Array<juce::Result> statuses;
     statuses.insertMultiple (0, juce::Result::ok(), fileCount);
     jam::Array<bool> matchedFlags;
-    matchedFlags.resize (fileCount);
-    jam::Array<std::string> outputs;
-    outputs.resize (fileCount);
+    matchedFlags.insertMultiple (0, false, fileCount);
+    jam::Array<Stdio::Documents> results;
+    results.resize (fileCount);
 
-    Jobs::run (fileCount, [&files, &isExplicitFlags, &statuses, &matchedFlags, &outputs, &fieldIndices, hasCustomDelimiter, delimiter, outputDelimiter, matchPattern, lineRange, afterLine, isFirstOnly, isStrict] (int index)
-    {
-        const auto& [displayPath, targetFile] { files.at (static_cast<size_t> (index)) };
-        auto [status, matched, output] { getFormattedFileResult (targetFile, displayPath, isExplicitFlags.at (index), fieldIndices, hasCustomDelimiter, delimiter, outputDelimiter, matchPattern, lineRange, afterLine, isFirstOnly, isStrict) };
-        statuses.at (index) = std::move (status);
-        matchedFlags.at (index) = matched;
-        outputs.at (index) = std::move (output);
-    });
+    Jobs::run (fileCount,
+               [this, &pathEntries = files, &statuses, &matchedFlags, &results] (int index)
+               {
+                   const auto& [displayPath, targetFile, isExplicit] { pathEntries.at (index) };
+                   auto [fileStatus, isMatched, fileDocuments] { getFileOutput (targetFile, displayPath, isExplicit) };
+                   statuses.at (index) = std::move (fileStatus);
+                   matchedFlags.at (index) = isMatched;
+                   results.at (index) = std::move (fileDocuments);
+               });
 
-    return getFileOutputs (statuses, matchedFlags, outputs, matchPattern != nullptr);
+    Stdio::Documents documents;
+
+    for (auto& fileDocuments : results)
+        Stdio::addDocuments (documents, std::move (fileDocuments));
+
+    return getDocumentsOutput (Stdio::getFirstFailure (statuses),
+                               std::find (matchedFlags.begin(), matchedFlags.end(), true) != matchedFlags.end(),
+                               matchPattern != nullptr,
+                               std::move (documents));
 }
 
-static Stdio::Output runFiles (const jam::Strings& rawPaths, const jam::Array<int>& fieldIndices, bool hasCustomDelimiter,
-                               std::string_view delimiter, std::string_view outputDelimiter, const Pattern* matchPattern,
-                               juce::Range<int> lineRange, int afterLine, bool isFirstOnly, bool isStrict)
+Fields::Fields (const Arguments& arguments,
+                jam::Array<int> newFieldIndices,
+                juce::Range<int> newLineRange,
+                int newAfterLine,
+                std::unique_ptr<Pattern> newMatchPattern)
+    : fieldIndices (std::move (newFieldIndices)),
+      delimiter (arguments.contains (Id::delimiterOption) ? std::optional<std::string_view> { arguments.getValueView (Id::delimiterOption) } : std::nullopt),
+      outputDelimiter (getOutputDelimiter (arguments)),
+      lineRange (newLineRange),
+      afterLine (newAfterLine),
+      matchPattern (std::move (newMatchPattern)),
+      isFirstOnly (arguments.contains (Id::firstOption)),
+      isStrict (arguments.contains (Id::strictOption))
 {
-    const auto [readStatus, files, isExplicitFlags] { Paths::getReadableFiles (rawPaths, {}, {}, false, false) };
-
-    if (readStatus.failed())
-        return Stdio::getFailure (readStatus.getErrorMessage());
-
-    return runParallelFilesFields (files, isExplicitFlags, fieldIndices, hasCustomDelimiter, delimiter, outputDelimiter, matchPattern, lineRange, afterLine, isFirstOnly, isStrict);
 }
 
-static Stdio::Output runWithInputs (const Arguments& arguments, const jam::Array<int>& fieldIndices, bool hasCustomDelimiter,
-                                    std::string_view delimiter, std::string_view outputDelimiter, const Pattern* matchPattern,
-                                    juce::Range<int> lineRange, int afterLine, const std::optional<std::string>& input)
+Arguments Fields::getArguments (juce::Span<const std::string_view> argumentList)
 {
-    const auto& positionals { arguments.getPositionals() };
-    jam::Strings rawPaths;
-    rawPaths.addArray (positionals, 1, positionals.size() - 1);
-    const bool isFirstOnly { arguments.contains (Id::firstOption) };
-    const bool isStrict { arguments.contains (Id::strictOption) };
-
-    if (rawPaths.size() == 0)
-        return runStandardInput (fieldIndices, hasCustomDelimiter, delimiter, outputDelimiter, matchPattern, lineRange, afterLine, isFirstOnly, isStrict, input);
-
-    return runFiles (rawPaths, fieldIndices, hasCustomDelimiter, delimiter, outputDelimiter, matchPattern, lineRange, afterLine, isFirstOnly, isStrict);
-}
-
-Arguments Fields::getArguments (const jam::Strings& argumentList)
-{
-    const std::vector<std::string_view> flagOptions { Id::regexOption, Id::firstOption, Id::strictOption };
-    const std::vector<std::string_view> valueOptions { Id::delimiterOption, Id::outputDelimiterOption, Id::matchOption, Id::linesOption, Id::afterOption };
-
-    return Arguments { argumentList, flagOptions, valueOptions, {} };
+    return Arguments { argumentList,
+                       { Id::regexOption, Id::firstOption, Id::strictOption },
+                       { Id::delimiterOption, Id::outputDelimiterOption, Id::matchOption, Id::linesOption, Id::afterOption },
+                       {} };
 }
 
 Stdio::Output Fields::run (const Arguments& arguments, const std::optional<std::string>& input)
 {
     if (arguments.getStatus().failed())
-        return Stdio::getFailure (arguments.getStatus().getErrorMessage());
+        return Stdio::getFailure (arguments.getStatus());
 
-    const auto [fieldStatus, fieldIndices, hasCustomDelimiter, delimiter, outputDelimiter] { getFieldSettings (arguments) };
+    const auto& positionals { arguments.getPositionals() };
 
-    if (fieldStatus.failed())
-        return Stdio::getFailure (fieldStatus.getErrorMessage());
+    if (positionals.isEmpty())
+        return Stdio::getFailure (text::Diagnostics::failFieldsRequiresSpec);
 
-    const auto [filterStatus, afterLine, lineRange, matchPattern] { getFilterSettings (arguments) };
+    auto [indexStatus, fieldIndices] { getFieldIndices (positionals.at (0)) };
+
+    if (indexStatus.failed())
+        return Stdio::getFailure (indexStatus);
+
+    if (arguments.contains (Id::delimiterOption) and arguments.getValueView (Id::delimiterOption).empty())
+        return Stdio::getFailure (text::Diagnostics::failDelimiterEmpty);
+
+    auto [filterStatus, afterLine, lineRange, matchPattern] { getFilterSettings (arguments) };
 
     if (filterStatus.failed())
-        return Stdio::getFailure (filterStatus.getErrorMessage());
+        return Stdio::getFailure (filterStatus);
 
-    return runWithInputs (arguments, fieldIndices, hasCustomDelimiter, delimiter, outputDelimiter, matchPattern.get(), lineRange, afterLine, input);
+    const Fields fields { arguments, std::move (fieldIndices), lineRange, afterLine, std::move (matchPattern) };
+
+    if (arguments.getPositionals (1).empty())
+        return fields.runStandardInput (input);
+
+    return fields.runFiles (arguments.getPositionals (1));
 }

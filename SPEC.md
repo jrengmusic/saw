@@ -60,7 +60,7 @@ Every design decision in this specification rests on ARCHITECT's verbatim ruling
 
 ### 1.3 Explicit Non-Goals
 
-- No daemon process. The CLI stays the single surface for scripts and for ARCHITECT (`"why mcp? not just cli? i meant one SSOT tools for all file manipulation."`). The server (§5.8) gives the same command lines to agents on demand (`"cli isn't enough? need lazy load mcp that never inject anything when idle? never eat context when not being used? always on demand? fine, add one."`). It is a child of its client on stdio, and it holds no state between calls.
+- No daemon process. saw is one binary (`"why mcp? not just cli? i meant one SSOT tools for all file manipulation."`). `saw --mcp` (§5.8) gives the same command lines to agents on demand (`"cli isn't enough? need lazy load mcp that never inject anything when idle? never eat context when not being used? always on demand? fine, add one."`). It is a child of its client on stdio, and it holds no state between calls.
 - No embedded scripting language (`BEGIN`/`END` blocks, loops, associative arrays, or arithmetic expressions).
 - No fuzzy matching, heuristic patching, or silent fallback.
 - No version-control subprocess calls inside SAW.
@@ -72,27 +72,27 @@ Every design decision in this specification rests on ARCHITECT's verbatim ruling
 
 - **Language:** C++17 (`CMAKE_CXX_STANDARD 17`).
 - **Project Skeleton:** Run `cast INIT.md ~/Documents/Poems/dev/saw` in `~/Documents/Poems/dev/archetype/cli` (`ARCHETYPE.md:93`). Then add the generation layer in the shape of `~/Documents/Poems/dev/scout/cast/`: `identifiers.md`, `text.md`, `banner.md`, `files.md`, `source.cast`, and the matching rows of `cast/spell.md` (`"Run cast INIT.md ~/Documents/Poems/dev/saw from archetype/cli. Then add the generation layer (identifiers/text/banner/files/source.cast + spell.md rows) to saw, in the same shape as scout/cast/"`).
-- **Build System:** `cast`-generated `CMakeLists.txt`, CMake 3.25+, Ninja, Release LTO (`-O3 -flto=thin`, `-dead_strip` on macOS). Edit `project-info.md`, run `cast`, then configure. Never edit `CMakeLists.txt` by hand.
+- **Build System:** `cast`-generated `CMakeLists.txt`, CMake 3.25+, Ninja, Release LTO (`-O3 -flto`, `-dead_strip` on macOS). Edit `project-info.md`, run `cast`, then configure. Never edit `CMakeLists.txt` by hand.
 - **Frameworks:** JUCE `8.0.17` + JAM (`jam_core` for runtime operations; `jam_tui` renders the `--help` frames at build time: `"i still like the HELP page. it's our identity. ~10mb still acceptable."`).
-- **Linked modules of saw (`## program module` table of `project-info.md`):** `juce_core`, `juce_cryptography` (for `juce::SHA256`), `jam_core`. No framework other than the C and C++ system libraries is loaded (`JUCE_USE_FOUNDATION=0`). The parts of `jam_core` that use a GUI module compile only when that module is linked (`JUCE_MODULE_AVAILABLE_*`). The two tables below list the modules of the `saw_HelpFrames` target.
-- **Server target:** `saw_ToolServer` links the same verb sources and `jam_model_context_protocol` (§5.8).
+- **Linked modules of saw (`## program module` table of `project-info.md`):** `juce_core`, `juce_cryptography` (for `juce::SHA256`), `juce_data_structures`, `juce_events`, `jam_core`, `jam_data_structures`, `jam_terminal`, `jam_model_context_protocol` (for `--mcp`, §5.8). No framework other than the C and C++ system libraries is loaded (`JUCE_USE_FOUNDATION=0`). The parts of the JAM modules that use a GUI module compile only when that module is linked (`JUCE_MODULE_AVAILABLE_*`). The two tables below list the modules of the `saw_HelpFrames` target, a build tool that is not installed.
 - **Linked JUCE modules (`## juce module` table of `project-info.md`):** the six rows of `~/Documents/Poems/dev/scout/project-info.md:108-113` (`juce_core`, `juce_data_structures`, `juce_events`, `juce_graphics`, `juce_gui_basics`, `juce_audio_processors`), plus `juce_cryptography` for `juce::SHA256`. scout links `jam_gui`, whose declaration lists `juce_gui_extra` and `juce_animation` (`~/Documents/Poems/dev/jam/user-modules-info.md:90,97`), and scout builds without those two rows. Thus the table does not restate them.
 - **Linked JAM modules (closure of `jam_tui`):** `jam_core`, `jam_document`, `jam_markdown`, `jam_freetype`, `jam_graphics`, `jam_data_structures`, `jam_animation`, `jam_web`, `jam_style`, `jam_gui`, `jam_mermaid_diagram`, `jam_markdown_graphics`, `jam_terminal`, `jam_tui`.
 - **Platforms:** macOS (ARM64 and x86_64) and Windows (x64, MSVC / clang-cl).
 - **Primary Dependencies (OOTB):**
-  - `Input` for file reads on macOS and Windows: `juce::MemoryMappedFile` (`readOnly`) for a file above 256 KB, and `juce::FileInputStream` for a smaller one, for a file that cannot be mapped, and for every file that a verb writes (`"i think juce already have ootb for mmap, swap, etc"`, `"why not crossplatfrom using juce? and jam?"`). `std::filesystem::file_size` gives the size and refuses a named pipe, a socket and a device before the open, because `juce::File::existsAsFile` accepts a named pipe. A folder is refused there on macOS and at the open on Windows. The null device is an empty file. A file that becomes shorter during a read gives no fault: on macOS a missing byte of the map reads as NUL, and the file is then binary (§4.5). Windows refuses to shorten a mapped file. A regular file on standard input is mapped from its descriptor on macOS.
-  - `jam::File::swapFiles` for the atomic exchange of a target and its blob. Where it is not possible: `juce::TemporaryFile` (`useHiddenFile`) with `jam::File::moveFileTo`, and `overwriteTargetFileWithTemporary()` on Windows (`"i think juce already have ootb for mmap, swap, etc"`). `juce::FileOutputStream::flush()` returns `void`, so SAW reads `getStatus()` after `flush()`.
+  - `Input` for file reads on macOS and Windows: `juce::MemoryMappedFile` (`readOnly`) for a file above 256 KB, and `juce::FileInputStream` for a smaller one, for a file that cannot be mapped, and for every file that a verb writes (`"i think juce already have ootb for mmap, swap, etc"`, `"why not crossplatfrom using juce? and jam?"`). `std::filesystem::file_size` gives the size and refuses a named pipe, a socket and a device before the open, because `juce::File::existsAsFile` accepts a named pipe. A folder is refused there on macOS and at the open on Windows. `/dev/null` is an empty file. A file that becomes shorter during a read gives no fault: on macOS a missing byte of the map reads as NUL, and the file is then binary (§4.5). Windows refuses to shorten a mapped file. A regular file on standard input is mapped from its descriptor on macOS.
+  - `jam::File::swapFiles` for the atomic exchange of a target and its blob. Where it is not possible: `juce::TemporaryFile` (`useHiddenFile`) with `jam::File::moveFileTo` or `jam::File::replaceFileIn` (`"i think juce already have ootb for mmap, swap, etc"`). `juce::FileOutputStream::flush()` returns `void`, so SAW reads `getStatus()` after `flush()`.
   - Parallel directory walks via `std::filesystem::directory_iterator` on macOS and Windows, skipping `.git` and ignored directories without descending (`"why not crossplatfrom using juce? and jam?"`). `juce::DirectoryEntry` has no entry type, so it cannot skip a named pipe or a symbolic link.
-  - Lock-free `Jobs::runRecursive` (atomics and `std::thread` workers) for the directory walk: each item is one folder or one batch of files of a folder, and it adds its subfolders as items. `Find` fuses the walk and the search.
+  - Lock-free `Jobs::runRecursive` (atomics and `std::thread` workers) for the directory walk: each item is one folder, or one range of the entries of a listed folder, and it adds its subfolders as items. `Find` fuses the walk and the search.
   - Lock-free `Jobs::run` (`std::atomic<int>` + `std::thread` workers, direct calling-thread execution for `count == 1`) for parallel work on files and on the chunks of one large file.
   - No lock anywhere. Each worker owns its state and its result slot. The undo cache publishes by one move of a complete record (§6.3).
   - `juce::SHA256` for content and transaction hashes.
-  - Raw UTF-8 `jam::Strings` parsed by `Arguments` for the command line (avoiding `juce::ArgumentList` whitespace trimming, empty-argument removal, and short-option matching defects).
+  - Raw UTF-8 views (`juce::Span<const std::string_view>`) parsed by `Arguments` for the command line (avoiding `juce::ArgumentList` whitespace trimming, empty-argument removal, and short-option matching defects).
   - `jam::simd` (`findByte`, `findBytePair`, `findAnyByte`, `findFingerprint`, `countByte`) and `jam::LiteralSet` for SIMD scanning. A literal search looks for its two rarest bytes. A set of literals uses one fingerprint pass.
   - `jam::RegExp` (extended in `jam_core` with offset-based `findNext` returning match spans and captures: `"Literal default + -r regex (extend jam::RegExp with findNext/spans) + recursive dir walk skipping .git/.gitignore"`).
   - `jam::RegExpProgram` and `jam::RegExpAutomaton` for matching in linear time (§4.8).
   - `jam::JsonDocument` and `jam::JsonWriter` for `patch` inputs and undo metadata.
   - `jam::TerminalPage` and `jam::MarkdownDocument` in `saw_HelpFrames`, for the help frames. saw prints the embedded frames.
+- **Result of a verb:** a list of `TextDocument` (a `jam::Document`), the failures, and the exit code. The text of a Document is created one time, or it is borrowed from the input. The terminal and the MCP reply read it in place (`"why not the AST just using jam::Document"`, `"i have never approved copying"`).
 - **Test runtime:** Neovim 0.10 or later (`vim.system` exists since 0.10). The runner is `nvim --headless -l test/run.lua` (§10).
 - **Benchmark runtime:** `scout` (§10.3).
 
@@ -102,7 +102,7 @@ Every design decision in this specification rests on ARCHITECT's verbatim ruling
 - ✅ Run saw in plain `int main (int argc, char* argv[])` with zero GUI initialization.
 - ✅ Use one mechanism for macOS and Windows: JAM first, then JUCE, then the C++17 standard library.
 - ✅ Erase the screen only on the help path (§4.1).
-- ✅ Check every `FileOutputStream` write result and the stream status after `flush()` before an exchange, a move, or `overwriteTargetFileWithTemporary()`.
+- ✅ Check every `FileOutputStream` write result and the stream status after `flush()` before an exchange, a move, or `jam::File::replaceFileIn`.
 - ✅ Follow BLESSED (`MANIFESTO.md`), `CODING.md`, and `NAMES.md`.
 - ❌ Never call `juce::File::replaceWithData()` (it deletes 0-byte targets and ignores `appendData()` errors).
 - ❌ Never spawn external subprocesses (`sed`, `awk`, `grep`, `diff`, `cmp`, `cp`, or any version-control program).
@@ -135,6 +135,7 @@ saw
 saw --help
 saw <verb> --help
 saw --version
+saw --mcp
 saw find <pattern> [path...] [options]
 saw replace <find> <with> [path...] [options]
 saw lines <range> [path...] [options]
@@ -186,7 +187,7 @@ Rules:
   - Skip dot-prefixed entries (hidden files and folders) unless `--hidden` is set.
   - Sort all collected file paths in ascending byte-lexicographic UTF-8 order before emitting output or writing.
 - **Piped stdin:** When no `path` argument is given and stdin is not a TTY:
-  - `find`, `lines` (read mode), `fields`, and `replace` (dry-run mode) read all bytes from stdin as a virtual file named `<stdin>`.
+  - `find`, `lines` (read mode), `fields`, and `replace` (dry-run mode) read stdin as a virtual file named `<stdin>`. `find`, `lines`, and `fields` stop the read when the line range or the first match decides the result.
   - Passing `--apply` with stdin input fails with exit `2`: `saw: cannot --apply on stdin; specify file paths`.
   - Empty stdin fails with exit `2`: `saw: missing path argument`.
 - **Pipes:** A path that names a pipe fails as an unreadable file. Use stdin.
@@ -300,6 +301,9 @@ Rules:
 - `find`, `replace`, and `fields --match` match each line on its own. The line text excludes its `\n` or `\r\n` ending. No match crosses a line ending.
 - **Literal mode (default):** the pattern is exact bytes. `-i` compares ASCII letters `A`–`Z` and `a`–`z` without case. Every other byte compares exactly.
 - **Regex mode (`-r`):** the pattern is a `jam::RegExp` pattern. `^` matches at the start of the line text. `$` matches at the end of the line text.
+- **Inline flags:** `(?i)`, `(?m)` and `(?s)` are accepted. `-` removes a flag, as in `(?i-s)`. A flag applies to the end of its group and to the later alternatives of that group. `(?x)` is invalid.
+- **POSIX classes:** `[[:digit:]]` and `[[:^digit:]]`, with each POSIX class name.
+- **Text start:** `\A` matches at the start of the line text.
 - **Regex mode with `-i`:** SAW compiles `(?i:` + pattern + `)`.
 - An invalid regex fails with exit `2`: `saw: invalid regex: <detail>`, where `<detail>` is the text of the parser error.
 - A pattern that holds a newline can never match. It fails with exit `2`: `saw: pattern cannot contain a newline`.
@@ -350,7 +354,7 @@ saw find <pattern> [path...] [options]
 #### Happy Path
 
 1. User runs `saw find "DEBT-" DEBT.md`.
-2. SAW memory-maps `DEBT.md`, checks for NUL bytes, and scans for `"DEBT-"` via `jam::simd::findByte` + `std::memcmp`.
+2. SAW reads `DEBT.md` as `Input` (§2), checks for NUL bytes, and scans for `"DEBT-"` with `jam::LiteralSet`.
 3. SAW computes 1-based line numbers lazily for matched byte offsets.
 4. SAW writes `<line>:<text>` (single file) or `<path>:<line>:<text>` (multiple files or directory walk) to stdout and exits `0`.
 
@@ -416,7 +420,7 @@ saw replace <find> <with> [path...] [options]
 #### Happy Path (Dry-Run Default)
 
 1. User runs `saw replace "DBG" "debug::Log" src/Foo.cpp`.
-2. SAW memory-maps `src/Foo.cpp`, locates all non-overlapping literal matches in left-to-right order, and builds the planned buffer in memory.
+2. SAW reads `src/Foo.cpp` into a buffer, locates all non-overlapping literal matches in left-to-right order, and builds the planned buffer in memory.
 3. SAW prints unified diff hunks and summary: `saw: dry-run — 3 edit(s) in 1 file(s); nothing written. Pass --apply --expect 3 to write.`
 4. Zero bytes change on disk. Exit `0`.
 
@@ -435,7 +439,7 @@ saw replace <find> <with> [path...] [options]
 - **`<find>` equals `<with>` (no-op replacement):** Count matches normally on dry-run; with `--apply`, skip disk write for byte-identical files and print `saw: no content changed; nothing written` (exit `0`).
 - **One file named two times (`h1 ./h1`):** SAW edits and counts it one time.
 - **Overlapping matches (e.g. `"aa"` in `"aaa"`):** Advance cursor past the end of each matched span (non-overlapping, left-to-right; `"aaa"` yields 1 match).
-- **Regex zero-length match (e.g. `^` or `$`):** Apply at current position and advance cursor by 1 byte to prevent infinite loops.
+- **Regex zero-length match (e.g. `^` or `$`):** Apply at current position and advance cursor by one code point to prevent infinite loops. A match never splits a UTF-8 character.
 - **Invalid capture reference (`$5` when regex has 2 groups):** Fail before any write with exit `2`: `saw: invalid capture group $5 in replacement`.
 - **Target file modified externally after its plan:** `preHash` is the hash of the bytes before the plan. A changed file is not written. Roll back all written files from pre-edit snapshots and exit `2`.
 
@@ -499,7 +503,7 @@ Mutating flags (`--delete`, `--replace`, `--insert-before`, `--insert-after`) ar
 #### Happy Path (Read)
 
 1. User runs `saw lines 10:25 --hash Source/Main.cpp`.
-2. SAW memory-maps `Source/Main.cpp`, locates lines 10 through 25 using `jam::simd::findByte` on `\n`, computes 4-hex SHA-256 hashes per line, writes `10:a1b2|...` through `25:c3d4|...`, and exits `0`.
+2. SAW reads `Source/Main.cpp` as `Input` (§2), locates lines 10 through 25 using `jam::simd::findByte` on `\n`, computes 4-hex SHA-256 hashes per line, writes `10:a1b2|...` through `25:c3d4|...`, and exits `0`.
 
 #### Happy Path (Mutate)
 
@@ -639,7 +643,9 @@ Input is a JSON array of edit objects (validated via `jam::JsonDocument`). Every
    - Two column-span edits on the same line with `prev.endCol > curr.startCol` or `prev.startCol == curr.startCol`.
    - Any column-span edit combined with a delete or range-replace on the same line.
    - Overlapping line ranges (`delete` or `replace`) in the same file.
-5. Apply non-overlapping column-span edits on each line right-to-left (highest `startCol` first), then assemble the full planned file buffer in memory.
+   - An insert whose line is in a deleted or replaced line range.
+   - Two inserts with the same line number.
+5. Apply the non-overlapping column-span edits of each line. Each span counts bytes of the original line. Then assemble the full planned file buffer in memory.
 6. **Dry-run (default):** Print unified diff hunks for every modified file + summary `saw: dry-run — <E> edit(s) in <F> file(s); nothing written. Pass --apply --expect <E> to write.` Exit `0`.
 7. **`--apply --expect N`:** Stage and commit one transaction that covers all touched files (§6.3), print `saw: applied <E> edit(s) in <F> file(s) (tx: <tx-id>)`, exit `0`.
 
@@ -719,7 +725,7 @@ saw undo --list
 |---|---|---|
 | Missing `<tx-id>` | `saw: undo requires <tx-id>` | `2` |
 | Unknown `<tx-id>` | `saw: unknown transaction: <tx-id>` | `2` |
-| Pending `<tx-id>` without `--force` | `saw: transaction <tx-id> is pending (pass --force to restore it)` | `2` |
+| `--apply` of a pending `<tx-id>` without `--force` | `saw: transaction <tx-id> is pending (pass --force to restore it)` | `2` |
 | Corrupt record or missing blob | `saw: corrupt transaction <tx-id>: <detail>` | `2` |
 | File drifted since `--apply` | `saw: cannot undo <tx-id>: <path> changed since apply (pass --force to overwrite)` | `2` |
 | Restore write failure | `saw: undo failed for <path>: <reason>; rolled back` | `2` |
@@ -761,15 +767,15 @@ Output on stdout, and nothing else:
 - The receipt line comes first. `<n>` is the count of targets given.
 - Blocks keep the target order. `<i>` counts targets from 1. A literal target prints one block for each merged range, with the same `<i>`.
 - The hash is the first 16 hex digits of the SHA-256 of the bytes of the block lines, line endings included.
-- In place of a range: `NOT FOUND`, `UNREADABLE`, `BINARY`, `EMPTY` (a 0-byte file), `NO MATCH` (a literal target), `OUT OF RANGE` (`A` beyond the last line).
+- In place of a range: `NOT FOUND`, `UNREADABLE`, `BINARY`, `EMPTY` (a 0-byte file), `NO MATCH` (a literal target), `OUT OF RANGE` (the range starts at `0`, ends before it starts, does not fit an integer, or starts beyond the last line).
 - A line that is not valid UTF-8 prints each invalid byte as `\xNN`, and the header of its block ends with ` escaped`. Every other line prints its bytes without its line ending, then `\n`.
 - Exit `0` when every target gives a block of lines, `1` when one target does not, `2` on a usage error. No target and empty stdin: `saw: excerpt requires <target>`, exit `2`.
 
-### 5.8 Server Lane (`saw_ToolServer`)
+### 5.8 Model Context Protocol (`saw --mcp`)
 
-Decisions: `"FASTER on ALL CASES. NON-NEGOTIABLE, NO EXCEPTIONS."`, `"cli isn't enough? need lazy load mcp that never inject anything when idle? never eat context when not being used? always on demand? fine, add one."`
+Decisions: `"FASTER on ALL CASES. NON-NEGOTIABLE, NO EXCEPTIONS."`, `"cli isn't enough? need lazy load mcp that never inject anything when idle? never eat context when not being used? always on demand? fine, add one."`, `"mcp isn't new pattern, module is."`, `"there are no saw_ToolServe anymore, we use native mcp. all carol CLI use --mcp"`
 
-`saw_ToolServer` is a Model Context Protocol server on stdio, built on `jam::ModelContextServer`. It gives one tool, `run`:
+`saw --mcp` serves the Model Context Protocol on stdio, built on `jam::ModelContextServer`, in the form of `scout --mcp`. It ends when stdin closes. It gives one tool, `run`:
 
 | Argument | Meaning |
 |---|---|
@@ -777,7 +783,7 @@ Decisions: `"FASTER on ALL CASES. NON-NEGOTIABLE, NO EXCEPTIONS."`, `"cli isn't 
 | `directory` | Absolute path of the working directory for relative paths. |
 | `stdin` | Optional text for standard input. |
 
-The result is one JSON object: `exitCode`, `output` and `errors`, the exit code, the standard output and the standard error of the same command line in the CLI, byte for byte. Text that is not valid UTF-8 cannot be a JSON string, so its member is `outputBase64` or `errorsBase64` in place of `output` or `errors`. The server runs one call at a time and holds no state between calls. `--apply` needs `--expect`, as in the CLI.
+The result is one JSON object: `exitCode`, `output` and `errors`, the exit code, the standard output and the standard error of the same command line in the CLI, byte for byte. Text that is not valid UTF-8 cannot be a JSON string, so its member is `outputBase64` or `errorsBase64` in place of `output` or `errors`. It runs one call at a time and holds no state between calls. `--apply` needs `--expect`, as in the CLI.
 
 ---
 
@@ -813,11 +819,11 @@ Record fields:
 
 No lock exists. Ownership is one exclusive creation. The creation of a name that exists fails, so one process wins.
 
-1. **Plan phase (memory only):** Read every target file, verify preconditions (`--expect N`, hashes, bounds, non-binary), and compute planned buffers. Any error aborts with zero disk touches.
+1. **Plan phase (memory only):** Read every target file, verify preconditions (`--expect N`, hashes, bounds, non-binary), and compute planned buffers. Any error aborts with zero disk touches. A file whose access list or flags deny its deletion, in a folder that can be written, is refused here with `saw: write failed for <path>: overwrite failed; rolled back`, because no replace can take its place.
 2. **Stage phase:** Create `pending/<tx-id>.json` exclusively. The hex id is the microsecond of the second. When `pending/<tx-id>.json` or `undo/<tx-id>.json` exists, the id advances by 1 and the creation runs again. Then write the record, with one `preHash` and one `postHash` for each file, and every `blobs/<tx-id>-<i>.blob`, in parallel. Flush each file. When the target and the cache are on one volume of a system with an atomic file exchange (macOS), the blob holds the planned bytes and the metadata of the target. When the group of the target folder differs from the group of the cache, SAW creates the blob in the target folder and moves it. In every other case the blob holds the pre-edit bytes. A pending record that is not complete, or whose blobs do not all exist, is a transaction that changed no file. `undo --list` does not list it, so a reader never sees a partial transaction.
 3. **Commit phase:** Release every mapping of a target. For each file `0..M-1`:
    - **Exchange:** exchange the target and its blob in one system call. Thus the original file becomes the backup, and no byte of it is copied. Verify that the bytes of the blob equal the pre-edit bytes: a write by another process before the exchange is found here, and SAW exchanges the files back. Verify that the bytes of the target equal the planned bytes.
-   - **Replace** (no exchange on this volume or system, or the exchange fails): the blob holds the pre-edit bytes. Verify that the bytes of the target equal the pre-edit bytes. Write the planned bytes to a new `juce::TemporaryFile (target, TemporaryFile::useHiddenFile)`, set the metadata, flush one time, and replace the target by one `rename` (Windows: `overwriteTargetFileWithTemporary()`). Verify that the bytes of the target equal the planned bytes.
+   - **Replace** (no exchange on this volume or system, or the exchange fails): the blob holds the pre-edit bytes. Verify that the bytes of the target equal the pre-edit bytes. Write the planned bytes to a new `juce::TemporaryFile (target, TemporaryFile::useHiddenFile)`, set the metadata, flush one time, and replace the target by one `rename` (Windows: `juce::File::replaceFileIn`). A target that did not exist before the run must still not exist before the write. Verify that the bytes of the target equal the planned bytes.
    - After the last file, publish: move `pending/<tx-id>.json` to `undo/<tx-id>.json`.
    - On any failure at index `k`: restore files `0..k-1` by the same exchange or replace, and verify each target and each blob. A target that another process changed after the exchange keeps that change, and the restore counts as failed, so its backup is kept. A blob that does not hold the pre-edit bytes is never discarded. When every restore holds, delete the record and the blobs and exit `2`. When one restore fails, keep them and exit `2` with `saw: write failed for <path>: <reason>; rollback failed for <paths>; backup kept in <folder>`.
 4. **Prune phase:** Delete the oldest published transactions beyond 32, each record before its blobs. The delete of the record is the claim: when the record is gone (an `undo` run moved it), SAW keeps the blobs.
@@ -877,7 +883,7 @@ SAW contains zero CAROL-specific logic. After SAW builds and installs to `~/.loc
 | `--apply` with stdin | `saw: cannot --apply on stdin; specify file paths` | `2` |
 | `--expect` mismatch | `saw: expected <N> edit(s), found <actual>; nothing written` | `1` |
 | Hash precondition mismatch | `saw: hash mismatch at <path>:<line>: expected <expected>, got <actual>` | `2` |
-| `undo` of a pending transaction without `--force` | `saw: transaction <tx-id> is pending (pass --force to restore it)` | `2` |
+| `undo --apply` of a pending transaction without `--force` | `saw: transaction <tx-id> is pending (pass --force to restore it)` | `2` |
 | Write or verify failure | `saw: write failed for <path>: <reason>; rolled back` | `2` |
 | Rollback failure | `saw: write failed for <path>: <reason>; rollback failed for <paths>; backup kept in <folder>` | `2` |
 
@@ -889,7 +895,7 @@ SAW contains zero CAROL-specific logic. After SAW builds and installs to `~/.loc
 
 - [ ] `saw`, `saw --help`, and `saw <verb> --help` print the frames that `jam::TerminalPage` rendered at build time and exit `0`.
 - [ ] `saw --version` prints `saw 0.0.1 (<commit>)` and exits `0`.
-- [ ] All 7 verbs (`find`, `replace`, `lines`, `fields`, `patch`, `undo`, `excerpt`) pass every case of `test/cases.md` through the runner (§10) on macOS and Windows, from the command line and from the server.
+- [ ] All 7 verbs (`find`, `replace`, `lines`, `fields`, `patch`, `undo`, `excerpt`) pass every case of `test/cases.md` through the runner (§10) on macOS and Windows, from the command line and from `saw --mcp`.
 - [ ] Every mutating verb defaults to dry-run and touches zero bytes without `--apply`.
 - [ ] `--apply` without `--expect N` fails with exit `2` and writes zero bytes on `replace`, `lines`, and `patch`.
 - [ ] Every `--expect N` mismatch writes zero bytes and exits `1`.
@@ -900,10 +906,10 @@ SAW contains zero CAROL-specific logic. After SAW builds and installs to `~/.loc
 
 ### Performance and Quality
 
-- [ ] saw runs without `juce::ScopedJuceInitialiser_GUI`. The help frames are rendered at build time.
+- [ ] Every verb runs without `juce::ScopedJuceInitialiser_GUI`. The help frames are rendered at build time.
 - [ ] Every row of the §10.3 gate holds, with the same output as its reference.
 - [ ] The saw binary loads no macOS or Windows GUI framework (`otool -L`, `dumpbin /dependents`).
-- [ ] No lock exists in `Source/` and in the JAM code that saw links.
+- [ ] No lock exists in `Source/` and in the JAM code that a verb runs.
 - [ ] Literal `find` and `replace` scan the file bytes through views with zero whole-file string copies on read.
 - [ ] `jam::RegExp` exposes offset-based `findNext` returning match spans and captures. Runner cases on `find -r` and `replace -r` cover several matches on one line, capture groups, and zero-length matches.
 - [ ] One scout report exists for each benchmark pair of §10.3.
@@ -926,7 +932,7 @@ Decisions:
 ### 10.1 Runner
 
 - **Files:** `test/run.lua`, `test/cases.md`, `test/fixture/<fixture>/`, `test/stdin/<file>`, `test/baseline/<name>/`.
-- **Invocation:** `nvim --headless -l test/run.lua <saw-binary>`. `nvim --headless -l test/run.lua <saw-binary> <server-binary>` runs each saw step through `saw_ToolServer`, and expects the same bytes. A step whose arguments or stdin are not UTF-8 runs on the CLI. Neovim 0.10 or later. `-l` skips the user configuration and disables plugins.
+- **Invocation:** `nvim --headless -l test/run.lua <saw-binary>`. `nvim --headless -l test/run.lua <saw-binary> mcp` runs each saw step through `saw --mcp`, and expects the same bytes. A step whose arguments or stdin are not UTF-8 runs on the CLI. Neovim 0.10 or later. `-l` skips the user configuration and disables plugins.
 - **Output:** one line per case: `PASS <name>` or `FAIL <name>: <first difference>`.
 - **Exit code:** `0` when every case passes, `1` when one case fails. The runner calls `os.exit`.
 - **Process calls:** `vim.system` with `text = false`, `stdin` set to a string, and a `cwd`. The runner always passes a stdin string, empty when the `stdin` cell is empty. Thus saw never sees a terminal on stdin in a test run. The terminal branches of §4.4 have no runner case.
@@ -946,7 +952,7 @@ Decisions:
 | `exit` | The expected exit code. |
 | `reference` | Empty, or a reference command (program and arguments, same split rule). |
 | `compare` | Empty, `stdout`, `lines` (sorted lines of stdout), or `file:<relative path>`. |
-| `setup` | Actions before the step, in both folders: `mode:<octal>:<path>`, `link:<source>:<path>`, `mkdir:<path>`, `xattr:<name>:<value>:<path>`, `copy:<source>:<path>`. |
+| `setup` | Actions before the step, in both folders: `mode:<octal>:<path>`, `link:<source>:<path>`, `mkdir:<path>`, `xattr:<name>:<value>:<path>`, `acl:<entry>:<path>`, `copy:<source>:<path>`. |
 | `check` | Checks after the step: `mode:<octal>:<path>`, `links:<n>:<path>`, `xattr:<name>:<value>:<path>`, `bytes:<path>:<path>`, `transactions:<n>`. |
 | `parallel` | Process count, `1` when empty. The runner compares the exit codes and the checks, not stdout. |
 | `platform` | Empty, `posix`, or `mac`. Another platform skips the case and prints `SKIP <name>`. |
@@ -974,7 +980,7 @@ Decisions:
 - **Corpus:** a copy of `~/Documents/Poems/JUCE/modules`, and files of 1 KB, 10 KB, 50 KB, 100 KB, 1 MB, 10 MB and 100 MB cut from it. A mutating workload copies the corpus to a new temporary folder at the start of each epoch.
 - **Gate:** correctness first. The output of each row equals the output of its reference, with 0 differences, before its time counts. Then, in the same run:
   - the CLI is faster than each reference in every row, at every size (`"FASTER on ALL CASES. NON-NEGOTIABLE, NO EXCEPTIONS."`),
-  - the server lane (§5.8) is faster than each reference in every row, at every size.
+  - `saw --mcp` (§5.8) is faster than each reference in every row, at every size.
 - **Baseline:** each saw manifest names the report of its reference tool as `baseline`. The saw report then holds `change` and `probability` columns.
 - **Pairs:**
 

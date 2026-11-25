@@ -5,7 +5,20 @@
  */
 struct Paths
 {
-    /** @brief Expands file and directory paths into sorted files and explicit flags.
+    /** @brief One file to read: its display path, the file it resolves to, and its explicit flag.
+     *
+     *  The explicit flag is true when the user named the file on the command line. A file found by a walk has false.
+     */
+    using Entry = std::tuple<std::string, juce::File, bool>;
+
+    /** @brief Paths that could not be read, each with the result that describes the failure.
+     *
+     *  The path is the raw path that the user gave, or the display path of a folder that could not be read.
+     *  The two lists have the same length, and the path at each index is paired with the result at that index.
+     */
+    using Failures = std::pair<jam::Strings, jam::Array<juce::Result>>;
+
+    /** @brief Expands file and directory paths into sorted entries.
      *
      *  Each path is resolved one time here, so that a verb reads the file it receives and resolves nothing again.
      *
@@ -15,17 +28,20 @@ struct Paths
      *  @param isIncludingHidden True to include dot-prefixed entries.
      *  @param isIgnoringRules   True to bypass `.gitignore` and global exclude rules.
      *
-     *  @return Tuple of: the failures, sorted by path, each with its failure result; the display path
-     *          and the resolved file of each input, sorted by display path; and one flag per file, true
-     *          when the file was named on the command line.
+     *  @return Pair of: the failures, each with its failure result, in the order found: first the failures of the
+     *          raw paths, in the order given, then the failures of the folder walk, by worker index; and the entries, one per
+     *          file, sorted by display path, each with its display path, its resolved file, and its explicit
+     *          flag, true when the file was named on the command line.
      *
-     *  Duplicate paths are removed when more than one raw path is given.
+     *  A file named on the command line wins over the same file found by the walk. The sort puts the explicit
+     *  entry first among entries with the same display path, and the duplicate removal keeps the first entry.
+     *  The duplicate removal runs only when more than one raw path is given.
      */
-    static std::tuple<std::vector<std::pair<std::string, juce::Result>>, std::vector<std::pair<std::string, juce::File>>, jam::Array<bool>> getFiles (const jam::Strings& rawPaths,
-                                                                                                                                                      const jam::Strings& includeGlobs,
-                                                                                                                                                      const jam::Strings& excludeGlobs,
-                                                                                                                                                      bool isIncludingHidden,
-                                                                                                                                                      bool isIgnoringRules);
+    static std::pair<Failures, jam::Array<Entry>> getFiles (juce::Span<const std::string_view> rawPaths,
+                                                            juce::Span<const std::string_view> includeGlobs,
+                                                            juce::Span<const std::string_view> excludeGlobs,
+                                                            bool isIncludingHidden,
+                                                            bool isIgnoringRules);
 
     /** @brief Expands the paths like getFiles, and stops at the first failure.
      *
@@ -35,14 +51,26 @@ struct Paths
      *  @param isIncludingHidden True to include dot-prefixed entries.
      *  @param isIgnoringRules   True to bypass `.gitignore` and global exclude rules.
      *
-     *  @return Tuple of: the result of the first failure in path order, or ok; the display paths and
-     *          resolved files, sorted by display path; and the explicit flags. The list and the flags are empty when a failure exists.
+     *  @return Pair of: the result of the first failure in path order, or ok; and the entries, sorted by
+     *          display path. The entries are empty when a failure exists.
      */
-    static std::tuple<juce::Result, std::vector<std::pair<std::string, juce::File>>, jam::Array<bool>> getReadableFiles (const jam::Strings& rawPaths,
-                                                                                                                         const jam::Strings& includeGlobs,
-                                                                                                                         const jam::Strings& excludeGlobs,
-                                                                                                                         bool isIncludingHidden,
-                                                                                                                         bool isIgnoringRules);
+    static std::pair<juce::Result, jam::Array<Entry>> getReadableFiles (juce::Span<const std::string_view> rawPaths,
+                                                                        juce::Span<const std::string_view> includeGlobs,
+                                                                        juce::Span<const std::string_view> excludeGlobs,
+                                                                        bool isIncludingHidden,
+                                                                        bool isIgnoringRules);
+
+    /** @brief Sorts the raw paths into failures, named files, and folders to walk.
+     *
+     *  A path that does not exist is a failure. A file is an explicit entry, because the user named it.
+     *  A folder keeps its raw path, which becomes the prefix of the display paths of the files under it.
+     *
+     *  @param rawPaths The paths as the user gave them.
+     *
+     *  @return Tuple of: the failures; the explicit entries of the named files; and the folders, each as a pair
+     *          of its raw path and its resolved folder.
+     */
+    static std::tuple<Failures, jam::Array<Entry>, jam::Array<std::pair<std::string_view, juce::File>>> getClassifiedPaths (juce::Span<const std::string_view> rawPaths);
 
     /** @brief Converts a raw path to the form that is shown to the user.
      *
@@ -53,23 +81,6 @@ struct Paths
      *  @return The display path.
      */
     static std::string getDisplayPath (std::string_view rawPath);
-
-    /** @brief Orders two path entries by their path, for sorting. The value is ignored.
-     *
-     *  @tparam Value  The type of the value that the entry holds.
-     *  @param firstEntry  The first entry.
-     *  @param secondEntry The second entry.
-     *
-     *  @return True when the path of firstEntry sorts before the path of secondEntry.
-     */
-    template <typename Value>
-    static bool isPathEarlier (const std::pair<std::string, Value>& firstEntry, const std::pair<std::string, Value>& secondEntry)
-    {
-        const auto& [firstPath, firstValue] { firstEntry };
-        const auto& [secondPath, secondValue] { secondEntry };
-        juce::ignoreUnused (firstValue, secondValue);
-        return firstPath < secondPath;
-    }
 
     /** @brief Resolves a raw path to its physical target, following symbolic links.
      *
@@ -84,25 +95,33 @@ struct Paths
      */
     static juce::File getLinkedTarget (std::string_view rawPath);
 
-    /** @brief Lists the names of the regular files in one folder.
+    /** @brief Calls a function with the name of each regular file in one folder. The walk does not recurse.
      *
-     *  Folders, hidden names, and symbolic links are not listed. A folder that cannot be read, or whose
-     *  listing fails part-way, gives an empty list.
+     *  Folders, symbolic links, and dot-prefixed names are skipped. No ignore rules apply. A folder that cannot
+     *  be listed gives no call.
      *
-     *  @param directory The folder to list. Its entries are not walked.
-     *
-     *  @return The file names, without their folder path.
+     *  @param directory The folder to list.
+     *  @param function  The function that receives each file name. The view is valid only during the call.
      */
-    static jam::Strings getFileNames (const juce::File& directory);
+    static void applyToFileNames (const juce::File& directory, const std::function<void (std::string_view)>& function);
 
-    /** @brief Walks each root and reports each included file and each unreadable folder.
+    /** @brief Appends the failures of addedFailures to failures, keeping each path paired with its result.
      *
-     *  All roots are items of one walk, so that many small roots do not each start and join threads.
-     *  A folder that cannot be read, or whose listing fails part-way, is reported as unreadable.
-     *  Symbolic links and Windows junctions are neither walked nor reported. The walk runs on worker
-     *  threads. Folders and batches of files are the items of Jobs::runRecursive. Each callback
-     *  receives the index of its worker. One thread uses one worker index at a time, so a caller keeps
-     *  one slot per worker and needs no lock. The order of the callbacks is not defined.
+     *  @param failures      The failures that receive the added entries.
+     *  @param addedFailures The failures to append, in their order.
+     */
+    static void addFailures (Failures& failures, Failures&& addedFailures);
+
+    /** @brief Walks each root and reports each included file. Returns each unreadable folder.
+     *
+     *  Each root is one item of one walk, so that many small roots do not each start and join threads.
+     *  A folder item reads its listing once and publishes that listing. The folder item then walks the first
+     *  64 entries of the listing. Each further range of 64 entries of the same listing is one more item.
+     *  Symbolic links and Windows junctions are neither walked nor reported. A folder that cannot be read, or
+     *  whose listing fails part-way, is unreadable. It is returned, not reported through onFile.
+     *  The walk runs on worker threads. Each callback receives the index of its worker. One thread uses one
+     *  worker index at a time, so a caller keeps one slot per worker and needs no lock. The order of the
+     *  callbacks is not defined.
      *
      *  @param roots             Pairs of the caller-supplied root path prefix, used in display paths, and the resolved directory to walk.
      *  @param includeGlobs      Wildcard patterns (`*`, `?`) a file must match when non-empty.
@@ -111,16 +130,17 @@ struct Paths
      *  @param isIgnoringRules   True to bypass `.gitignore` and global exclude rules.
      *  @param onWorkerCount     Callback invoked once before the walk, with the number of workers.
      *  @param onFile            Callback invoked per matching file with `(workerIndex, fullPath, displayPath)`.
-     *  @param onUnreadable      Callback invoked per folder that cannot be read, with `(workerIndex, displayPath)`.
      *  @param shouldStop        Atomic cancellation flag polled during the walk.
+     *
+     *  @return The unreadable folders, each with its display path and its read failure. The order depends on
+     *          the walk, so it is not defined.
      */
-    static void applyToDirectories (const std::vector<std::pair<std::string, juce::File>>& roots,
-                                    const jam::Strings& includeGlobs,
-                                    const jam::Strings& excludeGlobs,
-                                    bool isIncludingHidden,
-                                    bool isIgnoringRules,
-                                    const std::function<void (int)>& onWorkerCount,
-                                    const std::function<void (int, const std::string&, std::string_view)>& onFile,
-                                    const std::function<void (int, std::string_view)>& onUnreadable,
-                                    const std::atomic<bool>& shouldStop);
+    static Failures applyToDirectories (const jam::Array<std::pair<std::string_view, juce::File>>& roots,
+                                        juce::Span<const std::string_view> includeGlobs,
+                                        juce::Span<const std::string_view> excludeGlobs,
+                                        bool isIncludingHidden,
+                                        bool isIgnoringRules,
+                                        const std::function<void (int)>& onWorkerCount,
+                                        const std::function<void (int, const std::string&, std::string_view)>& onFile,
+                                        const std::atomic<bool>& shouldStop);
 };

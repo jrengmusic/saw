@@ -24,6 +24,7 @@ SAW replaces `sed`, `grep`, and file-oriented `awk` with one deterministic CLI t
 | `saw --help`, `saw -h` | Prints the banner and this guide. | `0` |
 | `saw <verb> --help` | Prints the help guide for `<verb>`. | `0` |
 | `saw --version`, `saw -V` | Prints `saw 0.0.1 (<commit>)`. | `0` |
+| `saw --mcp` | Serves the commands as Model Context Protocol over stdin and stdout. Ends when stdin closes. | `0` |
 | `saw <verb> ...` | Runs one of the seven verbs below. | `0`, `1`, or `2` |
 
 When stdout is a terminal, `saw`, `saw --help`, and `saw <verb> --help` erase the screen first. The seven verbs and `--version` never erase the screen.
@@ -85,7 +86,7 @@ Patterns support `#` comments, backslash escapes, and `!` negation. Patterns sup
 
 ## Files, Line Endings, and Line Hashes
 
-- **Binary detection:** Any file containing a NUL byte (`0x00`) is binary. Directory walks skip binary files silently. Naming a binary file directly or in `patch` exits `2`.
+- **Binary detection:** A file is binary when the bytes that the command reads contain a NUL byte (`0x00`). Directory walks skip binary files silently. Naming a binary file directly or in `patch` exits `2`.
 - **Empty files:** SAW treats 0-byte files as valid text with 0 lines and no error.
 - **Line endings:** Each untouched line keeps its own ending. A replaced line keeps the ending of the line it replaces. Other inserted lines take the ending of the file's first line (`\r\n` or `\n`). A file whose first line has no ending uses `\n`. SAW preserves trailing newline presence unless a deletion removes the final line.
 - **Metadata and permissions:** SAW keeps each file's mode, access control list, and extended attributes through the swap.
@@ -149,6 +150,8 @@ No lock exists. One exclusive creation gives each transaction its owner, so para
 | `lines` without a range | `saw: lines requires <range>` | `2` |
 | `fields` without a spec | `saw: fields requires <spec>` | `2` |
 | Unreadable stdin | `saw: cannot read stdin` | `2` |
+| Unwritable stdout | `saw: cannot write stdout` | `2` |
+| `excerpt` without a target | `saw: excerpt requires <target>` | `2` |
 | Missing file or directory | `saw: not found: <path>` | `2` |
 | Unreadable file or directory | `saw: cannot read <path>` | `2` |
 | Binary file named directly | `saw: binary file: <path>` | `2` |
@@ -162,5 +165,6 @@ No lock exists. One exclusive creation gives each transaction its owner, so para
 | `--apply` with stdin | `saw: cannot --apply on stdin; specify file paths` | `2` |
 | `--expect` mismatch | `saw: expected <N> edit(s), found <actual>; nothing written` | `1` |
 | Hash precondition mismatch | `saw: hash mismatch at <path>:<line>: expected <expected>, got <actual>` | `2` |
+| `undo` of a pending transaction without `--force` | `saw: transaction <tx-id> is pending (pass --force to restore it)` | `2` |
 | Write or verify failure | `saw: write failed for <path>: <reason>; rolled back` | `2` |
 | Rollback failure | `saw: write failed for <path>: <reason>; rollback failed for <paths>; backup kept in <folder>` | `2` |

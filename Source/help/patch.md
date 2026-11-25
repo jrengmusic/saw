@@ -44,8 +44,8 @@ Input is a JSON array of edit objects. Every object requires `"file"` (string pa
 - **Pre-validation:** SAW parses the full JSON array and checks `--expect N` before reading or writing files.
 - **Canonical grouping:** SAW resolves each symbolic link to its final target and groups edits by canonical path in sorted order.
 - **Bounds and hash checks:** SAW verifies all line and column bounds (`0 <= startCol <= endCol <= lineByteLength`) and optional `"hash"` preconditions.
-- **Conflict rejection:** SAW rejects overlapping column spans on one line (`prev.endCol > curr.startCol` or `prev.startCol == curr.startCol`). SAW rejects column spans mixed with delete or replace on the same line, and overlapping line ranges.
-- **Edit order:** SAW applies non-overlapping column-span edits right-to-left on each line.
+- **Conflict rejection:** SAW rejects overlapping column spans on one line (`prev.endCol > curr.startCol` or `prev.startCol == curr.startCol`). SAW rejects column spans mixed with delete or replace on the same line, and overlapping line ranges. SAW rejects an insert whose line is in a deleted or replaced range, and two inserts with the same line.
+- **Column positions:** Each column span counts bytes of the original line, whatever the order of the entries.
 - **Multi-line `"text"` in column-span edit:** SAW allows `\n` in column-span `"text"` and normalizes it to the file's line ending.
 - **Dry-run (default):** SAW prints unified diff hunks and `saw: dry-run — <E> edit(s) in <F> file(s); nothing written. Pass --apply --expect <E> to write.`.
 - **Apply (`--apply --expect N`):** SAW records one undo transaction, swaps all files atomically, and prints `saw: applied <E> edit(s) in <F> file(s) (tx: <tx-id>)`. Any file failure rolls back all files.

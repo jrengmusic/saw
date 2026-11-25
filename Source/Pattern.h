@@ -15,22 +15,20 @@ public:
      *
      *  @param newRegExp        The compiled expression, or null for a literal pattern.
      *  @param newProgram       The program that runs the expression, or null when none is built.
-     *  @param newLiteral       The case-folded literal of a single literal pattern. Empty otherwise.
+     *  @param newLiteralSize   The byte size of the text of a single literal pattern. Zero for every other pattern.
      *  @param newLiteralSet    The prefilter literals, or null when none applies.
      *  @param newPatternText   The pattern texts joined with `|`, kept for diagnostics.
-     *  @param newIsLiteral     True when the pattern matches its text as a literal.
-     *  @param newIsIgnoreCase  True when case is ignored.
+     *  @param newIsCandidateMatch     True for a pattern that is not a regex and whose text holds no carriage return.
      *  @param newIsExactLine   True when the pattern must match a whole line.
      *  @param newIsWord        True when the pattern must match whole words.
      */
     Pattern (Access,
              std::unique_ptr<jam::RegExp> newRegExp,
              std::unique_ptr<jam::RegExpProgram> newProgram,
-             std::string newLiteral,
+             size_t newLiteralSize,
              std::unique_ptr<jam::LiteralSet> newLiteralSet,
              std::string newPatternText,
-             bool newIsLiteral,
-             bool newIsIgnoreCase,
+             bool newIsCandidateMatch,
              bool newIsExactLine,
              bool newIsWord);
 
@@ -39,7 +37,8 @@ public:
      *  A pattern is a literal text, or a regex when isRegex is true. Several texts give an alternation.
      *  A pattern that is not a regex, and has one text, is kept as a literal, so no regex is built for it.
      *
-     *  @param patternTexts The pattern texts. Each must be non-empty, and must not hold a newline.
+     *  @param patternTexts The pattern texts. Each must be non-empty, and must not hold a newline. The
+     *                      views are read during the call only: create copies the text it keeps.
      *  @param isRegex      True when the texts are regular expressions.
      *  @param isIgnoreCase True to ignore case.
      *  @param isExactLine  True to match only a whole line.
@@ -48,7 +47,7 @@ public:
      *  @return Status result paired with the Pattern, or failure with null for an empty text,
      *          a text with a newline, or an invalid regex.
      */
-    static std::pair<juce::Result, std::unique_ptr<Pattern>> create (const jam::Strings& patternTexts,
+    static std::pair<juce::Result, std::unique_ptr<Pattern>> create (juce::Span<const std::string_view> patternTexts,
                                                                      bool isRegex,
                                                                      bool isIgnoreCase,
                                                                      bool isExactLine = false,
@@ -105,16 +104,47 @@ public:
     bool isConfirmed() const noexcept;
 
 private:
+    /** @brief Finds the next match from an offset, with the literal, the compiled program, or the backtracking matcher.
+     *
+     *  @param line   The line to search.
+     *  @param offset The byte offset where the search starts.
+     *
+     *  @return Status result paired with the captures. Group 0 is the match. The captures are empty when no match is found.
+     */
     std::pair<juce::Result, Captures> findSpan (std::string_view line, size_t offset) const;
+
+    /** @brief Finds the next match with the backtracking matcher, and fails when its step limit is exceeded.
+     *
+     *  The backtracking matcher is used when no program is built, or when the program has an empty repetition.
+     *
+     *  @param line   The line to search.
+     *  @param offset The byte offset where the search starts.
+     *
+     *  @return Status result paired with the captures. The failure is the step limit failure.
+     */
     std::pair<juce::Result, Captures> findBacktracked (std::string_view line, size_t offset) const;
 
+    /** @brief The compiled expression, or null for a literal pattern. */
     std::unique_ptr<jam::RegExp> regExp;
+
+    /** @brief The program that runs the expression with the automaton, or null when none is built. */
     std::unique_ptr<jam::RegExpProgram> program;
-    std::string literal;
+
+    /** @brief The byte size of the text of a single literal pattern, which gives the end of a match. Zero for every other pattern. */
+    size_t literalSize { 0 };
+
+    /** @brief The prefilter literals that find the candidate lines, or null when none applies. */
     std::unique_ptr<jam::LiteralSet> literalSet;
+
+    /** @brief The pattern texts joined with a pipe, kept for the step limit diagnostic. */
     std::string patternText;
-    bool isLiteral { false };
-    bool isIgnoreCase { false };
+
+    /** @brief True when a candidate line from findCandidate is a match with no second test. */
+    bool isCandidateMatch { false };
+
+    /** @brief True when the pattern must match a whole line. */
     bool isExactLine { false };
+
+    /** @brief True when the pattern must match whole words. */
     bool isWord { false };
 };

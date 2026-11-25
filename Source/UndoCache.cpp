@@ -2,65 +2,60 @@
 #include "Jobs.h"
 #include "Paths.h"
 #include "Stdio.h"
-#include "TextDocument.h"
 #include "Writer.h"
 #include "generated/Generated.h"
 #include <chrono>
+#include <ctime>
 
 static constexpr int hashesPerFile { 2 };
 
-static juce::String getRecordName (const juce::String& transactionId)
+static juce::String getRecordName (std::string_view transactionId)
 {
-    return transactionId + jam::Strings::fromView (Id::recordSuffix);
+    return jam::Strings::fromView (transactionId) + jam::Strings::fromView (Id::recordSuffix);
 }
 
 static jam::Strings getSortedIds (const juce::File& directory)
 {
-    const auto names (Paths::getFileNames (directory));
     jam::Strings ids;
 
-    for (int index { 0 }; index < names.size(); ++index)
+    Paths::applyToFileNames (directory, [&ids] (std::string_view name)
     {
-        const auto name { names.getView (index) };
-
         if (name.size() > Id::recordSuffix.size() and name.substr (name.size() - Id::recordSuffix.size()).compare (Id::recordSuffix) == 0)
             ids.add (name.substr (0, name.size() - Id::recordSuffix.size()));
-    }
+    });
 
     ids.sort (false);
     return ids;
 }
 
-static juce::Result writeBlob (const juce::File& blobFile,
-                               const juce::File& targetFile,
-                               std::string_view originalBytes,
-                               std::string_view plannedBytes)
+static juce::Result writeBlob (const juce::File& blobFile, const StagedFile& stagedFile)
 {
-    if (jam::File::isSwappable (targetFile, blobFile.getParentDirectory()))
-        return Writer::toStagedFile (blobFile, targetFile, plannedBytes);
+    if (jam::File::isSwappable (stagedFile.getTargetFile(), blobFile.getParentDirectory()))
+        return Writer::toStagedFile (blobFile, stagedFile.getTargetFile(), stagedFile.getPlannedBytes());
 
-    return Writer::toNewFile (blobFile, originalBytes);
+    return Writer::toNewFile (blobFile, stagedFile.getOriginalBytes());
 }
 
-static std::vector<juce::String> getContentHashes (const jam::Array<std::unique_ptr<TextDocument>>& originalDocuments,
-                                                   const std::vector<std::string>& plannedTexts)
+static jam::Array<juce::SHA256> getContentHashes (const jam::Array<StagedFile>& stagedFiles)
 {
     static constexpr size_t parallelHashSize { 256 * 1024 };
-    const int fileCount { originalDocuments.size() };
+    const int fileCount { stagedFiles.size() };
     const int hashCount { fileCount * hashesPerFile };
-    std::vector<juce::String> hashes (static_cast<size_t> (hashCount));
+    jam::Array<juce::SHA256> hashes;
+    hashes.resize (hashCount);
     size_t byteCount { 0 };
 
     for (int index { 0 }; index < fileCount; ++index)
-        byteCount += originalDocuments.at (index)->getBytes().size() + plannedTexts.at (static_cast<size_t> (index)).size();
+        byteCount += stagedFiles.at (index).getOriginalBytes().size() + stagedFiles.at (index).getPlannedBytes().size();
 
-    const auto setHash = [&hashes, &originalDocuments, &plannedTexts] (int index)
+    const auto setHash { [&hashes, &stagedFiles] (int index)
     {
         const int fileIndex { index / hashesPerFile };
-        const std::string_view contents { index % hashesPerFile == 0 ? originalDocuments.at (fileIndex)->getBytes()
-                                                                     : std::string_view { plannedTexts.at (static_cast<size_t> (fileIndex)) } };
-        hashes.at (static_cast<size_t> (index)) = TextDocument::getContentHash (contents);
-    };
+        const auto& stagedFile { stagedFiles.at (fileIndex) };
+        const std::string_view contents { index % hashesPerFile == 0 ? stagedFile.getOriginalBytes()
+                                                                     : stagedFile.getPlannedBytes() };
+        hashes.at (index) = juce::SHA256 (contents.data(), contents.size());
+    } };
 
     if (byteCount >= parallelHashSize)
     {
@@ -75,109 +70,61 @@ static std::vector<juce::String> getContentHashes (const jam::Array<std::unique_
     return hashes;
 }
 
-static void appendStringMember (std::string& json,
+static void appendStringMember (juce::OutputStream& json,
                                 std::string_view key,
+                                int index,
                                 std::string_view value)
 {
-    jam::JsonWriter::appendKey (json, key);
+    jam::JsonWriter::appendKey (json, key, index);
     jam::JsonWriter::appendString (json, value, juce::JSON::Encoding::utf8);
 }
 
-static void appendFileEntries (std::string& entries,
-                               const jam::Array<juce::File>& targetFiles,
-                               const std::vector<juce::String>& hashes,
-                               const jam::Array<bool>& executableFlags)
+static void appendFileEntries (juce::OutputStream& entries,
+                               const jam::Array<StagedFile>& stagedFiles,
+                               const jam::Array<juce::SHA256>& hashes)
 {
-    for (int index { 0 }; index < targetFiles.size(); ++index)
+    for (int index { 0 }; index < stagedFiles.size(); ++index)
     {
-        const auto hashIndex { static_cast<size_t> (index * hashesPerFile) };
-        jam::JsonWriter::appendSeparator (entries);
+        const int hashIndex { index * hashesPerFile };
+        jam::JsonWriter::appendSeparator (entries, index);
         jam::JsonWriter::appendObject (entries,
-            [&targetFiles, &hashes, &executableFlags, index, hashIndex] (std::string& entry)
+            [&stagedFiles, &hashes, index, hashIndex] (juce::OutputStream& entry)
             {
-                appendStringMember (entry, jam::Strings::getView (Id::path.toString()), jam::Strings::getView (targetFiles.at (index).getFullPathName()));
-                appendStringMember (entry, Id::preHash, jam::Strings::getView (hashes.at (hashIndex)));
-                appendStringMember (entry, Id::postHash, jam::Strings::getView (hashes.at (hashIndex + 1)));
-                jam::JsonWriter::appendKey (entry, Id::executable);
-                jam::JsonWriter::appendBoolean (entry, executableFlags.at (index));
+                appendStringMember (entry, jam::Strings::getView (Id::path.toString()), 0, jam::Strings::getView (stagedFiles.at (index).getTargetFile().getFullPathName()));
+                appendStringMember (entry, Id::preHash, 1, jam::Strings::getView (hashes.at (hashIndex).toHexString()));
+                appendStringMember (entry, Id::postHash, 2, jam::Strings::getView (hashes.at (hashIndex + 1).toHexString()));
+                jam::JsonWriter::appendKey (entry, Id::executable, 3);
+                jam::JsonWriter::appendBoolean (entry, stagedFiles.at (index).isExecutable());
             });
     }
 }
 
-static std::string getRecordJson (const juce::String& timestamp,
-                                  const juce::String& commandName,
-                                  const jam::Array<juce::File>& targetFiles,
-                                  const std::vector<juce::String>& hashes,
-                                  const jam::Array<bool>& executableFlags)
+static void appendTwoDigits (std::string& text, int value)
 {
-    std::string json;
+    static constexpr int firstTwoDigitValue { 10 };
 
-    jam::JsonWriter::appendObject (json,
-        [&timestamp, &commandName, &targetFiles, &hashes, &executableFlags] (std::string& members)
-        {
-            appendStringMember (members, Id::timestamp, jam::Strings::getView (timestamp));
-            appendStringMember (members, Id::transactionCommand, jam::Strings::getView (commandName));
-            jam::JsonWriter::appendKey (members, Id::files);
-            jam::JsonWriter::appendArray (members,
-                [&targetFiles, &hashes, &executableFlags] (std::string& entries)
-                {
-                    appendFileEntries (entries, targetFiles, hashes, executableFlags);
-                });
-        });
+    if (value < firstTwoDigitValue)
+        jam::Format::appendUtf8 (text, Chars::zero);
 
-    return json;
+    jam::Format::appendDecimal (text, value);
 }
 
-static bool isLeapYear (int year) noexcept
+static std::string getUtcText (const std::tm& utc, std::string_view dateSeparator, std::string_view timeSeparator)
 {
-    static constexpr int leapInterval { 4 };
-    static constexpr int centuryInterval { 100 };
-    static constexpr int eraInterval { 400 };
-    return (year % leapInterval == 0 and year % centuryInterval != 0) or year % eraInterval == 0;
-}
-
-static std::tuple<int, int, int> getUtcDate (int64_t daysSinceEpoch)
-{
-    static constexpr int epochYear { 1970 };
-    static constexpr int daysPerYear { 365 };
-    auto day { daysSinceEpoch };
-    int year { epochYear };
-    int yearLength { daysPerYear };
-
-    while (day >= yearLength)
-    {
-        day -= yearLength;
-        ++year;
-        yearLength = daysPerYear + (isLeapYear (year) ? 1 : 0);
-    }
-
-    const std::array<int, 12> monthLengths { 31, isLeapYear (year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-    size_t month { 0 };
-
-    while (day >= monthLengths.at (month))
-    {
-        day -= monthLengths.at (month);
-        ++month;
-    }
-
-    return { year, static_cast<int> (month) + 1, static_cast<int> (day) + 1 };
-}
-
-static juce::String getUtcText (int64_t seconds, const char* format)
-{
-    static constexpr int secondsPerMinute { 60 };
-    static constexpr int minutesPerHour { 60 };
-    static constexpr int secondsPerHour { secondsPerMinute * minutesPerHour };
-    static constexpr int secondsPerDay { 24 * secondsPerHour };
-    const auto [year, month, day] { getUtcDate (seconds / secondsPerDay) };
-    const int daySeconds { static_cast<int> (seconds % secondsPerDay) };
-    return Stdio::getFormatted (format,
-                                year,
-                                month,
-                                day,
-                                daySeconds / secondsPerHour,
-                                daySeconds / secondsPerMinute % minutesPerHour,
-                                daySeconds % secondsPerMinute);
+    static constexpr int firstYear { 1900 };
+    std::string text;
+    jam::Format::appendDecimal (text, utc.tm_year + firstYear);
+    jam::Format::appendBytes (text, dateSeparator);
+    appendTwoDigits (text, utc.tm_mon + 1);
+    jam::Format::appendBytes (text, dateSeparator);
+    appendTwoDigits (text, utc.tm_mday);
+    jam::Format::appendUtf8 (text, Chars::upperT);
+    appendTwoDigits (text, utc.tm_hour);
+    jam::Format::appendBytes (text, timeSeparator);
+    appendTwoDigits (text, utc.tm_min);
+    jam::Format::appendBytes (text, timeSeparator);
+    appendTwoDigits (text, utc.tm_sec);
+    return text;
 }
 
 static bool hasTypedMembers (const jam::JsonDocument& doc,
@@ -214,7 +161,7 @@ static bool isValidFileEntry (const jam::JsonDocument& doc,
 
 static bool isValidFilesArray (const jam::JsonDocument& doc,
                                const jam::Document::Element& rootElement,
-                               const juce::String& transactionId)
+                               std::string_view transactionId)
 {
     const auto& filesToken { doc.get (rootElement, Id::files) };
     const auto* filesElement { doc.getChildByToken (rootElement, filesToken) };
@@ -232,7 +179,7 @@ static bool isValidFilesArray (const jam::JsonDocument& doc,
 }
 
 static bool isValidTransactionDocument (const jam::JsonDocument& doc,
-                                        const juce::String& transactionId)
+                                        std::string_view transactionId)
 {
     const auto& rootToken { doc.getValue() };
 
@@ -253,12 +200,13 @@ static bool isValidTransactionDocument (const jam::JsonDocument& doc,
     return isValidFilesArray (doc, *rootElement, transactionId);
 }
 
-static std::pair<juce::Result, std::unique_ptr<jam::JsonDocument>> getCorruptResult (const juce::String& transactionId)
+static std::pair<juce::Result, std::unique_ptr<jam::JsonDocument>> getCorruptResult (std::string_view transactionId)
 {
-    return { juce::Result::fail (
-                 Stdio::getFormatted (text::Diagnostics::failUndoCorrupt,
-                                      transactionId.toRawUTF8(),
-                                      getRecordName (transactionId).toRawUTF8())),
+    const juce::String recordName { getRecordName (transactionId) };
+    return { Stdio::fail (text::Diagnostics::failUndoCorrupt,
+                          transactionId,
+                          jam::Strings::getView (Id::diagnosticSeparator),
+                          jam::Strings::getView (recordName)),
              nullptr };
 }
 
@@ -277,19 +225,19 @@ static juce::File getPendingDirectory()
     return getApplicationDirectory().getChildFile (Id::pendingFolder.data());
 }
 
+static juce::File getPendingFile (std::string_view transactionId)
+{
+    return getPendingDirectory().getChildFile (getRecordName (transactionId));
+}
+
 juce::File UndoCache::getBlobDirectory()
 {
     return getApplicationDirectory().getChildFile (Id::blobFolder.data());
 }
 
-juce::File UndoCache::getPendingFile (const juce::String& transactionId)
+static juce::File getRecordFile (std::string_view transactionId)
 {
-    return getPendingDirectory().getChildFile (getRecordName (transactionId));
-}
-
-static juce::File getRecordFile (const juce::String& transactionId)
-{
-    const auto pendingFile { UndoCache::getPendingFile (transactionId) };
+    const auto pendingFile { getPendingFile (transactionId) };
 
     if (pendingFile.getSize() > 0)
         return pendingFile;
@@ -297,29 +245,31 @@ static juce::File getRecordFile (const juce::String& transactionId)
     return getDirectory().getChildFile (getRecordName (transactionId));
 }
 
-juce::File UndoCache::getBlobFile (const juce::String& transactionId, int index)
+juce::File UndoCache::getBlobFile (std::string_view transactionId, int index)
 {
-    return getBlobDirectory().getChildFile (transactionId + Chars::dash + juce::String (index) + jam::Strings::fromView (Id::blobSuffix));
+    juce::String blobName;
+    blobName << jam::Strings::fromView (transactionId) << juce::String::charToString (Chars::dash) << index << jam::Strings::fromView (Id::blobSuffix);
+    return getBlobDirectory().getChildFile (blobName);
 }
 
-juce::Result UndoCache::publishTransaction (const juce::String& transactionId)
+juce::Result UndoCache::publishTransaction (std::string_view transactionId)
 {
     if (jam::File::moveFileTo (getPendingFile (transactionId), getDirectory().getChildFile (getRecordName (transactionId))))
         return juce::Result::ok();
 
-    return juce::Result::fail (text::Diagnostics::failOverwriteFailed);
+    return Stdio::fail (text::Diagnostics::failUndoPending, transactionId, text::Diagnostics::undoPending);
 }
 
-std::pair<juce::Result, bool> UndoCache::claimTransaction (const juce::String& transactionId, bool isForce)
+std::pair<juce::Result, bool> UndoCache::claimTransaction (std::string_view transactionId, bool isForce)
 {
     if (not jam::File::createDirectory (getPendingDirectory()))
-        return { juce::Result::fail (text::Diagnostics::failOverwriteFailed), false };
+        return { Writer::getWriteFailure (jam::Strings::getView (getPendingDirectory().getFullPathName()), text::Diagnostics::failOverwriteFailed), false };
 
     const auto pendingFile { getPendingFile (transactionId) };
     const auto isCreated { jam::File::createNewFile (pendingFile) };
 
     if (not isCreated.has_value())
-        return { juce::Result::fail (text::Diagnostics::failOverwriteFailed), false };
+        return { Writer::getWriteFailure (jam::Strings::getView (pendingFile.getFullPathName()), text::Diagnostics::failOverwriteFailed), false };
 
     if (*isCreated)
     {
@@ -327,32 +277,35 @@ std::pair<juce::Result, bool> UndoCache::claimTransaction (const juce::String& t
             return { juce::Result::ok(), true };
 
         juce::ignoreUnused (jam::File::deleteFile (pendingFile));
-        return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failUndoUnknown,
-                                                          transactionId.toRawUTF8())),
-                 false };
+        return { Stdio::fail (text::Diagnostics::failUndoUnknown, transactionId), false };
     }
 
     if (isForce)
         return { juce::Result::ok(), false };
 
-    return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failUndoPending,
-                                                      transactionId.toRawUTF8())),
-             false };
+    return { Stdio::fail (text::Diagnostics::failUndoPending, transactionId, text::Diagnostics::undoPending), false };
 }
 
-static std::pair<juce::Result, juce::String> addPendingFile (const juce::String& compactPrefix,
-                                                             int64_t firstSuffix)
+static std::pair<juce::Result, std::string> addPendingFile (std::string_view compactPrefix,
+                                                            int64_t firstSuffix)
 {
-    static constexpr int suffixHexLength { 6 };
+    static constexpr size_t suffixHexLength { 6 };
 
     for (auto suffix { firstSuffix }; ; ++suffix)
     {
-        const auto txId { compactPrefix + juce::String::toHexString (suffix).paddedLeft (Chars::zero, suffixHexLength) };
-        const auto pendingFile { UndoCache::getPendingFile (txId) };
+        std::string suffixHex;
+        jam::Format::appendHex (suffixHex, static_cast<std::uint64_t> (suffix));
+        std::string txId { compactPrefix };
+
+        for (auto padding { suffixHex.size() }; padding < suffixHexLength; ++padding)
+            jam::Format::appendUtf8 (txId, Chars::zero);
+
+        jam::Format::appendBytes (txId, suffixHex);
+        const auto pendingFile { getPendingFile (txId) };
         const auto isCreated { jam::File::createNewFile (pendingFile) };
 
         if (not isCreated.has_value())
-            return { juce::Result::fail (text::Diagnostics::failOverwriteFailed), {} };
+            return { Writer::getWriteFailure (jam::Strings::getView (pendingFile.getFullPathName()), text::Diagnostics::failOverwriteFailed), {} };
 
         if (*isCreated)
         {
@@ -364,62 +317,81 @@ static std::pair<juce::Result, juce::String> addPendingFile (const juce::String&
     }
 }
 
-std::pair<juce::Result, juce::String> UndoCache::addTransaction (const juce::String& commandName,
-                                                                 const jam::Array<juce::File>& targetFiles,
-                                                                 const jam::Array<bool>& executableFlags,
-                                                                 const jam::Array<std::unique_ptr<TextDocument>>& originalDocuments,
-                                                                 const std::vector<std::string>& plannedTexts)
+std::pair<juce::Result, std::string> UndoCache::addTransaction (std::string_view commandName,
+                                                                const jam::Array<StagedFile>& stagedFiles)
 {
     static constexpr int64_t microsecondsPerSecond { 1000000 };
-    jassert (targetFiles.size() == executableFlags.size());
-    jassert (targetFiles.size() == originalDocuments.size());
-    jassert (static_cast<size_t> (targetFiles.size()) == plannedTexts.size());
+    static constexpr std::string_view dateSeparator { "-" };
+    static constexpr std::string_view timeSeparator { ":" };
 
     if (not jam::File::createDirectory (getDirectory())
         or not jam::File::createDirectory (getPendingDirectory())
         or not jam::File::createDirectory (getBlobDirectory()))
-        return { juce::Result::fail (text::Diagnostics::failOverwriteFailed), {} };
+        return { Writer::getWriteFailure (jam::Strings::getView (getApplicationDirectory().getFullPathName()), text::Diagnostics::failOverwriteFailed), {} };
 
     const auto now { std::chrono::system_clock::now() };
     const int64_t microseconds { std::chrono::duration_cast<std::chrono::microseconds> (now.time_since_epoch()).count() };
     const auto seconds { microseconds / microsecondsPerSecond };
-    const auto compactPrefix { getUtcText (seconds, text::Diagnostics::utcCompactFormat) + Chars::dash };
-    const auto timestamp { getUtcText (seconds, text::Diagnostics::utcIsoFormat) };
+    const std::time_t time { static_cast<std::time_t> (seconds) };
+    const std::tm utc { *std::gmtime (&time) };
+    std::string compactPrefix { getUtcText (utc, {}, {}) };
+    jam::Format::appendUtf8 (compactPrefix, Chars::dash);
+    std::string timestamp { getUtcText (utc, dateSeparator, timeSeparator) };
+    jam::Format::appendUtf8 (timestamp, Chars::upperZ);
     const auto [addStatus, addedId] { addPendingFile (compactPrefix, microseconds % microsecondsPerSecond) };
 
     if (addStatus.failed())
         return { addStatus, {} };
 
-    const juce::String txId { addedId };
-    const int fileCount { targetFiles.size() };
+    const int fileCount { stagedFiles.size() };
     jam::Array<juce::Result> statuses;
     statuses.insertMultiple (0, juce::Result::ok(), fileCount + 1);
 
-    Jobs::run (fileCount + 1, [&statuses, &txId, &timestamp, &commandName, &targetFiles, &executableFlags, &originalDocuments, &plannedTexts, fileCount] (int index)
+    Jobs::run (fileCount + 1, [&statuses, &transactionId = addedId, &timestamp, &commandName, &stagedFiles, fileCount] (int index)
     {
         if (index == fileCount)
-            statuses.at (index) = Writer::toNewFile (getPendingFile (txId),
-                                                     getRecordJson (timestamp, commandName, targetFiles, getContentHashes (originalDocuments, plannedTexts), executableFlags));
+        {
+            const auto pendingFile { getPendingFile (transactionId) };
+            const auto hashes (getContentHashes (stagedFiles));
+            auto recordStatus { Writer::toNewFile (pendingFile, [&stagedFiles, &hashes, &timestamp, &commandName] (juce::OutputStream& json)
+            {
+                jam::JsonWriter::appendObject (json, [&stagedFiles, &hashes, &timestamp, &commandName] (juce::OutputStream& members)
+                {
+                    appendStringMember (members, Id::timestamp, 0, timestamp);
+                    appendStringMember (members, Id::transactionCommand, 1, commandName);
+                    jam::JsonWriter::appendKey (members, Id::files, 2);
+                    jam::JsonWriter::appendArray (members, [&stagedFiles, &hashes] (juce::OutputStream& entries)
+                    {
+                        appendFileEntries (entries, stagedFiles, hashes);
+                    });
+                });
+
+                return true;
+            }) };
+
+            statuses.at (index) = recordStatus.wasOk() ? recordStatus : Writer::getWriteFailure (jam::Strings::getView (pendingFile.getFullPathName()), jam::Strings::getView (recordStatus.getErrorMessage()));
+        }
         else
-            statuses.at (index) = writeBlob (getBlobFile (txId, index),
-                                             targetFiles.at (index),
-                                             originalDocuments.at (index)->getBytes(),
-                                             plannedTexts.at (static_cast<size_t> (index)));
+        {
+            const auto& stagedFile { stagedFiles.at (index) };
+            auto blobStatus { writeBlob (getBlobFile (transactionId, index), stagedFile) };
+
+            statuses.at (index) = blobStatus.wasOk() ? blobStatus : Writer::getWriteFailure (stagedFile.getDisplayPath(), jam::Strings::getView (blobStatus.getErrorMessage()));
+        }
     });
 
-    for (int index { 0 }; index < statuses.size(); ++index)
-    {
-        if (statuses.at (index).failed())
-        {
-            for (int blobIndex { 0 }; blobIndex < fileCount; ++blobIndex)
-                juce::ignoreUnused (jam::File::deleteFile (getBlobFile (txId, blobIndex)));
+    const auto firstFailure { Stdio::getFirstFailure (statuses) };
 
-            removeTransaction (txId);
-            return { statuses.at (index), {} };
-        }
+    if (firstFailure.failed())
+    {
+        for (int blobIndex { 0 }; blobIndex < fileCount; ++blobIndex)
+            juce::ignoreUnused (jam::File::deleteFile (getBlobFile (addedId, blobIndex)));
+
+        removeTransaction (addedId);
+        return { firstFailure, {} };
     }
 
-    return { juce::Result::ok(), txId };
+    return { juce::Result::ok(), addedId };
 }
 
 jam::Strings UndoCache::getTransactionIds()
@@ -429,7 +401,7 @@ jam::Strings UndoCache::getTransactionIds()
 
     for (int index { 0 }; index < pendingIds.size(); ++index)
     {
-        const auto [pendingStatus, pendingDocument] { getTransactionDocument (pendingIds.at (index)) };
+        const auto [pendingStatus, pendingDocument] { getTransactionDocument (pendingIds.getView (index)) };
         juce::ignoreUnused (pendingDocument);
 
         if (pendingStatus.wasOk())
@@ -438,27 +410,15 @@ jam::Strings UndoCache::getTransactionIds()
 
     ids.sort (false);
     ids.removeDuplicates (false);
-
-    jam::Strings newestFirst;
-    newestFirst.ensureStorageAllocated (ids.size());
-
-    for (int index { ids.size() - 1 }; index >= 0; --index)
-        newestFirst.add (ids.getView (index));
-
-    return newestFirst;
+    return ids;
 }
 
-std::pair<juce::Result, std::unique_ptr<jam::JsonDocument>> UndoCache::getTransactionDocument (const juce::String& transactionId)
+std::pair<juce::Result, std::unique_ptr<jam::JsonDocument>> UndoCache::getTransactionDocument (std::string_view transactionId)
 {
     const auto recordFile { getRecordFile (transactionId) };
 
     if (not recordFile.existsAsFile())
-    {
-        return { juce::Result::fail (
-                     Stdio::getFormatted (text::Diagnostics::failUndoUnknown,
-                                          transactionId.toRawUTF8())),
-                 nullptr };
-    }
+        return { Stdio::fail (text::Diagnostics::failUndoUnknown, transactionId), nullptr };
 
     auto doc { jam::JsonDocument::parse (recordFile) };
 
@@ -468,7 +428,7 @@ std::pair<juce::Result, std::unique_ptr<jam::JsonDocument>> UndoCache::getTransa
     return { juce::Result::ok(), std::move (doc) };
 }
 
-static void removeBlobs (const juce::String& transactionId)
+static void removeBlobs (std::string_view transactionId)
 {
     int index { 0 };
 
@@ -476,7 +436,7 @@ static void removeBlobs (const juce::String& transactionId)
         ++index;
 }
 
-void UndoCache::removeTransaction (const juce::String& transactionId)
+void UndoCache::removeTransaction (std::string_view transactionId)
 {
     juce::ignoreUnused (jam::File::deleteFile (getPendingFile (transactionId)));
     juce::ignoreUnused (jam::File::deleteFile (getDirectory().getChildFile (getRecordName (transactionId))));
@@ -492,7 +452,7 @@ void UndoCache::removeOldestTransactions()
 
     for (int index { 0 }; index < excessCount; ++index)
     {
-        const auto transactionId { ids.at (index) };
+        const auto transactionId { ids.getView (index) };
 
         if (jam::File::deleteFile (directory.getChildFile (getRecordName (transactionId))))
             removeBlobs (transactionId);

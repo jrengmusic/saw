@@ -76,7 +76,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "")
 
 if(APPLE)
     set(CAST_RELEASE_COMPILE_FLAGS
--Wno-shadow;-Wno-unused-parameter;-Wno-float-equal;-Wno-sign-conversion;-Wno-switch-enum;-Wno-implicit-float-conversion;-Wno-macro-redefined;-O3;-flto=thin
+-Wno-shadow;-Wno-unused-parameter;-Wno-float-equal;-Wno-sign-conversion;-Wno-switch-enum;-Wno-implicit-float-conversion;-Wno-macro-redefined;-O3;-flto
     )
     set(CAST_RELEASE_LINK_FLAGS
 -dead_strip;-Wl,-dead_strip_dylibs;-Wl,-exported_symbol,_main
@@ -97,7 +97,7 @@ elseif(WIN32)
         )
     else()
         set(CAST_RELEASE_COMPILE_FLAGS
--Wno-shadow;-Wno-unused-parameter;-Wno-float-equal;-Wno-sign-conversion;-Wno-switch-enum;-Wno-implicit-float-conversion;-Wno-macro-redefined;-O3;-flto=thin
+-Wno-shadow;-Wno-unused-parameter;-Wno-float-equal;-Wno-sign-conversion;-Wno-switch-enum;-Wno-implicit-float-conversion;-Wno-macro-redefined;-O3;-flto
         )
         list(REMOVE_ITEM CAST_RELEASE_COMPILE_FLAGS "-O3")
         list(APPEND CAST_RELEASE_COMPILE_FLAGS "/clang:-O3")
@@ -138,6 +138,8 @@ set(CAST_JUCE_PATCHES
 "${CAST_USER_MODULE_PATH}/patch/juce-value-tree-synchroniser-hook.patch"    # Listener exclusion for ValueTree senders: juce_ValueTree.cpp, juce_ValueTree.h, juce_ValueTreeSynchroniser.cpp, juce_ValueTreeSynchroniser.h; child and remove-property senders take a listener to exclude; ValueTree gains removePropertyExcludingListener, addChildExcludingListener, removeChildExcludingListener, moveChildExcludingListener; ValueTreeSynchroniser gains applyChange that excludes itself
 "${CAST_USER_MODULE_PATH}/patch/juce-posix-file-hook.patch"                 # POSIX file, link, folder, home and CPU-count functions on macOS when JUCE_USE_FOUNDATION=0: juce_Files_mac.mm, juce_Strings_mac.mm, juce_SystemStats_mac.mm, juce_core.h; read-only maps of MemoryMappedFile that give no fault when JUCE_USE_RESILIENT_MAPPING=1: juce_SharedCode_posix.h
 "${CAST_USER_MODULE_PATH}/patch/juce-sha256-hook.patch"                     # SHA-256 on the ARMv8 hash instructions.
+"${CAST_USER_MODULE_PATH}/patch/juce-posix-event-hook.patch"                # JUCE's POSIX message loop on macOS when JUCE_USE_FOUNDATION=0 and juce_gui_basics is not linked: juce_events.h, juce_events.cpp, juce_MessageManager.cpp, juce_ApplicationBase.cpp, juce_ScopedLowPowerModeDisabler.cpp, juce_Memory.h, juce_SharedCode_posix.h
+"${CAST_USER_MODULE_PATH}/patch/juce-child-process-hook.patch"              # ChildProcessManager singleton defined in its .cpp, so that a translation unit that includes juce_events.h has no initializer: juce_ChildProcessManager.h, juce_ChildProcessManager.cpp
 )
 
 if(WIN32)
@@ -353,28 +355,14 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE
 juce_core
 juce_cryptography
-jam_core
-    PUBLIC
-        juce::juce_recommended_config_flags
-)
-
-set(CAST_SERVER_MODULES
-juce_core
-juce_cryptography
 juce_data_structures
 juce_events
-juce_graphics
-juce_gui_basics
-juce_audio_processors
 jam_core
-jam_document
-jam_freetype
-jam_graphics
 jam_data_structures
-jam_web
-jam_style
 jam_terminal
 jam_model_context_protocol
+    PUBLIC
+        juce::juce_recommended_config_flags
 )
 
 if(MSVC)
@@ -471,66 +459,15 @@ juce_add_binary_data(${PROJECT_NAME}_BinaryData
     NAMESPACE "BinaryData"
     SOURCES
         ${CAST_FRAME_FILES}
+        "${CMAKE_CURRENT_SOURCE_DIR}/Source/tools.json"
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_BinaryData)
 
-set(CAST_SERVER_SOURCES ${CAST_SOURCE_FILES})
-list(REMOVE_ITEM CAST_SERVER_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/Source/Main.cpp")
-list(APPEND CAST_SERVER_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/server/Main.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/server/ToolServer.cpp"
-)
-
-juce_add_console_app(${PROJECT_NAME}_ToolServer
-    PRODUCT_NAME "${PROJECT_NAME}_ToolServer"
-    COMPANY_NAME "JRENG"
-    NEEDS_CURL OFF
-    NEEDS_WEB_BROWSER OFF
-    NEEDS_WEBVIEW2 OFF
-    NEEDS_STORE_KIT OFF
-)
-
-juce_generate_juce_header(${PROJECT_NAME}_ToolServer)
-
-target_sources(${PROJECT_NAME}_ToolServer PRIVATE ${CAST_SERVER_SOURCES})
-
-target_precompile_headers(${PROJECT_NAME}_ToolServer PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:<JuceHeader.h$<ANGLE-R>>")
-
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_options(${PROJECT_NAME}_ToolServer PRIVATE "SHELL:-Xclang -fno-pch-timestamp")
-endif()
-
-target_compile_definitions(${PROJECT_NAME}_ToolServer PRIVATE ${CAST_COMPILE_DEFINITIONS})
-target_include_directories(${PROJECT_NAME}_ToolServer PRIVATE ${CAST_INCLUDE_DIRECTORIES})
-
-target_compile_options(${PROJECT_NAME}_ToolServer PRIVATE
-    $<$<CONFIG:Release>:${CAST_RELEASE_COMPILE_FLAGS}>
-)
-
-target_link_options(${PROJECT_NAME}_ToolServer PRIVATE
-    $<$<CONFIG:Release>:${CAST_RELEASE_LINK_FLAGS}>
-)
-
-target_link_libraries(${PROJECT_NAME}_ToolServer
-    PRIVATE
-        ${CAST_SERVER_MODULES}
-        ${CAST_CORE_FRAMEWORKS}
-        ${PROJECT_NAME}_ServerData
-        juce::juce_recommended_config_flags
-)
-
-juce_add_binary_data(${PROJECT_NAME}_ServerData
-    NAMESPACE "BinaryData"
-    SOURCES
-        ${CAST_FRAME_FILES}
-        "${CMAKE_CURRENT_SOURCE_DIR}/server/tools.json"
-)
-
 include(CheckIPOSupported)
 
 set(CAST_POST_BUILD_STAMP_FILE "${CMAKE_BINARY_DIR}/post-build.stamp")
-set(CAST_POST_BUILD_DEPENDS $<TARGET_FILE:${PROJECT_NAME}> $<TARGET_FILE:${PROJECT_NAME}_ToolServer>)
+set(CAST_POST_BUILD_DEPENDS $<TARGET_FILE:${PROJECT_NAME}>)
 
 if(APPLE)
     set(CAST_PACK_folder "../Release")
@@ -560,7 +497,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
 
     if(CAST_IPO_SUPPORTED)
         set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
-        set_target_properties(${PROJECT_NAME}_ToolServer PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
         message(STATUS "CAST: LTO enabled")
     else()
         message(WARNING "CAST: LTO not supported — ${CAST_IPO_ERROR}")
@@ -602,7 +538,7 @@ COMMAND ${CMAKE_COMMAND} -E copy "${CAST_PACK_ARCHIVE}" "${CAST_QA_DIRECTORY}/"
 COMMAND ${CMAKE_COMMAND} -E touch "${CAST_SIGN_STAMP_FILE}"
             COMMENT "CAST: sign"
         )
-        set(CAST_POST_BUILD_DEPENDS "${CAST_SIGN_STAMP_FILE}" $<TARGET_FILE:${PROJECT_NAME}_ToolServer>)
+        set(CAST_POST_BUILD_DEPENDS "${CAST_SIGN_STAMP_FILE}")
     elseif(CAST_SIGN AND WIN32)
         cmake_host_system_information(RESULT CAST_INSTALLER_KITS_ROOT QUERY WINDOWS_REGISTRY "HKLM/SOFTWARE/Microsoft/Windows Kits/Installed Roots" VALUE KitsRoot10 VIEW 64_32)
         file(GLOB CAST_INSTALLER_KITS_VERSIONS LIST_DIRECTORIES true "${CAST_INSTALLER_KITS_ROOT}bin/10.*")
@@ -618,7 +554,7 @@ COMMAND ${CMAKE_COMMAND} -E touch "${CAST_SIGN_STAMP_FILE}"
             COMMENT "CAST: installer"
             VERBATIM
         )
-        set(CAST_POST_BUILD_DEPENDS "${CAST_SIGN_STAMP_FILE}" $<TARGET_FILE:${PROJECT_NAME}_ToolServer>)
+        set(CAST_POST_BUILD_DEPENDS "${CAST_SIGN_STAMP_FILE}")
     endif()
 endif()
 
@@ -630,11 +566,6 @@ COMMAND ${CMAKE_COMMAND} -E rm -f "$ENV{HOME}/.local/bin/${PROJECT_NAME}.old"
 COMMAND ${CMAKE_COMMAND} -E touch "$ENV{HOME}/.local/bin/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
 COMMAND ${CMAKE_COMMAND} -E rename "$ENV{HOME}/.local/bin/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}" "$ENV{HOME}/.local/bin/${PROJECT_NAME}.old"
 COMMAND ${CMAKE_COMMAND} -E rename "$ENV{HOME}/.local/bin/${PROJECT_NAME}.tmp" "$ENV{HOME}/.local/bin/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
-COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}_ToolServer> "$ENV{HOME}/.local/bin/${PROJECT_NAME}_ToolServer.tmp"
-COMMAND ${CMAKE_COMMAND} -E rm -f "$ENV{HOME}/.local/bin/${PROJECT_NAME}_ToolServer.old"
-COMMAND ${CMAKE_COMMAND} -E touch "$ENV{HOME}/.local/bin/${PROJECT_NAME}_ToolServer${CMAKE_EXECUTABLE_SUFFIX}"
-COMMAND ${CMAKE_COMMAND} -E rename "$ENV{HOME}/.local/bin/${PROJECT_NAME}_ToolServer${CMAKE_EXECUTABLE_SUFFIX}" "$ENV{HOME}/.local/bin/${PROJECT_NAME}_ToolServer.old"
-COMMAND ${CMAKE_COMMAND} -E rename "$ENV{HOME}/.local/bin/${PROJECT_NAME}_ToolServer.tmp" "$ENV{HOME}/.local/bin/${PROJECT_NAME}_ToolServer${CMAKE_EXECUTABLE_SUFFIX}"
 COMMAND ${CMAKE_COMMAND} -E touch "${CAST_POST_BUILD_STAMP_FILE}"
     COMMENT "CAST: post-build"
 )

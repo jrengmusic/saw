@@ -17,7 +17,7 @@ struct CommandLine
      *  @param arguments The argument list, with the verb at index 0.
      *  @param input     The text of the input, or nullopt when the process standard input is read.
      *
-     *  @return The exit code, the standard output bytes, and the standard error bytes.
+     *  @return The exit code, the output documents, and the failures.
      */
-    static Stdio::Output run (const jam::Strings& arguments, const std::optional<std::string>& input);
+    static Stdio::Output run (juce::Span<const std::string_view> arguments, const std::optional<std::string>& input);
 };

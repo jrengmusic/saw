@@ -29,7 +29,7 @@ saw undo --list
 - **Target file deleted after `--apply`:** Default check fails with hash drift (`<path> missing since apply`). With `--force`, SAW creates the file again with its original bytes and recorded POSIX execute bit.
 - **Corrupt transaction with `--list`:** SAW prints its error, prints the other transactions, and exits `2`.
 - **Parallel commands:** No lock exists. One `undo --apply` run owns a transaction. A second run of the same id exits `2`.
-- **Pending transaction:** A transaction that another process has not completed exits `2` with `saw: transaction <tx-id> is pending (pass --force to restore it)`. `--force` restores it.
+- **Pending transaction:** With `--apply`, a transaction that another process has not completed exits `2` with `saw: transaction <tx-id> is pending (pass --force to restore it)`. `--force` restores it. A dry-run reads it.
 
 ## Exit Codes and Errors
 
@@ -43,7 +43,7 @@ saw undo --list
 | Missing `<tx-id>` | `saw: undo requires <tx-id>` | `2` |
 | Unknown `<tx-id>` | `saw: unknown transaction: <tx-id>` | `2` |
 | Corrupt record or missing blob | `saw: corrupt transaction <tx-id>: <detail>` | `2` |
-| Pending `<tx-id>` without `--force` | `saw: transaction <tx-id> is pending (pass --force to restore it)` | `2` |
+| `--apply` of a pending `<tx-id>` without `--force` | `saw: transaction <tx-id> is pending (pass --force to restore it)` | `2` |
 | File drifted since `--apply` | `saw: cannot undo <tx-id>: <path> changed since apply (pass --force to overwrite)` | `2` |
 | Restore write failure | `saw: undo failed for <path>: <reason>; rolled back` | `2` |
 | Rollback failure | `saw: undo failed for <path>: <reason>; rollback failed for <paths>; backup kept in <folder>` | `2` |

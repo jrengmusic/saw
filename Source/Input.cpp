@@ -1,12 +1,10 @@
 #include "Input.h"
 #include "StandardStream.h"
 #include "generated/Generated.h"
-#ifndef _WIN32
+#if ! JUCE_WINDOWS
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-static constexpr int mappingFlags { MAP_PRIVATE | MAP_RESILIENT_MEDIA };
 #endif
 
 static bool isNullDevice (const std::filesystem::path& path)
@@ -15,9 +13,37 @@ static bool isNullDevice (const std::filesystem::path& path)
     return std::filesystem::equivalent (path, std::filesystem::u8path (Id::nullDevice), deviceError);
 }
 
+#if JUCE_WINDOWS
+struct Input::Native
+{
+};
+#else
+struct Input::Native
+{
+    static constexpr int mappingFlags { MAP_PRIVATE | MAP_RESILIENT_MEDIA };
+
+    explicit Native (size_t newSize)
+        : address (::mmap (nullptr, newSize, PROT_READ, mappingFlags, STDIN_FILENO, 0)),
+          size (newSize)
+    {
+    }
+
+    ~Native()
+    {
+        if (address != MAP_FAILED)
+            ::munmap (address, size);
+    }
+
+    void* address { MAP_FAILED };
+    size_t size { 0 };
+
+    JUCE_DECLARE_NON_COPYABLE (Native)
+};
+#endif
+
 std::unique_ptr<Input> Input::fromFile (const juce::File& file, size_t maxReadSize)
 {
-    const auto path { std::filesystem::u8path (file.getFullPathName().toRawUTF8()) };
+    const auto path { std::filesystem::u8path (jam::Strings::getView (file.getFullPathName())) };
     std::error_code sizeError;
     const auto size { static_cast<size_t> (std::filesystem::file_size (path, sizeError)) };
     auto input { std::make_unique<Input> (Access {}) };
@@ -57,13 +83,7 @@ std::unique_ptr<Input> Input::fromFile (const juce::File& file, size_t maxReadSi
 
 Input::Input (Access) {}
 
-Input::~Input()
-{
-#ifndef _WIN32
-    if (mappedAddress != nullptr)
-        ::munmap (mappedAddress, mappedSize);
-#endif
-}
+Input::~Input() = default;
 
 std::pair<juce::Result, std::unique_ptr<Input>> Input::create (const std::optional<std::string>& source, int numLines)
 {
@@ -83,7 +103,7 @@ std::pair<juce::Result, std::unique_ptr<Input>> Input::create (const std::option
 
 bool Input::isStream (const std::optional<std::string>& source)
 {
-#ifdef _WIN32
+#if JUCE_WINDOWS
     return not source.has_value();
 #else
     struct stat status {};
@@ -98,7 +118,7 @@ std::string_view Input::getBytes() const noexcept
 
 bool Input::setMappedBytes()
 {
-#ifdef _WIN32
+#if JUCE_WINDOWS
     return false;
 #else
     struct stat status {};
@@ -112,14 +132,13 @@ bool Input::setMappedBytes()
         return offset >= 0;
 
     const size_t size { static_cast<size_t> (status.st_size) };
-    void* const address { ::mmap (nullptr, size, PROT_READ, mappingFlags, STDIN_FILENO, 0) };
+    auto mapping { std::make_unique<Native> (size) };
 
-    if (address == MAP_FAILED)
+    if (mapping->address == MAP_FAILED)
         return false;
 
-    mappedAddress = address;
-    mappedSize = size;
-    bytes = std::string_view { static_cast<const char*> (address), size }.substr (static_cast<size_t> (offset));
+    native = std::move (mapping);
+    bytes = std::string_view { static_cast<const char*> (native->address), size }.substr (static_cast<size_t> (offset));
     return ::lseek (STDIN_FILENO, status.st_size, SEEK_SET) == status.st_size;
 #endif
 }

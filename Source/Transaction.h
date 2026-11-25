@@ -2,6 +2,7 @@
 #include <JuceHeader.h>
 #include "Arguments.h"
 #include "LineDiff.h"
+#include "StagedFile.h"
 #include "Stdio.h"
 #include "TextDocument.h"
 
@@ -16,6 +17,16 @@ public:
      */
     explicit Transaction (std::string_view newCommandName);
 
+    /** @brief Records a target file, and reports whether the file is new to this transaction.
+     *
+     *  A caller skips a file for which this returns false, so a file named twice in one command is edited once.
+     *
+     *  @param targetFile The file to record.
+     *
+     *  @return True when the file was not recorded before.
+     */
+    bool addTarget (const juce::File& targetFile);
+
     /** @brief Records edit counts, and stages the file when its planned bytes differ from its original bytes.
      *
      *  The edit count is added to the total even when the bytes do not change. The file is staged
@@ -23,7 +34,8 @@ public:
      *
      *  @param targetFile       Destination file on disk.
      *  @param originalDocument Pre-edit document snapshot; must not be null.
-     *  @param diff             Line-level changes to apply onto @p originalDocument.
+     *  @param diff             Line-level changes to apply onto @p originalDocument. The diff holds the planned
+     *                          bytes, which the staged file writes at commit.
      *  @param fileEditCount    Logical edit count added to the `--expect` total.
      *
      *  @return Ok when the file is staged or needs no change. Otherwise the failure that
@@ -41,11 +53,10 @@ public:
      *  diff, reports both counts, and exits with exitMismatch. Nothing is written, and no commit runs.
      *
      *  @param arguments       The parsed arguments of the command.
-     *  @param isStandardInput True when the input is standard input. `--apply` is refused then.
      *
-     *  @return The exit code, the output bytes, and the diagnostics.
+     *  @return The exit code, the output documents, and the failures.
      */
-    Stdio::Output run (const Arguments& arguments, bool isStandardInput);
+    Stdio::Output run (const Arguments& arguments);
 
     /** @brief Reads the `--expect` count from the arguments, and checks it against `--apply`.
      *
@@ -59,24 +70,54 @@ public:
 
     /** @brief Builds the output of a run whose edit count differs from `--expect`.
      *
-     *  @param diffText      The unified diff to print on standard output.
+     *  @param diff          The diff documents to print on standard output.
      *  @param expectedCount The count that `--expect` gave.
      *  @param actualCount   The count that the edits made.
      *
-     *  @return Exit code exitMismatch, the diff text, and a diagnostic with both counts.
+     *  @return Exit code exitMismatch, the diff documents, and a failure that holds both counts.
      */
-    static Stdio::Output getExpectMismatch (std::string diffText, int expectedCount, int actualCount);
+    static Stdio::Output getExpectMismatch (Stdio::Documents diff, int expectedCount, int actualCount);
+
+    /** @brief Builds the failure of a write whose rollback left some files unrestored.
+     *
+     *  The message holds the failure text, the failed path, the write failure, the unrestored paths joined
+     *  with a comma and a space, and the path of the blob folder.
+     *
+     *  @param failure         The failure text that starts the message.
+     *  @param failedPath      The display path of the file that failed to write.
+     *  @param status          The write failure. Its error message is appended.
+     *  @param unrestoredPaths The display paths that could not be restored.
+     *
+     *  @return The failed result.
+     */
+    static juce::Result getRollbackFailure (std::string_view failure, std::string_view failedPath, const juce::Result& status, const jam::Strings& unrestoredPaths);
+
+    /** @brief Calls a function for each staged file in order, and restores the files before a failure.
+     *
+     *  The loop stops at the first failure. The files before the failure are restored. The failing file is
+     *  restored too when its call reports true. A restore that fails does not stop the other restores.
+     *
+     *  @param stagedFiles   The staged files, in transaction order.
+     *  @param transactionId The transaction whose blob files the restore reads.
+     *  @param function      The operation for one staged file. Its bool is true when the target may have changed.
+     *
+     *  @return Tuple of: the failure, or ok; the display path of the file that failed; and the display paths
+     *          that could not be restored. The path is empty and the list is empty when every call succeeds.
+     */
+    static std::tuple<juce::Result, std::string_view, jam::Strings> applyToStagedFiles (const jam::Array<StagedFile>& stagedFiles, std::string_view transactionId, const std::function<std::pair<juce::Result, bool> (const StagedFile&)>& function);
+
+    /** @brief Builds the unified diff of each staged file whose diff is not empty.
+     *
+     *  @param stagedFiles The staged files, in transaction order.
+     *
+     *  @return One document for each staged file whose diff is not empty, in transaction order.
+     */
+    static Stdio::Documents getDiffDocuments (const jam::Array<StagedFile>& stagedFiles);
 
 private:
-    /** @brief Renders the unified diff of every staged file.
+    /** @brief Builds the output of a dry run: the diff documents and the summary.
      *
-     *  @return The concatenated diff text. Empty when no file is staged.
-     */
-    std::string getDryRunDiffText() const;
-
-    /** @brief Builds the output of a dry run: the diff and the summary.
-     *
-     *  @return Exit code exitSuccess, the diff text with the summary, and no diagnostic.
+     *  @return Exit code exitSuccess, the diff documents with the summary document, and no failure.
      */
     Stdio::Output runDryRun() const;
 
@@ -94,13 +135,17 @@ private:
      *
      *  @return Status result paired with the transaction id. The id is empty when staging or writing failed.
      */
-    std::pair<juce::Result, juce::String> commit();
+    std::pair<juce::Result, std::string> commit();
 
-    juce::String commandName;
-    jam::Array<juce::File> targetFiles;
-    jam::Array<std::unique_ptr<TextDocument>> originalDocuments;
-    std::vector<std::string> plannedTexts;
-    jam::Array<LineDiff> diffs;
-    jam::Array<bool> executableFlags;
+    /** @brief Mutating subcommand name, recorded with the undo record on commit. */
+    std::string commandName;
+
+    /** @brief Files recorded by addTarget, so that a file named twice is edited once. */
+    std::set<juce::File> targetFiles;
+
+    /** @brief Files whose planned bytes differ from their original bytes, in transaction order. */
+    jam::Array<StagedFile> stagedFiles;
+
+    /** @brief Sum of the edit counts of every added file, compared with --expect. */
     int totalEditCount { 0 };
 };

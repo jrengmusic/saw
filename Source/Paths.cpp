@@ -2,7 +2,6 @@
 #include "IgnoreRules.h"
 #include "Jobs.h"
 #include "TextDocument.h"
-#include "TransparentStringHash.h"
 #include "generated/Generated.h"
 
 static std::string getNormalizedPath (std::string_view rawPath)
@@ -20,7 +19,7 @@ static std::string getNormalizedDisplayPrefix (std::string_view rawPath)
     auto normalized { getNormalizedPath (rawPath) };
 
     if (normalized.empty() or normalized.back() != static_cast<char> (Chars::slash))
-        normalized.push_back (static_cast<char> (Chars::slash));
+        jam::Format::appendUtf8 (normalized, Chars::slash);
 
     return normalized;
 }
@@ -69,12 +68,10 @@ static bool matchesWildcard (std::string_view wildcard, std::string_view text) n
 static bool matchesAnyGlob (std::string_view fileName,
                             std::string_view displayPath,
                             std::string_view relativePath,
-                            const jam::Strings& globs)
+                            juce::Span<const std::string_view> globs)
 {
-    for (int index { 0 }; index < globs.size(); ++index)
+    for (const auto& glob : globs)
     {
-        const auto glob { globs.getView (index) };
-
         if (matchesWildcard (glob, fileName) or matchesWildcard (glob, displayPath) or matchesWildcard (glob, relativePath))
             return true;
     }
@@ -85,13 +82,13 @@ static bool matchesAnyGlob (std::string_view fileName,
 static bool shouldIncludeFile (std::string_view fileName,
                                std::string_view displayPath,
                                std::string_view relativePath,
-                               const jam::Strings& includeGlobs,
-                               const jam::Strings& excludeGlobs)
+                               juce::Span<const std::string_view> includeGlobs,
+                               juce::Span<const std::string_view> excludeGlobs)
 {
-    if (includeGlobs.size() > 0 and not matchesAnyGlob (fileName, displayPath, relativePath, includeGlobs))
+    if (not includeGlobs.empty() and not matchesAnyGlob (fileName, displayPath, relativePath, includeGlobs))
         return false;
 
-    if (excludeGlobs.size() > 0 and matchesAnyGlob (fileName, displayPath, relativePath, excludeGlobs))
+    if (not excludeGlobs.empty() and matchesAnyGlob (fileName, displayPath, relativePath, excludeGlobs))
         return false;
 
     return true;
@@ -100,9 +97,9 @@ static bool shouldIncludeFile (std::string_view fileName,
 static void appendPathSegment (std::string& path, std::string_view segment)
 {
     if (path.empty() or path.back() != static_cast<char> (Chars::slash))
-        path.push_back (static_cast<char> (Chars::slash));
+        jam::Format::appendUtf8 (path, Chars::slash);
 
-    path.append (segment);
+    jam::Format::appendBytes (path, segment);
 }
 
 static bool shouldVisitEntry (std::string_view name,
@@ -118,33 +115,15 @@ static bool shouldVisitEntry (std::string_view name,
     return true;
 }
 
-static constexpr int filesPerItem { 64 };
+static constexpr int entriesPerItem { 64 };
 
-using Folder = std::tuple<std::string, std::string, std::string, size_t, std::shared_ptr<const IgnoreRules>, std::vector<std::string>>;
+using Folder = std::tuple<std::string, std::string, std::string, size_t, std::shared_ptr<const IgnoreRules>>;
+using Listing = std::tuple<std::string, jam::Array<std::tuple<size_t, size_t, bool>>, bool>;
+using ListedFolder = std::pair<Folder, Listing>;
+using FolderRange = std::pair<std::shared_ptr<const ListedFolder>, juce::Range<int>>;
+using WalkItem = std::variant<Folder, FolderRange>;
 
-template <typename OnFile>
-static void applyToFileNames (int workerIndex,
-                              std::string& fullPath,
-                              std::string& displayBuffer,
-                              const std::vector<std::string>& fileNames,
-                              const std::atomic<bool>& shouldStop,
-                              const OnFile& onFile)
-{
-    for (const auto& fileName : fileNames)
-    {
-        if (shouldStop.load (std::memory_order_relaxed))
-            break;
-
-        const auto savedFullSize { fullPath.size() };
-        const auto savedDisplaySize { displayBuffer.size() };
-        appendPathSegment (fullPath, fileName);
-        displayBuffer.append (fileName);
-        onFile (workerIndex, fullPath, displayBuffer);
-        fullPath.resize (savedFullSize);
-        displayBuffer.resize (savedDisplaySize);
-    }
-}
-
+#if JUCE_WINDOWS
 static std::optional<std::string> getEntryName (const std::filesystem::directory_entry& entry)
 {
     try
@@ -156,17 +135,24 @@ static std::optional<std::string> getEntryName (const std::filesystem::directory
         return std::nullopt;
     }
 }
+#else
+static std::optional<std::string_view> getEntryName (const std::filesystem::directory_entry& entry)
+{
+    const std::string_view path { entry.path().native() };
+    return path.substr (path.rfind (static_cast<char> (Chars::slash)) + 1);
+}
+#endif
 
-static std::optional<std::tuple<std::string, std::vector<std::tuple<size_t, size_t, bool>>, bool>> getDirectoryListing (const std::string& fullPath,
-                                                                                                                        std::string_view gitDirectoryName,
-                                                                                                                        std::string_view gitignoreName,
-                                                                                                                        bool isIncludingHidden,
-                                                                                                                        const std::atomic<bool>& shouldStop)
+static std::optional<Listing> getDirectoryListing (const std::string& fullPath,
+                                                   std::string_view gitDirectoryName,
+                                                   std::string_view gitignoreName,
+                                                   bool isIncludingHidden,
+                                                   const std::atomic<bool>& shouldStop)
 {
     std::error_code listingError;
     std::filesystem::directory_iterator entry { std::filesystem::u8path (fullPath), listingError };
     std::string names;
-    std::vector<std::tuple<size_t, size_t, bool>> entries;
+    jam::Array<std::tuple<size_t, size_t, bool>> entries;
     bool hasGitignore { false };
 
     for (; listingError.value() == 0 and entry != std::filesystem::directory_iterator {} and not shouldStop.load (std::memory_order_relaxed); entry.increment (listingError))
@@ -184,46 +170,76 @@ static std::optional<std::tuple<std::string, std::vector<std::tuple<size_t, size
 
         if ((isDirectory or isRegularFile) and shouldVisitEntry (*name, gitDirectoryName, isIncludingHidden))
         {
-            entries.emplace_back (names.size(), name->size(), isDirectory);
-            names.append (*name);
+            entries.add (std::tuple<size_t, size_t, bool> { names.size(), name->size(), isDirectory });
+            jam::Format::appendBytes (names, *name);
         }
     }
 
     if (listingError.value() != 0)
         return std::nullopt;
 
-    return std::tuple<std::string, std::vector<std::tuple<size_t, size_t, bool>>, bool> { std::move (names), std::move (entries), hasGitignore };
+    return Listing { std::move (names), std::move (entries), hasGitignore };
+}
+
+static std::shared_ptr<const ListedFolder> getListedFolder (Folder folder, Listing listing)
+{
+    auto& [folderFull, folderDisplay, folderRel, displayPrefixSize, folderRules] { folder };
+    const bool isWalkRoot { folderDisplay.size() == displayPrefixSize };
+    const auto& [names, entries, hasGitignore] { listing };
+    juce::ignoreUnused (names, entries);
+
+    if (folderRules != nullptr and hasGitignore and not isWalkRoot)
+        folderRules = IgnoreRules::getChildRules (folderRules,
+                                                  juce::File (jam::Strings::fromView (folderFull)),
+                                                  folderRel);
+
+    return std::make_shared<ListedFolder> (std::move (folder), std::move (listing));
+}
+
+template <typename AddItem>
+static void addFolderRanges (const std::shared_ptr<const ListedFolder>& listedFolder, const AddItem& addItem)
+{
+    const auto& [folder, listing] { *listedFolder };
+    const auto& [names, entries, hasGitignore] { listing };
+    juce::ignoreUnused (folder, names, hasGitignore);
+    const int numEntries { entries.size() };
+
+    for (int entryStart { entriesPerItem }; entryStart < numEntries; entryStart += entriesPerItem)
+        addItem (WalkItem { FolderRange { listedFolder, juce::Range<int> { entryStart, std::min (entryStart + entriesPerItem, numEntries) } } });
 }
 
 template <typename AddItem, typename OnFile>
 static void applyToListing (int workerIndex,
-                            const std::string& names,
-                            const std::vector<std::tuple<size_t, size_t, bool>>& entries,
-                            const std::shared_ptr<const IgnoreRules>& childRules,
-                            std::string& fullPath,
-                            std::string& displayBuffer,
-                            std::string& relBuffer,
-                            size_t displayPrefixSize,
-                            const jam::Strings& includeGlobs,
-                            const jam::Strings& excludeGlobs,
+                            const ListedFolder& listedFolder,
+                            juce::Range<int> entryRange,
                             const std::atomic<bool>& shouldStop,
+                            juce::Span<const std::string_view> includeGlobs,
+                            juce::Span<const std::string_view> excludeGlobs,
                             const AddItem& addItem,
                             const OnFile& onFile)
 {
-    std::vector<std::string> pendingNames;
+    const auto& [folder, listing] { listedFolder };
+    const auto& [folderFull, folderDisplay, folderRel, displayPrefixSize, childRules] { folder };
+    const auto& [names, entries, hasGitignore] { listing };
+    juce::ignoreUnused (hasGitignore);
+    const int entryEnd { std::min (entryRange.getEnd(), entries.size()) };
+    std::string fullPath { folderFull };
+    std::string displayBuffer { folderDisplay };
+    std::string relBuffer { folderRel };
 
-    for (const auto& [start, length, isDirectory] : entries)
+    for (int index { entryRange.getStart() }; index < entryEnd; ++index)
     {
         if (shouldStop.load (std::memory_order_relaxed))
             break;
 
+        const auto& [start, length, isDirectory] { entries.at (index) };
         const std::string_view name { std::string_view { names }.substr (start, length) };
         const auto savedDisplaySize { displayBuffer.size() };
         const auto savedRelSize { relBuffer.size() };
-        displayBuffer.append (name);
+        jam::Format::appendBytes (displayBuffer, name);
 
         if (childRules != nullptr)
-            relBuffer.append (name);
+            jam::Format::appendBytes (relBuffer, name);
 
         const bool isIncluded { childRules == nullptr or not childRules->isIgnored (relBuffer, isDirectory) };
 
@@ -231,52 +247,25 @@ static void applyToListing (int workerIndex,
         {
             const auto savedFullSize { fullPath.size() };
             appendPathSegment (fullPath, name);
-            displayBuffer.push_back (static_cast<char> (Chars::slash));
+            jam::Format::appendUtf8 (displayBuffer, Chars::slash);
 
             if (childRules != nullptr)
-                relBuffer.push_back (static_cast<char> (Chars::slash));
+                jam::Format::appendUtf8 (relBuffer, Chars::slash);
 
-            addItem (Folder { fullPath, displayBuffer, relBuffer, displayPrefixSize, childRules, {} });
+            addItem (WalkItem { Folder { fullPath, displayBuffer, relBuffer, displayPrefixSize, childRules } });
             fullPath.resize (savedFullSize);
         }
         else if (isIncluded and shouldIncludeFile (name, displayBuffer, std::string_view { displayBuffer }.substr (displayPrefixSize), includeGlobs, excludeGlobs))
         {
-            pendingNames.emplace_back (name);
+            const auto savedFullSize { fullPath.size() };
+            appendPathSegment (fullPath, name);
+            onFile (workerIndex, fullPath, displayBuffer);
+            fullPath.resize (savedFullSize);
         }
 
         displayBuffer.resize (savedDisplaySize);
         relBuffer.resize (savedRelSize);
-
-        if (pendingNames.size() >= static_cast<size_t> (filesPerItem))
-        {
-            addItem (Folder { fullPath, displayBuffer, relBuffer, displayPrefixSize, childRules, std::move (pendingNames) });
-            pendingNames.clear();
-        }
     }
-
-    applyToFileNames (workerIndex, fullPath, displayBuffer, pendingNames, shouldStop, onFile);
-}
-
-static jam::Array<bool> getExplicitFlags (const std::vector<std::pair<std::string, juce::File>>& collectedFiles,
-                                          const jam::HashSet<std::string, TransparentStringHash, std::equal_to<>>& explicitSet)
-{
-    jam::Array<bool> flags;
-    flags.ensureStorageAllocated (static_cast<int> (collectedFiles.size()));
-
-    if (explicitSet.empty())
-    {
-        flags.insertMultiple (0, false, static_cast<int> (collectedFiles.size()));
-    }
-    else
-    {
-        for (const auto& [path, file] : collectedFiles)
-        {
-            juce::ignoreUnused (file);
-            flags.add (explicitSet.contains (path));
-        }
-    }
-
-    return flags;
 }
 
 static std::string_view getDirectoryDisplayPath (std::string_view displayPrefix)
@@ -285,10 +274,26 @@ static std::string_view getDirectoryDisplayPath (std::string_view displayPrefix)
     return isTrailingSlash ? displayPrefix.substr (0, displayPrefix.size() - 1) : displayPrefix;
 }
 
+void Paths::addFailures (Paths::Failures& failures, Paths::Failures&& addedFailures)
+{
+    auto& [failurePaths, failureResults] { failures };
+    const auto& [addedPaths, addedResults] { addedFailures };
+
+    if (failureResults.isEmpty())
+    {
+        failures = std::move (addedFailures);
+    }
+    else
+    {
+        failurePaths.addArray (addedPaths, 0, -1);
+        failureResults.insertArray (failureResults.size(), addedResults.data(), addedResults.size());
+    }
+}
+
 std::string Paths::getDisplayPath (std::string_view rawPath)
 {
     std::string displayPath { rawPath };
-#ifdef _WIN32
+#if JUCE_WINDOWS
     std::replace (displayPath.begin(),
                   displayPath.end(),
                   static_cast<char> (Chars::backslash),
@@ -308,11 +313,10 @@ juce::File Paths::getLinkedTarget (std::string_view rawPath)
     return juce::File::getCurrentWorkingDirectory().getChildFile (jam::Strings::fromView (rawPath));
 }
 
-jam::Strings Paths::getFileNames (const juce::File& directory)
+void Paths::applyToFileNames (const juce::File& directory, const std::function<void (std::string_view)>& function)
 {
     const std::atomic<bool> shouldStop { false };
-    auto fullPath { directory.getFullPathName().toStdString() };
-    jam::Strings fileNames;
+    std::string fullPath { jam::Strings::getView (directory.getFullPathName()) };
 
     if (const auto listing { getDirectoryListing (fullPath, {}, {}, false, shouldStop) })
     {
@@ -322,11 +326,9 @@ jam::Strings Paths::getFileNames (const juce::File& directory)
         for (const auto& [start, length, isDirectory] : entries)
         {
             if (not isDirectory)
-                fileNames.add (std::string_view { names }.substr (start, length));
+                function (std::string_view { names }.substr (start, length));
         }
     }
-
-    return fileNames;
 }
 
 static Folder getRootFolder (std::string_view rawPathView, const juce::File& rootDirectory, bool isIgnoringRules)
@@ -342,177 +344,195 @@ static Folder getRootFolder (std::string_view rawPathView, const juce::File& roo
 
     auto displayBuffer { getNormalizedDisplayPrefix (rawPathView) };
     const auto displayPrefixSize { displayBuffer.size() };
-    return { rootDirectory.getFullPathName().toStdString(), std::move (displayBuffer), std::move (relBuffer), displayPrefixSize, std::move (rules), std::vector<std::string> {} };
+    return { std::string { jam::Strings::getView (rootDirectory.getFullPathName()) }, std::move (displayBuffer), std::move (relBuffer), displayPrefixSize, std::move (rules) };
 }
 
-void Paths::applyToDirectories (const std::vector<std::pair<std::string, juce::File>>& roots,
-                                const jam::Strings& includeGlobs,
-                                const jam::Strings& excludeGlobs,
-                                bool isIncludingHidden,
-                                bool isIgnoringRules,
-                                const std::function<void (int)>& onWorkerCount,
-                                const std::function<void (int, const std::string&, std::string_view)>& onFile,
-                                const std::function<void (int, std::string_view)>& onUnreadable,
-                                const std::atomic<bool>& shouldStop)
+Paths::Failures Paths::applyToDirectories (const jam::Array<std::pair<std::string_view, juce::File>>& roots,
+                                           juce::Span<const std::string_view> includeGlobs,
+                                           juce::Span<const std::string_view> excludeGlobs,
+                                           bool isIncludingHidden,
+                                           bool isIgnoringRules,
+                                           const std::function<void (int)>& onWorkerCount,
+                                           const std::function<void (int, const std::string&, std::string_view)>& onFile,
+                                           const std::atomic<bool>& shouldStop)
 {
     const std::string_view gitDirectoryName { Id::gitDirectory };
     const std::string_view gitignoreName { Id::gitignoreFile };
+    const auto workingDirectory { juce::File::getCurrentWorkingDirectory() };
 
     const int workerCount { juce::SystemStats::getNumCpus() };
     onWorkerCount (workerCount);
+    jam::Array<Failures> workerFailures;
+    workerFailures.resize (workerCount);
 
-    const auto walkFolder = [&includeGlobs, &excludeGlobs, gitDirectoryName, gitignoreName, isIncludingHidden, isIgnoringRules, &roots, &onFile, &onUnreadable, &shouldStop]
-                            (int workerIndex, Folder& folder, auto& addItem)
+    const auto walkFolder { [&includeGlobs, &excludeGlobs, gitDirectoryName, gitignoreName, isIncludingHidden, &workingDirectory, &workerFailures, &onFile, &shouldStop]
+                            (int workerIndex, WalkItem& walkItem, auto& addItem)
     {
-        auto& [folderFull, folderDisplay, folderRel, displayPrefixSize, folderRules, fileNames] { folder };
-
-        if (folderFull.empty())
+        if (auto* folderRange { std::get_if<FolderRange> (&walkItem) })
         {
-            for (const auto& [rawPath, rootDirectory] : roots)
-                addItem (getRootFolder (rawPath, rootDirectory, isIgnoringRules));
+            const auto& [listedFolder, entryRange] { *folderRange };
+            applyToListing (workerIndex, *listedFolder, entryRange, shouldStop, includeGlobs, excludeGlobs, addItem, onFile);
         }
-        else if (not fileNames.empty())
+        else
         {
-            applyToFileNames (workerIndex, folderFull, folderDisplay, fileNames, shouldStop, onFile);
-        }
-        else if (not shouldStop.load (std::memory_order_relaxed))
-        {
-            const auto listing { getDirectoryListing (folderFull, gitDirectoryName, gitignoreName, isIncludingHidden, shouldStop) };
+            auto& folder { std::get<Folder> (walkItem) };
 
-            if (listing.has_value())
+            if (not shouldStop.load (std::memory_order_relaxed))
             {
-                const auto& [names, entries, hasGitignore] { *listing };
-                const bool isWalkRoot { folderDisplay.size() == displayPrefixSize };
-                auto childRules { folderRules };
+                const auto& [folderFull, folderDisplay, folderRel, displayPrefixSize, folderRules] { folder };
+                juce::ignoreUnused (folderRel, displayPrefixSize, folderRules);
+                auto listing { getDirectoryListing (folderFull, gitDirectoryName, gitignoreName, isIncludingHidden, shouldStop) };
 
-                if (folderRules != nullptr and hasGitignore and not isWalkRoot)
-                    childRules = IgnoreRules::getChildRules (folderRules,
-                                                             juce::File (juce::String::fromUTF8 (folderFull.data(), static_cast<int> (folderFull.size()))),
-                                                             folderRel);
-
-                applyToListing (workerIndex, names, entries, childRules, folderFull, folderDisplay, folderRel, displayPrefixSize, includeGlobs, excludeGlobs, shouldStop, addItem, onFile);
-            }
-            else
-            {
-                onUnreadable (workerIndex, getDirectoryDisplayPath (folderDisplay));
+                if (listing.has_value())
+                {
+                    const auto listedFolder { getListedFolder (std::move (folder), std::move (*listing)) };
+                    addFolderRanges (listedFolder, addItem);
+                    applyToListing (workerIndex, *listedFolder, juce::Range<int> { 0, entriesPerItem }, shouldStop, includeGlobs, excludeGlobs, addItem, onFile);
+                }
+                else
+                {
+                    const auto unreadableDisplayPath { getDirectoryDisplayPath (folderDisplay) };
+                    auto& [workerPaths, workerResults] { workerFailures.at (workerIndex) };
+                    workerPaths.add (unreadableDisplayPath);
+                    workerResults.add (TextDocument::getReadFailure (workingDirectory.getChildFile (jam::Strings::fromView (unreadableDisplayPath)), unreadableDisplayPath));
+                }
             }
         }
-    };
+    } };
 
-    Jobs::runRecursive (workerCount, Folder {}, walkFolder);
+    jam::Array<WalkItem> rootItems;
+
+    for (const auto& [rawPath, rootDirectory] : roots)
+        rootItems.add (WalkItem { getRootFolder (rawPath, rootDirectory, isIgnoringRules) });
+
+    Jobs::runRecursive (workerCount, std::move (rootItems), walkFolder);
+
+    Failures failures;
+
+    for (auto& worker : workerFailures)
+        addFailures (failures, std::move (worker));
+
+    return failures;
 }
 
-std::tuple<std::vector<std::pair<std::string, juce::Result>>, std::vector<std::pair<std::string, juce::File>>, jam::Array<bool>> Paths::getFiles (const jam::Strings& rawPaths,
-                                                                                                                                                  const jam::Strings& includeGlobs,
-                                                                                                                                                  const jam::Strings& excludeGlobs,
-                                                                                                                                                  bool isIncludingHidden,
-                                                                                                                                                  bool isIgnoringRules)
+std::tuple<Paths::Failures, jam::Array<Paths::Entry>, jam::Array<std::pair<std::string_view, juce::File>>> Paths::getClassifiedPaths (juce::Span<const std::string_view> rawPaths)
 {
-    std::vector<std::pair<std::string, juce::Result>> failures;
-    std::vector<std::pair<std::string, juce::File>> collectedFiles;
-    std::vector<std::pair<std::string, juce::File>> roots;
-    jam::HashSet<std::string, TransparentStringHash, std::equal_to<>> explicitSet;
+    Failures failures;
+    auto& [failurePaths, failureResults] { failures };
+    jam::Array<Entry> files;
+    jam::Array<std::pair<std::string_view, juce::File>> folders;
 
-    for (int index { 0 }; index < rawPaths.size(); ++index)
+    for (const auto& rawPathView : rawPaths)
     {
-        const auto rawPathView { rawPaths.getView (index) };
         auto targetFile { Paths::getLinkedTarget (rawPathView) };
 
         if (not targetFile.exists())
         {
-            failures.emplace_back (std::string { rawPathView }, TextDocument::getReadFailure (targetFile, jam::Strings::fromView (rawPathView)));
+            failurePaths.add (rawPathView);
+            failureResults.add (TextDocument::getReadFailure (targetFile, rawPathView));
         }
         else if (targetFile.isDirectory())
         {
-            roots.emplace_back (std::string { rawPathView }, std::move (targetFile));
+            folders.add (std::pair<std::string_view, juce::File> { rawPathView, std::move (targetFile) });
         }
         else
         {
-            std::string normalized { Paths::getDisplayPath (rawPathView) };
-            explicitSet.emplace (normalized);
-            collectedFiles.emplace_back (std::move (normalized), std::move (targetFile));
+            files.add (Entry { Paths::getDisplayPath (rawPathView), std::move (targetFile), true });
         }
     }
 
-    if (not roots.empty())
-    {
-        std::vector<std::vector<std::pair<std::string, juce::File>>> workerFiles;
-        std::vector<std::vector<std::pair<std::string, juce::Result>>> workerFailures;
-        const std::atomic<bool> shouldStop { false };
-        const auto workingDirectory { juce::File::getCurrentWorkingDirectory() };
-        applyToDirectories (roots,
-                            includeGlobs,
-                            excludeGlobs,
-                            isIncludingHidden,
-                            isIgnoringRules,
-                            [&workerFiles, &workerFailures] (int workerCount)
-                            {
-                                workerFiles.resize (static_cast<size_t> (workerCount));
-                                workerFailures.resize (static_cast<size_t> (workerCount));
-                            },
-                            [&workerFiles] (int workerIndex, const std::string& fileFullPath, std::string_view fileDisplayPath)
-                            {
-                                workerFiles.at (static_cast<size_t> (workerIndex)).emplace_back (std::string { fileDisplayPath }, juce::File { jam::Strings::fromView (fileFullPath) });
-                            },
-                            [&workerFailures, &workingDirectory] (int workerIndex, std::string_view unreadableDisplayPath)
-                            {
-                                const auto displayString { jam::Strings::fromView (unreadableDisplayPath) };
-                                workerFailures.at (static_cast<size_t> (workerIndex))
-                                    .emplace_back (std::string { unreadableDisplayPath },
-                                                   TextDocument::getReadFailure (workingDirectory.getChildFile (displayString), displayString));
-                            },
-                            shouldStop);
-
-        size_t totalCount { 0 };
-
-        for (const auto& worker : workerFiles)
-            totalCount += worker.size();
-
-        collectedFiles.reserve (collectedFiles.size() + totalCount);
-
-        for (auto& worker : workerFiles)
-        {
-            for (auto& path : worker)
-                collectedFiles.emplace_back (std::move (path));
-        }
-
-        for (auto& worker : workerFailures)
-        {
-            for (auto& failure : worker)
-                failures.push_back (std::move (failure));
-        }
-    }
-
-    std::sort (failures.begin(), failures.end(), &Paths::isPathEarlier<juce::Result>);
-    std::sort (collectedFiles.begin(), collectedFiles.end(), &Paths::isPathEarlier<juce::File>);
-
-    if (rawPaths.size() > 1)
-        collectedFiles.erase (std::unique (collectedFiles.begin(),
-                                           collectedFiles.end(),
-                                           [] (const auto& firstEntry, const auto& secondEntry)
-                                           {
-                                               return not Paths::isPathEarlier (firstEntry, secondEntry) and not Paths::isPathEarlier (secondEntry, firstEntry);
-                                           }),
-                              collectedFiles.end());
-
-    auto isExplicitFlags (getExplicitFlags (collectedFiles, explicitSet));
-    return { std::move (failures), std::move (collectedFiles), std::move (isExplicitFlags) };
+    return { std::move (failures), std::move (files), std::move (folders) };
 }
 
-std::tuple<juce::Result, std::vector<std::pair<std::string, juce::File>>, jam::Array<bool>> Paths::getReadableFiles (const jam::Strings& rawPaths,
-                                                                                                                     const jam::Strings& includeGlobs,
-                                                                                                                     const jam::Strings& excludeGlobs,
-                                                                                                                     bool isIncludingHidden,
-                                                                                                                     bool isIgnoringRules)
+std::pair<Paths::Failures, jam::Array<Paths::Entry>> Paths::getFiles (juce::Span<const std::string_view> rawPaths,
+                                                                      juce::Span<const std::string_view> includeGlobs,
+                                                                      juce::Span<const std::string_view> excludeGlobs,
+                                                                      bool isIncludingHidden,
+                                                                      bool isIgnoringRules)
 {
-    auto [pathFailures, files, isExplicitFlags] { getFiles (rawPaths, includeGlobs, excludeGlobs, isIncludingHidden, isIgnoringRules) };
+    auto [failures, entries, roots] { getClassifiedPaths (rawPaths) };
 
-    if (not pathFailures.empty())
+    if (not roots.isEmpty())
     {
-        const auto& [failurePath, failureResult] { pathFailures.front() };
-        juce::ignoreUnused (failurePath);
-        return { failureResult, std::vector<std::pair<std::string, juce::File>> {}, jam::Array<bool> {} };
+        jam::Array<jam::Array<Entry>> workerEntries;
+        const std::atomic<bool> shouldStop { false };
+        auto walkFailures (applyToDirectories (roots,
+                                               includeGlobs,
+                                               excludeGlobs,
+                                               isIncludingHidden,
+                                               isIgnoringRules,
+                                               [&workerEntries] (int workerCount)
+                                               {
+                                                   workerEntries.resize (workerCount);
+                                               },
+                                               [&workerEntries] (int workerIndex, const std::string& fileFullPath, std::string_view fileDisplayPath)
+                                               {
+                                                   workerEntries.at (workerIndex).add (Entry { std::string { fileDisplayPath }, juce::File { jam::Strings::fromView (fileFullPath) }, false });
+                                               },
+                                               shouldStop));
+
+        int totalCount { 0 };
+
+        for (const auto& worker : workerEntries)
+            totalCount += worker.size();
+
+        entries.ensureStorageAllocated (entries.size() + totalCount);
+
+        for (auto& worker : workerEntries)
+        {
+            for (auto& entry : worker)
+                entries.add (std::move (entry));
+        }
+
+        addFailures (failures, std::move (walkFailures));
     }
 
-    return { juce::Result::ok(), std::move (files), std::move (isExplicitFlags) };
+    std::sort (entries.begin(), entries.end(), [] (const Entry& firstEntry, const Entry& secondEntry)
+    {
+        const auto& [firstPath, firstFile, isFirstExplicit] { firstEntry };
+        const auto& [secondPath, secondFile, isSecondExplicit] { secondEntry };
+        juce::ignoreUnused (firstFile, secondFile);
+        const int order { firstPath.compare (secondPath) };
+        return order < 0 or (order == 0 and isFirstExplicit and not isSecondExplicit);
+    });
+
+    if (rawPaths.size() > 1)
+    {
+        const auto uniqueEnd { std::unique (entries.begin(), entries.end(), [] (const Entry& firstEntry, const Entry& secondEntry)
+        {
+            const auto& [firstPath, firstFile, isFirstExplicit] { firstEntry };
+            const auto& [secondPath, secondFile, isSecondExplicit] { secondEntry };
+            juce::ignoreUnused (firstFile, isFirstExplicit, secondFile, isSecondExplicit);
+            return firstPath.compare (secondPath) == 0;
+        }) };
+        const int uniqueCount { static_cast<int> (std::distance (entries.begin(), uniqueEnd)) };
+        entries.removeRange (uniqueCount, entries.size() - uniqueCount);
+    }
+
+    return { std::move (failures), std::move (entries) };
+}
+
+std::pair<juce::Result, jam::Array<Paths::Entry>> Paths::getReadableFiles (juce::Span<const std::string_view> rawPaths,
+                                                                           juce::Span<const std::string_view> includeGlobs,
+                                                                           juce::Span<const std::string_view> excludeGlobs,
+                                                                           bool isIncludingHidden,
+                                                                           bool isIgnoringRules)
+{
+    auto [pathFailures, entries] { getFiles (rawPaths, includeGlobs, excludeGlobs, isIncludingHidden, isIgnoringRules) };
+    const auto& [failurePaths, failureResults] { pathFailures };
+
+    if (not failureResults.isEmpty())
+    {
+        int firstIndex { 0 };
+
+        for (int index { 1 }; index < failurePaths.size(); ++index)
+        {
+            if (failurePaths.getView (index) < failurePaths.getView (firstIndex))
+                firstIndex = index;
+        }
+
+        return { failureResults.at (firstIndex), jam::Array<Entry> {} };
+    }
+
+    return { juce::Result::ok(), std::move (entries) };
 }

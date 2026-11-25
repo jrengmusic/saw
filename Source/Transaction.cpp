@@ -4,192 +4,16 @@
 #include "Writer.h"
 #include "generated/Generated.h"
 
-static std::pair<juce::Result, int> getValidatedRunState (const Arguments& arguments, bool isStandardInput)
-{
-    if (arguments.contains (Id::applyOption) and isStandardInput)
-        return { juce::Result::fail (text::Diagnostics::failApplyStandardInput), 0 };
-
-    return Transaction::getExpectStatus (arguments);
-}
-
-static juce::Result getRestoreStatus (const juce::File& targetFile,
-                                      const juce::File& blobFile,
-                                      const TextDocument& originalDocument,
-                                      std::string_view plannedBytes)
-{
-    const auto& displayPath { originalDocument.getDisplayPath() };
-    const auto blobStatus { TextDocument::getBytesStatus (blobFile, displayPath, originalDocument.getBytes(), Id::preHash) };
-
-    if (blobStatus.failed())
-        return blobStatus;
-
-    if (jam::File::swapFiles (targetFile, blobFile))
-    {
-        const auto swapStatus { TextDocument::getBytesStatus (blobFile, displayPath, plannedBytes, Id::postHash) };
-
-        if (swapStatus.failed())
-        {
-            jam::File::swapFiles (targetFile, blobFile);
-            return swapStatus;
-        }
-    }
-    else
-    {
-        const auto plannedStatus { TextDocument::getBytesStatus (targetFile, displayPath, plannedBytes, Id::postHash) };
-
-        if (plannedStatus.failed())
-            return plannedStatus;
-
-        const auto writeStatus { Writer::toFile (targetFile, originalDocument.getBytes()) };
-
-        if (writeStatus.failed())
-            return writeStatus;
-    }
-
-    return TextDocument::getBytesStatus (targetFile, displayPath, originalDocument.getBytes(), Id::preHash);
-}
-
-static jam::Strings rollbackFiles (const jam::Array<juce::File>& targetFiles,
-                                   const jam::Array<std::unique_ptr<TextDocument>>& originalDocuments,
-                                   const std::vector<std::string>& plannedTexts,
-                                   const juce::String& txId,
-                                   int rollbackCount)
-{
-    jam::Strings failedPaths;
-
-    for (int index { 0 }; index < rollbackCount; ++index)
-    {
-        const auto restoreStatus { getRestoreStatus (targetFiles.at (index),
-                                                     UndoCache::getBlobFile (txId, index),
-                                                     *originalDocuments.at (index),
-                                                     plannedTexts.at (static_cast<size_t> (index))) };
-
-        if (restoreStatus.failed())
-            failedPaths.add (originalDocuments.at (index)->getDisplayPath());
-    }
-
-    return failedPaths;
-}
-
-static std::pair<juce::Result, int> getSwappedFileStatus (const juce::File& targetFile,
-                                                          const juce::File& blobFile,
-                                                          const TextDocument& originalDocument,
-                                                          std::string_view plannedBytes,
-                                                          int fileIndex)
-{
-    const auto& displayPath { originalDocument.getDisplayPath() };
-    const auto preStatus { TextDocument::getBytesStatus (blobFile, displayPath, originalDocument.getBytes(), Id::preHash) };
-
-    if (preStatus.failed())
-    {
-        const bool isSwappedBack { jam::File::swapFiles (targetFile, blobFile) };
-
-        if (isSwappedBack and TextDocument::getBytesStatus (blobFile, displayPath, plannedBytes, Id::postHash).wasOk())
-            return { preStatus, fileIndex };
-
-        if (isSwappedBack)
-            jam::File::swapFiles (targetFile, blobFile);
-
-        return { preStatus, fileIndex + 1 };
-    }
-
-    const auto postStatus { TextDocument::getBytesStatus (targetFile, displayPath, plannedBytes, Id::postHash) };
-
-    if (postStatus.failed())
-        return { postStatus, fileIndex + 1 };
-
-    return { juce::Result::ok(), 0 };
-}
-
-static std::pair<juce::Result, int> getWrittenFileStatus (const juce::File& targetFile,
-                                                          const TextDocument& originalDocument,
-                                                          std::string_view plannedBytes,
-                                                          int fileIndex)
-{
-    const auto& displayPath { originalDocument.getDisplayPath() };
-    const auto preStatus { TextDocument::getBytesStatus (targetFile, displayPath, originalDocument.getBytes(), Id::preHash) };
-
-    if (preStatus.failed())
-        return { preStatus, fileIndex };
-
-    const auto writeStatus { Writer::toFile (targetFile, plannedBytes) };
-
-    if (writeStatus.failed())
-    {
-        const bool isUnchanged { TextDocument::getBytesStatus (targetFile, displayPath, originalDocument.getBytes(), Id::preHash).wasOk() };
-        return { writeStatus, isUnchanged ? fileIndex : fileIndex + 1 };
-    }
-
-    const auto postStatus { TextDocument::getBytesStatus (targetFile, displayPath, plannedBytes, Id::postHash) };
-
-    if (postStatus.failed())
-        return { postStatus, fileIndex + 1 };
-
-    return { juce::Result::ok(), 0 };
-}
-
-static std::pair<juce::Result, int> getCommitFileStatus (const juce::File& targetFile,
-                                                         const juce::File& blobFile,
-                                                         const TextDocument& originalDocument,
-                                                         std::string_view plannedBytes,
-                                                         int fileIndex)
-{
-    if (jam::File::isSwappable (targetFile, blobFile))
-    {
-        if (jam::File::swapFiles (targetFile, blobFile))
-            return getSwappedFileStatus (targetFile, blobFile, originalDocument, plannedBytes, fileIndex);
-
-        const auto backupStatus { Writer::toFile (blobFile, originalDocument.getBytes()) };
-
-        if (backupStatus.failed())
-            return { backupStatus, fileIndex };
-    }
-
-    return getWrittenFileStatus (targetFile, originalDocument, plannedBytes, fileIndex);
-}
-
-static juce::Result commitPlannedFiles (const jam::Array<juce::File>& targetFiles,
-                                        const jam::Array<std::unique_ptr<TextDocument>>& originalDocuments,
-                                        const std::vector<std::string>& plannedTexts,
-                                        const juce::String& txId)
-{
-    for (int index { 0 }; index < targetFiles.size(); ++index)
-    {
-        const auto displayPath { originalDocuments.at (index)->getDisplayPath() };
-        const auto [fileStatus, rollbackCount] { getCommitFileStatus (targetFiles.at (index),
-                                                                      UndoCache::getBlobFile (txId, index),
-                                                                      *originalDocuments.at (index),
-                                                                      plannedTexts.at (static_cast<size_t> (index)),
-                                                                      index) };
-
-        if (fileStatus.failed())
-        {
-            const auto failedPaths { rollbackFiles (targetFiles, originalDocuments, plannedTexts, txId, rollbackCount) };
-
-            if (failedPaths.size() == 0)
-            {
-                UndoCache::removeTransaction (txId);
-                return juce::Result::fail (
-                    Stdio::getFormatted (text::Diagnostics::failWrite,
-                                         displayPath.toRawUTF8(),
-                                         fileStatus.getErrorMessage().toRawUTF8()));
-            }
-
-            return juce::Result::fail (
-                Stdio::getFormatted (text::Diagnostics::failRollback,
-                                     displayPath.toRawUTF8(),
-                                     fileStatus.getErrorMessage().toRawUTF8(),
-                                     failedPaths.joinIntoString (", ").toRawUTF8(),
-                                     UndoCache::getBlobDirectory().getFullPathName().toRawUTF8()));
-        }
-    }
-
-    return juce::Result::ok();
-}
-
 Transaction::Transaction (std::string_view newCommandName)
-    : commandName (jam::Strings::fromView (newCommandName))
+    : commandName (newCommandName)
 {
+}
+
+bool Transaction::addTarget (const juce::File& targetFile)
+{
+    const auto [targetEntry, isInserted] { targetFiles.insert (targetFile) };
+    juce::ignoreUnused (targetEntry);
+    return isInserted;
 }
 
 juce::Result Transaction::addFile (const juce::File& targetFile,
@@ -201,38 +25,33 @@ juce::Result Transaction::addFile (const juce::File& targetFile,
 
     if (fileEditCount > 0)
     {
-        auto plannedText { diff.getPlannedText (*originalDocument) };
         totalEditCount += fileEditCount;
 
-        if (originalDocument->getBytes().compare (plannedText) != 0)
+        if (originalDocument->getBytes().compare (diff.getPlannedBytes()) != 0)
         {
             const auto writeStatus { Writer::getWriteStatus (targetFile, originalDocument->getDisplayPath()) };
 
             if (writeStatus.failed())
                 return writeStatus;
 
-            targetFiles.add (targetFile);
-            originalDocuments.add (std::move (originalDocument));
-            plannedTexts.push_back (std::move (plannedText));
-            diffs.add (std::move (diff));
-            executableFlags.add (Writer::isExecutable (targetFile));
+            stagedFiles.add (StagedFile (targetFile, std::move (originalDocument), std::move (diff), stagedFiles.size()));
         }
     }
 
     return juce::Result::ok();
 }
 
-Stdio::Output Transaction::run (const Arguments& arguments, bool isStandardInput)
+Stdio::Output Transaction::run (const Arguments& arguments)
 {
     const bool isApply { arguments.contains (Id::applyOption) };
     const bool hasExpect { arguments.contains (Id::expectOption) };
-    const auto [runStatus, expectedCount] { getValidatedRunState (arguments, isStandardInput) };
+    const auto [runStatus, expectedCount] { getExpectStatus (arguments) };
 
     if (runStatus.failed())
-        return Stdio::getFailure (runStatus.getErrorMessage());
+        return Stdio::getFailure (runStatus);
 
     if (hasExpect and expectedCount != totalEditCount)
-        return getExpectMismatch (getDryRunDiffText(), expectedCount, totalEditCount);
+        return getExpectMismatch (getDiffDocuments (stagedFiles), expectedCount, totalEditCount);
 
     if (isApply)
         return runCommit();
@@ -243,82 +62,154 @@ Stdio::Output Transaction::run (const Arguments& arguments, bool isStandardInput
 std::pair<juce::Result, int> Transaction::getExpectStatus (const Arguments& arguments)
 {
     if (arguments.contains (Id::applyOption) and not arguments.contains (Id::expectOption))
-        return { juce::Result::fail (text::Diagnostics::failApplyRequiresExpect), 0 };
+        return { Stdio::fail (text::Diagnostics::failApplyRequiresExpect), 0 };
 
     return arguments.getInteger (Id::expectOption, 0, 0);
 }
 
-Stdio::Output Transaction::getExpectMismatch (std::string diffText, int expectedCount, int actualCount)
+Stdio::Output Transaction::getExpectMismatch (Stdio::Documents diff, int expectedCount, int actualCount)
 {
-    return { Stdio::exitMismatch,
-             std::move (diffText),
-             Stdio::getDiagnostic (Stdio::getFormatted (text::Diagnostics::failExpectMismatch,
-                                                        expectedCount,
-                                                        actualCount)) };
+    jam::Array<juce::Result> failures;
+    failures.add (Stdio::fail (text::Diagnostics::failExpectMismatch,
+                               expectedCount,
+                               text::Diagnostics::foundEdits,
+                               actualCount,
+                               text::Diagnostics::nothingWritten));
+    return Stdio::getOutput (Stdio::exitMismatch, std::move (diff), std::move (failures));
 }
 
-std::string Transaction::getDryRunDiffText() const
+juce::Result Transaction::getRollbackFailure (std::string_view failure, std::string_view failedPath, const juce::Result& status, const jam::Strings& unrestoredPaths)
 {
-    std::string diffText;
+    static constexpr const char* pathSeparator { ", " };
+    return Stdio::fail (failure,
+                        failedPath,
+                        jam::Strings::getView (Id::diagnosticSeparator),
+                        status,
+                        text::Diagnostics::rollbackFailed,
+                        jam::Strings::getView (unrestoredPaths.joinIntoString (pathSeparator)),
+                        text::Diagnostics::backupKept,
+                        jam::Strings::getView (UndoCache::getBlobDirectory().getFullPathName()));
+}
 
-    for (int index { 0 }; index < diffs.size(); ++index)
-        diffText.append (diffs.at (index).getUnifiedDiff (*originalDocuments.at (index), plannedTexts.at (static_cast<size_t> (index))));
+std::tuple<juce::Result, std::string_view, jam::Strings> Transaction::applyToStagedFiles (const jam::Array<StagedFile>& stagedFiles,
+                                                                                         std::string_view transactionId,
+                                                                                         const std::function<std::pair<juce::Result, bool> (const StagedFile&)>& function)
+{
+    for (int index { 0 }; index < stagedFiles.size(); ++index)
+    {
+        const auto& stagedFile { stagedFiles.at (index) };
+        const auto [fileStatus, isChanged] { function (stagedFile) };
 
-    return diffText;
+        if (fileStatus.failed())
+        {
+            const int restoreCount { isChanged ? index + 1 : index };
+            jam::Strings unrestoredPaths;
+
+            for (int restoreIndex { 0 }; restoreIndex < restoreCount; ++restoreIndex)
+            {
+                const auto& restoredFile { stagedFiles.at (restoreIndex) };
+
+                if (restoredFile.restore (transactionId).failed())
+                    unrestoredPaths.add (restoredFile.getDisplayPath());
+            }
+
+            return { fileStatus, stagedFile.getDisplayPath(), std::move (unrestoredPaths) };
+        }
+    }
+
+    return { juce::Result::ok(), std::string_view {}, jam::Strings {} };
+}
+
+Stdio::Documents Transaction::getDiffDocuments (const jam::Array<StagedFile>& stagedFiles)
+{
+    Stdio::Documents documents;
+
+    for (int index { 0 }; index < stagedFiles.size(); ++index)
+    {
+        const auto& stagedFile { stagedFiles.at (index) };
+        std::string diffText;
+        stagedFile.appendUnifiedDiff (diffText);
+
+        if (not diffText.empty())
+            documents.add (TextDocument::fromText (std::move (diffText), stagedFile.getDisplayPath()));
+    }
+
+    return documents;
 }
 
 Stdio::Output Transaction::runDryRun() const
 {
-    std::string printedOutput { getDryRunDiffText() };
+    auto documents (getDiffDocuments (stagedFiles));
 
     if (totalEditCount == 0)
     {
-        printedOutput += Stdio::getDiagnostic (juce::String::fromUTF8 (text::Diagnostics::summaryDryRunZero));
-        return { Stdio::exitSuccess, std::move (printedOutput), {} };
+        documents.add (TextDocument::fromText (Stdio::getDiagnostic (text::Diagnostics::summaryDryRunZero), {}));
+        return Stdio::getOutput (Stdio::exitSuccess, std::move (documents));
     }
 
-    printedOutput += Stdio::getDiagnostic (Stdio::getFormatted (text::Diagnostics::summaryDryRun,
-                                                                totalEditCount,
-                                                                originalDocuments.size(),
-                                                                totalEditCount));
-    return { Stdio::exitSuccess, std::move (printedOutput), {} };
+    documents.add (TextDocument::fromText (Stdio::getDiagnostic (text::Diagnostics::summaryDryRun,
+                                                                 totalEditCount,
+                                                                 text::Diagnostics::editsIn,
+                                                                 stagedFiles.size(),
+                                                                 text::Diagnostics::expectToWrite,
+                                                                 totalEditCount,
+                                                                 text::Diagnostics::toWrite), {}));
+    return Stdio::getOutput (Stdio::exitSuccess, std::move (documents));
 }
 
 Stdio::Output Transaction::runCommit()
 {
     if (totalEditCount == 0)
-        return { Stdio::exitSuccess, Stdio::getDiagnostic (text::Diagnostics::summaryAppliedZero), {} };
+        return Stdio::getOutput (Stdio::exitSuccess, Stdio::getDocuments (Stdio::getDiagnostic (text::Diagnostics::summaryAppliedZero)));
 
-    if (targetFiles.isEmpty())
-        return { Stdio::exitSuccess, Stdio::getDiagnostic (text::Diagnostics::summaryNoContentChanged), {} };
+    if (stagedFiles.isEmpty())
+        return Stdio::getOutput (Stdio::exitSuccess, Stdio::getDocuments (Stdio::getDiagnostic (text::Diagnostics::summaryNoContentChanged)));
 
     const auto [commitStatus, txId] { commit() };
 
-    if (commitStatus.failed() and txId.isEmpty())
-        return Stdio::getFailure (commitStatus.getErrorMessage());
+    if (commitStatus.failed() and txId.empty())
+        return Stdio::getFailure (commitStatus);
 
-    const auto appliedSummary { Stdio::getDiagnostic (Stdio::getFormatted (text::Diagnostics::summaryApplied,
-                                                                           totalEditCount,
-                                                                           targetFiles.size(),
-                                                                           txId.toRawUTF8())) };
+    auto appliedSummary (Stdio::getDocuments (Stdio::getDiagnostic (text::Diagnostics::summaryApplied,
+                                                                    totalEditCount,
+                                                                    text::Diagnostics::editsIn,
+                                                                    stagedFiles.size(),
+                                                                    text::Diagnostics::transactionOpen,
+                                                                    txId,
+                                                                    Chars::closeParen)));
 
     if (commitStatus.failed())
-        return { Stdio::exitError, appliedSummary, Stdio::getDiagnostic (commitStatus.getErrorMessage()) };
+    {
+        jam::Array<juce::Result> failures;
+        failures.add (commitStatus);
+        return Stdio::getOutput (Stdio::exitError, std::move (appliedSummary), std::move (failures));
+    }
 
-    return { Stdio::exitSuccess, appliedSummary, {} };
+    return Stdio::getOutput (Stdio::exitSuccess, std::move (appliedSummary));
 }
 
-std::pair<juce::Result, juce::String> Transaction::commit()
+std::pair<juce::Result, std::string> Transaction::commit()
 {
-    const auto [stageStatus, txId] { UndoCache::addTransaction (commandName, targetFiles, executableFlags, originalDocuments, plannedTexts) };
+    const auto [stageStatus, txId] { UndoCache::addTransaction (commandName, stagedFiles) };
 
     if (stageStatus.failed())
         return { stageStatus, {} };
 
-    const auto commitStatus { commitPlannedFiles (targetFiles, originalDocuments, plannedTexts, txId) };
+    const auto [commitStatus, failedPath, unrestoredPaths] { applyToStagedFiles (stagedFiles, txId, [&transactionId = txId] (const StagedFile& stagedFile)
+    {
+        return stagedFile.commit (transactionId);
+    }) };
 
     if (commitStatus.failed())
-        return { commitStatus, {} };
+    {
+        if (unrestoredPaths.size() == 0)
+        {
+            UndoCache::removeTransaction (txId);
+            return { Writer::getWriteFailure (failedPath, jam::Strings::getView (commitStatus.getErrorMessage())), {} };
+        }
+
+        return { getRollbackFailure (text::Diagnostics::failWrite, failedPath, commitStatus, unrestoredPaths), {} };
+    }
 
     const auto publishStatus { UndoCache::publishTransaction (txId) };
     UndoCache::removeOldestTransactions();

@@ -1,6 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
-#include "TextDocument.h"
+#include "StagedFile.h"
 
 /** @brief Stores the pre-edit snapshots of transactions on disk, so that `saw undo` can restore them.
  *
@@ -18,14 +18,6 @@ struct UndoCache
      */
     static juce::File getBlobDirectory();
 
-    /** @brief Returns the path of the record of a transaction in the pending folder.
-     *
-     *  @param transactionId Identifier of the transaction.
-     *
-     *  @return Path of the pending record file. The file may not exist.
-     */
-    static juce::File getPendingFile (const juce::String& transactionId);
-
     /** @brief Returns the path of the blob file of one original file of a transaction.
      *
      *  @param transactionId Identifier of the transaction.
@@ -33,15 +25,16 @@ struct UndoCache
      *
      *  @return Path of the blob file. The file may not exist.
      */
-    static juce::File getBlobFile (const juce::String& transactionId, int index);
+    static juce::File getBlobFile (std::string_view transactionId, int index);
 
     /** @brief Publishes a pending record into the undo folder with one rename.
      *
      *  @param transactionId Identifier of the transaction whose record is pending.
      *
-     *  @return Ok when the rename succeeds, otherwise the failure of the rename.
+     *  @return Ok when the rename succeeds. Otherwise the failure that names the transaction id and reports
+     *          that its record is pending.
      */
-    static juce::Result publishTransaction (const juce::String& transactionId);
+    static juce::Result publishTransaction (std::string_view transactionId);
 
     /** @brief Claims a transaction for `undo`, by moving its record out of the undo folder.
      *
@@ -55,7 +48,7 @@ struct UndoCache
      *  @return Status result paired with true when the record came out of the undo folder, and
      *          false when the record was not moved.
      */
-    static std::pair<juce::Result, bool> claimTransaction (const juce::String& transactionId, bool isForce);
+    static std::pair<juce::Result, bool> claimTransaction (std::string_view transactionId, bool isForce);
 
     /** @brief Stages the blob files and the record of a transaction, in parallel.
      *
@@ -64,24 +57,18 @@ struct UndoCache
      *  failed write removes the transaction again.
      *
      *  @param commandName     Subcommand name stored in the record.
-     *  @param targetFiles     The files that the transaction changes, in order.
-     *  @param executableFlags The executable permission flag of each target file, before the edit.
-     *  @param originalDocuments The document of each target file, before the edit.
-     *  @param plannedTexts    The planned bytes of each target file.
+     *  @param stagedFiles     The staged files of the transaction. Each one gives its blob file and its record entry.
      *
      *  @return Status result paired with the generated transaction id on success.
      */
-    static std::pair<juce::Result, juce::String> addTransaction (const juce::String& commandName,
-                                                                 const jam::Array<juce::File>& targetFiles,
-                                                                 const jam::Array<bool>& executableFlags,
-                                                                 const jam::Array<std::unique_ptr<TextDocument>>& originalDocuments,
-                                                                 const std::vector<std::string>& plannedTexts);
+    static std::pair<juce::Result, std::string> addTransaction (std::string_view commandName,
+                                                                const jam::Array<StagedFile>& stagedFiles);
 
-    /** @brief Lists the transaction ids, newest first.
+    /** @brief Lists the transaction ids in ascending order.
      *
      *  A pending id is listed only when its record is valid.
      *
-     *  @return The ids, newest first.
+     *  @return The ids, in ascending order.
      */
     static jam::Strings getTransactionIds();
 
@@ -92,13 +79,13 @@ struct UndoCache
      *  @return Status result paired with the parsed record, or failure with null. A record that
      *          does not exist is reported as unknown. A record that does not validate is reported as corrupt.
      */
-    static std::pair<juce::Result, std::unique_ptr<jam::JsonDocument>> getTransactionDocument (const juce::String& transactionId);
+    static std::pair<juce::Result, std::unique_ptr<jam::JsonDocument>> getTransactionDocument (std::string_view transactionId);
 
     /** @brief Removes a transaction: its pending record, its undo record, and its blob files.
      *
      *  @param transactionId Identifier of the transaction to remove.
      */
-    static void removeTransaction (const juce::String& transactionId);
+    static void removeTransaction (std::string_view transactionId);
 
     /** @brief Removes the oldest transactions, and keeps the newest 32.
      *

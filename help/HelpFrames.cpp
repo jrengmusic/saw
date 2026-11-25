@@ -1,12 +1,13 @@
 #include <JuceHeader.h>
 
-static bool writeFrame (const juce::File& frameFile, const juce::MemoryOutputStream& frame)
+static bool writeFrame (const juce::File& frameFile, const std::function<void (juce::OutputStream&)>& writeBytes)
 {
     frameFile.deleteFile();
     juce::FileOutputStream stream { frameFile };
 
-    if (stream.openedOk() and stream.write (frame.getData(), frame.getDataSize()))
+    if (stream.openedOk())
     {
+        writeBytes (stream);
         stream.flush();
         return stream.getStatus().wasOk();
     }
@@ -20,31 +21,37 @@ static bool writeHelpFrame (const juce::File& frameFile, const juce::String& doc
     auto document { jam::MarkdownDocument::parse (BinaryData::getString (documentName), documentName) };
     assert (document != nullptr);
     page.setDocument (std::move (*document));
-    juce::MemoryOutputStream frame;
-    page.writeToStream (frame);
-    return writeFrame (frameFile, frame);
+    return writeFrame (frameFile, [&page] (juce::OutputStream& stream)
+    {
+        page.writeToStream (stream);
+    });
 }
 
 static bool writeEraseFrame (const juce::File& frameFile)
 {
-    juce::MemoryOutputStream frame;
-    jam::TerminalEncoder::writeEraseScreen (frame);
-    return writeFrame (frameFile, frame);
+    return writeFrame (frameFile, [] (juce::OutputStream& stream)
+    {
+        jam::TerminalEncoder::writeEraseScreen (stream);
+    });
 }
 
 int main (int argc, char* argv[])
 {
-    assert (argc > 3);
+    static constexpr int folderIndex { 1 };
+    static constexpr int eraseFileIndex { 2 };
+    static constexpr int firstDocumentIndex { 3 };
+    static constexpr const char* frameExtension { ".frame" };
+    assert (argc > firstDocumentIndex);
 
     const juce::ScopedJuceInitialiser_GUI juceInitialiser;
-    const juce::File folder { juce::String::fromUTF8 (argv[1]) };
-    const juce::File eraseFile { folder.getChildFile (juce::String::fromUTF8 (argv[2])) };
+    const juce::File folder { juce::String::fromUTF8 (argv[folderIndex]) };
+    const juce::File eraseFile { folder.getChildFile (juce::String::fromUTF8 (argv[eraseFileIndex])) };
     bool isWritten { writeEraseFrame (eraseFile) };
 
-    for (int index { 3 }; index < argc; ++index)
+    for (int index { firstDocumentIndex }; index < argc; ++index)
     {
         const auto documentName { juce::String::fromUTF8 (argv[index]) };
-        const auto frameFile { folder.getChildFile (documentName).withFileExtension (".frame") };
+        const auto frameFile { folder.getChildFile (documentName).withFileExtension (frameExtension) };
         isWritten = writeHelpFrame (frameFile, documentName) and isWritten;
     }
 

@@ -3,8 +3,9 @@
 
 /** @brief Bytes of one source behind one view: a mapped file, a buffer read into memory, or a supplied text.
  *
- *  The Input owns each mapping and each buffer that it creates. A supplied text is not owned, so the
- *  view refers to the caller's text.
+ *  The Input owns each mapping and each buffer that it creates. The standard-input mapping is held by
+ *  native, which unmaps it when the Input is destroyed. A mapped file is held by mappedFile, which unmaps
+ *  it. A buffer is held by buffer. A supplied text is not owned, so the view refers to the caller's text.
  */
 class Input
 {
@@ -29,9 +30,9 @@ public:
     /** @brief Creates an empty Input. Only the static factories can name Access, so only they construct one. */
     explicit Input (Access);
 
-    /** @brief Releases the standard-input mapping, when the Input holds one.
+    /** @brief Destroys the Input. The members release the mappings and the buffer.
      *
-     *  The mapping of a file belongs to mappedFile and is released with it.
+     *  The destructor is defaulted. native unmaps the standard input, and mappedFile unmaps a mapped file.
      */
     ~Input();
 
@@ -69,11 +70,11 @@ public:
 
     /** @brief Checks whether the input of a command is a stream, not a regular file.
      *
-     *  @param source The supplied text, or nullopt for the process standard input.
-     *
      *  On Windows, every standard input without a supplied text is a stream. On other platforms,
      *  standard input is a stream when no text is supplied and its status is not a regular file,
      *  or when its status cannot be read.
+     *
+     *  @param source The supplied text, or nullopt for the process standard input.
      *
      *  @return True when the input is a stream.
      */
@@ -87,15 +88,39 @@ public:
     std::string_view getBytes() const noexcept;
 
 private:
+    /** @brief Owns the memory mapping of the standard input on POSIX platforms.
+     *
+     *  The constructor maps the standard input with mmap, and the destructor unmaps it with munmap.
+     *  On Windows, Native is empty, because standard input is never mapped there.
+     */
+    struct Native;
+
+    /** @brief Maps the standard input from its current offset to its end, when standard input is a regular file.
+     *
+     *  @return True when the mapping gives the bytes, or when the offset is at or past the end, which gives
+     *          an empty input. False when standard input is not a regular file or the map fails, so the
+     *          caller reads it instead.
+     */
     bool setMappedBytes();
+
+    /** @brief Reads standard input into the buffer, until numLines newlines are read or the end is reached.
+     *
+     *  @param numLines The number of newlines that ends the read. allLines reads to the end.
+     *
+     *  @return True when the read ends at the end of the input or at numLines, false when a read fails.
+     */
     bool setReadBytes (int numLines);
 
+    /** @brief Holds the bytes read into memory, for a file that is read and for standard input that is read. */
     juce::HeapBlock<char> buffer;
+
+    /** @brief Holds the mapping of a file that is larger than the read limit, and unmaps it on destruction. */
     std::unique_ptr<juce::MemoryMappedFile> mappedFile;
-#ifndef _WIN32
-    void* mappedAddress { nullptr };
-    size_t mappedSize { 0 };
-#endif
+
+    /** @brief Holds the mapping of standard input on POSIX platforms, and unmaps it on destruction. */
+    std::unique_ptr<Native> native;
+
+    /** @brief View of the bytes of the input. The owner is buffer, mappedFile, native, or the caller's text. */
     std::string_view bytes;
 
     JUCE_DECLARE_NON_COPYABLE (Input)

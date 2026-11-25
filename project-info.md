@@ -137,59 +137,26 @@ Every field is a complete literal; nothing downstream derives, concatenates, or 
 
 ## program module
 
-+--------------+-------------------+
-| name         | value             |
-+==============+===================+
-| core         | juce_core         |
-| cryptography | juce_cryptography |
-| jamCore      | jam_core          |
-+--------------+-------------------+
++-------------------------+----------------------------+
+| name                    | value                      |
++=========================+============================+
+| core                    | juce_core                  |
+| cryptography            | juce_cryptography          |
+| dataStructures          | juce_data_structures       |
+| events                  | juce_events                |
+| jamCore                 | jam_core                   |
+| jamDataStructures       | jam_data_structures        |
+| jamTerminal             | jam_terminal               |
+| jamModelContextProtocol | jam_model_context_protocol |
++-------------------------+----------------------------+
 
-## server user module
+## program user module
 
 +--------------+----------------------------+------------------------------------------+
 | root         | name                       | description                              |
 +==============+============================+==========================================+
 | @user-module | jam_model_context_protocol | Model Context Protocol server over stdio |
 +--------------+----------------------------+------------------------------------------+
-
-## server module
-
-+-------------------------+----------------------------+---------------------------------------------+
-| name                    | value                      | description                                 |
-+=========================+============================+=============================================+
-| core                    | juce_core                  | JUCE core                                   |
-+-------------------------+----------------------------+---------------------------------------------+
-| cryptography            | juce_cryptography          | JUCE cryptography                           |
-+-------------------------+----------------------------+---------------------------------------------+
-| dataStructures          | juce_data_structures       | JUCE data structures                        |
-+-------------------------+----------------------------+---------------------------------------------+
-| events                  | juce_events                | JUCE events                                 |
-+-------------------------+----------------------------+---------------------------------------------+
-| graphics                | juce_graphics              | JUCE graphics                               |
-+-------------------------+----------------------------+---------------------------------------------+
-| guiBasics               | juce_gui_basics            | JUCE GUI basics                             |
-+-------------------------+----------------------------+---------------------------------------------+
-| audioProcessors         | juce_audio_processors      | JUCE audio processors                       |
-+-------------------------+----------------------------+---------------------------------------------+
-| jamCore                 | jam_core                   | JAM Core                                    |
-+-------------------------+----------------------------+---------------------------------------------+
-| jamDocument             | jam_document               | Universal line break and reflow             |
-+-------------------------+----------------------------+---------------------------------------------+
-| jamFreetype             | jam_freetype               | Vendored FreeType rasterization             |
-+-------------------------+----------------------------+---------------------------------------------+
-| jamGraphics             | jam_graphics               | Graphics utilities                          |
-+-------------------------+----------------------------+---------------------------------------------+
-| jamDataStructures       | jam_data_structures        | ValueTree data model                        |
-+-------------------------+----------------------------+---------------------------------------------+
-| jamWeb                  | jam_web                    | HTML and CSS tokenizers and parsers         |
-+-------------------------+----------------------------+---------------------------------------------+
-| jamStyle                | jam_style                  | LookAndFeel base and colour registry        |
-+-------------------------+----------------------------+---------------------------------------------+
-| jamTerminal             | jam_terminal               | VT read-side engine and protocol vocabulary |
-+-------------------------+----------------------------+---------------------------------------------+
-| jamModelContextProtocol | jam_model_context_protocol | Model Context Protocol server over stdio    |
-+-------------------------+----------------------------+---------------------------------------------+
 
 ## source glob
 
@@ -338,7 +305,7 @@ Every field is a complete literal; nothing downstream derives, concatenates, or 
 +-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
 | optimization            | -O3                            | /O2            |        | Full optimization                                |
 +-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| linkTimeOptimization    | -flto=thin                     | /GL            |        | Link-time optimization codegen                   |
+| linkTimeOptimization    | -flto                          | /GL            |        | Link-time optimization codegen                   |
 +-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
 | linkTimeCodegen         |                                | /LTCG          | linker | MSVC whole-program link-time codegen             |
 +-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+

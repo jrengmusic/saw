@@ -18,59 +18,23 @@ static std::string getFormattedCountOutput (std::string_view displayPath,
     if (isShowingPathPrefix)
     {
         jam::Format::appendBytes (output, displayPath);
-        output.push_back (static_cast<char> (Chars::colon));
+        jam::Format::appendUtf8 (output, Chars::colon);
     }
 
     jam::Format::appendDecimal (output, matchCount);
-    output.push_back (static_cast<char> (Chars::newline));
+    jam::Format::appendUtf8 (output, Chars::newline);
     return output;
 }
 
-static size_t getLineStart (const char* data, size_t pos, size_t minOffset) noexcept
-{
-    static constexpr size_t wordSize { sizeof (std::uint64_t) };
-    static constexpr std::uint64_t lowBits { 0x0101010101010101 };
-    static constexpr std::uint64_t highBits { 0x8080808080808080 };
-    static constexpr std::uint64_t newlines { lowBits * static_cast<std::uint64_t> (Chars::newline) };
-    size_t lineStart { pos };
-
-    while (lineStart - minOffset >= wordSize)
-    {
-        std::uint64_t word {};
-        std::memcpy (&word, data + lineStart - wordSize, wordSize);
-        const std::uint64_t difference { word ^ newlines };
-
-        if (((difference - lowBits) & ~ difference & highBits) != 0)
-            break;
-
-        lineStart -= wordSize;
-    }
-
-    while (lineStart > minOffset and data[lineStart - 1] != static_cast<char> (Chars::newline))
-        --lineStart;
-
-    return lineStart;
-}
-
-static std::tuple<juce::Result, int, std::string> getBinaryOutcome (std::string_view displayPath, bool isExplicit)
-{
-    if (isExplicit)
-        return { TextDocument::getBinaryFailure (jam::Strings::fromView (displayPath)),
-                 0,
-                 {} };
-
-    return { juce::Result::ok(), 0, {} };
-}
-
-static std::tuple<juce::Result, int, std::string> getCountOutcome (std::string_view displayPath,
-                                                                   int matchCount,
-                                                                   bool isExplicit,
-                                                                   bool isShowingPathPrefix)
+static std::tuple<juce::Result, int, Stdio::Documents> getCountOutcome (std::string_view displayPath,
+                                                                        int matchCount,
+                                                                        bool isExplicit,
+                                                                        bool isShowingPathPrefix)
 {
     if (isExplicit or matchCount > 0)
-        return { juce::Result::ok(), matchCount, getFormattedCountOutput (displayPath, matchCount, isShowingPathPrefix) };
+        return { juce::Result::ok(), matchCount, Stdio::getDocuments (getFormattedCountOutput (displayPath, matchCount, isShowingPathPrefix), displayPath) };
 
-    return { juce::Result::ok(), 0, {} };
+    return { juce::Result::ok(), 0, Stdio::Documents {} };
 }
 
 static std::pair<juce::Result, bool> getLineMatch (const Pattern& pattern,
@@ -85,10 +49,10 @@ static std::pair<juce::Result, bool> getLineMatch (const Pattern& pattern,
     return pattern.hasMatch (line, automaton);
 }
 
-static std::vector<size_t> getChunkEnds (std::string_view bytes)
+static jam::Array<size_t> getChunkEnds (std::string_view bytes)
 {
     static constexpr size_t chunkSize { 1024 * 1024 };
-    std::vector<size_t> chunkEnds;
+    jam::Array<size_t> chunkEnds;
     size_t chunkStart { 0 };
 
     while (chunkStart < bytes.size())
@@ -96,38 +60,16 @@ static std::vector<size_t> getChunkEnds (std::string_view bytes)
         const size_t targetEnd { std::min (chunkStart + chunkSize, bytes.size()) };
         const size_t newlinePos { jam::simd::findByte (bytes.data(), bytes.size(), targetEnd - 1, static_cast<char> (Chars::newline)) };
         chunkStart = newlinePos < bytes.size() ? newlinePos + 1 : bytes.size();
-        chunkEnds.push_back (chunkStart);
+        chunkEnds.add (chunkStart);
     }
 
     return chunkEnds;
 }
 
-static std::string_view getChunk (std::string_view bytes, const std::vector<size_t>& chunkEnds, int chunkIndex)
+static std::string_view getChunk (std::string_view bytes, const jam::Array<size_t>& chunkEnds, int chunkIndex)
 {
-    const size_t index { static_cast<size_t> (chunkIndex) };
-    const size_t chunkStart { index == 0 ? size_t { 0 } : chunkEnds.at (index - 1) };
-    return bytes.substr (chunkStart, chunkEnds.at (index) - chunkStart);
-}
-
-static int getFirstLineNumber (const jam::Array<size_t>& newlineCounts, int chunkIndex)
-{
-    size_t newlinesBefore { 0 };
-
-    for (int index { 0 }; index < chunkIndex; ++index)
-        newlinesBefore += newlineCounts.at (index);
-
-    return initialLineNumber + static_cast<int> (newlinesBefore);
-}
-
-static juce::Result getFirstFailure (const jam::Array<juce::Result>& chunkStatuses)
-{
-    for (int index { 0 }; index < chunkStatuses.size(); ++index)
-    {
-        if (chunkStatuses.at (index).failed())
-            return chunkStatuses.at (index);
-    }
-
-    return juce::Result::ok();
+    const size_t chunkStart { chunkIndex == 0 ? size_t { 0 } : chunkEnds.at (chunkIndex - 1) };
+    return bytes.substr (chunkStart, chunkEnds.at (chunkIndex) - chunkStart);
 }
 
 Search::Search (const Arguments& arguments, int newBeforeContext, int newAfterContext, int newAfterLine, juce::Range<int> newLineRange)
@@ -146,38 +88,44 @@ Search::Search (const Arguments& arguments, int newBeforeContext, int newAfterCo
 {
 }
 
-std::tuple<juce::Result, int, std::string> Search::run (std::string_view bytes,
-                                                        std::string_view displayPath,
-                                                        const Pattern& pattern,
-                                                        jam::RegExpAutomaton& automaton,
-                                                        bool isExplicit,
-                                                        bool isShowingPathPrefix) const
+std::tuple<juce::Result, int, Stdio::Documents> Search::run (std::string_view bytes,
+                                                             std::string_view displayPath,
+                                                             const Pattern& pattern,
+                                                             jam::RegExpAutomaton& automaton,
+                                                             bool isExplicit,
+                                                             bool isShowingPathPrefix) const
 {
     if (isChunkedSearch (bytes.size()))
         return runChunks (bytes, displayPath, pattern, isExplicit, isShowingPathPrefix);
 
     const bool isRangeBounded { lineRange.getEnd() != Arguments::openRangeEnd };
     const std::string_view rangeBytes { isRangeBounded ? TextDocument::getLeadingLines (bytes, lineRange.getEnd() - 1 + std::min (afterContext, Arguments::openRangeEnd - lineRange.getEnd())) : bytes };
-    auto [searchResult, searchCount, searchOutput, searchedSize] { runLines (rangeBytes, displayPath, pattern, automaton, isExplicit, isShowingPathPrefix, initialLineNumber) };
+    auto [searchResult, searchCount, searchOutput, searchedSize] { runLines (rangeBytes, displayPath, pattern, automaton, isShowingPathPrefix, initialLineNumber) };
     const bool isBinaryRelevant { isExplicit or isCount or searchResult.failed() or searchCount > 0 };
 
     if (isBinaryRelevant and TextDocument::isBinary (rangeBytes.substr (0, searchedSize)))
-        return getBinaryOutcome (displayPath, isExplicit);
+        return { TextDocument::getBinaryStatus (displayPath, isExplicit), 0, Stdio::Documents {} };
 
-    return { std::move (searchResult), searchCount, std::move (searchOutput) };
+    if (searchResult.failed())
+        return { std::move (searchResult), 0, Stdio::Documents {} };
+
+    if (isCount and not isQuiet and not isFilesWithMatches)
+        return getCountOutcome (displayPath, searchCount, isExplicit, isShowingPathPrefix);
+
+    return { std::move (searchResult), searchCount, Stdio::getDocuments (std::move (searchOutput), displayPath) };
 }
 
-std::tuple<juce::Result, int, std::string> Search::runFile (const juce::File& file,
-                                                            std::string_view displayPath,
-                                                            const Pattern& pattern,
-                                                            jam::RegExpAutomaton& automaton,
-                                                            bool isExplicit,
-                                                            bool isShowingPathPrefix) const
+std::tuple<juce::Result, int, Stdio::Documents> Search::runFile (const juce::File& file,
+                                                                 std::string_view displayPath,
+                                                                 const Pattern& pattern,
+                                                                 jam::RegExpAutomaton& automaton,
+                                                                 bool isExplicit,
+                                                                 bool isShowingPathPrefix) const
 {
     const auto input { Input::fromFile (file, Input::maxBufferedReadSize) };
 
     if (input == nullptr)
-        return { TextDocument::getReadFailure (file, jam::Strings::fromView (displayPath)), 0, {} };
+        return { TextDocument::getReadFailure (file, displayPath), 0, Stdio::Documents {} };
 
     if (input->getBytes().empty())
         return getEmptyFileOutcome (displayPath, isExplicit, isShowingPathPrefix);
@@ -185,7 +133,7 @@ std::tuple<juce::Result, int, std::string> Search::runFile (const juce::File& fi
     return run (input->getBytes(), displayPath, pattern, automaton, isExplicit, isShowingPathPrefix);
 }
 
-std::tuple<juce::Result, int, std::string, size_t> Search::runStream (const Pattern& pattern) const
+std::tuple<juce::Result, int, Stdio::Documents, size_t> Search::runStream (const Pattern& pattern) const
 {
     static constexpr size_t initialCapacity { 256 * 1024 };
     const bool isStoppingAtFirst { isQuiet or isFilesWithMatches or isFirst };
@@ -197,7 +145,7 @@ std::tuple<juce::Result, int, std::string, size_t> Search::runStream (const Patt
     size_t readSize { 0 };
     int lineNumber { initialLineNumber };
     int matchCount { 0 };
-    std::string output;
+    Stdio::Documents documents;
     juce::int64 numRead { 1 };
 
     while (numRead > 0 and lineNumber < lineRange.getEnd() and not (isStoppingAtFirst and matchCount > 0))
@@ -205,7 +153,7 @@ std::tuple<juce::Result, int, std::string, size_t> Search::runStream (const Patt
         numRead = StandardStream::read (buffer.getData() + size, capacity - size);
 
         if (numRead < 0)
-            return { juce::Result::fail (text::Diagnostics::failStandardInput), 0, {}, readSize };
+            return { Stdio::fail (text::Diagnostics::failStandardInput), 0, Stdio::Documents {}, readSize };
 
         size += static_cast<size_t> (numRead);
         readSize += static_cast<size_t> (numRead);
@@ -217,21 +165,20 @@ std::tuple<juce::Result, int, std::string, size_t> Search::runStream (const Patt
         if (not chunk.empty())
         {
             const std::string_view rangeChunk { lineRange.getEnd() == Arguments::openRangeEnd ? chunk : TextDocument::getLeadingLines (chunk, lineRange.getEnd() - lineNumber) };
-            const auto [chunkStatus, chunkMatches, chunkOutput, searchedSize] { runLines (rangeChunk, Id::stdinPath, pattern, automaton, true, false, lineNumber) };
+            auto [chunkStatus, chunkMatches, chunkOutput, searchedSize] { runLines (rangeChunk, Id::stdinPath, pattern, automaton, false, lineNumber) };
 
             if (TextDocument::isBinary (rangeChunk.substr (0, searchedSize)))
             {
-                auto [binaryResult, binaryCount, binaryOutput] { getBinaryOutcome (Id::stdinPath, true) };
-                return { std::move (binaryResult), binaryCount, std::move (binaryOutput), readSize };
+                return { TextDocument::getBinaryStatus (Id::stdinPath, true), 0, Stdio::Documents {}, readSize };
             }
 
             if (chunkStatus.failed())
-                return { chunkStatus, 0, {}, readSize };
+                return { chunkStatus, 0, Stdio::Documents {}, readSize };
 
             matchCount += chunkMatches;
 
-            if (isFilesWithMatches or not isCount)
-                output.append (chunkOutput);
+            if (not chunkOutput.empty())
+                documents.add (TextDocument::fromText (std::move (chunkOutput), Id::stdinPath));
 
             if (isNumbered)
                 lineNumber += static_cast<int> (jam::simd::countByte (chunk.data(), chunk.size(), static_cast<char> (Chars::newline)));
@@ -247,16 +194,15 @@ std::tuple<juce::Result, int, std::string, size_t> Search::runStream (const Patt
     }
 
     if (isCount and not isQuiet and not isFilesWithMatches)
-        output = getFormattedCountOutput (Id::stdinPath, matchCount, false);
+        return { juce::Result::ok(), matchCount, Stdio::getDocuments (getFormattedCountOutput (Id::stdinPath, matchCount, false), Id::stdinPath), readSize };
 
-    return { juce::Result::ok(), matchCount, std::move (output), readSize };
+    return { juce::Result::ok(), matchCount, std::move (documents), readSize };
 }
 
 std::tuple<juce::Result, int, std::string, size_t> Search::runLines (std::string_view bytes,
                                                                      std::string_view displayPath,
                                                                      const Pattern& pattern,
                                                                      jam::RegExpAutomaton& automaton,
-                                                                     bool isExplicit,
                                                                      bool isShowingPathPrefix,
                                                                      int firstLineNumber) const
 {
@@ -276,7 +222,9 @@ std::tuple<juce::Result, int, std::string, size_t> Search::runLines (std::string
         if (pos >= bytes.size())
             break;
 
-        const size_t lineStart { getLineStart (bytes.data(), pos, cursor) };
+        const std::string_view lineHead { bytes.substr (cursor, pos - cursor) };
+        const size_t lineNewlinePos { lineHead.rfind (static_cast<char> (Chars::newline)) };
+        const size_t lineStart { lineNewlinePos == std::string_view::npos ? cursor : cursor + lineNewlinePos + 1 };
         const size_t newlinePos { jam::simd::findByte (bytes.data(), bytes.size(), pos, static_cast<char> (Chars::newline)) };
         const std::string_view line { TextDocument::getLine (bytes, lineStart, newlinePos) };
         const size_t lineEnd { newlinePos < bytes.size() ? newlinePos + 1 : bytes.size() };
@@ -318,7 +266,7 @@ std::tuple<juce::Result, int, std::string, size_t> Search::runLines (std::string
                 {
                     std::string output;
                     jam::Format::appendBytes (output, displayPath);
-                    output.push_back (static_cast<char> (Chars::newline));
+                    jam::Format::appendUtf8 (output, Chars::newline);
                     return { juce::Result::ok(), 1, std::move (output), lineEnd };
                 }
 
@@ -344,24 +292,18 @@ std::tuple<juce::Result, int, std::string, size_t> Search::runLines (std::string
     if (isQuiet or isFilesWithMatches)
         return { juce::Result::ok(), matchCount, {}, searchedSize };
 
-    if (isCount)
-    {
-        auto [countResult, countMatches, countOutput] { getCountOutcome (displayPath, matchCount, isExplicit, isShowingPathPrefix) };
-        return { std::move (countResult), countMatches, std::move (countOutput), searchedSize };
-    }
-
-    auto output { writer.getOutput() };
+    auto output { writer.removeOutput() };
     return { juce::Result::ok(), matchCount, std::move (output), std::max (searchedSize, writer.getPrintedSize()) };
 }
 
-std::tuple<juce::Result, int, std::string> Search::runChunks (std::string_view bytes,
-                                                               std::string_view displayPath,
-                                                               const Pattern& pattern,
-                                                               bool isExplicit,
-                                                               bool isShowingPathPrefix) const
+std::tuple<juce::Result, int, Stdio::Documents> Search::runChunks (std::string_view bytes,
+                                                                    std::string_view displayPath,
+                                                                    const Pattern& pattern,
+                                                                    bool isExplicit,
+                                                                    bool isShowingPathPrefix) const
 {
-    const auto chunkEnds { getChunkEnds (bytes) };
-    const int chunkCount { static_cast<int> (chunkEnds.size()) };
+    const auto chunkEnds (getChunkEnds (bytes));
+    const int chunkCount { chunkEnds.size() };
     jam::Array<size_t> newlineCounts;
     newlineCounts.resize (chunkCount);
     jam::Array<bool> nulFlags;
@@ -375,62 +317,79 @@ std::tuple<juce::Result, int, std::string> Search::runChunks (std::string_view b
     });
 
     bool hasNul { false };
+    jam::Array<int> firstLineNumbers;
+    firstLineNumbers.ensureStorageAllocated (chunkCount);
+    int nextLineNumber { initialLineNumber };
 
     for (int index { 0 }; index < chunkCount; ++index)
+    {
         hasNul = hasNul or nulFlags.at (index);
+        firstLineNumbers.add (nextLineNumber);
+        nextLineNumber += static_cast<int> (newlineCounts.at (index));
+    }
 
     if ((isExplicit or isCount) and hasNul)
-        return getBinaryOutcome (displayPath, isExplicit);
+        return { TextDocument::getBinaryStatus (displayPath, isExplicit), 0, Stdio::Documents {} };
 
-    jam::Array<juce::Result> chunkStatuses;
-    chunkStatuses.insertMultiple (0, juce::Result::ok(), chunkCount);
-    jam::Array<int> chunkMatchCounts;
-    chunkMatchCounts.resize (chunkCount);
-    jam::Array<std::string> chunkOutputs;
-    chunkOutputs.resize (chunkCount);
+    jam::Array<std::tuple<juce::Result, int, std::string, size_t>> chunkOutcomes;
+    chunkOutcomes.insertMultiple (0, { juce::Result::ok(), 0, std::string {}, size_t { 0 } }, chunkCount);
 
-    Jobs::run (chunkCount, [this, bytes, displayPath, &pattern, isExplicit, isShowingPathPrefix, &chunkEnds, &newlineCounts, &chunkStatuses, &chunkMatchCounts, &chunkOutputs] (int index)
+    Jobs::run (chunkCount, [this, bytes, displayPath, &pattern, isShowingPathPrefix, &chunkEnds, &firstLineNumbers, &chunkOutcomes] (int index)
     {
         jam::RegExpAutomaton automaton;
-        auto [chunkStatus, chunkMatches, chunkOutput, chunkSearchedSize] { runLines (getChunk (bytes, chunkEnds, index),
-                                                                                     displayPath,
-                                                                                     pattern,
-                                                                                     automaton,
-                                                                                     isExplicit,
-                                                                                     isShowingPathPrefix,
-                                                                                     getFirstLineNumber (newlineCounts, index)) };
-        juce::ignoreUnused (chunkSearchedSize);
-        chunkStatuses.at (index) = std::move (chunkStatus);
-        chunkMatchCounts.at (index) = chunkMatches;
-        chunkOutputs.at (index) = std::move (chunkOutput);
+        chunkOutcomes.at (index) = runLines (getChunk (bytes, chunkEnds, index),
+                                             displayPath,
+                                             pattern,
+                                             automaton,
+                                             isShowingPathPrefix,
+                                             firstLineNumbers.at (index));
     });
 
-    const juce::Result firstFailure { getFirstFailure (chunkStatuses) };
+    juce::Result firstFailure { juce::Result::ok() };
     int totalMatches { 0 };
 
     for (int index { 0 }; index < chunkCount; ++index)
-        totalMatches += chunkMatchCounts.at (index);
+    {
+        const auto& [chunkStatus, chunkMatches, chunkOutput, chunkSearchedSize] { chunkOutcomes.at (index) };
+        juce::ignoreUnused (chunkOutput, chunkSearchedSize);
+
+        if (chunkStatus.failed() and firstFailure.wasOk())
+            firstFailure = chunkStatus;
+
+        totalMatches += chunkMatches;
+    }
 
     if (not isExplicit and not isCount and (firstFailure.failed() or totalMatches > 0) and hasNul)
-        return getBinaryOutcome (displayPath, false);
+        return { TextDocument::getBinaryStatus (displayPath, false), 0, Stdio::Documents {} };
 
     if (firstFailure.failed())
-        return { firstFailure, 0, {} };
+        return { firstFailure, 0, Stdio::Documents {} };
 
     if (isCount)
         return getCountOutcome (displayPath, totalMatches, isExplicit, isShowingPathPrefix);
 
-    return { juce::Result::ok(), totalMatches, Stdio::getJoinedOutput (chunkOutputs) };
+    Stdio::Documents documents;
+
+    for (int index { 0 }; index < chunkCount; ++index)
+    {
+        auto& [chunkStatus, chunkMatches, chunkOutput, chunkSearchedSize] { chunkOutcomes.at (index) };
+        juce::ignoreUnused (chunkStatus, chunkMatches, chunkSearchedSize);
+
+        if (not chunkOutput.empty())
+            documents.add (TextDocument::fromText (std::move (chunkOutput), displayPath));
+    }
+
+    return { juce::Result::ok(), totalMatches, std::move (documents) };
 }
 
-std::tuple<juce::Result, int, std::string> Search::getEmptyFileOutcome (std::string_view displayPath,
-                                                                        bool isExplicit,
-                                                                        bool isShowingPathPrefix) const
+std::tuple<juce::Result, int, Stdio::Documents> Search::getEmptyFileOutcome (std::string_view displayPath,
+                                                                             bool isExplicit,
+                                                                             bool isShowingPathPrefix) const
 {
-    if (isExplicit and isCount and not isQuiet and not isFilesWithMatches)
-        return { juce::Result::ok(), 0, getFormattedCountOutput (displayPath, 0, isShowingPathPrefix) };
+    if (isCount and not isQuiet and not isFilesWithMatches)
+        return getCountOutcome (displayPath, 0, isExplicit, isShowingPathPrefix);
 
-    return { juce::Result::ok(), 0, {} };
+    return { juce::Result::ok(), 0, Stdio::Documents {} };
 }
 
 bool Search::isChunkedSearch (size_t size) const noexcept

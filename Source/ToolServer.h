@@ -1,6 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
-#include "../Source/generated/Generated.h"
+#include "generated/Generated.h"
 
 /** @brief MCP server on standard input and output, with one tool that runs saw command lines.
  *
@@ -57,7 +57,9 @@ private:
      *
      *  The request names the folder and the arguments. The folder must be an absolute path that
      *  can be set as the working folder. Otherwise the call sends a tool error. The result holds
-     *  the exit code, the output, and the errors. A text that is not valid UTF-8 is sent as base64.
+     *  the exit code, the output, and the errors. The bytes of the output documents are read in
+     *  place and sent as one text. When that text is not valid UTF-8, the bytes are sent as one
+     *  base64 text instead. The failures are sent as diagnostic lines, under the same rule.
      *
      *  @param requestId The id of the request to answer.
      *  @param document  The parsed request.
@@ -65,7 +67,8 @@ private:
      */
     void runTool (const juce::String& requestId, const jam::JsonDocument& document, const jam::Document::Element& arguments);
 
-    jam::ModelContextServer server { BinaryData::getString (jam::Strings::fromView (files::serverTools)).toStdString(), ProjectInfo::projectName, ProjectInfo::versionString };
+    /** @brief The MCP server on standard input and output, with the tool table built from the server tool definitions. */
+    jam::ModelContextServer server { std::string { jam::Strings::getView (BinaryData::getString (jam::Strings::fromView (files::serverTools))) }, ProjectInfo::projectName, ProjectInfo::versionString };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToolServer)
 };

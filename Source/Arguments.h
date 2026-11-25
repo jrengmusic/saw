@@ -23,15 +23,18 @@ public:
      *  An optional-value option takes the next argument. When `--stdin` is the next argument, or
      *  was already matched, the optional-value option acts as a flag.
      *
+     *  Every stored value and positional is a view into the argument list, or into an option text.
+     *  The argument list must outlive this object.
+     *
      *  @param arguments            The argument list, with the verb name at index 0.
      *  @param flagOptions          Options that take no value.
      *  @param valueOptions         Options that take the next argument as their value.
      *  @param optionalValueOptions Options that take the next argument as their value, unless `--stdin` applies.
      */
-    Arguments (const jam::Strings& arguments,
-               const std::vector<std::string_view>& flagOptions,
-               const std::vector<std::string_view>& valueOptions,
-               const std::vector<std::string_view>& optionalValueOptions);
+    Arguments (juce::Span<const std::string_view> arguments,
+               std::initializer_list<std::string_view> flagOptions,
+               std::initializer_list<std::string_view> valueOptions,
+               std::initializer_list<std::string_view> optionalValueOptions);
 
     /** @brief Tests whether an argument matches an option text.
      *
@@ -50,7 +53,7 @@ public:
      *
      *  @return The first alias of the option text.
      */
-    static juce::String getOptionName (std::string_view option);
+    static std::string_view getOptionName (std::string_view option);
 
     /** @brief Parses a line or `start:end` range specification into a half-open range.
      *
@@ -59,7 +62,7 @@ public:
      *
      *  @return Status result paired with an exclusive-end line range.
      */
-    static std::pair<juce::Result, juce::Range<int>> getLineRange (const juce::String& rangeText,
+    static std::pair<juce::Result, juce::Range<int>> getLineRange (std::string_view rangeText,
                                                                    bool allowZeroStart);
 
     /** @brief Returns the parse status recorded during construction.
@@ -76,17 +79,9 @@ public:
      */
     bool contains (std::string_view option) const;
 
-    /** @brief Returns the value of an option. An option may repeat, so the last value wins.
-     *
-     *  @param option The option text, with its aliases separated by `|`.
-     *
-     *  @return The last value of the option, or an empty string when the option is absent.
-     */
-    juce::String getValue (std::string_view option) const;
-
     /** @brief Returns the value of an option as a view. An option may repeat, so the last value wins.
      *
-     *  The view stays valid while this Arguments object lives.
+     *  The view points into the argument list, so it stays valid while that list lives.
      *
      *  @param option The option text, with its aliases separated by `|`.
      *
@@ -96,17 +91,42 @@ public:
 
     /** @brief Returns every value of an option, in the order given.
      *
+     *  The span is valid while this Arguments object and the argument list live.
+     *
      *  @param option The option text, with its aliases separated by `|`.
      *
      *  @return All values of the option. The list is empty when the option is absent.
      */
-    jam::Strings getValues (std::string_view option) const;
+    juce::Span<const std::string_view> getValues (std::string_view option) const;
 
     /** @brief Returns positional arguments in order, including all tokens after `--`.
      *
+     *  The views point into the argument list.
+     *
      *  @return Reference to the parsed positional argument list.
      */
-    const jam::Strings& getPositionals() const noexcept;
+    const jam::Array<std::string_view>& getPositionals() const noexcept;
+
+    /** @brief Returns the positional arguments from an index to the end.
+     *
+     *  The span is valid while this Arguments object lives.
+     *
+     *  @param firstIndex The index of the first positional to return. It must be in [0, size].
+     *
+     *  @return The positionals from firstIndex to the end. The span is empty when firstIndex equals the size.
+     */
+    juce::Span<const std::string_view> getPositionals (int firstIndex) const noexcept;
+
+    /** @brief Parses the whole text as a signed decimal integer.
+     *
+     *  The text is read by std::from_chars. A plus sign fails. Leading zeros are accepted here,
+     *  so a caller that needs the canonical form checks it after the parse.
+     *
+     *  @param text The text to parse.
+     *
+     *  @return The integer, or an empty optional when the text is not a whole integer.
+     */
+    static std::optional<int> getInteger (std::string_view text);
 
     /** @brief Returns the integer value of an option, with a minimum.
      *
@@ -129,32 +149,119 @@ public:
     std::pair<juce::Result, juce::Range<int>> getLineRangeFilter() const;
 
 private:
-    static bool containsOption (const std::vector<std::string_view>& matchedOptions, std::string_view option);
-    static int getMatchingOptionIndex (std::string_view argument,
-                                       const std::vector<std::string_view>& optionList);
-    static bool isOptionArgument (std::string_view argument) noexcept;
-    static std::pair<bool, int> getParsedLineNumber (const juce::String& token, int minimumValue);
+    /** @brief Tests whether a list of matched option texts holds the option text.
+     *
+     *  @param matchedOptions The option texts that were matched.
+     *  @param option         The option text to find.
+     *
+     *  @return True when the list holds the option text.
+     */
+    static bool containsOption (const jam::Array<std::string_view>& matchedOptions, std::string_view option);
 
-    int addToken (const jam::Strings& arguments,
+    /** @brief Finds the first option text in a list that the argument matches, through any of its aliases.
+     *
+     *  @param argument   The argument text to test.
+     *  @param optionList The option texts to test, in priority order.
+     *
+     *  @return The index of the first matching option text, or -1 when none matches.
+     */
+    static int getMatchingOptionIndex (std::string_view argument,
+                                       std::initializer_list<std::string_view> optionList);
+
+    /** @brief Reports whether an argument is an option: a leading dash followed by a character that is not a digit.
+     *
+     *  A lone dash and a negative number are positionals.
+     *
+     *  @param argument The argument text to test.
+     *
+     *  @return True when the argument is an option.
+     */
+    static bool isOptionArgument (std::string_view argument) noexcept;
+
+    /** @brief Parses a line number in canonical decimal form, with a minimum.
+     *
+     *  Only the canonical form is accepted: a single digit, or a number without leading zeros and without a sign.
+     *
+     *  @param token        The text to parse.
+     *  @param minimumValue The smallest accepted value.
+     *
+     *  @return True and the value when the text is a canonical integer at or above the minimum, otherwise false and 0.
+     */
+    static std::pair<bool, int> getParsedLineNumber (std::string_view token, int minimumValue);
+
+    /** @brief Parses one argument: a flag, a value option with its value, a short-flag group, or a positional.
+     *
+     *  @param arguments            The whole argument list, with the verb name at index 0.
+     *  @param index                The index of the argument to parse.
+     *  @param token                The argument text, or the single-letter option of a short-flag group.
+     *  @param flagOptions          Options that take no value.
+     *  @param valueOptions         Options that take the next argument as their value.
+     *  @param optionalValueOptions Options that take the next argument as their value, unless --stdin applies.
+     *
+     *  @return The index of the next argument to parse.
+     */
+    int addToken (juce::Span<const std::string_view> arguments,
                   int index,
                   std::string_view token,
-                  const std::vector<std::string_view>& flagOptions,
-                  const std::vector<std::string_view>& valueOptions,
-                  const std::vector<std::string_view>& optionalValueOptions);
-    int addShortFlags (const jam::Strings& arguments,
+                  std::initializer_list<std::string_view> flagOptions,
+                  std::initializer_list<std::string_view> valueOptions,
+                  std::initializer_list<std::string_view> optionalValueOptions);
+
+    /** @brief Parses a group of single-letter flags, such as `-abc`, where a value letter may end the group.
+     *
+     *  An unknown letter is a failure, and the group ends at it.
+     *
+     *  @param arguments            The whole argument list, with the verb name at index 0.
+     *  @param index                The index of the group argument.
+     *  @param flagOptions          Options that take no value.
+     *  @param valueOptions         Options that take the next argument as their value.
+     *  @param optionalValueOptions Options that take the next argument as their value, unless --stdin applies.
+     *
+     *  @return The index of the next argument to parse.
+     */
+    int addShortFlags (juce::Span<const std::string_view> arguments,
                        int index,
-                       const std::vector<std::string_view>& flagOptions,
-                       const std::vector<std::string_view>& valueOptions,
-                       const std::vector<std::string_view>& optionalValueOptions);
-    int addValue (const jam::Strings& arguments,
+                       std::initializer_list<std::string_view> flagOptions,
+                       std::initializer_list<std::string_view> valueOptions,
+                       std::initializer_list<std::string_view> optionalValueOptions);
+
+    /** @brief Records the next argument as the value of an option, keyed by the option text.
+     *
+     *  A value option at the end of the list is a failure.
+     *
+     *  @param arguments The whole argument list, with the verb name at index 0.
+     *  @param index     The index of the option argument.
+     *  @param option    The option text, with its aliases, that keys the value.
+     *  @param token     The option argument as the user typed it, named in the failure.
+     *
+     *  @return The index of the argument after the value.
+     */
+    int addValue (juce::Span<const std::string_view> arguments,
                   int index,
                   std::string_view option,
                   std::string_view token);
-    int addFailure (const char* format, std::string_view token, int nextIndex);
 
+    /** @brief Records a parse failure when none is recorded yet, and returns the index of the next argument.
+     *
+     *  Only the first failure is kept in the status. A later failure leaves the status unchanged.
+     *
+     *  @param failure   The failure text that the status reports.
+     *  @param token     The argument text that the failure names.
+     *  @param nextIndex The index of the next argument to parse.
+     *
+     *  @return nextIndex.
+     */
+    int addFailure (std::string_view failure, std::string_view token, int nextIndex);
+
+    /** @brief The first parse failure, or ok. Later failures do not replace it. */
     juce::Result status { juce::Result::ok() };
-    std::vector<std::string_view> matchedFlags;
-    std::vector<std::string_view> matchedValueOptions;
-    jam::Strings matchedValues;
-    jam::Strings positionals;
+
+    /** @brief The option texts of the flags that were matched, in the order matched. */
+    jam::Array<std::string_view> matchedFlags;
+
+    /** @brief The values of each value option, keyed by the option text. Every value is kept, in order. */
+    jam::HashMap<std::string_view, jam::Array<std::string_view>> matchedValues;
+
+    /** @brief The arguments that are neither options nor option values, in order, including those after `--`. */
+    jam::Array<std::string_view> positionals;
 };

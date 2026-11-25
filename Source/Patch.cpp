@@ -16,9 +16,7 @@ static std::pair<juce::Result, std::unique_ptr<jam::JsonDocument>> getValidatedJ
     if (jsonDoc == nullptr)
     {
         const auto syntaxStatus { jam::JsonDocument::isValid (jsonBytes) };
-        return { juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failPatchJsonInvalid,
-                                                          syntaxStatus.getErrorMessage().toRawUTF8())),
-                 nullptr };
+        return { Stdio::fail (text::Diagnostics::failPatchJsonInvalid, syntaxStatus), nullptr };
     }
 
     const auto validationStatus { PatchValidator {}.isValid (*jsonDoc) };
@@ -29,69 +27,67 @@ static std::pair<juce::Result, std::unique_ptr<jam::JsonDocument>> getValidatedJ
     return { juce::Result::ok(), std::move (jsonDoc) };
 }
 
-static std::tuple<jam::Strings,
-                  jam::HashMap<juce::String, juce::String>,
-                  jam::HashMap<juce::String, jam::Array<int>>>
-getGroupedEntries (const jam::JsonDocument& jsonDoc,
-                   const jam::Document::Element& rootArray,
-                   const jam::Document::Tokens& entryTokens)
+static std::tuple<jam::Strings, jam::Array<juce::File>, jam::Array<jam::Array<int>>> getGroupedEntries (const jam::JsonDocument& jsonDoc,
+                                                                                                        const jam::Document::Element& rootArray,
+                                                                                                        const jam::Document::Tokens& entryTokens)
 {
-    jam::Strings displayPaths;
-    jam::HashMap<juce::String, juce::String> displayToCanonical;
-    jam::HashMap<juce::String, jam::Array<int>> canonicalToEntries;
+    jam::Strings groupDisplayPaths;
+    jam::Array<juce::File> groupFiles;
+    jam::Array<jam::Array<int>> groupEntryIndices;
+    jam::HashMap<juce::String, int> groupIndexByCanonicalPath;
 
     for (int entryIndex { 0 }; entryIndex < entryTokens.size(); ++entryIndex)
     {
         const auto* entry { jsonDoc.getChildByToken (rootArray, entryTokens.at (entryIndex)) };
-        const auto filePath { jam::Strings::fromView (jsonDoc.getString (jsonDoc.get (*entry, jam::Strings::getView (Id::file.toString())))) };
-        const auto displayPath { jam::Strings::fromView (Paths::getDisplayPath (jam::Strings::getView (filePath))) };
-        const auto canonicalPath { Paths::getLinkedTarget (jam::Strings::getView (filePath)).getFullPathName() };
-        const auto [bucket, inserted] { canonicalToEntries.try_emplace (canonicalPath) };
-        auto& [bucketKey, bucketIndices] { *bucket };
-        juce::ignoreUnused (bucketKey);
-        bucketIndices.add (entryIndex);
+        const auto filePath { jsonDoc.getString (jsonDoc.get (*entry, jam::Strings::getView (Id::file.toString()))) };
+        const auto targetFile { Paths::getLinkedTarget (filePath) };
+        const auto [groupEntry, isInserted] { groupIndexByCanonicalPath.try_emplace (targetFile.getFullPathName(), groupFiles.size()) };
 
-        if (inserted)
+        if (isInserted)
         {
-            displayPaths.add (displayPath);
-            displayToCanonical.try_emplace (displayPath, canonicalPath);
+            groupDisplayPaths.add (Paths::getDisplayPath (filePath));
+            groupFiles.add (targetFile);
+            groupEntryIndices.add (jam::Array<int> {});
         }
+
+        auto& [groupCanonicalPath, groupIndex] { *groupEntry };
+        juce::ignoreUnused (groupCanonicalPath);
+        groupEntryIndices.at (groupIndex).add (entryIndex);
     }
 
-    displayPaths.sort (false);
-    return { std::move (displayPaths), std::move (displayToCanonical), std::move (canonicalToEntries) };
+    return { std::move (groupDisplayPaths), std::move (groupFiles), std::move (groupEntryIndices) };
 }
 
-static LineDiff::Change getDeleteChange (const juce::Identifier&,
-                                         const jam::JsonDocument& jsonDoc,
-                                         const jam::Document::Element& entry)
+static std::tuple<int, int, std::optional<std::string_view>> getDeleteChange (const juce::Identifier&,
+                                                                              const jam::JsonDocument& jsonDoc,
+                                                                              const jam::Document::Element& entry,
+                                                                              std::string_view)
 {
-    const auto range { PatchValidator::getEntryLineRange (jsonDoc, entry) };
-    return { range.getStart() - 1, range.getLength(), {} };
+    return LineDiff::getDeletion (PatchValidator::getEntryLineRange (jsonDoc, entry));
 }
 
-static LineDiff::Change getReplaceChange (const juce::Identifier&,
-                                          const jam::JsonDocument& jsonDoc,
-                                          const jam::Document::Element& entry)
+static std::tuple<int, int, std::optional<std::string_view>> getReplaceChange (const juce::Identifier&,
+                                                                               const jam::JsonDocument& jsonDoc,
+                                                                               const jam::Document::Element& entry,
+                                                                               std::string_view text)
 {
-    const auto range { PatchValidator::getEntryLineRange (jsonDoc, entry) };
-    const auto text { jsonDoc.getString (jsonDoc.get (entry, jam::Strings::getView (Id::text.toString()))) };
-    return { range.getStart() - 1, range.getLength(), LineDiff::getLines (text) };
+    return LineDiff::getReplacement (PatchValidator::getEntryLineRange (jsonDoc, entry), text);
 }
 
-static LineDiff::Change getInsertChange (const juce::Identifier& key,
-                                         const jam::JsonDocument& jsonDoc,
-                                         const jam::Document::Element& entry)
+static std::tuple<int, int, std::optional<std::string_view>> getInsertChange (const juce::Identifier& key,
+                                                                              const jam::JsonDocument& jsonDoc,
+                                                                              const jam::Document::Element& entry,
+                                                                              std::string_view text)
 {
+    static const juce::Identifier insertBeforeKey { jam::Strings::fromView (Id::insertBefore) };
     const int line { PatchValidator::getIntMember (jsonDoc, entry, jam::Strings::getView (key.toString())) };
-    const auto text { jsonDoc.getString (jsonDoc.get (entry, jam::Strings::getView (Id::text.toString()))) };
-    const int changeStart { key == juce::Identifier (jam::Strings::fromView (Id::insertBefore)) ? line - 1 : line };
-    return { changeStart, 0, LineDiff::getLines (text) };
+    const int changeStart { key == insertBeforeKey ? line - 1 : line };
+    return LineDiff::getInsertion (changeStart, text);
 }
 
 static const jam::Function::Map<juce::Identifier,
                                 jam::Function::pointerCapacity,
-                                LineDiff::Change (const jam::JsonDocument&, const jam::Document::Element&)>&
+                                std::tuple<int, int, std::optional<std::string_view>> (const jam::JsonDocument&, const jam::Document::Element&, std::string_view)>&
 getEntryChanges()
 {
     static const auto entryChanges (
@@ -99,7 +95,7 @@ getEntryChanges()
         {
             jam::Function::Map<juce::Identifier,
                                jam::Function::pointerCapacity,
-                               LineDiff::Change (const jam::JsonDocument&, const jam::Document::Element&)> entryChanges;
+                               std::tuple<int, int, std::optional<std::string_view>> (const jam::JsonDocument&, const jam::Document::Element&, std::string_view)> entryChanges;
             entryChanges.add (juce::Identifier (jam::Strings::fromView (Id::deletion)), &getDeleteChange);
             entryChanges.add (juce::Identifier (jam::Strings::fromView (Id::startLine)), &getReplaceChange);
             entryChanges.add (juce::Identifier (jam::Strings::fromView (Id::insertBefore)), &getInsertChange);
@@ -110,75 +106,87 @@ getEntryChanges()
     return entryChanges;
 }
 
-static LineDiff::Change getColumnLineChange (const jam::JsonDocument& jsonDoc,
-                                             const jam::Document::Element& rootArray,
-                                             const jam::Document::Tokens& entryTokens,
-                                             const TextDocument& targetDoc,
-                                             int lineNumber,
-                                             jam::Array<int> lineEntryIndices)
+static std::string getEntryText (const jam::JsonDocument& jsonDoc, const jam::Document::Element& entry)
 {
-    std::sort (lineEntryIndices.begin(), lineEntryIndices.end(),
-        [&jsonDoc, &rootArray, &entryTokens] (int leftIndex, int rightIndex)
-        {
-            const auto* leftEntry { jsonDoc.getChildByToken (rootArray, entryTokens.at (leftIndex)) };
-            const auto* rightEntry { jsonDoc.getChildByToken (rootArray, entryTokens.at (rightIndex)) };
-            return PatchValidator::getIntMember (jsonDoc, *leftEntry, Id::startCol)
-                 > PatchValidator::getIntMember (jsonDoc, *rightEntry, Id::startCol);
-        });
-
-    std::string lineText { targetDoc.getLine (lineNumber) };
-
-    for (int index { 0 }; index < lineEntryIndices.size(); ++index)
-    {
-        const auto* entry { jsonDoc.getChildByToken (rootArray, entryTokens.at (lineEntryIndices.at (index))) };
-        const auto startCol { static_cast<size_t> (PatchValidator::getIntMember (jsonDoc, *entry, Id::startCol)) };
-        const auto endCol { static_cast<size_t> (PatchValidator::getIntMember (jsonDoc, *entry, Id::endCol)) };
-        const auto replacement { jsonDoc.getString (jsonDoc.get (*entry, jam::Strings::getView (Id::text.toString()))) };
-        lineText.replace (startCol, endCol - startCol, replacement);
-    }
-
-    return { lineNumber - 1, 1, LineDiff::getLinesPreservingEmpty (lineText) };
+    return jsonDoc.contains (entry, jam::Strings::getView (Id::text.toString()))
+               ? jsonDoc.getString (jsonDoc.get (entry, jam::Strings::getView (Id::text.toString())))
+               : std::string {};
 }
 
-static bool isChangeEarlier (const LineDiff::Change& left, const LineDiff::Change& right) noexcept
+static const jam::Document::Element& getEntryAt (const jam::JsonDocument& jsonDoc,
+                                                 const jam::Document::Element& rootArray,
+                                                 const jam::Document::Tokens& entryTokens,
+                                                 const jam::Array<int>& entryIndices,
+                                                 int position)
 {
-    if (left.start != right.start)
-        return left.start < right.start;
-
-    return left.length == 0 and right.length > 0;
+    return *jsonDoc.getChildByToken (rootArray, entryTokens.at (entryIndices.at (position)));
 }
 
-static jam::Array<LineDiff::Change> getFileChanges (const jam::JsonDocument& jsonDoc,
-                                                    const jam::Document::Element& rootArray,
-                                                    const jam::Document::Tokens& entryTokens,
-                                                    const jam::Array<int>& entryIndices,
-                                                    const TextDocument& targetDoc)
+static int getColumnLineNumber (const jam::JsonDocument& jsonDoc, const jam::Document::Element& entry)
 {
-    jam::HashMap<int, jam::Array<int>> columnEditsByLine;
-    jam::Array<LineDiff::Change> changes;
+    return PatchValidator::getIntMember (jsonDoc, entry, jam::Strings::getView (Id::line.toString()));
+}
 
-    for (int index { 0 }; index < entryIndices.size(); ++index)
+static const juce::Identifier& getStartColKey()
+{
+    static const juce::Identifier startColKey { jam::Strings::fromView (Id::startCol) };
+    return startColKey;
+}
+
+static bool isColumnOfLine (const jam::JsonDocument& jsonDoc, const jam::Document::Element& entry, int lineNumber)
+{
+    return PatchValidator::getEntryShapeKey (jsonDoc, entry) == getStartColKey()
+           and getColumnLineNumber (jsonDoc, entry) == lineNumber;
+}
+
+static int getColumnGroupEnd (const jam::JsonDocument& jsonDoc,
+                              const jam::Document::Element& rootArray,
+                              const jam::Document::Tokens& entryTokens,
+                              const jam::Array<int>& entryIndices,
+                              int groupStart)
+{
+    const int lineNumber { getColumnLineNumber (jsonDoc, getEntryAt (jsonDoc, rootArray, entryTokens, entryIndices, groupStart)) };
+    int groupEnd { groupStart + 1 };
+
+    while (groupEnd < entryIndices.size() and isColumnOfLine (jsonDoc, getEntryAt (jsonDoc, rootArray, entryTokens, entryIndices, groupEnd), lineNumber))
+        ++groupEnd;
+
+    return groupEnd;
+}
+
+static void setColumnLineText (std::string& lineText,
+                               const jam::JsonDocument& jsonDoc,
+                               const jam::Document::Element& rootArray,
+                               const jam::Document::Tokens& entryTokens,
+                               const jam::Array<int>& entryIndices,
+                               juce::Range<int> groupRange,
+                               std::string_view line)
+{
+    lineText.clear();
+    size_t cursor { 0 };
+
+    for (int position { groupRange.getStart() }; position < groupRange.getEnd(); ++position)
     {
-        const int entryIndex { entryIndices.at (index) };
-        const auto* entry { jsonDoc.getChildByToken (rootArray, entryTokens.at (entryIndex)) };
-        const auto key { PatchValidator::getEntryShapeKey (jsonDoc, *entry) };
-
-        if (key == juce::Identifier (jam::Strings::fromView (Id::startCol)))
-        {
-            const auto [bucket, inserted] { columnEditsByLine.try_emplace (PatchValidator::getIntMember (jsonDoc, *entry, jam::Strings::getView (Id::line.toString()))) };
-            auto& [bucketKey, bucketIndices] { *bucket };
-            juce::ignoreUnused (bucketKey, inserted);
-            bucketIndices.add (entryIndex);
-        }
-        else
-            changes.add (getEntryChanges().get (key, jsonDoc, *entry));
+        const auto& entry { getEntryAt (jsonDoc, rootArray, entryTokens, entryIndices, position) };
+        const auto startCol { static_cast<size_t> (PatchValidator::getIntMember (jsonDoc, entry, Id::startCol)) };
+        const auto endCol { static_cast<size_t> (PatchValidator::getIntMember (jsonDoc, entry, Id::endCol)) };
+        const auto replacement { jsonDoc.getString (jsonDoc.get (entry, jam::Strings::getView (Id::text.toString()))) };
+        jam::Format::appendBytes (lineText, line.substr (cursor, startCol - cursor));
+        jam::Format::appendBytes (lineText, replacement);
+        cursor = endCol;
     }
 
-    for (auto& [lineNumber, lineEntryIndices] : columnEditsByLine)
-        changes.add (getColumnLineChange (jsonDoc, rootArray, entryTokens, targetDoc, lineNumber, std::move (lineEntryIndices)));
+    jam::Format::appendBytes (lineText, line.substr (cursor));
+}
 
-    std::stable_sort (changes.begin(), changes.end(), &isChangeEarlier);
-    return changes;
+static std::tuple<int, int, int> getEntryOrder (const jam::JsonDocument& jsonDoc, const jam::Document::Element& entry)
+{
+    if (PatchValidator::getEntryShapeKey (jsonDoc, entry) == getStartColKey())
+        return { getColumnLineNumber (jsonDoc, entry) - 1, 1, PatchValidator::getIntMember (jsonDoc, entry, Id::startCol) };
+
+    const auto [start, length, insertedText] { getEntryChanges().get (PatchValidator::getEntryShapeKey (jsonDoc, entry), jsonDoc, entry, std::string_view {}) };
+    juce::ignoreUnused (insertedText);
+    return { start, length > 0 ? 1 : 0, 0 };
 }
 
 static juce::Result addTargetFile (Transaction& transaction,
@@ -186,7 +194,7 @@ static juce::Result addTargetFile (Transaction& transaction,
                                    const jam::Document::Element& rootArray,
                                    const jam::Document::Tokens& entryTokens,
                                    const juce::File& targetFile,
-                                   const juce::String& displayPath,
+                                   std::string_view displayPath,
                                    const jam::Array<int>& entryIndices)
 {
     auto [readStatus, targetDoc] { TextDocument::fromTextFile (targetFile, displayPath, Input::allBytes) };
@@ -199,8 +207,50 @@ static juce::Result addTargetFile (Transaction& transaction,
     if (fileStatus.failed())
         return fileStatus;
 
-    auto changes (getFileChanges (jsonDoc, rootArray, entryTokens, entryIndices, *targetDoc));
-    return transaction.addFile (targetFile, std::move (targetDoc), LineDiff { std::move (changes) }, entryIndices.size());
+    jam::Array<std::pair<std::tuple<int, int, int>, int>> entryOrder;
+    entryOrder.ensureStorageAllocated (entryIndices.size());
+
+    for (int position { 0 }; position < entryIndices.size(); ++position)
+        entryOrder.add ({ getEntryOrder (jsonDoc, getEntryAt (jsonDoc, rootArray, entryTokens, entryIndices, position)), position });
+
+    std::sort (entryOrder.begin(), entryOrder.end());
+
+    jam::Array<int> sortedIndices;
+    sortedIndices.ensureStorageAllocated (entryIndices.size());
+
+    for (const auto& [sortKey, position] : entryOrder)
+        sortedIndices.add (entryIndices.at (position));
+
+    const TextDocument& targetDocument { *targetDoc };
+    LineDiff diff (targetDocument, [&jsonDoc, &rootArray, &entryTokens, &sortedIndices, &targetDocument] (const auto& addChange)
+    {
+        std::string lineText;
+        int position { 0 };
+
+        while (position < sortedIndices.size())
+        {
+            const auto& entry { getEntryAt (jsonDoc, rootArray, entryTokens, sortedIndices, position) };
+            const auto key { PatchValidator::getEntryShapeKey (jsonDoc, entry) };
+
+            if (key == getStartColKey())
+            {
+                const int groupEnd { getColumnGroupEnd (jsonDoc, rootArray, entryTokens, sortedIndices, position) };
+                const int lineNumber { getColumnLineNumber (jsonDoc, entry) };
+                setColumnLineText (lineText, jsonDoc, rootArray, entryTokens, sortedIndices, juce::Range<int> (position, groupEnd), targetDocument.getLine (lineNumber));
+                addChange (lineNumber - 1, 1, std::string_view { lineText });
+                position = groupEnd;
+            }
+            else
+            {
+                const auto text { getEntryText (jsonDoc, entry) };
+                const auto [start, length, insertedText] { getEntryChanges().get (key, jsonDoc, entry, text) };
+                addChange (start, length, insertedText);
+                ++position;
+            }
+        }
+    });
+
+    return transaction.addFile (targetFile, std::move (targetDoc), std::move (diff), entryIndices.size());
 }
 
 static juce::Result addGroupedFiles (Transaction& transaction,
@@ -208,19 +258,22 @@ static juce::Result addGroupedFiles (Transaction& transaction,
                                      const jam::Document::Element& rootArray,
                                      const jam::Document::Tokens& entryTokens)
 {
-    const auto [displayPaths, displayToCanonical, canonicalToEntries] { getGroupedEntries (jsonDoc, rootArray, entryTokens) };
+    auto [groupDisplayPaths, groupFiles, groupEntryIndices] { getGroupedEntries (jsonDoc, rootArray, entryTokens) };
+    jam::Array<int> groupOrder;
 
-    for (int index { 0 }; index < displayPaths.size(); ++index)
+    for (int groupIndex { 0 }; groupIndex < groupDisplayPaths.size(); ++groupIndex)
+        groupOrder.add (groupIndex);
+
+    std::sort (groupOrder.begin(), groupOrder.end(),
+        [&groupDisplayPaths = groupDisplayPaths] (int leftGroup, int rightGroup)
+        {
+            return groupDisplayPaths.getView (leftGroup) < groupDisplayPaths.getView (rightGroup);
+        });
+
+    for (int position { 0 }; position < groupOrder.size(); ++position)
     {
-        const auto displayPath { displayPaths.at (index) };
-        const auto& canonicalPath { displayToCanonical.at (displayPath) };
-        const auto fileStatus { addTargetFile (transaction,
-                                               jsonDoc,
-                                               rootArray,
-                                               entryTokens,
-                                               juce::File { canonicalPath },
-                                               displayPath,
-                                               canonicalToEntries.at (canonicalPath)) };
+        const int groupIndex { groupOrder.at (position) };
+        const auto fileStatus { addTargetFile (transaction, jsonDoc, rootArray, entryTokens, groupFiles.at (groupIndex), groupDisplayPaths.getView (groupIndex), groupEntryIndices.at (groupIndex)) };
 
         if (fileStatus.failed())
             return fileStatus;
@@ -236,7 +289,7 @@ static Stdio::Output runTransaction (const Arguments& arguments, const jam::Json
     const auto [expectStatus, expectedCount] { Transaction::getExpectStatus (arguments) };
 
     if (expectStatus.failed())
-        return Stdio::getFailure (expectStatus.getErrorMessage());
+        return Stdio::getFailure (expectStatus);
 
     if (arguments.contains (Id::expectOption) and expectedCount != entryTokens.size())
         return Transaction::getExpectMismatch ({}, expectedCount, entryTokens.size());
@@ -245,9 +298,9 @@ static Stdio::Output runTransaction (const Arguments& arguments, const jam::Json
     const auto addStatus { addGroupedFiles (transaction, jsonDoc, *rootArray, entryTokens) };
 
     if (addStatus.failed())
-        return Stdio::getFailure (addStatus.getErrorMessage());
+        return Stdio::getFailure (addStatus);
 
-    return transaction.run (arguments, false);
+    return transaction.run (arguments);
 }
 
 static Stdio::Output runJson (const Arguments& arguments, std::string_view jsonBytes)
@@ -255,19 +308,19 @@ static Stdio::Output runJson (const Arguments& arguments, std::string_view jsonB
     const auto [docStatus, jsonDoc] { getValidatedJsonDocument (jsonBytes) };
 
     if (docStatus.failed())
-        return Stdio::getFailure (docStatus.getErrorMessage());
+        return Stdio::getFailure (docStatus);
 
     return runTransaction (arguments, *jsonDoc);
 }
 
 static Stdio::Output runFile (const Arguments& arguments)
 {
-    const auto filePath { arguments.getValue (Id::fileOption) };
-    const auto targetFile { Paths::getLinkedTarget (jam::Strings::getView (filePath)) };
+    const auto filePath { arguments.getValueView (Id::fileOption) };
+    const auto targetFile { Paths::getLinkedTarget (filePath) };
     const auto [readStatus, document] { TextDocument::fromTextFile (targetFile, filePath, Input::maxBufferedReadSize) };
 
     if (readStatus.failed())
-        return Stdio::getFailure (readStatus.getErrorMessage());
+        return Stdio::getFailure (readStatus);
 
     return runJson (arguments, document->getBytes());
 }
@@ -280,29 +333,23 @@ static Stdio::Output runStandardInput (const Arguments& arguments, const std::op
     const auto [inputStatus, standardInput] { Input::create (input, Input::allLines) };
 
     if (inputStatus.failed())
-        return Stdio::getFailure (inputStatus.getErrorMessage());
+        return Stdio::getFailure (inputStatus);
 
     return runJson (arguments, standardInput->getBytes());
 }
 
-Arguments Patch::getArguments (const jam::Strings& argumentList)
+Arguments Patch::getArguments (juce::Span<const std::string_view> argumentList)
 {
-    const std::vector<std::string_view> flagOptions { Id::applyOption };
-    const std::vector<std::string_view> valueOptions { Id::fileOption, Id::expectOption };
-
-    return Arguments { argumentList, flagOptions, valueOptions, {} };
+    return Arguments { argumentList, { Id::applyOption }, { Id::fileOption, Id::expectOption }, {} };
 }
 
 Stdio::Output Patch::run (const Arguments& arguments, const std::optional<std::string>& input)
 {
     if (arguments.getStatus().failed())
-        return Stdio::getFailure (arguments.getStatus().getErrorMessage());
+        return Stdio::getFailure (arguments.getStatus());
 
     if (arguments.getPositionals().size() > 0)
-    {
-        return Stdio::getFailure (Stdio::getFormatted (text::Diagnostics::failUnexpectedArgument,
-                                                       arguments.getPositionals().at (0).toRawUTF8()));
-    }
+        return Stdio::getFailure (text::Diagnostics::failUnexpectedArgument, arguments.getPositionals().at (0));
 
     if (arguments.contains (Id::fileOption))
         return runFile (arguments);

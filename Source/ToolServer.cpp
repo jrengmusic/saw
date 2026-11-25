@@ -1,0 +1,127 @@
+#include "ToolServer.h"
+#include "CommandLine.h"
+
+ToolServer::ToolServer()
+{
+    server.addTool (Id::run, [this] (const juce::Identifier&, const juce::String& requestId, const jam::JsonDocument& document, const jam::Document::Element& arguments)
+    {
+        runTool (requestId, document, arguments);
+    });
+
+    server.onInputClosed = [this]
+    {
+        quit();
+    };
+}
+
+const juce::String ToolServer::getApplicationName()
+{
+    return ProjectInfo::projectName;
+}
+
+const juce::String ToolServer::getApplicationVersion()
+{
+    return ProjectInfo::versionString;
+}
+
+bool ToolServer::moreThanOneInstanceAllowed()
+{
+    return true;
+}
+
+void ToolServer::initialise (const juce::String&)
+{
+    server.start();
+}
+
+void ToolServer::shutdown()
+{
+}
+
+void ToolServer::anotherInstanceStarted (const juce::String&)
+{
+}
+
+void ToolServer::systemRequestedQuit()
+{
+    quit();
+}
+
+void ToolServer::suspended()
+{
+}
+
+void ToolServer::resumed()
+{
+}
+
+void ToolServer::unhandledException (const std::exception*, const juce::String&, int)
+{
+}
+
+template <typename Function>
+static bool isValidText (const Function& applyText)
+{
+    bool isValid { true };
+    applyText ([&isValid] (std::string_view text) { isValid = isValid and jam::Utf8::isValid (text); });
+    return isValid;
+}
+
+template <typename Function>
+static void setText (jam::ModelContextServer::Content& content, std::string_view plainName, std::string_view encodedName, const Function& applyText, bool isValid)
+{
+    if (isValid)
+        content.setText (plainName, applyText);
+    else
+        content.setBase64 (encodedName, applyText);
+}
+
+void ToolServer::runTool (const juce::String& requestId, const jam::JsonDocument& document, const jam::Document::Element& arguments)
+{
+    const auto directory { document.getString (document.get (arguments, jam::Strings::getView (Id::directory.toString()))) };
+
+    if (juce::File::isAbsolutePath (directory) and juce::File { jam::Strings::fromView (directory) }.setAsCurrentWorkingDirectory())
+    {
+        const auto& argumentTokens { *document.getChildByToken (arguments, document.get (arguments, mcp::Member::arguments))->get<jam::Document::Tokens> (Id::tokens) };
+        jam::Array<std::string> decodedArguments;
+        decodedArguments.ensureStorageAllocated (argumentTokens.size());
+
+        for (int index { 0 }; index < argumentTokens.size(); ++index)
+            decodedArguments.add (document.getString (argumentTokens.at (index)));
+
+        jam::Array<std::string_view> commandArguments;
+        commandArguments.ensureStorageAllocated (decodedArguments.size());
+
+        for (int index { 0 }; index < decodedArguments.size(); ++index)
+            commandArguments.add (decodedArguments.at (index));
+
+        const juce::Span<const std::string_view> span { commandArguments.data(), static_cast<size_t> (commandArguments.size()) };
+        const std::optional<std::string> standardInput { document.contains (arguments, Id::standardInput) ? document.getString (document.get (arguments, Id::standardInput)) : std::string {} };
+        const auto commandResult { CommandLine::run (span, standardInput) };
+
+        const auto& [exitCode, documents, failures] { commandResult };
+        const auto applyOutput { [&documents = documents] (const auto& appendText)
+        {
+            for (const auto& outputDocument : documents)
+                appendText (outputDocument->getBytes());
+        } };
+        const auto applyErrors { [&failures = failures] (const auto& appendText)
+        {
+            for (const auto& failure : failures)
+                Stdio::applyToPieces (failure, appendText);
+        } };
+        const bool isOutputValid { isValidText (applyOutput) };
+        const bool areErrorsValid { isValidText (applyErrors) };
+
+        server.sendResponse (requestId, [exitCode = exitCode, &applyOutput, &applyErrors, isOutputValid, areErrorsValid] (jam::ModelContextServer::Content& content)
+        {
+            content.setMember (Id::exitCode, exitCode);
+            setText (content, Id::output, Id::outputBase64, applyOutput, isOutputValid);
+            setText (content, Id::errors, Id::errorsBase64, applyErrors, areErrorsValid);
+        });
+    }
+    else
+    {
+        server.sendToolError (requestId, text::Diagnostics::failDirectory);
+    }
+}

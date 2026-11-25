@@ -114,7 +114,71 @@
 <!-- The entry format is in /log (commands/log.md). It is the only source. -->
 <!-- Sprint entries go here, written by PRIMARY agents -->
 
-## Sprint 2: SAW must live to its premise ✅
+## Sprint 3: One binary, no copy in transit, audit, doxygen (start cost open)
+
+ARCHITECT ordered the audit, the doxygen pass and the log while the CLI still loses rows (*"/audit doxygen pass until /log"*). The speed contract is not met by a new `saw` process. The entry has no ✅ for that reason.
+
+**Date:** 2026-11-25
+**Duration:** not measured. First logged work 24 November 22:52 (the Sprint 2 commit), log 25 November.
+
+### Agents Participated
+- Primary: COUNSELOR — read and planned `PLAN-native-mcp.md` and `PLAN-document-output.md`, corrected Engineer deviations, filtered the audit, edited `SPEC.md`, `CLAUDE.md` and the help texts, read every doxygen block against the code.
+- Discovery, builds, measurement, doxygen: Pathfinder — builds 1 to 17, both runner lanes, the scout rows, the doxygen pass of saw and JAM.
+- Implementation: Engineer — the steps of both plans, the audit fixes, the ignore-rule lookup.
+- QA/QC: Auditor — one audit in two parts (saw; JAM and consumers), two rounds. Round one: 13 findings and 4 drifts in saw, 7 in JAM. Round two: 9 in saw, 2 in JAM.
+
+### Files Modified (91 paths in saw, 54 in jam, 1 in scout, 5 in ling, 1 in whatdbg: `git status --short`, nothing committed)
+Plan work:
+- `server/` deleted, `Source/ToolServer.{h,cpp}`, `Source/tools.json`, `Source/Main.cpp` — `saw --mcp` in the form of scout, whatdbg and ling.
+- `Source/TextDocument.{h,cpp}` — a `jam::Document`. It owns its text, its Input, or a view. Its own line index is deleted.
+- `Source/Stdio.{h,cpp}`, `StandardStream.{h,cpp}`, `Search`, `FindOutcome`, `Find`, `Lines`, `Fields`, `Excerpt`, `Transaction`, `Undo`, `CommandLine`, `Patch`, `Replace` — a verb returns Documents and failures. CLI and MCP read the same Documents in place.
+- `Source/StagedFile.{h,cpp}`, `LineDiff.{h,cpp}`, `UndoCache`, `Writer`, `Paths`, `Arguments`, `Jobs.h` — one owner for each rule, no temporary container.
+- jam: `jam_core/document` (`size_t` offsets), `jam_core/json` (JSON on a stream, escape depth), `jam_core/text` (`Format::appendDecimal`, `RegExp::appendEscaped`, `getRequiredLiterals`), `jam_data_structures/model`, `jam_terminal` (`StdioServer`, `TerminalFIFO`), `jam_model_context_protocol`, `patch/juce-posix-event-hook.patch`, `patch/juce-child-process-hook.patch`, and the modules that read the offsets.
+
+Audit fixes:
+- `Source/Replace.cpp` — an empty match moves one code point (`RegExp::getNextPosition`). The old form moved one byte and wrote invalid UTF-8. `SPEC.md` corrected.
+- `Source/IgnoreRules.{h,cpp}` — POSIX classes in a pattern; a literal after `**/` is a lookup; a regex runs only behind its required literal.
+- `Source/Writer.{h,cpp}` — one `setBytes`; a short write is a failure.
+- `Source/Transaction`, `Search`, `TextDocument`, `Arguments`, `Patch`, `Paths`, `Excerpt`, `Stdio`, `help/HelpFrames.cpp` — duplicate, dead and re-checked code deleted.
+- jam: `jam_ModelContextServer` (a message larger than the ring gives a reply and closes the server), `jam_StdioServer.h:97` (a closed output ends the write), `jam_JsonWriter.h` (decode inside the view), `jam_JsonValidator.cpp` (`Utf8::isValid`), `jam_ModelContextProtocol` (template, its `.cpp` deleted), `getToken` and `Cursor::operator+=` in every Document (`size_t`), markdown row offset (`int64`).
+- `scout/Source/ToolServer.cpp:152`, `:202` — the capture is read in place.
+- `test/cases.md` — `find-ignore-posix-class`, `find-ignore-suffix`. `benchmark/matrix-rows.sh` — `findIgnored` and `filesIgnored`.
+- `SPEC.md`, `CLAUDE.md`, `RFC-live-to-premise.md`, `PLAN-native-mcp.md`, `Source/help/patch.md`, `Source/help/undo.md`, `cast/banner.md` — text that the code contradicted. `PLAN-document-output.md` deleted, its objective is complete.
+- `~/.carol/HANDOFF-saw-enforcement.md` — new numbers, build 17.
+
+### Alignment Check
+- [x] BLESSED principles followed
+- [x] NAMES.md adhered
+- [x] MANIFESTO.md principles applied
+- [ ] SPEC §10.3 gate does not hold: one saw process loses the 1K rows and the early-stop rows to `sed`, `grep` and `awk`. No exemption is written.
+
+### Problems Solved
+- One MCP reply was copied or escaped up to six times. Now a verb creates its text one time, and the server escapes it into the output ring. `fields` 100M through `--mcp`: 375 to 291 ms (build 9 to build 14, two runs).
+- `findDigits` tree through `--mcp` lost to `rg` (42.6 ms). Now 34.3 against 36.6.
+- The ignore rules of JUCE cost 60 ms for 3069 files (68.5 ms against 8.0 ms with `--no-ignore`), so `find` on `JUCE/modules` took 78 ms against `rg` 35. The gate missed it, because its corpus has no `.gitignore`. Now 27.7 against 31.7 on the same corpus with JUCE's rules. `find --files` 7.7 against 11.3. JUCE lists the same 11548 files as `rg`. In jam, saw lists 8 files less than `rg`: git marks them ignored, and `rg` takes them back from `carol/.ignore`.
+- Two faults in the MCP lane: a full ring at a closed output did not end, and a message larger than the ring was never answered.
+
+### State for Continuation
+- Build 17 is installed: sha256 `2d2f7c93c8da340adb990810e4030d0ecd37ca5c27137208849497d13ecf0967`, 0 warnings, 184 of 184 on both lanes. After it: comments, and one `jassert` in `jam_JsonWriter.h` (`appendQuote`). Verify with one build.
+- Open: the start cost (`PLAN-native-mcp.md` Step 17). Measured on build 12, µs: `sed` 1K 1587 and 1627, empty program of ours 1772 and 1822, `saw lines` 1K 2268 and 2293. No measurement says how the 0.48 ms above the empty program divides between imports, identifiers and initializers. dyld gives a prebuilt loader set only to a program in the shared cache (`DyldRuntimeState.cpp:2707`). On-disk sets need `SUPPORT_ON_DISK_PREBUILTLOADERS` (`:2663`), an internal install, or a containerized home folder (`:2364`, `:2410`).
+- The full row set was last timed on build 9. Builds 14, 16 and 17 timed only the affected rows.
+- The JAM consumers (`ling`, `scout`, `whatdbg`, `cast`, `sandbox`, `end`, `eve`, `tit`, `stamp`, `whelmed`, `ggwp`, `caroline`) and Windows are not compiled against the changed JAM. `ling` MCP did not connect in this session, so no symbol lookup was made.
+- The Auditors did not read all of `jam_mermaid_diagram`, `jam_markdown`, `jam_web`, `jam_opentype` and the JAM consumers (their reports name the parts). COUNSELOR searched the consumers for the calls of `JsonDocument::parse`, `writeMessage` and the JSON writer by text, which proves no absence. The compiler of each consumer is the check.
+- `SPEC.md:80` says Windows x64. `RELEASE.md:15` lists Windows arm64 too. ARCHITECT rules which one holds.
+- JAM doxygen: 0 warnings in the six files that changed whole. 294 warnings remain in the changed-part headers. Which of them are older than this sprint was not checked. The docs index (`jam/docs/xml`) is not regenerated.
+- The MCP server closes on a message larger than 1 MB. No larger message was tested.
+
+### Debts Paid
+- None
+
+### Debts Deferred
+- None
+
+---
+
+## Sprint 2: SAW must live to its premise (NOT DONE, reopened)
+
+COUNSELOR logged this sprint with the job unfinished. ARCHITECT ruled *"mcp isn't new pattern, module is"* before the plan. The plan kept a second binary, `saw_ToolServer`, against that ruling and against the three tools that start from `--mcp` (`scout/Source/Main.cpp:262`, `whatdbg/Source/Main.cpp:262`, `ling/Source/Main.cpp:302`). The work continues in `PLAN-native-mcp.md`: one binary, `saw --mcp`, and the clean-up of the smells.
 
 **Date:** 2026-11-24
 **Duration:** 02:16 for this session (first probe report 20:35, log 22:51). The earlier session of the same day is in the handoff below; its work was not logged until now.
@@ -163,7 +227,7 @@ The earlier session: the list in the handoff below.
 - The tree search and listing rows are 4 to 8% slower than the binary of the earlier session, and faster than `rg` (24.8 against 26.5 ms, 7.8 against 9.5 ms). The cost is the one mechanism, SPEC:104.
 - Lost CLI rows: the table in the handoff below. Only `findLiteral` 1K was measured again (2,088 against `grep` 1,584 µs). `findPipe` 100M against `rg` was not measured again.
 - Windows code is read, not built or run.
-- Not wired (SPEC:850, ARCHITECT): `~/.claude.json` entry `saw` with command `saw_ToolServer`, `mcp__saw__*` in the agent tool lists, the hooks of SPEC §7.
+- Not wired (SPEC §7, ARCHITECT): the `saw` entry of `~/.claude.json`, `mcp__saw__*` in the agent tool lists, the hooks. `saw_ToolServer` is deleted; the command is `saw --mcp`.
 
 ### Debts Paid
 - None

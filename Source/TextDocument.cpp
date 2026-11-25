@@ -4,56 +4,45 @@
 
 TextDocument::TextDocument (Access,
                             std::unique_ptr<Input> newInput,
-                            std::string newOwnedBytes,
-                            const juce::String& newDisplayPath)
+                            std::string_view newDisplayPath)
     : input (std::move (newInput))
-    , ownedBytes (std::move (newOwnedBytes))
-    , displayPath (newDisplayPath)
 {
-    if (input != nullptr)
-    {
-        data = input->getBytes().data();
-        size = input->getBytes().size();
-    }
-    else
-    {
-        data = ownedBytes.data();
-        size = ownedBytes.size();
-    }
-
-    binary = isBinary (getBytes());
-
-    if (size > 0 and not binary)
-    {
-        size_t cursor { 0 };
-
-        while (cursor < size)
-        {
-            const auto newlineIndex { jam::simd::findByte (data, size, cursor, static_cast<char> (Chars::newline)) };
-            const auto line { getLine (getBytes(), cursor, newlineIndex) };
-            const bool hasCarriageReturn { line.size() < newlineIndex - cursor };
-
-            if (lineStarts.isEmpty() and hasCarriageReturn)
-                dominantLineEnding = "\r\n";
-
-            lineStarts.add (cursor);
-            lineLengths.add (line.size());
-            cursor = newlineIndex < size ? newlineIndex + 1 : size;
-        }
-    }
+    getRoot()->add<juce::String> (Id::path, jam::Strings::fromView (newDisplayPath));
 }
 
-juce::Result TextDocument::getReadFailure (const juce::File& file, const juce::String& displayPath)
+const jam::Document::Vocabulary& TextDocument::getVocabulary() const
+{
+    return getPlainTextVocabulary();
+}
+
+size_t TextDocument::getToken (Cursor& cursor, int)
+{
+    return cursor.source.size() - cursor.getOffset();
+}
+
+void TextDocument::build()
+{
+}
+
+juce::Result TextDocument::getReadFailure (const juce::File& file, std::string_view displayPath)
 {
     if (file.exists())
-        return juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failRead, displayPath.toRawUTF8()));
+        return Stdio::fail (text::Diagnostics::failRead, displayPath);
 
-    return juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failNotFound, displayPath.toRawUTF8()));
+    return Stdio::fail (text::Diagnostics::failNotFound, displayPath);
 }
 
-juce::Result TextDocument::getBinaryFailure (const juce::String& displayPath)
+juce::Result TextDocument::getBinaryFailure (std::string_view displayPath)
 {
-    return juce::Result::fail (Stdio::getFormatted (text::Diagnostics::failBinaryFile, displayPath.toRawUTF8()));
+    return Stdio::fail (text::Diagnostics::failBinaryFile, displayPath);
+}
+
+juce::Result TextDocument::getBinaryStatus (std::string_view displayPath, bool isExplicit)
+{
+    if (isExplicit)
+        return getBinaryFailure (displayPath);
+
+    return juce::Result::ok();
 }
 
 bool TextDocument::isBinary (std::string_view bytes)
@@ -62,7 +51,7 @@ bool TextDocument::isBinary (std::string_view bytes)
 }
 
 juce::Result TextDocument::getBytesStatus (const juce::File& file,
-                                           const juce::String& displayPath,
+                                           std::string_view displayPath,
                                            std::string_view expectedBytes,
                                            std::string_view failure)
 {
@@ -72,13 +61,30 @@ juce::Result TextDocument::getBytesStatus (const juce::File& file,
         return readStatus;
 
     if (fileInput->getBytes().compare (expectedBytes) != 0)
-        return juce::Result::fail (jam::Strings::fromView (failure));
+        return Stdio::fail (failure);
 
     return juce::Result::ok();
 }
 
+juce::Result TextDocument::getLineHashStatus (int lineNumber, std::string_view expectedHash) const
+{
+    const auto actualHash { lineNumber >= 1 ? getLineHash (lineNumber) : juce::String {} };
+
+    if (lineNumber >= 1 and jam::Strings::getView (actualHash).compare (expectedHash) == 0)
+        return juce::Result::ok();
+
+    return Stdio::fail (text::Diagnostics::failHashMismatch,
+                        getDisplayPath(),
+                        Chars::colon,
+                        lineNumber,
+                        text::Diagnostics::hashExpected,
+                        expectedHash,
+                        text::Diagnostics::hashFound,
+                        jam::Strings::getView (actualHash));
+}
+
 std::pair<juce::Result, std::unique_ptr<Input>> TextDocument::getInput (const juce::File& file,
-                                                                        const juce::String& displayPath,
+                                                                        std::string_view displayPath,
                                                                         size_t maxReadSize)
 {
     auto fileInput { Input::fromFile (file, maxReadSize) };
@@ -89,27 +95,42 @@ std::pair<juce::Result, std::unique_ptr<Input>> TextDocument::getInput (const ju
     return { juce::Result::ok(), std::move (fileInput) };
 }
 
-std::pair<juce::Result, std::unique_ptr<TextDocument>> TextDocument::fromFile (const juce::File& file,
-                                                                                const juce::String& displayPath)
+std::pair<juce::Result, std::unique_ptr<Input>> TextDocument::getInput (const std::optional<std::string>& source, int numLines)
 {
-    auto [inputStatus, fileInput] { getInput (file, displayPath, Input::maxBufferedReadSize) };
+    auto [inputStatus, standardInput] { Input::create (source, numLines) };
 
     if (inputStatus.failed())
         return { inputStatus, nullptr };
 
-    return { juce::Result::ok(), std::make_unique<TextDocument> (Access {}, std::move (fileInput), std::string {}, displayPath) };
+    if (standardInput->getBytes().empty())
+        return { Stdio::fail (text::Diagnostics::failMissingPath), nullptr };
+
+    return { juce::Result::ok(), std::move (standardInput) };
 }
 
-std::pair<juce::Result, std::unique_ptr<TextDocument>> TextDocument::fromTextFile (const juce::File& file,
-                                                                                    const juce::String& displayPath,
-                                                                                    size_t maxReadSize)
+std::pair<juce::Result, std::unique_ptr<TextDocument>> TextDocument::fromFile (const juce::File& file,
+                                                                                std::string_view displayPath,
+                                                                                size_t maxReadSize)
 {
     auto [inputStatus, fileInput] { getInput (file, displayPath, maxReadSize) };
 
     if (inputStatus.failed())
         return { inputStatus, nullptr };
 
-    auto document { fromInput (std::move (fileInput), displayPath) };
+    auto document { std::make_unique<TextDocument> (Access {}, std::move (fileInput), displayPath) };
+    document->setSource (document->input->getBytes());
+    document->setLineIndex();
+    return { juce::Result::ok(), std::move (document) };
+}
+
+std::pair<juce::Result, std::unique_ptr<TextDocument>> TextDocument::fromTextFile (const juce::File& file,
+                                                                                    std::string_view displayPath,
+                                                                                    size_t maxReadSize)
+{
+    auto [documentStatus, document] { fromFile (file, displayPath, maxReadSize) };
+
+    if (documentStatus.failed())
+        return { documentStatus, nullptr };
 
     if (document->isBinary())
         return { getBinaryFailure (displayPath), nullptr };
@@ -117,37 +138,47 @@ std::pair<juce::Result, std::unique_ptr<TextDocument>> TextDocument::fromTextFil
     return { juce::Result::ok(), std::move (document) };
 }
 
-std::pair<juce::Result, std::unique_ptr<TextDocument>> TextDocument::fromOwnedFile (const juce::File& file,
-                                                                                    const juce::String& displayPath)
+std::unique_ptr<TextDocument> TextDocument::fromInput (std::unique_ptr<Input> newInput,
+                                                       std::string_view displayPath)
 {
-    auto [inputStatus, fileInput] { getInput (file, displayPath, Input::allBytes) };
-
-    if (inputStatus.failed())
-        return { inputStatus, nullptr };
-
-    return { juce::Result::ok(), fromInput (std::move (fileInput), displayPath) };
+    auto document { std::make_unique<TextDocument> (Access {}, std::move (newInput), displayPath) };
+    document->setSource (document->input != nullptr ? document->input->getBytes() : std::string_view {});
+    document->setLineIndex();
+    return document;
 }
 
-std::unique_ptr<TextDocument> TextDocument::fromString (std::string text,
-                                                        const juce::String& displayPath)
+std::unique_ptr<TextDocument> TextDocument::fromText (std::string&& text, std::string_view displayPath)
 {
-    return std::make_unique<TextDocument> (Access {}, nullptr, std::move (text), displayPath);
+    auto document { std::make_unique<TextDocument> (Access {}, nullptr, displayPath) };
+    *document->arena = std::move (text);
+    document->setSource (*document->arena);
+    return document;
+}
+
+std::unique_ptr<TextDocument> TextDocument::fromView (std::string_view text, std::string_view displayPath)
+{
+    auto document { std::make_unique<TextDocument> (Access {}, nullptr, displayPath) };
+    document->setSource (text);
+    return document;
 }
 
 std::unique_ptr<TextDocument> TextDocument::fromInput (std::unique_ptr<Input> newInput,
-                                                       const juce::String& displayPath)
+                                                       std::string_view displayPath,
+                                                       std::string_view output)
 {
-    return std::make_unique<TextDocument> (Access {}, std::move (newInput), std::string {}, displayPath);
+    auto document { std::make_unique<TextDocument> (Access {}, std::move (newInput), displayPath) };
+    document->setSource (output);
+    return document;
 }
 
-const juce::String& TextDocument::getDisplayPath() const noexcept
+std::string_view TextDocument::getDisplayPath() const noexcept
 {
-    return displayPath;
+    return jam::Strings::getView (*getRoot()->get<juce::String> (Id::path));
 }
 
 std::string_view TextDocument::getBytes() const noexcept
 {
-    return size > 0 ? std::string_view { data, size } : std::string_view {};
+    return source;
 }
 
 bool TextDocument::isBinary() const noexcept
@@ -157,7 +188,29 @@ bool TextDocument::isBinary() const noexcept
 
 int TextDocument::getNumLines() const noexcept
 {
-    return lineStarts.size();
+    if (binary)
+        return 0;
+
+    return lineOffsets.size() - (source.empty() or hasTrailingNewline() ? 1 : 0);
+}
+
+void TextDocument::setSource (std::string_view text)
+{
+    source = text;
+    Document::parse();
+}
+
+void TextDocument::setLineIndex()
+{
+    binary = isBinary (source);
+
+    if (not binary)
+    {
+        addLineOffsets (0);
+
+        if (lineOffsets.size() > 1 and lineOffsets.at (1) >= 2 and source.at (lineOffsets.at (1) - 2) == static_cast<char> (Chars::carriageReturn))
+            dominantLineEnding = windowsLineEnding;
+    }
 }
 
 std::string_view TextDocument::getLine (std::string_view bytes, size_t lineStart, size_t newlinePos)
@@ -171,37 +224,31 @@ std::string_view TextDocument::getLine (std::string_view bytes, size_t lineStart
 std::string_view TextDocument::getLeadingLines (std::string_view bytes, int numLines)
 {
     assert (numLines >= 0);
-    size_t cursor { 0 };
-
-    for (int line { 0 }; line < numLines and cursor < bytes.size(); ++line)
-    {
-        const size_t newlinePos { jam::simd::findByte (bytes.data(), bytes.size(), cursor, static_cast<char> (Chars::newline)) };
-        cursor = newlinePos < bytes.size() ? newlinePos + 1 : bytes.size();
-    }
-
-    return bytes.substr (0, cursor);
+    return bytes.substr (0, applyToLines (bytes, juce::Range<int> (numLines, numLines + 1), [] (int, std::string_view) { return true; }));
 }
 
 std::string_view TextDocument::getLine (int lineNumber) const
 {
     assert (lineNumber >= 1 and lineNumber <= getNumLines());
-    return std::string_view { data + lineStarts.at (lineNumber - 1), lineLengths.at (lineNumber - 1) };
+    const auto bytes { getBytes() };
+    const size_t lineEnd { lineNumber < getNumLines() ? lineOffsets.at (lineNumber) - 1
+                                                      : bytes.size() - (hasTrailingNewline() ? 1 : 0) };
+    return getLine (bytes, lineOffsets.at (lineNumber - 1), lineEnd);
 }
 
 int TextDocument::getLineNumber (size_t offset) const noexcept
 {
-    assert (offset < size);
-    const auto firstLineStartingAfter { std::upper_bound (lineStarts.begin(), lineStarts.end(), offset) };
-    return static_cast<int> (firstLineStartingAfter - lineStarts.begin());
+    assert (offset < getBytes().size());
+    return static_cast<int> (Document::getLineNumber (offset));
 }
 
 std::string_view TextDocument::getLineBytes (juce::Range<int> lineRange) const
 {
     assert (lineRange.getStart() >= 1 and lineRange.getEnd() <= getNumLines() + 1);
     assert (not lineRange.isEmpty());
-    const auto startOffset { lineStarts.at (lineRange.getStart() - 1) };
-    const auto endOffset { lineRange.getEnd() <= getNumLines() ? lineStarts.at (lineRange.getEnd() - 1) : size };
-    return std::string_view { data + startOffset, endOffset - startOffset };
+    const auto startOffset { lineOffsets.at (lineRange.getStart() - 1) };
+    const auto endOffset { lineRange.getEnd() <= getNumLines() ? lineOffsets.at (lineRange.getEnd() - 1) : getBytes().size() };
+    return getBytes().substr (startOffset, endOffset - startOffset);
 }
 
 std::string_view TextDocument::getLineEnding() const noexcept
@@ -211,7 +258,7 @@ std::string_view TextDocument::getLineEnding() const noexcept
 
 bool TextDocument::hasTrailingNewline() const noexcept
 {
-    return size > 0 and getBytes().at (size - 1) == static_cast<char> (Chars::newline);
+    return not getBytes().empty() and getBytes().back() == static_cast<char> (Chars::newline);
 }
 
 juce::String TextDocument::getLineHash (std::string_view line)
@@ -232,4 +279,25 @@ juce::String TextDocument::getLineHash (int lineNumber) const
 juce::String TextDocument::getContentHash() const
 {
     return getContentHash (getBytes());
+}
+
+void TextDocument::appendLinePrefix (std::string& output,
+                                     int lineNumber,
+                                     std::string_view line,
+                                     char separator,
+                                     bool isShowingLineNumber,
+                                     bool isShowingHash)
+{
+    if (isShowingLineNumber or isShowingHash)
+    {
+        jam::Format::appendDecimal (output, lineNumber);
+        jam::Format::appendByte (output, separator);
+    }
+
+    if (isShowingHash)
+    {
+        const auto lineHash { getLineHash (line) };
+        jam::Format::appendBytes (output, jam::Strings::getView (lineHash));
+        jam::Format::appendUtf8 (output, Chars::pipe);
+    }
 }

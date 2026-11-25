@@ -2,43 +2,43 @@
 #include <JuceHeader.h>
 #include "Input.h"
 
-/** @brief Bytes of an Input or an owned string, with a line index.
+/** @brief The text of one file, of standard input, or of one piece of output, as a jam::Document.
  *
- *  The document owns its bytes, through the Input or the owned string. The line index holds
- *  the start and the length of each line, so a line is read without a copy.
+ *  One document type holds the input and the output, so that no text is copied between a verb and its
+ *  writer. The path is stored as Id::path of the root. The bytes are owned by the Input, owned by the
+ *  arena of jam::Document, or viewed. The line index is jam::Document::lineOffsets. Only fromFile,
+ *  fromTextFile, and fromInput without an output build it, because output is not read by line. Plain
+ *  text has no structure, so getToken takes the whole text as one token. Each line is a view into the bytes.
  */
-class TextDocument
+class TextDocument : public jam::Document
 {
+    /** @brief Key that restricts the constructor to the factory functions of this class. */
     struct Access {};
 
 public:
-    /** @brief Leading hex character count taken from a line's SHA-256 digest.
-     */
+    /** @brief Leading hex character count taken from a line's SHA-256 digest. */
     static constexpr int lineHashLength { 4 };
 
-    /** @brief Builds a document from an Input or an owned byte buffer.
+    /** @brief Stores the input and the display path. The factory that calls this sets the bytes.
      *
-     *  Detects NUL bytes first. For text, the constructor indexes the line boundaries and the
-     *  dominant line ending.
-     *
-     *  @param newInput       Input that holds the bytes, or null when newOwnedBytes holds them.
-     *  @param newOwnedBytes  Owned buffer used when newInput is null.
-     *  @param newDisplayPath Path string preserved for diagnostics and diff headers.
+     *  @param newInput       Input that holds the bytes, or nullptr when the bytes are supplied by the factory.
+     *  @param newDisplayPath Path string stored as Id::path of the root, for diagnostics and diff headers.
      */
     TextDocument (Access,
                   std::unique_ptr<Input> newInput,
-                  std::string newOwnedBytes,
-                  const juce::String& newDisplayPath);
+                  std::string_view newDisplayPath);
 
-    /** @brief Opens and indexes an existing file. A file larger than maxBufferedReadSize is mapped.
+    /** @brief Opens and indexes an existing file. A file larger than maxReadSize is mapped.
      *
      *  @param file        File on disk to read.
      *  @param displayPath Path string stored on the document for diagnostics and output.
+     *  @param maxReadSize The largest file size that is read into a buffer. Larger files are mapped.
      *
      *  @return Status result paired with the loaded document, or failure with null.
      */
     static std::pair<juce::Result, std::unique_ptr<TextDocument>> fromFile (const juce::File& file,
-                                                                            const juce::String& displayPath);
+                                                                            std::string_view displayPath,
+                                                                            size_t maxReadSize);
 
     /** @brief Opens an existing file and fails if the bytes contain any NUL byte.
      *
@@ -49,33 +49,12 @@ public:
      *  @return Status result paired with the text document, or failure with null.
      */
     static std::pair<juce::Result, std::unique_ptr<TextDocument>> fromTextFile (const juce::File& file,
-                                                                                const juce::String& displayPath,
+                                                                                std::string_view displayPath,
                                                                                 size_t maxReadSize);
 
-    /** @brief Opens an existing file into an owned buffer.
+    /** @brief Creates a document over an Input, and indexes the bytes of the Input.
      *
-     *  The owned buffer keeps the bytes when the file changes later, so a write to the same
-     *  file does not change the document.
-     *
-     *  @param file        File on disk to read.
-     *  @param displayPath Path string stored on the document for diagnostics and output.
-     *
-     *  @return Status result paired with the document, or failure with null.
-     */
-    static std::pair<juce::Result, std::unique_ptr<TextDocument>> fromOwnedFile (const juce::File& file,
-                                                                                 const juce::String& displayPath);
-
-    /** @brief Creates a document owning an in-memory byte string.
-     *
-     *  @param text        Raw bytes moved into the document.
-     *  @param displayPath Path string stored on the document for diagnostics and output.
-     *
-     *  @return Newly constructed document owning text.
-     */
-    static std::unique_ptr<TextDocument> fromString (std::string text,
-                                                     const juce::String& displayPath);
-
-    /** @brief Creates a document over an Input.
+     *  The Input owns the bytes, so the document reads them in place. A null Input gives the empty document.
      *
      *  @param newInput    The Input that holds the bytes. The document takes ownership.
      *  @param displayPath Path string stored on the document for diagnostics and output.
@@ -83,7 +62,44 @@ public:
      *  @return Newly constructed document.
      */
     static std::unique_ptr<TextDocument> fromInput (std::unique_ptr<Input> newInput,
-                                                    const juce::String& displayPath);
+                                                    std::string_view displayPath);
+
+    /** @brief Creates a document that owns text, moved into the arena of jam::Document.
+     *
+     *  The text is moved, so no byte is copied. The line index is not built, because the text is output only.
+     *
+     *  @param text        The text, moved into the document.
+     *  @param displayPath Path string stored on the document for diagnostics and output.
+     *
+     *  @return Newly constructed document.
+     */
+    static std::unique_ptr<TextDocument> fromText (std::string&& text, std::string_view displayPath);
+
+    /** @brief Creates a document that views text with static storage.
+     *
+     *  The document does not own the bytes. The line index is not built, because the text is output only.
+     *
+     *  @param text        The bytes, with static storage. They must outlive the document.
+     *  @param displayPath Path string stored on the document for diagnostics and output.
+     *
+     *  @return Newly constructed document.
+     */
+    static std::unique_ptr<TextDocument> fromView (std::string_view text, std::string_view displayPath);
+
+    /** @brief Creates a document that owns an Input, and views a range of its bytes as the output.
+     *
+     *  The document owns the Input, so output is a view into the bytes that the Input owns, and
+     *  getBytes returns that view. The line index is not built, because the text is output only.
+     *
+     *  @param newInput    The Input that owns the bytes. The document takes ownership.
+     *  @param displayPath Path string stored on the document for diagnostics and output.
+     *  @param output      A view into the bytes of newInput, which becomes the text of the document.
+     *
+     *  @return Newly constructed document.
+     */
+    static std::unique_ptr<TextDocument> fromInput (std::unique_ptr<Input> newInput,
+                                                    std::string_view displayPath,
+                                                    std::string_view output);
 
     /** @brief Builds the failure of a file that cannot be read.
      *
@@ -92,7 +108,7 @@ public:
      *
      *  @return Failure that reports not found when the file does not exist, otherwise unreadable.
      */
-    static juce::Result getReadFailure (const juce::File& file, const juce::String& displayPath);
+    static juce::Result getReadFailure (const juce::File& file, std::string_view displayPath);
 
     /** @brief Builds the failure of a binary file that is read as text.
      *
@@ -100,7 +116,19 @@ public:
      *
      *  @return Failure that reports a binary file.
      */
-    static juce::Result getBinaryFailure (const juce::String& displayPath);
+    static juce::Result getBinaryFailure (std::string_view displayPath);
+
+    /** @brief Returns the status of a binary input.
+     *
+     *  An explicit input is named on the command line, so its binary bytes are a failure. An input that
+     *  a walk found gives ok, so that a binary file does not stop the command.
+     *
+     *  @param displayPath The display path of the input. The failure text uses it.
+     *  @param isExplicit  True when the input was named as a file on the command line.
+     *
+     *  @return The binary failure when the input is explicit, otherwise ok.
+     */
+    static juce::Result getBinaryStatus (std::string_view displayPath, bool isExplicit);
 
     /** @brief Checks whether bytes are binary. A NUL byte is the test.
      *
@@ -122,9 +150,21 @@ public:
      *  @return Ok when the bytes match, the read failure when the file cannot be read, or failure with the given text.
      */
     static juce::Result getBytesStatus (const juce::File& file,
-                                        const juce::String& displayPath,
+                                        std::string_view displayPath,
                                         std::string_view expectedBytes,
                                         std::string_view failure);
+
+    /** @brief Checks the hash of one line against an expected hash.
+     *
+     *  A line number below 1 has no line, so the found hash is empty and the check fails.
+     *
+     *  @param lineNumber   One-based line index. A number below 1 has no line.
+     *  @param expectedHash The expected hash text, compared as it is.
+     *
+     *  @return Ok when the line exists and its hash equals expectedHash. Otherwise the hash mismatch failure,
+     *          which names the display path, the line number, the expected hash, and the found hash.
+     */
+    juce::Result getLineHashStatus (int lineNumber, std::string_view expectedHash) const;
 
     /** @brief Opens a file as an Input, with a failure when the file cannot be read.
      *
@@ -135,8 +175,18 @@ public:
      *  @return Status result paired with the Input, or failure with null.
      */
     static std::pair<juce::Result, std::unique_ptr<Input>> getInput (const juce::File& file,
-                                                                     const juce::String& displayPath,
+                                                                     std::string_view displayPath,
                                                                      size_t maxReadSize);
+
+    /** @brief Opens the supplied text, or the standard input, as an Input.
+     *
+     *  @param source   The supplied text, or nullopt for the process standard input.
+     *  @param numLines The number of newlines to read from standard input that is read. See Input::create.
+     *
+     *  @return Status result paired with the Input, or failure with null. The failure reports that standard
+     *          input cannot be read, or that a path is missing when the input holds no bytes.
+     */
+    static std::pair<juce::Result, std::unique_ptr<Input>> getInput (const std::optional<std::string>& source, int numLines);
 
     /** @brief Returns one line of bytes without its line ending.
      *
@@ -160,6 +210,40 @@ public:
      */
     static std::string_view getLeadingLines (std::string_view bytes, int numLines);
 
+    /** @brief Calls a function for each line of a line range, until the function returns false.
+     *
+     *  The lines before the range are read, but the function is not called for them. Each line is passed
+     *  as a view without its line ending. The cursor moves past a line after the function returns for it,
+     *  so the returned count includes the line that stopped the loop.
+     *
+     *  @tparam Function Callable accepting `(int lineNumber, std::string_view line)` and returning bool. True continues with the next line.
+     *  @param bytes     The bytes to read.
+     *  @param lineRange One-based half-open range of lines, `[start, end)`, to pass to the function.
+     *  @param function  The callable for each line of the range.
+     *
+     *  @return The number of bytes that were read, from the start of bytes through the last line that was read.
+     */
+    template <typename Function>
+    static size_t applyToLines (std::string_view bytes, juce::Range<int> lineRange, const Function& function)
+    {
+        size_t cursor { 0 };
+        int lineNumber { 1 };
+        bool isContinuing { true };
+
+        while (isContinuing and cursor < bytes.size() and lineNumber < lineRange.getEnd() and not lineRange.isEmpty())
+        {
+            const size_t newlinePos { jam::simd::findByte (bytes.data(), bytes.size(), cursor, static_cast<char> (Chars::newline)) };
+
+            if (lineNumber >= lineRange.getStart())
+                isContinuing = function (lineNumber, getLine (bytes, cursor, newlinePos));
+
+            cursor = newlinePos < bytes.size() ? newlinePos + 1 : bytes.size();
+            ++lineNumber;
+        }
+
+        return cursor;
+    }
+
     /** @brief Computes the truncated SHA-256 hex digest of one line.
      *
      *  @param line The line bytes, without the line ending.
@@ -176,15 +260,34 @@ public:
      */
     static juce::String getContentHash (std::string_view bytes);
 
+    /** @brief Appends the line number and the hash that prefix one output line.
+     *
+     *  The line number and the separator are appended when the line number or the hash is shown. The hash
+     *  and a pipe follow when the hash is shown. The caller appends the text and the newline.
+     *
+     *  @param output              The text that receives the prefix.
+     *  @param lineNumber          The one-based line number. It is written when the number or the hash is shown.
+     *  @param line                The line bytes, without the line ending. They are hashed only when the hash is shown.
+     *  @param separator           The character written after the line number when the number or the hash is shown.
+     *  @param isShowingLineNumber True to show the line number.
+     *  @param isShowingHash       True to show the hash of the line.
+     */
+    static void appendLinePrefix (std::string& output,
+                                  int lineNumber,
+                                  std::string_view line,
+                                  char separator,
+                                  bool isShowingLineNumber,
+                                  bool isShowingHash);
+
     /** @brief Returns the caller-supplied display path.
      *
-     *  @return Display path stored at construction.
+     *  @return A view of the display path stored at construction. The view is valid while this document lives.
      */
-    const juce::String& getDisplayPath() const noexcept;
+    std::string_view getDisplayPath() const noexcept;
 
-    /** @brief Returns a view of the entire raw byte buffer.
+    /** @brief Returns the text of the document in place.
      *
-     *  @return Raw byte view, or empty when the document has zero bytes.
+     *  @return View of the bytes, or empty when the document has zero bytes. The view is valid while this document lives.
      */
     std::string_view getBytes() const noexcept;
 
@@ -252,14 +355,46 @@ public:
      */
     juce::String getContentHash() const;
 
+protected:
+    /** @brief Returns the vocabulary of plain text, the only vocabulary of a document.
+     *
+     *  @return The plain text vocabulary.
+     */
+    const Vocabulary& getVocabulary() const override;
+
+    /** @brief Takes the whole remaining text as one token, because plain text has no structure.
+     *
+     *  @param cursor The position of the parse. Its source is the text.
+     *
+     *  @return The number of bytes of the token, which is every byte from the cursor to the end.
+     */
+    size_t getToken (Cursor& cursor, int) override;
+
+    /** @brief Adds nothing to the tree, because plain text has no structure. */
+    void build() override;
+
 private:
+    /** @brief Line ending of Windows text, detected for the first line. */
+    static constexpr std::string_view windowsLineEnding { "\r\n" };
+
+    /** @brief Line ending of Unix text, used when the first line has no CR. */
+    static constexpr std::string_view unixLineEnding { "\n" };
+
+    /** @brief Input that owns the bytes, or nullptr when a factory owns them. Kept so the bytes outlive the document. */
     std::unique_ptr<Input> input;
-    std::string ownedBytes;
-    juce::String displayPath;
-    const char* data { nullptr };
-    size_t size { 0 };
+
+    /** @brief True when the bytes hold a NUL byte, so the document has no lines. */
     bool binary { false };
-    std::string_view dominantLineEnding { "\n" };
-    jam::Array<size_t> lineStarts;
-    jam::Array<size_t> lineLengths;
+
+    /** @brief The line ending of the first line, returned by getLineEnding. */
+    std::string_view dominantLineEnding { unixLineEnding };
+
+    /** @brief Sets the bytes of the document and parses them.
+     *
+     *  @param text The bytes that the document views.
+     */
+    void setSource (std::string_view text);
+
+    /** @brief Detects a NUL byte, and indexes the line starts and the dominant line ending of text. */
+    void setLineIndex();
 };

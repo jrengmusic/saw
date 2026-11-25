@@ -56,8 +56,10 @@ saw find <pattern> [path...] [options]
 
 With `-r`, SAW reads `<pattern>` as ECMAScript regex syntax.
 
-- **Supported:** Character classes (`[a-z]`, `[^0-9]`), `\d`, `\w`, `\s`, `\b`, groups, named groups (`(?<name>...)`), lazy quantifiers (`*?`, `+?`), lookaround, backreferences (`\1`), and Unicode properties (`\p{...}`).
-- **Rejected:** Inline flags such as `(?i)`, POSIX classes such as `[[:digit:]]`, `\A`, `(?m)`, and `(?x)`. SAW exits `2` with `saw: invalid regex: <detail>`.
+- **Supported:** Character classes (`[a-z]`, `[^0-9]`), POSIX classes (`[[:digit:]]`, `[[:^alpha:]]`), `\d`, `\w`, `\s`, `\b`, `\A`, groups, named groups (`(?<name>...)`), lazy quantifiers (`*?`, `+?`), lookaround, backreferences (`\1`), Unicode properties (`\p{...}`), and inline flags (`(?i)`, `(?m)`, `(?s)`).
+- **Inline flags:** A flag such as `(?i)` applies to the end of its group. It also applies to the later alternatives of that group. `(?m)` makes `^` and `$` match at each line break. `(?s)` makes `.` match a line terminator. A flag is removed with `-`, as in `(?i-s)`.
+- **Text start:** `\A` matches at the start of each line that SAW searches.
+- **Rejected:** `(?x)`. SAW exits `2` with `saw: invalid regex: <detail>`.
 - **Case:** Use `-i` in place of `(?i)`. SAW compiles `-i` as `(?i:<pattern>)`.
 - **Linear time:** A pattern runs in linear time, with three exceptions: a backreference, a lookaround that holds more than one character, and a pattern that compiles to more than 2048 instructions.
 - **Step limit:** The exceptions run under a step limit and a depth limit. The match spans of a repeated group that can be empty (`(a*)*`) do too. Over a limit, SAW exits `2` with `saw: regex exceeded its step limit: <pattern>`.

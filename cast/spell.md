@@ -86,7 +86,7 @@
 | - [list]: @project-info:release:stage=linker  | - [list]: @semicolon      | - [list]: @cmake:win                          |                  |
 | - [list]: @project-info:debug:stage=          | - [list]: @semicolon      | - [list]: @cmake:mac                          |                  |
 | - [list]: @project-info:user module           |                           | - [list]: @cmake:module                       |                  |
-| - [list]: @project-info:server user module    |                           | - [list]: @cmake:module                       |                  |
+| - [list]: @project-info:program user module   |                           | - [list]: @cmake:module                       |                  |
 | - [list]: @project-info:source glob           |                           | - [list]: @cmake:glob-pattern                 |                  |
 | - [list]: @project-info:macro                 |                           | - [list]: @cmake:value                        |                  |
 | - [list]: @project-info:include               |                           | - [list]: @cmake:value                        |                  |
@@ -94,7 +94,6 @@
 | - [list]: @project-info:user module           |                           | - [list]: @cmake:link                         |                  |
 | - [list]: @project-info:library               |                           | - [list]: @cmake:value                        |                  |
 | - [list]: @project-info:program module        |                           | - [list]: @cmake:value                        |                  |
-| - [list]: @project-info:server module         |                           | - [list]: @cmake:value                        |                  |
 | - [list]: @project-info:binary                |                           | - [list]: @cmake:value                        |                  |
 | - [list]: @project-info:pack                  |                           | - [list]: @cmake:pack-value                   |                  |
 |                                               |                           | - strip: @cmake:strip                         |                  |
@@ -157,6 +156,15 @@
 |                                               |                           |                                               |                  |
 |                                               |                           | @code:struct                                  |                  |
 |                                               |                           | - name: Diagnostics                           |                  |
+|                                               |                           | > - [list]: @code:char                        |                  |
++-----------------------------------------------+---------------------------+-----------------------------------------------+------------------+
+| > - [list]: @text:formats                     |                           | @code:namespace                               | @Text            |
+|                                               |                           | - macro: #pragma once                         |                  |
+|                                               |                           | - name: text                                  |                  |
+|                                               |                           | - [description]: @headers:brief               |                  |
+|                                               |                           |                                               |                  |
+|                                               |                           | @code:struct                                  |                  |
+|                                               |                           | - name: Formats                               |                  |
 |                                               |                           | > - [list]: @code:char                        |                  |
 +-----------------------------------------------+---------------------------+-----------------------------------------------+------------------+
 | - [list]: @binaryFiles:files                  |                           | @code:namespace                               | @Files           |

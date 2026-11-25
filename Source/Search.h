@@ -2,6 +2,7 @@
 #include <JuceHeader.h>
 #include "Arguments.h"
 #include "Pattern.h"
+#include "Stdio.h"
 
 /** @brief Searches the bytes of one input for a pattern, with the settings of one command.
  *
@@ -32,14 +33,14 @@ public:
      *  @param isExplicit           True when the input was named as a file on the command line.
      *  @param isShowingPathPrefix True to prefix the output lines with the display path.
      *
-     *  @return Status result, the number of matching lines, and the output bytes.
+     *  @return Status result, the number of matching lines, and the output documents.
      */
-    std::tuple<juce::Result, int, std::string> run (std::string_view bytes,
-                                                    std::string_view displayPath,
-                                                    const Pattern& pattern,
-                                                    jam::RegExpAutomaton& automaton,
-                                                    bool isExplicit,
-                                                    bool isShowingPathPrefix) const;
+    std::tuple<juce::Result, int, Stdio::Documents> run (std::string_view bytes,
+                                                         std::string_view displayPath,
+                                                         const Pattern& pattern,
+                                                         jam::RegExpAutomaton& automaton,
+                                                         bool isExplicit,
+                                                         bool isShowingPathPrefix) const;
 
     /** @brief Opens a file and searches its bytes.
      *
@@ -54,14 +55,14 @@ public:
      *  @param isExplicit           True when the input was named as a file on the command line.
      *  @param isShowingPathPrefix  True to prefix the output lines with the display path.
      *
-     *  @return Status result, the number of matching lines, and the output bytes.
+     *  @return Status result, the number of matching lines, and the output documents.
      */
-    std::tuple<juce::Result, int, std::string> runFile (const juce::File& file,
-                                                        std::string_view displayPath,
-                                                        const Pattern& pattern,
-                                                        jam::RegExpAutomaton& automaton,
-                                                        bool isExplicit,
-                                                        bool isShowingPathPrefix) const;
+    std::tuple<juce::Result, int, Stdio::Documents> runFile (const juce::File& file,
+                                                             std::string_view displayPath,
+                                                             const Pattern& pattern,
+                                                             jam::RegExpAutomaton& automaton,
+                                                             bool isExplicit,
+                                                             bool isShowingPathPrefix) const;
 
     /** @brief Searches the process standard input in blocks of complete lines, as they arrive.
      *
@@ -69,10 +70,10 @@ public:
      *
      *  @param pattern The compiled pattern.
      *
-     *  @return Status result, the number of matching lines, the output bytes, and the number of
+     *  @return Status result, the number of matching lines, the output documents, and the number of
      *          bytes read from standard input.
      */
-    std::tuple<juce::Result, int, std::string, size_t> runStream (const Pattern& pattern) const;
+    std::tuple<juce::Result, int, Stdio::Documents, size_t> runStream (const Pattern& pattern) const;
 
     /** @brief Reports whether the search needs no context lines.
      *
@@ -81,17 +82,16 @@ public:
     bool isStreamSearch() const noexcept;
 
 private:
-    /** @brief Searches the lines of a byte range, and returns the bytes the result depends on.
+    /** @brief Searches the lines of a byte range, and returns the output text and the size of the input that the result depends on.
      *
      *  @param bytes               The bytes to search.
      *  @param displayPath         The path shown in the output.
      *  @param pattern             The compiled pattern.
      *  @param automaton           Matcher state that the caller owns.
-     *  @param isExplicit          True when the input was named as a file on the command line.
      *  @param isShowingPathPrefix True to prefix the output lines with the display path.
      *  @param firstLineNumber     The line number of the first byte of bytes.
      *
-     *  @return Status result, the number of matching lines, the output bytes, and the number of
+     *  @return Status result, the number of matching lines, the output text, and the number of
      *          bytes of the input that the result depends on. A NUL byte after that point does not
      *          make the input binary.
      */
@@ -99,14 +99,17 @@ private:
                                                                  std::string_view displayPath,
                                                                  const Pattern& pattern,
                                                                  jam::RegExpAutomaton& automaton,
-                                                                 bool isExplicit,
                                                                  bool isShowingPathPrefix,
                                                                  int firstLineNumber) const;
 
-    /** @brief Searches a large byte range in parallel chunks, and joins their output in order.
+    /** @brief Searches a large byte range in parallel chunks, with one output document for each chunk.
      *
-     *  A NUL byte in any chunk makes the outcome binary, as getBinaryOutcome defines it, when the
-     *  input is explicit or a count is requested, and also when the search fails or finds a match.
+     *  The chunks are cut at a newline, so each line is in one chunk. The chunks are counted for their
+     *  newlines and their NUL bytes first, so that each chunk knows its first line number. Then the
+     *  chunks are searched in parallel. A NUL byte in any chunk makes an explicit input or a counted
+     *  input binary, and that is reported at once. Otherwise a failure is returned before any output,
+     *  and a binary status is returned when the input is not explicit and the search failed or found
+     *  a match. The documents are returned in chunk order, and empty chunks give no document.
      *
      *  @param bytes               The bytes to search.
      *  @param displayPath         The path shown in the output.
@@ -114,13 +117,13 @@ private:
      *  @param isExplicit          True when the input was named as a file on the command line.
      *  @param isShowingPathPrefix True to prefix the output lines with the display path.
      *
-     *  @return Status result, the number of matching lines, and the output bytes.
+     *  @return Status result, the number of matching lines, and the output documents, one for each chunk.
      */
-    std::tuple<juce::Result, int, std::string> runChunks (std::string_view bytes,
-                                                          std::string_view displayPath,
-                                                          const Pattern& pattern,
-                                                          bool isExplicit,
-                                                          bool isShowingPathPrefix) const;
+    std::tuple<juce::Result, int, Stdio::Documents> runChunks (std::string_view bytes,
+                                                               std::string_view displayPath,
+                                                               const Pattern& pattern,
+                                                               bool isExplicit,
+                                                               bool isShowingPathPrefix) const;
 
     /** @brief Returns the outcome of an input with no bytes.
      *
@@ -131,11 +134,11 @@ private:
      *  @param isExplicit          True when the input was named as a file on the command line.
      *  @param isShowingPathPrefix True to prefix the count with the display path.
      *
-     *  @return Status result, zero matches, and the output bytes.
+     *  @return Status result, zero matches, and the output documents.
      */
-    std::tuple<juce::Result, int, std::string> getEmptyFileOutcome (std::string_view displayPath,
-                                                                    bool isExplicit,
-                                                                    bool isShowingPathPrefix) const;
+    std::tuple<juce::Result, int, Stdio::Documents> getEmptyFileOutcome (std::string_view displayPath,
+                                                                         bool isExplicit,
+                                                                         bool isShowingPathPrefix) const;
 
     /** @brief Reports whether a byte range is large enough, and needs no context, to be searched in parallel.
      *
@@ -146,16 +149,39 @@ private:
      */
     bool isChunkedSearch (size_t size) const noexcept;
 
+    /** @brief Quiet mode: the first match ends the search, and no output is printed. */
     bool isQuiet { false };
+
+    /** @brief Files-with-matches mode: the first match ends the search, and only the display path is printed. */
     bool isFilesWithMatches { false };
+
+    /** @brief Count mode: the output is the number of matches, not the lines. */
     bool isCount { false };
+
+    /** @brief Only-matching mode: the output holds the matched text, not the whole line. */
     bool isOnlyMatching { false };
+
+    /** @brief Invert mode: the output holds the lines that do not match. */
     bool isInvert { false };
+
+    /** @brief First mode: the search stops at the first matching line. */
     bool isFirst { false };
+
+    /** @brief True when each output line carries its line number. */
     bool isShowingLineNumber { false };
+
+    /** @brief True when each output line carries its hash. */
     bool isShowingHash { false };
+
+    /** @brief Lines printed before each match. */
     int beforeContext { 0 };
+
+    /** @brief Lines printed after each match. */
     int afterContext { 0 };
+
+    /** @brief Matches are taken only on lines numbered after this line. */
     int afterLine { 0 };
+
+    /** @brief One-based half-open range of lines that the search covers. */
     juce::Range<int> lineRange;
 };

@@ -11,9 +11,9 @@ static void appendLine (std::string& output, int lineNumber, std::string_view li
     constexpr unsigned char hexRadix { 16 };
     constexpr size_t maximumUtf8Length { 4 };
     jam::Format::appendDecimal (output, lineNumber);
-    output.push_back (static_cast<char> (Chars::tab));
+    jam::Format::appendUtf8 (output, Chars::tab);
 
-    if (juce::CharPointer_UTF8::isValidString (line.data(), static_cast<int> (line.size())))
+    if (jam::Utf8::isValid (line))
     {
         jam::Format::appendBytes (output, line);
     }
@@ -26,7 +26,7 @@ static void appendLine (std::string& output, int lineNumber, std::string_view li
             const size_t maximumLength { std::min (maximumUtf8Length, line.size() - index) };
             size_t length { 1 };
 
-            while (length <= maximumLength and not juce::CharPointer_UTF8::isValidString (line.data() + index, static_cast<int> (length)))
+            while (length <= maximumLength and not jam::Utf8::isValid (line.substr (index, length)))
                 ++length;
 
             if (length <= maximumLength)
@@ -37,10 +37,10 @@ static void appendLine (std::string& output, int lineNumber, std::string_view li
             else
             {
                 const auto byteValue { static_cast<unsigned char> (line.at (index)) };
-                jam::Format::appendBytes (output, "\\x");
+                jam::Format::appendBytes (output, jam::Strings::getView (Id::hexEscapePrefix.toString()));
 
                 if (byteValue < hexRadix)
-                    output.push_back (static_cast<char> (Chars::zero));
+                    jam::Format::appendUtf8 (output, Chars::zero);
 
                 jam::Format::appendHex (output, byteValue);
                 ++index;
@@ -48,7 +48,7 @@ static void appendLine (std::string& output, int lineNumber, std::string_view li
         }
     }
 
-    output.push_back (static_cast<char> (Chars::newline));
+    jam::Format::appendUtf8 (output, Chars::newline);
 }
 
 static void appendBlock (std::string& output,
@@ -60,42 +60,47 @@ static void appendBlock (std::string& output,
 {
     constexpr int blockHashLength { 16 };
     const auto blockBytes { document.getLineBytes (juce::Range<int> { startLine, endLine + 1 }) };
-    const auto blockHash { juce::SHA256 (blockBytes.data(), blockBytes.size()).toHexString().substring (0, blockHashLength) };
-    const juce::String escapedMarker { juce::CharPointer_UTF8::isValidString (blockBytes.data(), static_cast<int> (blockBytes.size())) ? "" : text::Diagnostics::excerptEscaped };
-    const auto header { Stdio::getFormatted (text::Diagnostics::excerptHeaderFormat,
-                                             targetNumber,
-                                             jam::Strings::fromView (path).toRawUTF8(),
-                                             startLine,
-                                             endLine,
-                                             document.getNumLines(),
-                                             blockHash.toRawUTF8(),
-                                             escapedMarker.toRawUTF8()) };
-    jam::Format::appendBytes (output, jam::Strings::getView (header));
+    const std::string_view escapedMarker { jam::Utf8::isValid (blockBytes) ? std::string_view {} : std::string_view { text::Diagnostics::excerptEscaped } };
+    jam::Format::appendBytes (output, text::Formats::excerptHeader);
+    jam::Format::appendDecimal (output, targetNumber);
+    jam::Format::appendUtf8 (output, Chars::space);
+    jam::Format::appendBytes (output, path);
+    jam::Format::appendUtf8 (output, Chars::colon);
+    jam::Format::appendDecimal (output, startLine);
+    jam::Format::appendUtf8 (output, Chars::dash);
+    jam::Format::appendDecimal (output, endLine);
+    jam::Format::appendBytes (output, text::Formats::excerptOf);
+    jam::Format::appendDecimal (output, document.getNumLines());
+    jam::Format::appendBytes (output, text::Formats::excerptHash);
+    jam::Format::appendBytes (output, jam::Strings::getView (TextDocument::getContentHash (blockBytes).substring (0, blockHashLength)));
+    jam::Format::appendBytes (output, escapedMarker);
+    jam::Format::appendUtf8 (output, Chars::newline);
 
     for (int lineNumber { startLine }; lineNumber <= endLine; ++lineNumber)
         appendLine (output, lineNumber, document.getLine (lineNumber));
 }
 
-static std::pair<bool, std::string> getStateBlock (int targetNumber, std::string_view path, const char* state)
+static std::pair<bool, Stdio::Documents> getStateBlock (int targetNumber, std::string_view path, std::string_view state)
 {
-    const auto header { Stdio::getFormatted (text::Diagnostics::excerptStateFormat,
-                                             targetNumber,
-                                             jam::Strings::fromView (path).toRawUTF8(),
-                                             state) };
     std::string output;
-    jam::Format::appendBytes (output, jam::Strings::getView (header));
-    return { false, std::move (output) };
+    jam::Format::appendBytes (output, text::Formats::excerptHeader);
+    jam::Format::appendDecimal (output, targetNumber);
+    jam::Format::appendUtf8 (output, Chars::space);
+    jam::Format::appendBytes (output, path);
+    jam::Format::appendUtf8 (output, Chars::space);
+    jam::Format::appendBytes (output, state);
+    jam::Format::appendUtf8 (output, Chars::newline);
+    return { false, Stdio::getDocuments (std::move (output), path) };
 }
 
-static std::pair<const char*, std::unique_ptr<TextDocument>> getLoadedDocument (std::string_view path)
+static std::pair<std::string_view, std::unique_ptr<TextDocument>> getLoadedDocument (std::string_view path)
 {
-    const auto displayPath { jam::Strings::fromView (path) };
     const auto targetFile { Paths::getLinkedTarget (path) };
 
     if (not targetFile.exists())
         return { text::Diagnostics::excerptNotFound, nullptr };
 
-    auto [documentStatus, document] { TextDocument::fromFile (targetFile, displayPath) };
+    auto [documentStatus, document] { TextDocument::fromFile (targetFile, path, Input::maxBufferedReadSize) };
 
     if (documentStatus.failed())
         return { text::Diagnostics::excerptUnreadable, nullptr };
@@ -106,29 +111,34 @@ static std::pair<const char*, std::unique_ptr<TextDocument>> getLoadedDocument (
     if (document->getBytes().empty())
         return { text::Diagnostics::excerptEmpty, nullptr };
 
-    return { nullptr, std::move (document) };
+    return { std::string_view {}, std::move (document) };
 }
 
-static std::pair<bool, std::string> getLiteralBlock (int targetNumber,
-                                                     std::string_view path,
-                                                     std::string_view literal,
-                                                     int contextLines)
+static std::pair<bool, Stdio::Documents> getLiteralBlock (int targetNumber,
+                                                          std::string_view path,
+                                                          std::string_view literal,
+                                                          int contextLines)
 {
     auto [documentState, loadedDocument] { getLoadedDocument (path) };
 
-    if (documentState != nullptr)
+    if (not documentState.empty())
         return getStateBlock (targetNumber, path, documentState);
 
     const TextDocument& document { *loadedDocument };
+    const std::string_view bytes { document.getBytes() };
     const int numLines { document.getNumLines() };
     const int contextSpan { std::min (contextLines, numLines) };
+    const auto literalSet { literal.empty() ? nullptr : jam::LiteralSet::create (std::vector<std::string> { std::string { literal } }, false) };
     std::string output;
     int pendingStart { 0 };
     int pendingEnd { 0 };
+    size_t matchOffset { literalSet == nullptr ? bytes.size() : literalSet->findNext (bytes, 0) };
 
-    for (int lineNumber { 1 }; lineNumber <= numLines; ++lineNumber)
+    while (matchOffset < bytes.size())
     {
-        if (not literal.empty() and document.getLine (lineNumber).find (literal) != std::string_view::npos)
+        const int lineNumber { document.getLineNumber (matchOffset) };
+
+        if (document.getLine (lineNumber).find (literal) != std::string_view::npos)
         {
             const int start { std::max (1, lineNumber - contextSpan) };
             const int end { std::min (numLines, lineNumber + contextSpan) };
@@ -149,13 +159,18 @@ static std::pair<bool, std::string> getLiteralBlock (int targetNumber,
                 pendingEnd = end;
             }
         }
+
+        const size_t nextLineOffset { lineNumber < numLines
+                                          ? static_cast<size_t> (document.getLine (lineNumber + 1).data() - bytes.data())
+                                          : bytes.size() };
+        matchOffset = literalSet->findNext (bytes, nextLineOffset);
     }
 
     if (pendingEnd == 0)
         return getStateBlock (targetNumber, path, text::Diagnostics::excerptNoMatch);
 
     appendBlock (output, document, path, targetNumber, pendingStart, pendingEnd);
-    return { true, std::move (output) };
+    return { true, Stdio::getDocuments (std::move (output), path) };
 }
 
 static bool isDigits (std::string_view text)
@@ -165,22 +180,11 @@ static bool isDigits (std::string_view text)
 
     for (const char character : text)
     {
-        if (character < static_cast<char> (Chars::zero) or character > static_cast<char> (Chars::nine))
+        if (not jam::Document::isDigit (static_cast<unsigned char> (character)))
             return false;
     }
 
     return true;
-}
-
-static std::optional<int> getLineNumber (std::string_view digits)
-{
-    int lineNumber { 0 };
-    const auto parseResult { std::from_chars (digits.data(), digits.data() + digits.size(), lineNumber) };
-
-    if (parseResult.ec == std::errc {})
-        return lineNumber;
-
-    return std::nullopt;
 }
 
 static bool isSpanText (std::string_view suffix)
@@ -196,8 +200,8 @@ static std::optional<std::pair<int, int>> getSpan (std::string_view spanText)
         return std::pair<int, int> { 1, Arguments::openRangeEnd };
 
     const auto dashIndex { spanText.find (static_cast<char> (Chars::dash)) };
-    const auto firstLine { getLineNumber (spanText.substr (0, dashIndex)) };
-    const auto lastLine { dashIndex == std::string_view::npos ? firstLine : getLineNumber (spanText.substr (dashIndex + 1)) };
+    const auto firstLine { Arguments::getInteger (spanText.substr (0, dashIndex)) };
+    const auto lastLine { dashIndex == std::string_view::npos ? firstLine : Arguments::getInteger (spanText.substr (dashIndex + 1)) };
 
     if (firstLine and lastLine and *firstLine >= 1 and *lastLine >= *firstLine)
         return std::pair<int, int> { *firstLine, *lastLine };
@@ -205,7 +209,7 @@ static std::optional<std::pair<int, int>> getSpan (std::string_view spanText)
     return std::nullopt;
 }
 
-static std::pair<bool, std::string> getRangeBlock (int targetNumber, std::string_view target)
+static std::pair<bool, Stdio::Documents> getRangeBlock (int targetNumber, std::string_view target)
 {
     const auto colonIndex { target.rfind (static_cast<char> (Chars::colon)) };
     const auto suffix { colonIndex == std::string_view::npos ? std::string_view {} : target.substr (colonIndex + 1) };
@@ -218,7 +222,7 @@ static std::pair<bool, std::string> getRangeBlock (int targetNumber, std::string
 
     auto [documentState, loadedDocument] { getLoadedDocument (path) };
 
-    if (documentState != nullptr)
+    if (not documentState.empty())
         return getStateBlock (targetNumber, path, documentState);
 
     const TextDocument& document { *loadedDocument };
@@ -230,10 +234,10 @@ static std::pair<bool, std::string> getRangeBlock (int targetNumber, std::string
 
     std::string output;
     appendBlock (output, document, path, targetNumber, firstLine, std::min (lastLine, numLines));
-    return { true, std::move (output) };
+    return { true, Stdio::getDocuments (std::move (output), path) };
 }
 
-static std::pair<bool, std::string> getTargetBlock (int targetNumber, std::string_view target, int contextLines)
+static std::pair<bool, Stdio::Documents> getTargetBlock (int targetNumber, std::string_view target, int contextLines)
 {
     constexpr std::string_view literalSeparator { " ~ " };
     const auto separatorIndex { target.find (literalSeparator) };
@@ -247,100 +251,98 @@ static std::pair<bool, std::string> getTargetBlock (int targetNumber, std::strin
                             contextLines);
 }
 
-static std::pair<juce::Result, jam::Strings> getTargets (const Arguments& arguments, const std::optional<std::string>& input)
+static std::tuple<juce::Result, std::unique_ptr<Input>, jam::Array<std::string_view>> getTargets (const std::optional<std::string>& input)
 {
-    jam::Strings targets;
-    targets.addArray (arguments.getPositionals(), 0, -1);
+    if (Stdio::isTerminalInput (input))
+        return { Stdio::fail (text::Diagnostics::failExcerptRequiresTarget), nullptr, jam::Array<std::string_view> {} };
 
-    if (targets.size() == 0)
+    auto [inputStatus, standardInput] { Input::create (input, Input::allLines) };
+
+    if (inputStatus.failed())
+        return { inputStatus, nullptr, jam::Array<std::string_view> {} };
+
+    jam::Array<std::string_view> targets;
+    const auto inputText { standardInput->getBytes() };
+
+    TextDocument::applyToLines (inputText, juce::Range<int> (1, Input::allLines), [&targets] (int, std::string_view line)
     {
-        if (Stdio::isTerminalInput (input))
-            return { juce::Result::fail (text::Diagnostics::failExcerptRequiresTarget), {} };
+        if (not line.empty())
+            targets.add (line);
 
-        const auto [inputStatus, standardInput] { Input::create (input, Input::allLines) };
+        return true;
+    });
 
-        if (inputStatus.failed())
-            return { inputStatus, {} };
+    if (targets.isEmpty())
+        return { Stdio::fail (text::Diagnostics::failExcerptRequiresTarget), nullptr, jam::Array<std::string_view> {} };
 
-        const auto inputText { standardInput->getBytes() };
-        size_t cursor { 0 };
-
-        while (cursor < inputText.size())
-        {
-            const auto newlineIndex { jam::simd::findByte (inputText.data(), inputText.size(), cursor, static_cast<char> (Chars::newline)) };
-            const auto line { TextDocument::getLine (inputText, cursor, newlineIndex) };
-
-            if (not line.empty())
-                targets.add (line);
-
-            cursor = newlineIndex < inputText.size() ? newlineIndex + 1 : inputText.size();
-        }
-    }
-
-    if (targets.size() == 0)
-        return { juce::Result::fail (text::Diagnostics::failExcerptRequiresTarget), {} };
-
-    return { juce::Result::ok(), std::move (targets) };
+    return { juce::Result::ok(), std::move (standardInput), std::move (targets) };
 }
 
-static Stdio::Output getOutput (const jam::Array<std::string>& blocks, const jam::Array<bool>& isFoundFlags)
+static Stdio::Output getOutput (juce::Span<const std::string_view> targets, int contextLines)
 {
-    const int targetCount { blocks.size() };
+    const int targetCount { static_cast<int> (targets.size()) };
+    jam::Array<bool> foundFlags;
+    foundFlags.insertMultiple (0, false, targetCount);
+    jam::Array<Stdio::Documents> blockDocuments;
+    blockDocuments.resize (targetCount);
+
+    Jobs::run (targetCount, [targets, contextLines, &foundFlags, &blockDocuments] (int index)
+               {
+                   auto [isFound, documents] { getTargetBlock (index + 1, targets[static_cast<size_t> (index)], contextLines) };
+                   foundFlags.at (index) = isFound;
+                   blockDocuments.at (index) = std::move (documents);
+               });
+
     int foundCount { 0 };
 
     for (int index { 0 }; index < targetCount; ++index)
     {
-        if (isFoundFlags.at (index))
+        if (foundFlags.at (index))
             ++foundCount;
     }
 
-    std::string output;
-    const auto receipt { Stdio::getFormatted (text::Diagnostics::excerptReceiptFormat, targetCount, foundCount, targetCount - foundCount) };
-    jam::Format::appendBytes (output, jam::Strings::getView (receipt));
+    std::string receipt;
+    jam::Format::appendBytes (receipt, text::Formats::excerptReceipt);
+    jam::Format::appendDecimal (receipt, targetCount);
+    jam::Format::appendBytes (receipt, text::Formats::excerptTargets);
+    jam::Format::appendDecimal (receipt, foundCount);
+    jam::Format::appendBytes (receipt, text::Formats::excerptFound);
+    jam::Format::appendDecimal (receipt, targetCount - foundCount);
+    jam::Format::appendBytes (receipt, text::Formats::excerptMissing);
 
-    for (int index { 0 }; index < targetCount; ++index)
-        jam::Format::appendBytes (output, blocks.at (index));
+    Stdio::Documents documents (Stdio::getDocuments (std::move (receipt)));
+
+    for (auto& targetDocuments : blockDocuments)
+        Stdio::addDocuments (documents, std::move (targetDocuments));
 
     const int exitCode { foundCount == targetCount ? Stdio::exitSuccess : Stdio::exitMismatch };
-    return { exitCode, std::move (output), {} };
+    return Stdio::getOutput (exitCode, std::move (documents));
 }
 
-Arguments Excerpt::getArguments (const jam::Strings& argumentList)
+Arguments Excerpt::getArguments (juce::Span<const std::string_view> argumentList)
 {
-    const std::vector<std::string_view> flagOptions {};
-    const std::vector<std::string_view> valueOptions { Id::contextOption };
-    const std::vector<std::string_view> optionalValueOptions {};
-
-    return Arguments { argumentList, flagOptions, valueOptions, optionalValueOptions };
+    return Arguments { argumentList, {}, { Id::contextOption }, {} };
 }
 
 Stdio::Output Excerpt::run (const Arguments& arguments, const std::optional<std::string>& input)
 {
     if (arguments.getStatus().failed())
-        return Stdio::getFailure (arguments.getStatus().getErrorMessage());
+        return Stdio::getFailure (arguments.getStatus());
 
     const auto [contextStatus, contextLines] { arguments.getInteger (Id::contextOption, 0, 0) };
 
     if (contextStatus.failed())
-        return Stdio::getFailure (contextStatus.getErrorMessage());
+        return Stdio::getFailure (contextStatus);
 
-    const auto [targetStatus, targets] { getTargets (arguments, input) };
+    if (arguments.getPositionals (0).empty())
+    {
+        const auto [targetStatus, standardInput, standardTargets] { getTargets (input) };
 
-    if (targetStatus.failed())
-        return Stdio::getFailure (targetStatus.getErrorMessage());
+        if (targetStatus.failed())
+            return Stdio::getFailure (targetStatus);
 
-    const int targetCount { targets.size() };
-    jam::Array<std::string> blocks;
-    blocks.resize (targetCount);
-    jam::Array<bool> isFoundFlags;
-    isFoundFlags.insertMultiple (0, false, targetCount);
+        return getOutput (standardTargets, contextLines);
+    }
 
-    Jobs::run (targetCount, [&targetTexts = targets, contextLines = contextLines, &blocks, &isFoundFlags] (int index)
-               {
-                   auto [isFound, block] { getTargetBlock (index + 1, targetTexts.getView (index), contextLines) };
-                   isFoundFlags.at (index) = isFound;
-                   blocks.at (index) = std::move (block);
-               });
-
-    return getOutput (blocks, isFoundFlags);
+    return getOutput (arguments.getPositionals (0), contextLines);
 }

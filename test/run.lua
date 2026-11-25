@@ -1,12 +1,8 @@
 local sawBinary = arg[1]
-assert (sawBinary ~= nil and #sawBinary > 0, "usage: nvim --headless -l test/run.lua <saw-binary> [<server-binary>]")
+assert (sawBinary ~= nil and #sawBinary > 0, "usage: nvim --headless -l test/run.lua <saw-binary> [mcp]")
 sawBinary = vim.fn.fnamemodify (sawBinary, ":p")
 
-local serverBinary = arg[2]
-
-if serverBinary ~= nil then
-    serverBinary = vim.fn.fnamemodify (serverBinary, ":p")
-end
+local isMcpLane = arg[2] == "mcp"
 
 local mcpProtocolVersion = "2026-07-28"
 local mcpProtocolVersionMember = "io.modelcontextprotocol/protocolVersion"
@@ -297,6 +293,11 @@ local function makeTreeReadable (rootDir)
         local result = vim.system ({ "chmod", "-R", "u+rwX", rootDir }):wait ()
         assert (result.code == 0, "chmod failed: " .. rootDir)
     end
+
+    if vim.fn.has ("mac") == 1 then
+        local result = vim.system ({ "chmod", "-R", "-N", rootDir }):wait ()
+        assert (result.code == 0, "chmod failed: " .. rootDir)
+    end
 end
 
 local function countTransactions ()
@@ -353,6 +354,11 @@ local setupActions = {
         local targetPath = vim.fs.joinpath (rootDir, fields[4])
         local result = vim.system ({ "xattr", "-w", fields[2], fields[3], targetPath }):wait ()
         assert (result.code == 0, "xattr write failed: " .. targetPath)
+    end,
+    acl = function (rootDir, fields)
+        local targetPath = vim.fs.joinpath (rootDir, fields[3])
+        local result = vim.system ({ "chmod", "+a", fields[2], targetPath }):wait ()
+        assert (result.code == 0, "acl write failed: " .. targetPath)
     end,
     copy = function (rootDir, fields)
         copyFile (vim.fs.joinpath (rootDir, fields[2]), vim.fs.joinpath (rootDir, fields[3]))
@@ -474,7 +480,7 @@ local function startToolCall (sawArgs, stdinBytes, tempRoot)
     local serverProcess
     local replyBytes = ""
 
-    serverProcess = vim.system ({ serverBinary }, {
+    serverProcess = vim.system ({ sawBinary, "--mcp" }, {
         stdin = true,
         text = false,
         cwd = tempRoot,
@@ -504,7 +510,7 @@ local function startSawProcesses (step, stdinBytes, tempRoot)
         commandText = commandText:gsub ("{xff}", function () return "\255" end)
         local sawArgs = splitCommand (commandText)
 
-        if serverBinary ~= nil and not hasNonUtf8Byte (commandText) and not hasNonUtf8Byte (stdinBytes) then
+        if isMcpLane and not hasNonUtf8Byte (commandText) and not hasNonUtf8Byte (stdinBytes) then
             processes[processIndex] = startToolCall (sawArgs, stdinBytes, tempRoot)
         else
             local sawCmd = { sawBinary }

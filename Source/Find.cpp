@@ -1,4 +1,5 @@
 #include "Find.h"
+#include "FindOutcome.h"
 #include "Arguments.h"
 #include "Input.h"
 #include "Jobs.h"
@@ -9,197 +10,139 @@
 #include "TextDocument.h"
 #include "generated/Generated.h"
 
-static std::string getFailureDiagnostics (std::vector<std::pair<std::string, juce::Result>> failures)
+static constexpr std::array defaultPaths { Id::currentDirectory };
+
+static jam::Array<juce::Result> getFailureResults (const Paths::Failures& failures)
 {
-    std::sort (failures.begin(), failures.end(), &Paths::isPathEarlier<juce::Result>);
+    const auto& [failurePaths, failureResults] { failures };
+    jam::Array<int> failureOrder;
+    failureOrder.ensureStorageAllocated (failurePaths.size());
 
-    jam::Strings printedMessages;
-    std::string diagnostics;
+    for (int index { 0 }; index < failurePaths.size(); ++index)
+        failureOrder.add (index);
 
-    for (const auto& [failurePath, failureResult] : failures)
+    const auto getMessageOrder { [&results = failureResults] (int firstIndex, int secondIndex)
     {
-        juce::ignoreUnused (failurePath);
-        const auto errorMessage { failureResult.getErrorMessage() };
+        return jam::Strings::getView (results.at (firstIndex).getErrorMessage()).compare (jam::Strings::getView (results.at (secondIndex).getErrorMessage()));
+    } };
+    const auto getPathOrder { [&paths = failurePaths] (int firstIndex, int secondIndex)
+    {
+        return paths.getView (firstIndex).compare (paths.getView (secondIndex));
+    } };
 
-        if (printedMessages.addIfNotAlreadyThere (errorMessage, false))
-            diagnostics += Stdio::getDiagnostic (errorMessage);
-    }
+    std::sort (failureOrder.begin(), failureOrder.end(), [&getMessageOrder, &getPathOrder] (int firstIndex, int secondIndex)
+    {
+        const int messageOrder { getMessageOrder (firstIndex, secondIndex) };
+        return messageOrder < 0 or (messageOrder == 0 and getPathOrder (firstIndex, secondIndex) < 0);
+    });
 
-    return diagnostics;
+    const auto uniqueEnd { std::unique (failureOrder.begin(), failureOrder.end(), [&getMessageOrder] (int firstIndex, int secondIndex)
+    {
+        return getMessageOrder (firstIndex, secondIndex) == 0;
+    }) };
+
+    std::sort (failureOrder.begin(), uniqueEnd, [&getMessageOrder, &getPathOrder] (int firstIndex, int secondIndex)
+    {
+        const int pathOrder { getPathOrder (firstIndex, secondIndex) };
+        return pathOrder < 0 or (pathOrder == 0 and getMessageOrder (firstIndex, secondIndex) < 0);
+    });
+
+    jam::Array<juce::Result> results;
+
+    for (auto position { failureOrder.begin() }; position != uniqueEnd; ++position)
+        results.add (failureResults.at (*position));
+
+    return results;
 }
 
-static std::string getSortedOutput (std::vector<std::pair<std::string, std::string>> matchedOutputs)
+static std::pair<jam::Array<FindOutcome>, Paths::Failures> getDirectoriesOutcome (const jam::Array<std::pair<std::string_view, juce::File>>& roots,
+                                                                                  const Pattern& pattern,
+                                                                                  const Arguments& arguments,
+                                                                                  const Search& search)
 {
-    std::stable_sort (matchedOutputs.begin(), matchedOutputs.end(), &Paths::isPathEarlier<std::string>);
-    size_t totalSize { 0 };
+    const bool isQuiet { arguments.contains (Id::quietOption) };
+    const auto includeGlobs (arguments.getValues (Id::includeOption));
+    const auto excludeGlobs (arguments.getValues (Id::excludeOption));
+    jam::Array<FindOutcome> workerOutcomes;
+    Paths::Failures walkFailures;
+    std::atomic<bool> shouldStop { false };
 
-    for (const auto& [displayPath, output] : matchedOutputs)
+    if (not roots.isEmpty())
     {
-        juce::ignoreUnused (displayPath);
-        totalSize += output.size();
+        walkFailures = Paths::applyToDirectories (roots,
+                                                  includeGlobs,
+                                                  excludeGlobs,
+                                                  arguments.contains (Id::hiddenOption),
+                                                  arguments.contains (Id::noIgnoreOption),
+                                                  [&workerOutcomes] (int workerCount)
+                                                  {
+                                                      workerOutcomes.resize (workerCount);
+                                                  },
+                                                  [&workerOutcomes, isQuiet, &pattern, &search, &shouldStop] (int workerIndex, const std::string& fullPath, std::string_view displayPath)
+                                                  {
+                                                      auto& workerOutcome { workerOutcomes.at (workerIndex) };
+                                                      workerOutcome.addFile (juce::File { jam::Strings::fromView (fullPath) }, displayPath, pattern, search, false, true);
+
+                                                      if (isQuiet and workerOutcome.getNumMatches() > 0)
+                                                          shouldStop.store (true, std::memory_order_relaxed);
+                                                  },
+                                                  shouldStop);
     }
 
-    if (matchedOutputs.size() == 1)
-    {
-        auto& [displayPath, output] { matchedOutputs.front() };
-        juce::ignoreUnused (displayPath);
-        return std::move (output);
-    }
-
-    std::string printedOutput;
-    printedOutput.reserve (totalSize);
-    std::string_view previousPath;
-
-    for (const auto& [displayPath, output] : matchedOutputs)
-    {
-        if (previousPath.compare (displayPath) != 0)
-            printedOutput.append (output);
-
-        previousPath = displayPath;
-    }
-
-    return printedOutput;
+    return { std::move (workerOutcomes), std::move (walkFailures) };
 }
 
-static Stdio::Output runFilesFind (const jam::Strings& rawPaths,
+static jam::Array<FindOutcome> getFilesOutcome (const jam::Array<Paths::Entry>& files,
+                                                const Pattern& pattern,
+                                                const Search& search,
+                                                bool isShowingPathPrefix)
+{
+    jam::Array<FindOutcome> outcomes;
+    outcomes.resize (files.size());
+
+    Jobs::run (files.size(),
+               [&files, &pattern, &search, isShowingPathPrefix, &outcomes] (int index)
+               {
+                   const auto& [displayPath, file, isExplicit] { files.at (index) };
+                   juce::ignoreUnused (isExplicit);
+                   outcomes.at (index).addFile (file, displayPath, pattern, search, true, isShowingPathPrefix);
+               });
+
+    return outcomes;
+}
+
+static Stdio::Output runFilesFind (juce::Span<const std::string_view> rawPaths,
                                    const Pattern& pattern,
                                    const Arguments& arguments,
                                    const Search& search)
 {
     const bool isQuiet { arguments.contains (Id::quietOption) };
-    const auto includeGlobs (arguments.getValues (Id::includeOption));
-    const auto excludeGlobs (arguments.getValues (Id::excludeOption));
-    std::vector<std::pair<std::string, juce::Result>> failures;
-    std::vector<std::pair<std::string, juce::File>> explicitFiles;
-    std::vector<std::pair<std::string, juce::File>> roots;
-    std::vector<std::vector<std::pair<std::string, std::string>>> workerOutputs;
-    std::vector<int> workerMatchCounts;
-    std::vector<std::vector<std::pair<std::string, juce::Result>>> workerFailures;
-    std::vector<jam::RegExpAutomaton> workerAutomata;
-    std::atomic<bool> shouldStop { false };
-
-    for (int index { 0 }; index < rawPaths.size(); ++index)
-    {
-        const auto rawPathView { rawPaths.getView (index) };
-        const auto targetFile { Paths::getLinkedTarget (rawPathView) };
-
-        if (not targetFile.exists())
-        {
-            failures.emplace_back (std::string { rawPathView }, TextDocument::getReadFailure (targetFile, jam::Strings::fromView (rawPathView)));
-        }
-        else if (targetFile.isDirectory())
-        {
-            roots.emplace_back (std::string { rawPathView }, targetFile);
-        }
-        else
-        {
-            explicitFiles.emplace_back (Paths::getDisplayPath (rawPathView), targetFile);
-        }
-    }
-
-    if (not roots.empty())
-    {
-        Paths::applyToDirectories (roots,
-                                   includeGlobs,
-                                   excludeGlobs,
-                                   arguments.contains (Id::hiddenOption),
-                                   arguments.contains (Id::noIgnoreOption),
-                                   [&workerOutputs, &workerMatchCounts, &workerFailures, &workerAutomata] (int workerCount)
-                                   {
-                                       workerOutputs.resize (static_cast<size_t> (workerCount));
-                                       workerMatchCounts.resize (static_cast<size_t> (workerCount), 0);
-                                       workerFailures.resize (static_cast<size_t> (workerCount));
-                                       workerAutomata.resize (static_cast<size_t> (workerCount));
-                                   },
-                                   [&workerOutputs, &workerMatchCounts, &workerFailures, &workerAutomata, &shouldStop, isQuiet, &pattern, &search] (int workerIndex, const std::string& fullPath, std::string_view displayPath)
-                                   {
-                                       auto [status, matchCount, output] { search.runFile (juce::File { jam::Strings::fromView (fullPath) },
-                                                                                           displayPath,
-                                                                                           pattern,
-                                                                                           workerAutomata.at (static_cast<size_t> (workerIndex)),
-                                                                                           false,
-                                                                                           true) };
-
-                                       if (status.failed())
-                                       {
-                                           workerFailures.at (static_cast<size_t> (workerIndex)).emplace_back (std::string { displayPath }, std::move (status));
-                                       }
-                                       else if (matchCount > 0)
-                                       {
-                                           workerMatchCounts.at (static_cast<size_t> (workerIndex)) += matchCount;
-
-                                           if (isQuiet)
-                                               shouldStop.store (true, std::memory_order_relaxed);
-                                           else if (not output.empty())
-                                               workerOutputs.at (static_cast<size_t> (workerIndex)).emplace_back (std::string { displayPath }, std::move (output));
-                                       }
-                                   },
-                                   [&workerFailures] (int workerIndex, std::string_view unreadableDisplayPath)
-                                   {
-                                       const auto displayString { jam::Strings::fromView (unreadableDisplayPath) };
-                                       workerFailures.at (static_cast<size_t> (workerIndex))
-                                           .emplace_back (std::string { unreadableDisplayPath },
-                                                          TextDocument::getReadFailure (juce::File::getCurrentWorkingDirectory().getChildFile (displayString), displayString));
-                                   },
-                                   shouldStop);
-    }
-
-    const auto explicitCount { static_cast<int> (explicitFiles.size()) };
-    jam::Array<juce::Result> statuses;
-    statuses.insertMultiple (0, juce::Result::ok(), explicitCount);
-    jam::Array<std::string> outputs;
-    outputs.resize (explicitCount);
-    jam::Array<int> matchCounts;
-    matchCounts.resize (explicitCount);
+    auto [failures, files, roots] { Paths::getClassifiedPaths (rawPaths) };
     const bool isShowingPathPrefix { rawPaths.size() > 1 };
+    auto outcomes (getFilesOutcome (files, pattern, search, isShowingPathPrefix));
+    auto [directoryOutcomes, directoryFailures] { getDirectoriesOutcome (roots, pattern, arguments, search) };
 
-    Jobs::run (explicitCount,
-               [&explicitFiles, &pattern, &search, isShowingPathPrefix, &statuses, &matchCounts, &outputs] (int index)
-               {
-                   jam::RegExpAutomaton automaton;
-                   const auto& [displayPath, file] { explicitFiles.at (static_cast<size_t> (index)) };
-                   auto [status, matchCount, output] { search.runFile (file, displayPath, pattern, automaton, true, isShowingPathPrefix) };
-                   statuses.at (index) = std::move (status);
-                   matchCounts.at (index) = matchCount;
-                   outputs.at (index) = std::move (output);
-               });
+    for (int index { 0 }; index < directoryOutcomes.size(); ++index)
+        outcomes.add (std::move (directoryOutcomes.at (index)));
 
+    Paths::addFailures (failures, std::move (directoryFailures));
     int totalMatches { 0 };
-    std::vector<std::pair<std::string, std::string>> matchedOutputs;
 
-    for (int index { 0 }; index < explicitCount; ++index)
+    for (int index { 0 }; index < outcomes.size(); ++index)
     {
-        auto& [displayPath, file] { explicitFiles.at (static_cast<size_t> (index)) };
-        juce::ignoreUnused (file);
-        totalMatches += matchCounts.at (index);
-
-        if (statuses.at (index).failed())
-            failures.emplace_back (std::move (displayPath), statuses.at (index));
-        else if (not outputs.at (index).empty())
-            matchedOutputs.emplace_back (std::move (displayPath), std::move (outputs.at (index)));
+        totalMatches += outcomes.at (index).getNumMatches();
+        Paths::addFailures (failures, outcomes.at (index).removeFailures());
     }
 
-    for (const int count : workerMatchCounts)
-        totalMatches += count;
-
-    for (auto& worker : workerOutputs)
-    {
-        for (auto& entry : worker)
-            matchedOutputs.emplace_back (std::move (entry));
-    }
-
-    for (auto& worker : workerFailures)
-    {
-        for (auto& failure : worker)
-            failures.push_back (std::move (failure));
-    }
+    auto& [failurePaths, failureResults] { failures };
+    juce::ignoreUnused (failurePaths);
 
     if (isQuiet and totalMatches > 0)
-        return { Stdio::exitSuccess, {}, {} };
+        return Stdio::getOutput (Stdio::exitSuccess);
 
-    const bool hasFailures { not failures.empty() };
+    const bool hasFailures { not failureResults.isEmpty() };
     const int exitCode { hasFailures ? Stdio::exitError : totalMatches > 0 ? Stdio::exitSuccess : Stdio::exitMismatch };
-    return { exitCode, isQuiet ? std::string {} : getSortedOutput (std::move (matchedOutputs)), getFailureDiagnostics (std::move (failures)) };
+    return Stdio::getOutput (exitCode, isQuiet ? Stdio::Documents {} : FindOutcome::getSortedDocuments (std::move (outcomes)), getFailureResults (failures));
 }
 
 static Stdio::Output runStdinFind (const Pattern& pattern,
@@ -209,112 +152,90 @@ static Stdio::Output runStdinFind (const Pattern& pattern,
 {
     if (Input::isStream (input) and search.isStreamSearch())
     {
-        auto [streamResult, streamMatches, streamOutput, readSize] { search.runStream (pattern) };
+        auto [streamResult, streamMatches, streamDocuments, readSize] { search.runStream (pattern) };
 
         if (streamResult.failed())
-            return Stdio::getFailure (streamResult.getErrorMessage());
+            return Stdio::getFailure (streamResult);
 
         if (readSize == 0)
             return Stdio::getFailure (text::Diagnostics::failMissingPath);
 
-        return { streamMatches > 0 ? Stdio::exitSuccess : Stdio::exitMismatch, std::move (streamOutput), {} };
+        return Stdio::getOutput (streamMatches > 0 ? Stdio::exitSuccess : Stdio::exitMismatch, std::move (streamDocuments));
     }
 
-    const auto [inputResult, standardInput] { Input::create (input, Input::allLines) };
+    const auto [inputResult, standardInput] { TextDocument::getInput (input, Input::allLines) };
 
     if (inputResult.failed())
-        return Stdio::getFailure (inputResult.getErrorMessage());
+        return Stdio::getFailure (inputResult);
 
     const auto stdinBytes { standardInput->getBytes() };
-
-    if (stdinBytes.empty())
-        return Stdio::getFailure (text::Diagnostics::failMissingPath);
-
     jam::RegExpAutomaton automaton;
-    auto [searchResult, matchCount, output] { search.run (stdinBytes,
-                                                          Id::stdinPath,
-                                                          pattern,
-                                                          automaton,
-                                                          true,
-                                                          false) };
+    auto [searchResult, matchCount, documents] { search.run (stdinBytes,
+                                                             Id::stdinPath,
+                                                             pattern,
+                                                             automaton,
+                                                             true,
+                                                             false) };
 
     if (searchResult.failed())
-        return Stdio::getFailure (searchResult.getErrorMessage());
+        return Stdio::getFailure (searchResult);
 
     const int exitCode { matchCount > 0 ? Stdio::exitSuccess : Stdio::exitMismatch };
-    return { exitCode, std::move (output), {} };
+    return Stdio::getOutput (exitCode, std::move (documents));
 }
 
 static Stdio::Output runListFiles (const Arguments& arguments)
 {
-    const auto& positionals { arguments.getPositionals() };
-    jam::Strings rawPaths;
-    rawPaths.addArray (positionals, 0, -1);
-
-    if (rawPaths.size() == 0)
-        rawPaths.add (Id::currentDirectory);
-
-    auto [pathFailures, files, isExplicitFlags] { Paths::getFiles (rawPaths,
-                                                                   arguments.getValues (Id::includeOption),
-                                                                   arguments.getValues (Id::excludeOption),
-                                                                   arguments.contains (Id::hiddenOption),
-                                                                   arguments.contains (Id::noIgnoreOption)) };
-    juce::ignoreUnused (isExplicitFlags);
-    const bool hasFailures { not pathFailures.empty() };
-    std::string diagnostics { getFailureDiagnostics (std::move (pathFailures)) };
+    const auto positionals (arguments.getPositionals (0));
+    const auto rawPaths (positionals.empty() ? juce::Span<const std::string_view> { defaultPaths } : positionals);
+    auto [pathFailures, files] { Paths::getFiles (rawPaths,
+                                                  arguments.getValues (Id::includeOption),
+                                                  arguments.getValues (Id::excludeOption),
+                                                  arguments.contains (Id::hiddenOption),
+                                                  arguments.contains (Id::noIgnoreOption)) };
+    auto& [failurePaths, failureResults] { pathFailures };
+    juce::ignoreUnused (failurePaths);
+    const bool hasFailures { not failureResults.isEmpty() };
     std::string output;
 
     if (not arguments.contains (Id::quietOption))
     {
-        for (const auto& [displayPath, file] : files)
+        for (const auto& [displayPath, file, isExplicit] : files)
         {
-            juce::ignoreUnused (file);
+            juce::ignoreUnused (file, isExplicit);
             jam::Format::appendBytes (output, displayPath);
-            output.push_back (static_cast<char> (Chars::newline));
+            jam::Format::appendUtf8 (output, Chars::newline);
         }
     }
 
-    const int exitCode { hasFailures ? Stdio::exitError : files.empty() ? Stdio::exitMismatch : Stdio::exitSuccess };
-    return { exitCode, std::move (output), std::move (diagnostics) };
+    const int exitCode { hasFailures ? Stdio::exitError : files.isEmpty() ? Stdio::exitMismatch : Stdio::exitSuccess };
+    return Stdio::getOutput (exitCode, Stdio::getDocuments (std::move (output)), getFailureResults (pathFailures));
 }
 
 static Stdio::Output runWithValidatedOptions (const Arguments& arguments,
-                                              const jam::Strings& positionals,
-                                              int beforeContext,
-                                              int afterContext,
-                                              int afterLine,
-                                              juce::Range<int> lineRange,
+                                              const Search& search,
                                               const std::optional<std::string>& input)
 {
     const auto isPatternOption { arguments.contains (Id::patternOption) };
     const int firstPathIndex { isPatternOption ? 0 : 1 };
-    jam::Strings patterns;
-
-    if (isPatternOption)
-        patterns = arguments.getValues (Id::patternOption);
-    else
-        patterns.add (positionals.getView (0));
-
-    const auto [patternResult, pattern] { Pattern::create (patterns,
+    const auto positionals (arguments.getPositionals (0));
+    const std::string_view patternText { isPatternOption ? std::string_view {} : positionals.front() };
+    const auto patternTexts (isPatternOption ? arguments.getValues (Id::patternOption) : juce::Span<const std::string_view> { &patternText, 1 });
+    const auto [patternResult, pattern] { Pattern::create (patternTexts,
                                                            arguments.contains (Id::regexOption),
                                                            arguments.contains (Id::ignoreCaseOption),
                                                            arguments.contains (Id::exactOption),
                                                            arguments.contains (Id::wordOption)) };
 
     if (patternResult.failed())
-        return Stdio::getFailure (patternResult.getErrorMessage());
+        return Stdio::getFailure (patternResult);
 
-    const Search search { arguments, beforeContext, afterContext, afterLine, lineRange };
-    jam::Strings rawPaths;
-    rawPaths.addArray (positionals, firstPathIndex, -1);
+    const auto rawPaths (arguments.getPositionals (firstPathIndex));
 
-    if (rawPaths.size() == 0 and not Stdio::isTerminalInput (input))
+    if (rawPaths.empty() and not Stdio::isTerminalInput (input))
         return runStdinFind (*pattern, arguments, search, input);
 
-    if (rawPaths.size() == 0)
-        rawPaths.add (Id::currentDirectory);
-
-    return runFilesFind (rawPaths, *pattern, arguments, search);
+    return runFilesFind (rawPaths.empty() ? juce::Span<const std::string_view> { defaultPaths } : rawPaths, *pattern, arguments, search);
 }
 
 static Stdio::Output runWithValidatedArguments (const Arguments& arguments, const std::optional<std::string>& input)
@@ -328,50 +249,54 @@ static Stdio::Output runWithValidatedArguments (const Arguments& arguments, cons
         return Stdio::getFailure (text::Diagnostics::failFindRequiresPattern);
 
     const auto [contextResult, contextDefault] { arguments.getInteger (Id::contextOption, 0, 0) };
+
+    if (contextResult.failed())
+        return Stdio::getFailure (contextResult);
+
     const auto [beforeResult, requestedBeforeContext] { arguments.getInteger (Id::beforeContextOption, 0, contextDefault) };
+
+    if (beforeResult.failed())
+        return Stdio::getFailure (beforeResult);
+
     const auto [afterContextResult, requestedAfterContext] { arguments.getInteger (Id::afterContextOption, 0, contextDefault) };
+
+    if (afterContextResult.failed())
+        return Stdio::getFailure (afterContextResult);
+
     const auto [afterResult, afterLine] { arguments.getInteger (Id::afterOption, 0, 0) };
+
+    if (afterResult.failed())
+        return Stdio::getFailure (afterResult);
+
     const auto [linesResult, lineRange] { arguments.getLineRangeFilter() };
 
-    if (contextResult.failed() or beforeResult.failed() or afterContextResult.failed() or afterResult.failed() or linesResult.failed())
-    {
-        const auto& failedResult { contextResult.failed() ? contextResult
-                                 : beforeResult.failed() ? beforeResult
-                                 : afterContextResult.failed() ? afterContextResult
-                                 : afterResult.failed() ? afterResult
-                                 : linesResult };
-        return Stdio::getFailure (failedResult.getErrorMessage());
-    }
+    if (linesResult.failed())
+        return Stdio::getFailure (linesResult);
 
     const auto isContextSuppressed { arguments.contains (Id::quietOption) or arguments.contains (Id::filesWithMatchesOption) or arguments.contains (Id::countOption) or arguments.contains (Id::onlyMatchingOption) };
     const int beforeContext { isContextSuppressed ? 0 : requestedBeforeContext };
     const int afterContext { isContextSuppressed ? 0 : requestedAfterContext };
 
-    return runWithValidatedOptions (arguments, positionals, beforeContext, afterContext, afterLine, lineRange, input);
+    const Search search { arguments, beforeContext, afterContext, afterLine, lineRange };
+    return runWithValidatedOptions (arguments, search, input);
 }
 
-Arguments Find::getArguments (const jam::Strings& argumentList)
+Arguments Find::getArguments (juce::Span<const std::string_view> argumentList)
 {
-    const std::vector<std::string_view> flagOptions
-    {
-        Id::regexOption, Id::ignoreCaseOption, Id::exactOption, Id::invertOption,
-        Id::countOption, Id::quietOption, Id::lineNumberOption, Id::noLineNumberOption,
-        Id::hashOption, Id::firstOption, Id::hiddenOption, Id::noIgnoreOption,
-        Id::filesWithMatchesOption, Id::onlyMatchingOption, Id::wordOption, Id::filesOption
-    };
-    const std::vector<std::string_view> valueOptions
-    {
-        Id::contextOption, Id::afterOption, Id::linesOption, Id::includeOption, Id::excludeOption,
-        Id::afterContextOption, Id::beforeContextOption, Id::patternOption
-    };
-
-    return Arguments { argumentList, flagOptions, valueOptions, {} };
+    return Arguments { argumentList,
+                       { Id::regexOption, Id::ignoreCaseOption, Id::exactOption, Id::invertOption,
+                         Id::countOption, Id::quietOption, Id::lineNumberOption, Id::noLineNumberOption,
+                         Id::hashOption, Id::firstOption, Id::hiddenOption, Id::noIgnoreOption,
+                         Id::filesWithMatchesOption, Id::onlyMatchingOption, Id::wordOption, Id::filesOption },
+                       { Id::contextOption, Id::afterOption, Id::linesOption, Id::includeOption, Id::excludeOption,
+                         Id::afterContextOption, Id::beforeContextOption, Id::patternOption },
+                       {} };
 }
 
 Stdio::Output Find::run (const Arguments& arguments, const std::optional<std::string>& input)
 {
     if (arguments.getStatus().failed())
-        return Stdio::getFailure (arguments.getStatus().getErrorMessage());
+        return Stdio::getFailure (arguments.getStatus());
 
     return runWithValidatedArguments (arguments, input);
 }

@@ -6,7 +6,6 @@ scratch="/tmp/saw-bench-matrix"
 rows="$scratch/rows"
 corpus="/tmp/saw-bench-corpus"
 saw="$(command -v saw)"
-server="$(command -v saw_ToolServer)"
 table="$benchmark/matrix-$setName-table.md"
 failures=0
 
@@ -119,7 +118,7 @@ runServer()
 work="\$(mktemp -d)"
 mkfifo "\$work/hold"
 exec 3<> "\$work/hold"
-{ cat "$rows/$name.jsonl"; read -r line <&3; } | "$server" | { head -n $count > /dev/null; echo >&3; }
+{ cat "$rows/$name.jsonl"; read -r line <&3; } | "$saw" --mcp | { head -n $count > /dev/null; echo >&3; }
 exitCode=\${PIPESTATUS[1]}
 rm -rf "\$work"
 : > "$rows/$name-samples.md"
@@ -131,7 +130,7 @@ SCRIPT
     hold="$(mktemp -d)"
     mkfifo "$hold/hold"
     exec 3<> "$hold/hold"
-    if ! { cat "$rows/$name-one.jsonl"; read -r line <&3; } | "$server" | { head -n 1 > "$rows/$name-reply.json"; echo >&3; } ||
+    if ! { cat "$rows/$name-one.jsonl"; read -r line <&3; } | "$saw" --mcp | { head -n 1 > "$rows/$name-reply.json"; echo >&3; } ||
        ! LC_ALL=C grep -q "\"exitCode\":$expected," "$rows/$name-reply.json"; then
         fail "$name reply"
     fi
@@ -378,6 +377,26 @@ runTree()
     runCommand findFiles tree saw 0 "$saw" find --files "$corpus"
     runCommand findSorted tree rg 0 rg --no-config -n --sort path juce_wchar "$corpus"
     runCommand findSorted tree saw 0 "$saw" find juce_wchar "$corpus"
+    runIgnoredTree
+}
+
+runIgnoredTree()
+{
+    local ignoredCorpus="/tmp/saw-bench-ignored"
+
+    if [ ! -f "$ignoredCorpus/.gitignore" ]; then
+        rm -rf "$ignoredCorpus"
+        mkdir -p "$ignoredCorpus/.git"
+        cp -R "$corpus" "$ignoredCorpus/modules"
+        cp "$benchmark/../../../JUCE/.gitignore" "$ignoredCorpus/.gitignore"
+    fi
+
+    "$saw" find juce_wchar "$ignoredCorpus" < /dev/null > "$rows/saw-output" 2> /dev/null
+    checkEqualLines "findIgnored tree rg" rg --no-config -n juce_wchar "$ignoredCorpus"
+    runCommand findIgnored tree rg 0 rg --no-config -n juce_wchar "$ignoredCorpus"
+    runCommand findIgnored tree saw 0 "$saw" find juce_wchar "$ignoredCorpus"
+    runCommand filesIgnored tree rg 0 rg --no-config --files "$ignoredCorpus"
+    runCommand filesIgnored tree saw 0 "$saw" find --files "$ignoredCorpus"
 }
 
 cat > "$table" << 'HEADER'

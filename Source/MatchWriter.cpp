@@ -2,18 +2,6 @@
 #include "TextDocument.h"
 #include "generated/Generated.h"
 
-static size_t getPreviousLineStart (std::string_view bytes, size_t lineStart, size_t minOffset)
-{
-    assert (lineStart > minOffset);
-
-    size_t previousStart { lineStart - 1 };
-
-    while (previousStart > minOffset and bytes.at (previousStart - 1) != static_cast<char> (Chars::newline))
-        --previousStart;
-
-    return previousStart;
-}
-
 MatchWriter::MatchWriter (std::string_view newBytes,
                           std::string_view newDisplayPath,
                           int newBeforeContext,
@@ -52,7 +40,9 @@ int MatchWriter::getLineNumber() const noexcept
 juce::Result MatchWriter::addMatch (const Pattern& pattern, size_t lineStart, size_t newlinePos)
 {
     static constexpr size_t initialCapacity { 16 * 1024 };
-    output.reserve (std::max (output.capacity(), std::min (bytes.size(), initialCapacity)));
+
+    if (output.empty())
+        output.reserve (std::min (bytes.size(), initialCapacity));
     const std::string_view line { TextDocument::getLine (bytes, lineStart, newlinePos) };
 
     if (isNumbered())
@@ -70,12 +60,17 @@ juce::Result MatchWriter::addMatch (const Pattern& pattern, size_t lineStart, si
     size_t firstLeadingStart { lineStart };
 
     for (int index { 0 }; index < leadingCount; ++index)
-        firstLeadingStart = getPreviousLineStart (bytes, firstLeadingStart, printedUpTo);
+    {
+        assert (firstLeadingStart > printedUpTo);
+        const std::string_view previousBytes { bytes.substr (printedUpTo, firstLeadingStart - 1 - printedUpTo) };
+        const size_t previousNewlinePos { previousBytes.rfind (static_cast<char> (Chars::newline)) };
+        firstLeadingStart = previousNewlinePos == std::string_view::npos ? printedUpTo : printedUpTo + previousNewlinePos + 1;
+    }
 
     if ((beforeContext != 0 or afterContext != 0) and printedUpTo > 0 and firstLeadingStart > printedUpTo)
     {
         jam::Format::appendBytes (output, Chars::doubleDash);
-        output.push_back (static_cast<char> (Chars::newline));
+        jam::Format::appendUtf8 (output, Chars::newline);
     }
 
     int leadingLineNumber { matchLineNumber - leadingCount };
@@ -93,7 +88,7 @@ juce::Result MatchWriter::addMatch (const Pattern& pattern, size_t lineStart, si
     return juce::Result::ok();
 }
 
-std::string MatchWriter::getOutput()
+std::string MatchWriter::removeOutput()
 {
     if (printedUpTo > 0)
         appendTrailingContext (bytes.size());
@@ -116,29 +111,17 @@ void MatchWriter::appendLinePrefix (int lineNumber, std::string_view line, char 
     if (isShowingPathPrefix)
     {
         jam::Format::appendBytes (output, displayPath);
-        output.push_back (separator);
+        jam::Format::appendUtf8 (output, separator);
     }
 
-    if (isShowingHash)
-    {
-        const auto lineHash { TextDocument::getLineHash (line) };
-        jam::Format::appendDecimal (output, lineNumber);
-        output.push_back (separator);
-        jam::Format::appendBytes (output, jam::Strings::getView (lineHash));
-        output.push_back (static_cast<char> (Chars::pipe));
-    }
-    else if (isShowingLineNumber)
-    {
-        jam::Format::appendDecimal (output, lineNumber);
-        output.push_back (separator);
-    }
+    TextDocument::appendLinePrefix (output, lineNumber, line, separator, isShowingLineNumber, isShowingHash);
 }
 
 void MatchWriter::appendFormattedLine (int lineNumber, std::string_view line, char separator)
 {
     appendLinePrefix (lineNumber, line, separator);
     jam::Format::appendBytes (output, line);
-    output.push_back (static_cast<char> (Chars::newline));
+    jam::Format::appendUtf8 (output, Chars::newline);
 }
 
 juce::Result MatchWriter::appendOnlyMatches (const Pattern& pattern, int lineNumber, std::string_view line)
@@ -162,7 +145,7 @@ juce::Result MatchWriter::appendOnlyMatches (const Pattern& pattern, int lineNum
         {
             appendLinePrefix (lineNumber, line, static_cast<char> (Chars::colon));
             jam::Format::appendBytes (output, matchText);
-            output.push_back (static_cast<char> (Chars::newline));
+            jam::Format::appendUtf8 (output, Chars::newline);
         }
 
         offset = matchText.empty() ? jam::RegExp::getNextPosition (line, matchEnd, true) : matchEnd;

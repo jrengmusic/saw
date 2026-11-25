@@ -13,7 +13,7 @@ struct Patch
      *
      *  @return The parsed arguments. Their status holds any parse failure.
      */
-    static Arguments getArguments (const jam::Strings& argumentList);
+    static Arguments getArguments (juce::Span<const std::string_view> argumentList);
 
     /** @brief Runs patch on parsed arguments.
      *
@@ -23,7 +23,7 @@ struct Patch
      *  @param arguments The parsed arguments from getArguments.
      *  @param input     The supplied input text, or nullopt for the process standard input.
      *
-     *  @return The exit code, the output bytes, and the diagnostics.
+     *  @return The exit code, the output text, and the diagnostics.
      */
     static Stdio::Output run (const Arguments& arguments, const std::optional<std::string>& input);
 };

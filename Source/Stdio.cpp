@@ -1,25 +1,5 @@
 #include "Stdio.h"
 #include "StandardStream.h"
-#include "generated/Generated.h"
-#include <cerrno>
-#include <cstdarg>
-
-static constexpr size_t maximumChunkSize { 64 * 1024 };
-
-static bool writeStream (int descriptor, std::string_view text)
-{
-    while (not text.empty())
-    {
-        const auto written { StandardStream::write (descriptor, text.data(), std::min (text.size(), maximumChunkSize)) };
-
-        if (written <= 0)
-            return written < 0 and errno == EPIPE;
-
-        text.remove_prefix (static_cast<size_t> (written));
-    }
-
-    return true;
-}
 
 bool Stdio::isTerminalInput (const std::optional<std::string>& input)
 {
@@ -31,84 +11,120 @@ bool Stdio::isTerminalOutput() noexcept
     return StandardStream::isTerminal (StandardStream::output);
 }
 
-std::string Stdio::getLine (const juce::String& message)
+Stdio::Output Stdio::getOutput (int exitCode, Documents documents, jam::Array<juce::Result> failures)
 {
-    return message.toStdString() + static_cast<char> (Chars::newline);
+    return { exitCode, std::move (documents), std::move (failures) };
 }
 
-std::string Stdio::getDiagnostic (const juce::String& message)
+Stdio::Documents Stdio::getDocuments (std::string&& text, std::string_view displayPath)
 {
-    return getLine (ProjectInfo::projectName + Id::diagnosticSeparator + message);
+    Documents documents;
+
+    if (not text.empty())
+        documents.add (TextDocument::fromText (std::move (text), displayPath));
+
+    return documents;
 }
 
-Stdio::Output Stdio::getFailure (const juce::String& message)
+void Stdio::addDocuments (Documents& documents, Documents&& addedDocuments)
 {
-    return { exitError, {}, getDiagnostic (message) };
+    if (documents.isEmpty())
+    {
+        documents = std::move (addedDocuments);
+    }
+    else
+    {
+        for (auto& document : addedDocuments)
+            documents.add (std::move (document));
+    }
 }
 
-juce::Result Stdio::write (std::string_view bytes)
+Stdio::Output Stdio::getFailure (const juce::Result& status)
 {
-    if (writeStream (StandardStream::output, bytes))
-        return juce::Result::ok();
+    jam::Array<juce::Result> failures;
+    failures.add (status);
+    return getOutput (exitError, {}, std::move (failures));
+}
 
-    return juce::Result::fail (text::Diagnostics::failStandardOutput);
+void Stdio::appendPiece (std::string& message, std::string_view piece)
+{
+    jam::Format::appendBytes (message, piece);
+}
+
+void Stdio::appendPiece (std::string& message, int piece)
+{
+    jam::Format::appendDecimal (message, piece);
+}
+
+void Stdio::appendPiece (std::string& message, juce::juce_wchar piece)
+{
+    jam::Format::appendUtf8 (message, piece);
+}
+
+void Stdio::appendPiece (std::string& message, const juce::Result& piece)
+{
+    jam::Format::appendBytes (message, jam::Strings::getView (piece.getErrorMessage()));
+}
+
+void Stdio::appendPiece (juce::String& message, std::string_view piece)
+{
+    if (not piece.empty())
+        message.appendCharPointer (juce::CharPointer_UTF8 { piece.data() }, juce::CharPointer_UTF8 { piece.data() + piece.size() });
+}
+
+void Stdio::appendPiece (juce::String& message, int piece)
+{
+    message << piece;
+}
+
+void Stdio::appendPiece (juce::String& message, juce::juce_wchar piece)
+{
+    message << juce::String::charToString (piece);
+}
+
+void Stdio::appendPiece (juce::String& message, const juce::Result& piece)
+{
+    message << piece.getErrorMessage();
+}
+
+juce::Result Stdio::getFirstFailure (const jam::Array<juce::Result>& statuses)
+{
+    for (int index { 0 }; index < statuses.size(); ++index)
+    {
+        if (statuses.at (index).failed())
+            return statuses.at (index);
+    }
+
+    return juce::Result::ok();
 }
 
 int Stdio::write (const Output& output)
 {
-    const auto& [exitCode, standardOutput, standardError] { output };
-    const auto writeResult { write (std::string_view { standardOutput }) };
-    writeError (standardError);
+    const auto& [exitCode, documents, failures] { output };
+    StandardStream standardOutput { StandardStream::output };
 
-    if (writeResult.failed())
+    for (const auto& document : documents)
     {
-        writeError (getDiagnostic (writeResult.getErrorMessage()));
-        return exitError;
+        const auto text { document->getBytes() };
+        standardOutput.write (text.data(), text.size());
     }
 
-    return exitCode;
-}
+    standardOutput.flush();
 
-void Stdio::writeError (std::string_view text)
-{
-    juce::ignoreUnused (writeStream (StandardStream::error, text));
-}
-
-juce::String Stdio::getFormatted (const char* format, ...)
-{
-    assert (format != nullptr);
-    va_list measureArgs;
-    va_start (measureArgs, format);
-    va_list formatArgs;
-    va_copy (formatArgs, measureArgs);
-    const int length { std::vsnprintf (nullptr, 0, format, measureArgs) };
-    va_end (measureArgs);
-
-    juce::String formatted;
-
-    if (length > 0)
+    StandardStream standardError { StandardStream::error };
+    const auto writeToStandardError { [&standardError] (std::string_view piece)
     {
-        std::string buffer (static_cast<size_t> (length), '\0');
-        std::vsnprintf (buffer.data(), buffer.size() + 1, format, formatArgs);
-        formatted = juce::String::fromUTF8 (buffer.data(), length);
-    }
+        standardError.write (piece.data(), piece.size());
+    } };
 
-    va_end (formatArgs);
-    return formatted;
-}
+    for (const auto& failure : failures)
+        applyToPieces (failure, writeToStandardError);
 
-std::string Stdio::getJoinedOutput (const jam::Array<std::string>& outputs)
-{
-    size_t totalSize { 0 };
+    const auto& standardOutputStatus { standardOutput.getStatus() };
 
-    for (int index { 0 }; index < outputs.size(); ++index)
-        totalSize += outputs.at (index).size();
+    if (standardOutputStatus.failed())
+        applyToPieces (standardOutputStatus, writeToStandardError);
 
-    std::string joined;
-    joined.reserve (totalSize);
-
-    for (int index { 0 }; index < outputs.size(); ++index)
-        joined.append (outputs.at (index));
-
-    return joined;
+    standardError.flush();
+    return standardOutputStatus.failed() ? exitError : exitCode;
 }

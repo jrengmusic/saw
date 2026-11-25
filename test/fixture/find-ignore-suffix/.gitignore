@@ -1,0 +1,4 @@
+**/deep/skip.log
+**/build*
+**/*.gen
+/only/top.log

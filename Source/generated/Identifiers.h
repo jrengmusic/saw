@@ -22,6 +22,7 @@ namespace Id
 
     static constexpr std::string_view helpOption                   { "--help|-h"               };///< Show help text.
     static constexpr std::string_view versionOption                { "--version|-V"            };///< Show tool version.
+    static constexpr std::string_view mcpOption                    { "--mcp"                   };///< Serve commands over the Model Context Protocol.
     static constexpr std::string_view regexOption                  { "--regex|-r"              };///< Treat pattern as a regular expression.
     static constexpr std::string_view ignoreCaseOption             { "--ignore-case|-i"        };///< Match without case sensitivity.
     static constexpr std::string_view exactOption                  { "--exact|-x"              };///< Match entire line text.
@@ -65,7 +66,7 @@ namespace Id
     static constexpr std::string_view forceOption                  { "--force"                 };///< Overwrite drifted files during undo.
     static constexpr std::string_view stdinPath                    { "<stdin>"                 };///< Standard input label in diagnostics and output.
     static constexpr std::string_view currentDirectory             { "."                       };///< Current working directory path.
-    static constexpr std::string_view nullDevice                   { "/dev/null"               };///< Device that gives no byte.
+    static constexpr std::string_view nullDevice                   { "/dev/null"               };///< POSIX device that gives no byte.
     static constexpr std::string_view gitDirectory                 { ".git"                    };///< Git repository metadata directory name.
     static constexpr std::string_view gitignoreFile                { ".gitignore"              };///< Per-directory ignore file name.
     static constexpr std::string_view gitExcludePath               { ".git/info/exclude"       };///< Repository-local exclude file relative path.
@@ -85,6 +86,7 @@ namespace Id
     static constexpr std::string_view exactRegexSuffix             { ")$"                      };///< Exact-line regex group suffix.
     static constexpr std::string_view wordRegexPrefix              { "(\?<![A-Za-z0-9_])(\?:"  };///< Word-match regex group prefix.
     static constexpr std::string_view wordRegexSuffix              { ")(\?![A-Za-z0-9_])"      };///< Word-match regex group suffix.
+    static constexpr std::string_view groupRegexPrefix             { "(\?:"                    };///< Regex group prefix.
     static constexpr std::string_view undoFolder                   { "undo"                    };///< Undo storage directory name.
     static constexpr std::string_view pendingFolder                { "pending"                 };///< Folder of transactions that are not published.
     static constexpr std::string_view blobFolder                   { "blobs"                   };///< Folder of undo backup blob files.
@@ -111,6 +113,13 @@ namespace Id
     static constexpr std::string_view preHash                      { "preHash"                 };///< File hash before apply.
     static constexpr std::string_view postHash                     { "postHash"                };///< File hash after apply.
     static constexpr std::string_view executable                   { "executable"              };///< Executable bit flag key.
+    static constexpr std::string_view run                          { "run"                     };///< Name of the MCP tool that runs a saw command line.
+    static constexpr std::string_view exitCode                     { "exitCode"                };///< MCP result key for the exit code.
+    static constexpr std::string_view output                       { "output"                  };///< MCP result key for the standard output text.
+    static constexpr std::string_view outputBase64                 { "outputBase64"            };///< MCP result key for the standard output in base64.
+    static constexpr std::string_view errors                       { "errors"                  };///< MCP result key for the standard error text.
+    static constexpr std::string_view errorsBase64                 { "errorsBase64"            };///< MCP result key for the standard error in base64.
+    static constexpr std::string_view standardInput                { "stdin"                   };///< MCP request key for the standard input text.
 
 /**______________________________END OF NAMESPACE______________________________*/
 }// namespace Id
