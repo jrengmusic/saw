@@ -24,11 +24,11 @@ public:
      *  lines are read. Otherwise the lines are changed.
      *
      *  @param arguments The parsed arguments from getArguments.
-     *  @param input     The supplied input text, or nullopt for the process standard input.
+     *  @param input     The standard input, the null device, or a supplied text.
      *
      *  @return The exit code, the output documents, and the failures.
      */
-    static Stdio::Output run (const Arguments& arguments, const std::optional<std::string>& input);
+    static Stdio::Output run (const Arguments& arguments, const Input::Source& input);
 
 private:
     /** @brief Binds the parsed arguments of one lines command to its line range and its payload.
@@ -44,21 +44,22 @@ private:
      *
      *  Only the process standard input can be a terminal. A terminal is refused, so the command does not wait for typed text.
      *
-     *  @param input The supplied input text, or nullopt for the process standard input.
+     *  @param input The standard input, the null device, or a supplied text.
      *
      *  @return The exit code, the output documents, and the failures.
      */
-    Stdio::Output runStandardInput (const std::optional<std::string>& input) const;
+    Stdio::Output runStandardInput (const Input::Source& input) const;
 
     /** @brief Reads each file in its own job, and writes the output of each file into its own slot.
      *
      *  The slots keep the order of the sorted file entries. No lock is needed, because each job writes one slot.
      *
      *  @param rawPaths The paths that the user named.
+     *  @param source   The source of the input, passed to TextDocument::getInput for each file.
      *
-     *  @return The exit code, one document group for each file in file order, and the failures.
+     *  @return The exit code, and one document group for each file in file order. The first failure in job order is returned as the failure, with no documents.
      */
-    Stdio::Output runFiles (juce::Span<const std::string_view> rawPaths) const;
+    Stdio::Output runFiles (juce::Span<const std::string_view> rawPaths, const Input::Source& source) const;
 
     /** @brief Stages the mutation of every target file in one transaction, and runs the transaction.
      *
@@ -73,15 +74,16 @@ private:
      *  @param file        The file to read.
      *  @param displayPath The display path of the file.
      *  @param isExplicit  True when the file was named on the command line.
+     *  @param source    The source of the input, passed to TextDocument::getInput.
      *
      *  @return The read status, and the documents of the selected lines.
      */
-    std::pair<juce::Result, Stdio::Documents> getFileOutput (const juce::File& file, std::string_view displayPath, bool isExplicit) const;
+    std::pair<juce::Result, Stdio::Documents> getFileOutput (const juce::File& file, std::string_view displayPath, bool isExplicit, const Input::Source& source) const;
 
     /** @brief Builds the documents of the selected lines of an input.
      *
-     *  A range with no prefix and no carriage return is borrowed from the input, so the document is a view.
-     *  A missing last newline is one more borrowed document. Otherwise the formatted lines are one document.
+     *  Without a line number or a hash prefix, the selected bytes are borrowed from the input as one document, so the document is a view.
+     *  With a prefix, each selected line is formatted into one document.
      *
      *  @param input       The input that holds the bytes. Ownership passes to a borrowed document.
      *  @param displayPath The display path of the input.
@@ -91,13 +93,14 @@ private:
      */
     std::pair<juce::Result, Stdio::Documents> getOutputDocuments (std::unique_ptr<Input> input, std::string_view displayPath, bool isExplicit) const;
 
-    /** @brief Appends one selected line, with its line number or hash prefix, and its newline.
+    /** @brief Appends one selected line, with its line number or hash prefix, and its line ending.
      *
      *  @param output     The text that receives the line.
      *  @param lineNumber The one-based number of the line.
      *  @param line       The line bytes, without the line ending.
+     *  @param ending    The line ending of the line, as TextDocument::getLineEnding gives it.
      */
-    void appendFormattedLine (std::string& output, int lineNumber, std::string_view line) const;
+    void appendFormattedLine (std::string& output, int lineNumber, std::string_view line, std::string_view ending) const;
 
     /** @brief Stages the mutation of one file as one edit of the transaction.
      *
@@ -114,8 +117,8 @@ private:
 
     /** @brief Resolves the mutation range against the line count, and checks its bounds.
      *
-     *  An open end becomes numLines + 1. An insertAfter may start at line 0 or at the last line, so an
-     *  insertion can follow the last line. Every other mutation needs a range inside the lines.
+     *  An open end becomes numLines + 1. An insertAfter may start at any line from 0 to numLines, so an insertion can follow the last line.
+     *  Every other mutation needs a range inside the lines.
      *
      *  @param document    The document to mutate.
      *  @param displayPath The display path of the document, used in the failure text.
@@ -157,4 +160,7 @@ private:
 
     /** @brief True when each selected line is printed with its line number. */
     bool isShowingLineNumber { false };
+
+    /** @brief True when binary input is formatted rather than reported. */
+    bool isText { false };
 };

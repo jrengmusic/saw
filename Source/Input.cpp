@@ -1,6 +1,10 @@
 #include "Input.h"
 #include "StandardStream.h"
+#include "Stdio.h"
 #include "generated/Generated.h"
+#if JUCE_WINDOWS
+#include <windows.h>
+#endif
 #if ! JUCE_WINDOWS
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -53,6 +57,22 @@ std::unique_ptr<Input> Input::fromFile (const juce::File& file, size_t maxReadSi
         if (isNullDevice (path))
             return input;
 
+        std::error_code fifoError;
+
+        if (maxReadSize != allBytes and std::filesystem::is_fifo (path, fifoError))
+        {
+            juce::FileInputStream stream { file };
+
+            if (stream.failedToOpen())
+                return nullptr;
+
+            if (input->setReadBytes ([&stream] (char* destination, size_t maximumSize)
+                                     {
+                                         return stream.InputStream::read (destination, maximumSize);
+                                     }, allLines))
+                return input;
+        }
+
         return nullptr;
     }
 
@@ -85,29 +105,49 @@ Input::Input (Access) {}
 
 Input::~Input() = default;
 
-std::pair<juce::Result, std::unique_ptr<Input>> Input::create (const std::optional<std::string>& source, int numLines)
+std::pair<juce::Result, std::unique_ptr<Input>> Input::create (const Source& source, int numLines)
 {
     auto input { std::make_unique<Input> (Access {}) };
 
-    if (source.has_value())
+    if (std::holds_alternative<std::string_view> (source))
     {
-        input->bytes = *source;
+        input->bytes = std::get<std::string_view> (source);
         return { juce::Result::ok(), std::move (input) };
     }
 
-    if (input->setMappedBytes() or input->setReadBytes (numLines))
+    if (not Stdio::isTerminalInput (source) and not hasData (source))
+        return { juce::Result::ok(), std::move (input) };
+
+    if (input->setMappedBytes() or input->setReadBytes (StandardStream::read, numLines))
         return { juce::Result::ok(), std::move (input) };
 
     return { juce::Result::fail (text::Diagnostics::failStandardInput), nullptr };
 }
 
-bool Input::isStream (const std::optional<std::string>& source)
+bool Input::isStream (const Source& source)
 {
 #if JUCE_WINDOWS
-    return not source.has_value();
+    return std::holds_alternative<StandardInput> (source);
 #else
     struct stat status {};
-    return not source.has_value() and (::fstat (STDIN_FILENO, &status) != 0 or not S_ISREG (status.st_mode));
+    return std::holds_alternative<StandardInput> (source) and (::fstat (STDIN_FILENO, &status) != 0 or not S_ISREG (status.st_mode));
+#endif
+}
+
+bool Input::hasData (const Source& source)
+{
+    if (std::holds_alternative<std::string_view> (source))
+        return true;
+
+    if (std::holds_alternative<NullDevice> (source))
+        return false;
+
+#if JUCE_WINDOWS
+    const auto fileType { GetFileType (GetStdHandle (STD_INPUT_HANDLE)) };
+    return fileType == FILE_TYPE_DISK or fileType == FILE_TYPE_PIPE;
+#else
+    struct stat status {};
+    return ::fstat (STDIN_FILENO, &status) == 0 and (S_ISREG (status.st_mode) or S_ISFIFO (status.st_mode) or S_ISSOCK (status.st_mode));
 #endif
 }
 
@@ -143,7 +183,7 @@ bool Input::setMappedBytes()
 #endif
 }
 
-bool Input::setReadBytes (int numLines)
+bool Input::setReadBytes (const std::function<juce::int64 (char*, size_t)>& read, int numLines)
 {
     static constexpr size_t initialCapacity { 64 * 1024 };
     size_t capacity { initialCapacity };
@@ -159,7 +199,7 @@ bool Input::setReadBytes (int numLines)
             buffer.realloc (capacity);
         }
 
-        const auto numRead { StandardStream::read (buffer.getData() + size, capacity - size) };
+        const auto numRead { read (buffer.getData() + size, capacity - size) };
 
         if (numRead == 0)
         {

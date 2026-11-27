@@ -25,11 +25,11 @@ public:
      *  validated, and the replacement is previewed, or applied with `--apply`.
      *
      *  @param arguments The parsed arguments from getArguments.
-     *  @param input     The supplied input text, or nullopt for the process standard input.
+     *  @param input     The standard input, the null device, or a supplied text.
      *
      *  @return The exit code, the output documents, and the failures.
      */
-    static Stdio::Output run (const Arguments& arguments, const std::optional<std::string>& input);
+    static Stdio::Output run (const Arguments& arguments, const Input::Source& input);
 
 private:
     /** @brief The document of one file, its diff, and its number of replacements. */
@@ -52,11 +52,11 @@ private:
      *  Standard input has no file to write. `--apply` is refused before any diff is built.
      *
      *  @param arguments The parsed arguments of the command.
-     *  @param input     The supplied input text, or nullopt for the process standard input.
+     *  @param input     The standard input, the null device, or a supplied text.
      *
      *  @return The exit code, the output documents, and the failures.
      */
-    Stdio::Output runStandardInput (const Arguments& arguments, const std::optional<std::string>& input) const;
+    Stdio::Output runStandardInput (const Arguments& arguments, const Input::Source& input) const;
 
     /** @brief Reads and diffs each file in its own job, then stages the replacements in file order.
      *
@@ -64,10 +64,11 @@ private:
      *
      *  @param arguments The parsed arguments of the command.
      *  @param rawPaths  The paths that the user named.
+     *  @param source    The source of the input, passed to TextDocument::getInput for each file.
      *
      *  @return The exit code, the output documents, and the failures.
      */
-    Stdio::Output runFiles (const Arguments& arguments, juce::Span<const std::string_view> rawPaths) const;
+    Stdio::Output runFiles (const Arguments& arguments, juce::Span<const std::string_view> rawPaths, const Input::Source& source) const;
 
     /** @brief Reads one file, and builds its diff only when the pattern has a candidate in the file.
      *
@@ -76,10 +77,11 @@ private:
      *  @param targetFile  The file to read.
      *  @param displayPath The display path of the file.
      *  @param isExplicit  True when the file was named on the command line.
+     *  @param source    The source of the input, passed to TextDocument::getInput.
      *
      *  @return The result, and the replacement when the file has one.
      */
-    std::pair<juce::Result, std::optional<Replacement>> getReplacedFile (const juce::File& targetFile, std::string_view displayPath, bool isExplicit) const;
+    std::pair<juce::Result, std::optional<Replacement>> getReplacedFile (const juce::File& targetFile, std::string_view displayPath, bool isExplicit, const Input::Source& source) const;
 
     /** @brief Builds one change for each line that has a match, within the line range.
      *

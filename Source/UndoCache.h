@@ -50,19 +50,17 @@ struct UndoCache
      */
     static std::pair<juce::Result, bool> claimTransaction (std::string_view transactionId, bool isForce);
 
-    /** @brief Stages the blob files and the record of a transaction, in parallel.
+    /** @brief Stores a transaction in the pending folder: its record, and the blob files that hold the original bytes.
      *
-     *  A blob holds the planned bytes when the target and the blob folder can be swapped, so that
-     *  the commit is one exchange of two files. Otherwise a blob holds the original bytes. Any
-     *  failed write removes the transaction again.
+     *  @param commandName The name of the mutating subcommand, recorded with the transaction.
+     *  @param stagedFiles The staged files of the transaction, in transaction order.
+     *  @param folders     The folders that the transaction creates, recorded with the transaction.
      *
-     *  @param commandName     Subcommand name stored in the record.
-     *  @param stagedFiles     The staged files of the transaction. Each one gives its blob file and its record entry.
-     *
-     *  @return Status result paired with the generated transaction id on success.
+     *  @return Status result paired with the transaction id. The id is empty when the record cannot be stored.
      */
     static std::pair<juce::Result, std::string> addTransaction (std::string_view commandName,
-                                                                const jam::Array<StagedFile>& stagedFiles);
+                                                                const jam::Array<StagedFile>& stagedFiles,
+                                                                const jam::Array<juce::File>& folders);
 
     /** @brief Lists the transaction ids in ascending order.
      *

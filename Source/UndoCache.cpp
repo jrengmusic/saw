@@ -30,6 +30,9 @@ static jam::Strings getSortedIds (const juce::File& directory)
 
 static juce::Result writeBlob (const juce::File& blobFile, const StagedFile& stagedFile)
 {
+    if (not stagedFile.isExisting())
+        return juce::Result::ok();
+
     if (jam::File::isSwappable (stagedFile.getTargetFile(), blobFile.getParentDirectory()))
         return Writer::toStagedFile (blobFile, stagedFile.getTargetFile(), stagedFile.getPlannedBytes());
 
@@ -79,6 +82,15 @@ static void appendStringMember (juce::OutputStream& json,
     jam::JsonWriter::appendString (json, value, juce::JSON::Encoding::utf8);
 }
 
+static void appendFolderEntries (juce::OutputStream& entries, const jam::Array<juce::File>& folders)
+{
+    for (int index { 0 }; index < folders.size(); ++index)
+    {
+        jam::JsonWriter::appendSeparator (entries, index);
+        jam::JsonWriter::appendString (entries, jam::Strings::getView (folders.at (index).getFullPathName()), juce::JSON::Encoding::utf8);
+    }
+}
+
 static void appendFileEntries (juce::OutputStream& entries,
                                const jam::Array<StagedFile>& stagedFiles,
                                const jam::Array<juce::SHA256>& hashes)
@@ -90,11 +102,19 @@ static void appendFileEntries (juce::OutputStream& entries,
         jam::JsonWriter::appendObject (entries,
             [&stagedFiles, &hashes, index, hashIndex] (juce::OutputStream& entry)
             {
-                appendStringMember (entry, jam::Strings::getView (Id::path.toString()), 0, jam::Strings::getView (stagedFiles.at (index).getTargetFile().getFullPathName()));
-                appendStringMember (entry, Id::preHash, 1, jam::Strings::getView (hashes.at (hashIndex).toHexString()));
-                appendStringMember (entry, Id::postHash, 2, jam::Strings::getView (hashes.at (hashIndex + 1).toHexString()));
-                jam::JsonWriter::appendKey (entry, Id::executable, 3);
-                jam::JsonWriter::appendBoolean (entry, stagedFiles.at (index).isExecutable());
+                const auto& stagedFile { stagedFiles.at (index) };
+                const bool isExisting { stagedFile.isExisting() };
+                const int postHashMember { isExisting ? 3 : 2 };
+                appendStringMember (entry, jam::Strings::getView (Id::path.toString()), 0, jam::Strings::getView (stagedFile.getTargetFile().getFullPathName()));
+                jam::JsonWriter::appendKey (entry, Id::existing, 1);
+                jam::JsonWriter::appendBoolean (entry, isExisting);
+
+                if (isExisting)
+                    appendStringMember (entry, Id::preHash, 2, jam::Strings::getView (hashes.at (hashIndex).toHexString()));
+
+                appendStringMember (entry, Id::postHash, postHashMember, jam::Strings::getView (hashes.at (hashIndex + 1).toHexString()));
+                jam::JsonWriter::appendKey (entry, Id::executable, postHashMember + 1);
+                jam::JsonWriter::appendBoolean (entry, stagedFile.isExecutable());
             });
     }
 }
@@ -140,6 +160,12 @@ static bool hasTypedMembers (const jam::JsonDocument& doc,
     return true;
 }
 
+static bool isExistingEntry (const jam::JsonDocument& doc,
+                             const jam::Document::Element& entryElement)
+{
+    return not doc.contains (entryElement, Id::existing) or doc.getBoolean (doc.get (entryElement, Id::existing));
+}
+
 static bool isValidFileEntry (const jam::JsonDocument& doc,
                               const jam::Document::Element& filesElement,
                               const jam::Document::Token& entryToken,
@@ -150,13 +176,24 @@ static bool isValidFileEntry (const jam::JsonDocument& doc,
 
     const auto* entryElement { doc.getChildByToken (filesElement, entryToken) };
 
-    return entryElement != nullptr
-           and hasTypedMembers (doc, *entryElement, {
+    if (doc.contains (*entryElement, Id::existing) and doc.get (*entryElement, Id::existing).type != map::JsonTokenType::boolean)
+        return false;
+
+    if (isExistingEntry (doc, *entryElement))
+    {
+        return hasTypedMembers (doc, *entryElement, {
                    { jam::Strings::getView (Id::path.toString()), map::JsonTokenType::string },
                    { Id::preHash, map::JsonTokenType::string },
                    { Id::postHash, map::JsonTokenType::string },
                    { Id::executable, map::JsonTokenType::boolean } })
-           and blobFile.existsAsFile();
+               and blobFile.existsAsFile();
+    }
+
+    return hasTypedMembers (doc, *entryElement, {
+               { jam::Strings::getView (Id::path.toString()), map::JsonTokenType::string },
+               { Id::postHash, map::JsonTokenType::string },
+               { Id::executable, map::JsonTokenType::boolean } })
+           and not blobFile.existsAsFile();
 }
 
 static bool isValidFilesArray (const jam::JsonDocument& doc,
@@ -173,6 +210,27 @@ static bool isValidFilesArray (const jam::JsonDocument& doc,
 
     for (int index { 0 }; index < entryTokens.size(); ++index)
         if (not isValidFileEntry (doc, *filesElement, entryTokens.at (index), UndoCache::getBlobFile (transactionId, index)))
+            return false;
+
+    return true;
+}
+
+static bool isValidFoldersArray (const jam::JsonDocument& doc,
+                                 const jam::Document::Element& rootElement)
+{
+    if (not doc.contains (rootElement, Id::folders))
+        return true;
+
+    const auto& foldersToken { doc.get (rootElement, Id::folders) };
+
+    if (foldersToken.type != map::JsonTokenType::array)
+        return false;
+
+    const auto* foldersElement { doc.getChildByToken (rootElement, foldersToken) };
+    const auto& folderTokens { *foldersElement->get<jam::Document::Tokens> (Id::tokens) };
+
+    for (int index { 0 }; index < folderTokens.size(); ++index)
+        if (folderTokens.at (index).type != map::JsonTokenType::string)
             return false;
 
     return true;
@@ -197,7 +255,7 @@ static bool isValidTransactionDocument (const jam::JsonDocument& doc,
         return false;
     }
 
-    return isValidFilesArray (doc, *rootElement, transactionId);
+    return isValidFoldersArray (doc, *rootElement) and isValidFilesArray (doc, *rootElement, transactionId);
 }
 
 static std::pair<juce::Result, std::unique_ptr<jam::JsonDocument>> getCorruptResult (std::string_view transactionId)
@@ -318,7 +376,8 @@ static std::pair<juce::Result, std::string> addPendingFile (std::string_view com
 }
 
 std::pair<juce::Result, std::string> UndoCache::addTransaction (std::string_view commandName,
-                                                                const jam::Array<StagedFile>& stagedFiles)
+                                                                const jam::Array<StagedFile>& stagedFiles,
+                                                                const jam::Array<juce::File>& folders)
 {
     static constexpr int64_t microsecondsPerSecond { 1000000 };
     static constexpr std::string_view dateSeparator { "-" };
@@ -347,19 +406,24 @@ std::pair<juce::Result, std::string> UndoCache::addTransaction (std::string_view
     jam::Array<juce::Result> statuses;
     statuses.insertMultiple (0, juce::Result::ok(), fileCount + 1);
 
-    Jobs::run (fileCount + 1, [&statuses, &transactionId = addedId, &timestamp, &commandName, &stagedFiles, fileCount] (int index)
+    Jobs::run (fileCount + 1, [&statuses, &transactionId = addedId, &timestamp, &commandName, &folders, &stagedFiles, fileCount] (int index)
     {
         if (index == fileCount)
         {
             const auto pendingFile { getPendingFile (transactionId) };
             const auto hashes (getContentHashes (stagedFiles));
-            auto recordStatus { Writer::toNewFile (pendingFile, [&stagedFiles, &hashes, &timestamp, &commandName] (juce::OutputStream& json)
+            auto recordStatus { Writer::toNewFile (pendingFile, [&stagedFiles, &hashes, &folders, &timestamp, &commandName] (juce::OutputStream& json)
             {
-                jam::JsonWriter::appendObject (json, [&stagedFiles, &hashes, &timestamp, &commandName] (juce::OutputStream& members)
+                jam::JsonWriter::appendObject (json, [&stagedFiles, &hashes, &folders, &timestamp, &commandName] (juce::OutputStream& members)
                 {
                     appendStringMember (members, Id::timestamp, 0, timestamp);
                     appendStringMember (members, Id::transactionCommand, 1, commandName);
-                    jam::JsonWriter::appendKey (members, Id::files, 2);
+                    jam::JsonWriter::appendKey (members, Id::folders, 2);
+                    jam::JsonWriter::appendArray (members, [&folders] (juce::OutputStream& entries)
+                    {
+                        appendFolderEntries (entries, folders);
+                    });
+                    jam::JsonWriter::appendKey (members, Id::files, 3);
                     jam::JsonWriter::appendArray (members, [&stagedFiles, &hashes] (juce::OutputStream& entries)
                     {
                         appendFileEntries (entries, stagedFiles, hashes);
@@ -430,10 +494,16 @@ std::pair<juce::Result, std::unique_ptr<jam::JsonDocument>> UndoCache::getTransa
 
 static void removeBlobs (std::string_view transactionId)
 {
-    int index { 0 };
+    jam::Strings blobNames;
 
-    while (jam::File::deleteFile (UndoCache::getBlobFile (transactionId, index)))
-        ++index;
+    Paths::applyToFileNames (UndoCache::getBlobDirectory(), [&blobNames, &transactionId] (std::string_view name)
+    {
+        if (name.size() > transactionId.size() and name.substr (0, transactionId.size()).compare (transactionId) == 0)
+            blobNames.add (name);
+    });
+
+    for (int index { 0 }; index < blobNames.size(); ++index)
+        juce::ignoreUnused (jam::File::deleteFile (UndoCache::getBlobDirectory().getChildFile (jam::Strings::fromView (blobNames.getView (index)))));
 }
 
 void UndoCache::removeTransaction (std::string_view transactionId)

@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['l_20—_20what_20saw_20lacks_20the_20tool_20it_20replaces_20has_20it_0',['L — What saw lacks (the tool it replaces has it)',['../md__r_f_c-live-to-premise.html#autotoc_md143',1,'']]],
+  ['lacks_20the_20tool_20it_20replaces_20has_20it_1',['L — What saw lacks (the tool it replaces has it)',['../md__r_f_c-live-to-premise.html#autotoc_md143',1,'']]],
+  ['language_20framework_20constraints_2',['Language Framework Constraints',['../md__p_l_a_n-native-mcp.html#autotoc_md48',1,'Language / Framework Constraints'],['../md__p_l_a_n-one-tool.html#autotoc_md82',1,'Language / Framework Constraints']]],
+  ['last_20build_20of_20step_2012_3',['Step 14: In-house containers, and no temporary container (runs before the last build of Step 12)',['../md__p_l_a_n-native-mcp.html#autotoc_md69',1,'']]],
+  ['layout_4',['6.2 Transaction Layout',['../md__s_p_e_c.html#autotoc_md232',1,'']]],
+  ['level_5',['LEVEL',['../md__a_g_e_n_t_s.html#autotoc_md7',1,'Definitive Correctness Foundation (PROTOCOL LEVEL)'],['../md__a_g_e_n_t_s.html#autotoc_md6',1,'Ground of Truth (PROTOCOL LEVEL)']]],
+  ['library_6',['library',['../md_project-info.html#autotoc_md119',1,'']]],
+  ['line_20at_20the_20document_20base_20done_7',['Stage 2 — One line at the Document base (done)',['../md__p_l_a_n-one-tool.html#autotoc_md93',1,'']]],
+  ['line_20endings_20and_20permissions_8',['4.5 Binary Files, Empty Files, Line Endings, and Permissions',['../md__s_p_e_c.html#autotoc_md172',1,'']]],
+  ['line_20hash_20format_20hash_9',['4.6 Line Hash Format (&lt;span class=&quot;tt&quot;&gt;--hash&lt;/span&gt;)',['../md__s_p_e_c.html#autotoc_md173',1,'']]],
+  ['lines_10',['5.3 Feature: &lt;span class=&quot;tt&quot;&gt;lines&lt;/span&gt;',['../md__s_p_e_c.html#autotoc_md193',1,'']]],
+  ['ling_20owns_20the_20seam_20done_11',['Stage 4 — ling owns the seam (done)',['../md__p_l_a_n-one-tool.html#autotoc_md95',1,'']]],
+  ['literal_20is_20slow_20tree_20output_20to_20a_20pipe_12',['S3. Regex without a required literal is slow (tree, output to a pipe)',['../md__r_f_c-live-to-premise.html#autotoc_md137',1,'']]],
+  ['live_20in_20their_20object_20smells_2011_2015_13',['Step 8: Settings live in their object (smells 11, 15)',['../md__p_l_a_n-native-mcp.html#autotoc_md64',1,'']]],
+  ['live_20to_20its_20premise_14',['RFC — SAW must live to its premise',['../md__r_f_c-live-to-premise.html',1,'']]],
+  ['llm_20agents_15',['Cognitive Amplifier Role Orchestration with LLM agents',['../md__a_g_e_n_t_s.html#autotoc_md1',1,'']]],
+  ['location_20and_20bound_16',['6.1 Cache Location and Bound',['../md__s_p_e_c.html#autotoc_md231',1,'']]],
+  ['locked_20architect_20decisions_20verbatim_17',['1.2 Locked ARCHITECT Decisions (Verbatim)',['../md__s_p_e_c.html#autotoc_md158',1,'']]],
+  ['log_20runs_20before_20step_2013_18',['Step 16: Code smells, start cost, audit, doxygen, handoff, log (runs before Step 13)',['../md__p_l_a_n-native-mcp.html#autotoc_md71',1,'']]],
+  ['logic_20smells_2017_2019_2022_2025_2027_19',['Step 7: One owner for repeated logic (smells 17, 19-22, 25, 27)',['../md__p_l_a_n-native-mcp.html#autotoc_md63',1,'']]],
+  ['loop_20',['S2. Where the startup goes (per call, the same loop)',['../md__r_f_c-live-to-premise.html#autotoc_md136',1,'']]],
+  ['loop_20with_20no_20appkit_21',['Step 2: JUCE message loop with no AppKit',['../md__p_l_a_n-native-mcp.html#autotoc_md58',1,'']]],
+  ['lost_22',['D — Safety defects (data is changed or lost)',['../md__r_f_c-live-to-premise.html#autotoc_md141',1,'']]]
+];

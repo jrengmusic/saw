@@ -19,15 +19,15 @@ public:
 
     /** @brief Runs fields on parsed arguments.
      *
-     *  The field settings and the filter settings are checked first. A failed check is returned
-     *  as a failure. Without paths, standard input is read.
+     *  The first positional is the field specification, and the others are paths. The field settings and the filter settings are checked first,
+     *  and a failed check is returned as a failure. Without paths, standard input is read. With paths, each file is read.
      *
      *  @param arguments The parsed arguments from getArguments.
-     *  @param input     The supplied input text, or nullopt for the process standard input.
+     *  @param input     The standard input, the null device, or a supplied text.
      *
      *  @return The exit code, the output documents, and the failures.
      */
-    static Stdio::Output run (const Arguments& arguments, const std::optional<std::string>& input);
+    static Stdio::Output run (const Arguments& arguments, const Input::Source& input);
 
 private:
     /** @brief Binds the parsed field settings and filter settings of one fields command.
@@ -44,33 +44,35 @@ private:
      *
      *  Only the process standard input can be a terminal. A terminal is refused, so the command does not wait for typed text.
      *
-     *  @param input The supplied input text, or nullopt for the process standard input.
+     *  @param input The standard input, the null device, or a supplied text.
      *
      *  @return The exit code, the output documents, and the failures.
      */
-    Stdio::Output runStandardInput (const std::optional<std::string>& input) const;
+    Stdio::Output runStandardInput (const Input::Source& input) const;
 
     /** @brief Reads each file in its own job, and writes the output of each file into its own slot.
      *
      *  The slots keep the order of the sorted file entries. No lock is needed, because each job writes one slot.
      *
      *  @param rawPaths The paths that the user named.
+     *  @param source   The source of the input, passed to TextDocument::getInput for each file.
      *
      *  @return The exit code, one document group for each file in file order, and the failures.
      */
-    Stdio::Output runFiles (juce::Span<const std::string_view> rawPaths) const;
+    Stdio::Output runFiles (juce::Span<const std::string_view> rawPaths, const Input::Source& source) const;
 
     /** @brief Reads one file and returns its output, whether any line matched, and the read failure.
      *
      *  @param file        The file to read.
      *  @param displayPath The display path of the file.
      *  @param isExplicit  True when the file was named on the command line.
+     *  @param source      The source of the input, passed to TextDocument::getInput.
      *
      *  @return The status, whether any line matched, and the output documents.
      */
-    std::tuple<juce::Result, bool, Stdio::Documents> getFileOutput (const juce::File& file, std::string_view displayPath, bool isExplicit) const;
+    std::tuple<juce::Result, bool, Stdio::Documents> getFileOutput (const juce::File& file, std::string_view displayPath, bool isExplicit, const Input::Source& source) const;
 
-    /** @brief Formats the selected lines of the bytes, and reports a binary input as a failure when it is explicit.
+    /** @brief Formats the selected lines of the bytes. A binary input gives no output unless --text is set.
      *
      *  The NUL check covers only the bytes that the line loop read. With isFirstOnly, the loop stops at the
      *  first matching line, so a NUL byte after that line is not checked.
@@ -87,6 +89,7 @@ private:
      *
      *  @param output     The text that receives the formatted line.
      *  @param tokens     Scratch array that receives the fields of the line. Its previous content is replaced.
+     *  @param bytes      The bytes of the whole input, which give the line ending of the line.
      *  @param line       The line bytes, without the line ending.
      *  @param lineNumber The one-based number of the line.
      *  @param displayPath The display path of the input, used in the failure text.
@@ -94,7 +97,7 @@ private:
      *
      *  @return The status, and whether the line was matched and formatted.
      */
-    std::pair<juce::Result, bool> appendFields (std::string& output, jam::Array<std::string_view>& tokens, std::string_view line, int lineNumber, std::string_view displayPath, jam::RegExpAutomaton& automaton) const;
+    std::pair<juce::Result, bool> appendFields (std::string& output, jam::Array<std::string_view>& tokens, std::string_view bytes, std::string_view line, int lineNumber, std::string_view displayPath, jam::RegExpAutomaton& automaton) const;
 
     /** @brief Splits a line into fields, by the delimiter, or by runs of whitespace when no delimiter is given.
      *
@@ -103,18 +106,19 @@ private:
      */
     void setLineTokens (jam::Array<std::string_view>& tokens, std::string_view line) const;
 
-    /** @brief Appends the selected fields, joined by the output delimiter, and a newline.
+    /** @brief Appends the selected fields, joined by the output delimiter, and the line ending.
      *
-     *  An empty line is printed as a newline alone, unless strict mode is set. A field outside the line is a failure in strict mode.
+     *  An empty line is printed as its line ending alone, unless strict mode is set. A field outside the line is a failure in strict mode.
      *
      *  @param output      The text that receives the line.
      *  @param tokens      The fields of the line.
      *  @param displayPath The display path of the input, used in the failure text.
      *  @param lineNumber  The one-based number of the line, used in the failure text.
+     *  @param ending     The line ending that ends the output line.
      *
      *  @return Ok when every selected field was written, otherwise the failure.
      */
-    juce::Result appendFormattedLine (std::string& output, const jam::Array<std::string_view>& tokens, std::string_view displayPath, int lineNumber) const;
+    juce::Result appendFormattedLine (std::string& output, const jam::Array<std::string_view>& tokens, std::string_view displayPath, int lineNumber, std::string_view ending) const;
 
     /** @brief Returns the field at a one-based index, or at a negative index counted from the end.
      *
@@ -150,4 +154,7 @@ private:
 
     /** @brief True when a field outside the line is a failure rather than an empty field. */
     bool isStrict { false };
+
+    /** @brief True when binary input is formatted rather than reported. */
+    bool isText { false };
 };

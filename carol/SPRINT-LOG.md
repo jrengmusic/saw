@@ -114,6 +114,47 @@
 <!-- The entry format is in /log (commands/log.md). It is the only source. -->
 <!-- Sprint entries go here, written by PRIMARY agents -->
 
+
+## Sprint 4: jq 1.8.2 and cat/bat feature parity (one tool) ✅
+
+**Date:** 2026-11-27
+**Duration:** multi-session (Steps 1 to 50 of `PLAN-one-tool.md`)
+
+### Agents Participated
+- Primary: COUNSELOR — planned and drove `PLAN-one-tool.md`, validated every Engineer edit and doxygen block against CONTRACT, verified 949/949 jq tests and 434/434 CLI/MCP suites.
+- Discovery, builds, tests, doxygen: Pathfinder — builds of `saw` and `ling`, CLI and MCP test suites, 7 jq test files, and post-audit doxygen passes across `saw` and `jam`.
+- Implementation: Engineer — `saw json`, `saw page`, `saw write`, JAM JSON filter/evaluator/writer, decimal-literal parity, cast-table error prose, and static-string removal.
+- QA/QC: Auditor — post-Step-47 audit (run by ARCHITECT prior to session rewind).
+
+### Files Modified (saw and jam working trees; ling clean)
+- `saw/Source/Json.{h,cpp}`, `JsonOptions.{h,cpp}`, `Page.{h,cpp}`, `PageConfiguration.{h,cpp}`, `PageOptions.{h,cpp}`, `PageRanges.{h,cpp}`, `NonPrintable.{h,cpp}`, `Write.{h,cpp}` — added `saw json`, `saw page`, and `saw write` verbs; moved all static string constants into `saw/cast/identifiers.md` and `saw/cast/text.md`.
+- `saw/test/cases.md`, `saw/test/baseline/*`, `saw/test/fixture/*`, `saw/test/stdin/*` — added parity test cases and updated 4 pre-decnum baselines after exact decimal parity landed.
+- `saw/benchmark/matrix-corpus.sh` — checked `10M.json` presence alongside completion marker.
+- `jam/jam_core/json/jam_JsonDocument.{h,cpp}`, `jam_JsonValidator.{h,cpp}`, `jam_JsonWriter.{h,cpp}`, `jam_JsonLanguageDocument.{h,cpp}`, `jam_JsonLanguageValidator.{h,cpp}` — implemented jq 1.8.2 filter engine, ISO 8601 `fromdateiso8601/0`, `?//`, `_strindices/1`, `modulemeta`, `get_search_list`, `get_prog_origin`, `get_jq_origin`, duplicate-key deduplication (last key wins), `--stream-errors` partial container tracking, cast-table error prose (`jam/cast/core.md`), zero-allocation exact decimal-literal comparison (`compareDecimalLiterals`), literal preservation through unary `-`/`abs`/`length`, plain-range scientific literal formatting, and `have_decnum == true`.
+- `jam/jam_git/*`, `jam/jam_gui/widgets/jam_TextEditorGutter.{h,cpp}`, `jam/jam_terminal/document/jam_AnsiSequence.{h,cpp}`, `jam/jam_tui/page/jam_TerminalReader.{h,cpp}` — added git index/object reader, gutter widget, ANSI tokenizer, and terminal reader for `saw page`.
+- `jam/jam_core/text/jam_RegExp.h`, `jam_RegExpParser.h`, `jam/jam_core/json/jam_JsonDocument.h`, `saw/docs/xml/*`, `jam/docs/xml/*` — completed post-audit doxygen pass with 0 warnings in `saw` and `jam` headers.
+
+### Alignment Check
+- [x] BLESSED principles followed
+- [x] NAMES.md adhered
+- [x] MANIFESTO.md principles applied
+
+### Problems Solved
+- Fixed `page-list-languages` on MCP by removing the `Input::StandardInput` guard in `saw/Source/Page.cpp`.
+- Deduplicated repeated JSON object keys in `JsonDocument::setKeyOrder` (last key wins, keeps first slot).
+- Implemented `--stream-errors` partial-container path reporting and suppressed close events for unclosed containers.
+- Resolved all 28 jq 1.8.2 feature gaps, all 86 error-prose comparisons via `jam/cast/core.md` (`U+0020` `fromUTF8` infixes), and all 8 `have_decnum` decimal-literal checks to reach 949/949 PASS across all 7 upstream jq test files.
+- Removed all static string constants from `saw/Source/Json.cpp`, `jam_JsonDocument.{h,cpp}`, and `jam_JsonWriter.cpp` into cast tables.
+- Resolved duplicate linker symbol `Id::as` between `jam_core` and `jam_mermaid_diagram` by renaming `jam/cast/core.md:45` to `importAlias`.
+
+### State for Continuation
+None — sprint fully closed, nothing open. Verified: `saw` and `ling` build cleanly (`cast cast/spell.md --no-sign`, exit 0, 0 warnings); `saw` CLI suite 434/434 PASS; `saw` MCP suite 434/434 PASS; jq test suite 949/949 PASS (0 malformed, 0 skipped); doxygen XML regenerated for `saw` and `jam` with 0 warnings in project/framework headers.
+
+### Debts Paid
+None
+
+### Debts Deferred
+None
 ## Sprint 3: One binary, no copy in transit, audit, doxygen (start cost open)
 
 ARCHITECT ordered the audit, the doxygen pass and the log while the CLI still loses rows (*"/audit doxygen pass until /log"*). The speed contract is not met by a new `saw` process. The entry has no ✅ for that reason.
@@ -463,3 +504,69 @@ Copy this template to your project root as `SPRINT-LOG.md` and customize:
 
 Rock 'n Roll!  
 **JRENG!**
+
+## Handoff to COUNSELOR: one tool, Step 46 (jq parity)
+
+**From:** COUNSELOR
+**Date:** 2026-11-27
+**Status:** In Progress
+
+### Read First
+1. `PLAN-one-tool.md` — the locked plan; Step 46 and its progress block (after `PLAN-one-tool.md:467`).
+2. `SPEC.md:801-821` — §5.9 `saw json`.
+3. `test/cases.md` and `test/run.lua:550-564`, `:629-692` — the suite rows, the baseline and reference comparison.
+4. `jam/jam_core/json/jam_JsonDocument.{h,cpp}` — the jq run.
+5. `saw/Source/Json.cpp` — the saw side of the run.
+
+### Context
+Objective (ARCHITECT): "our objective is to add jq and cat/bat feature parity". The plan is locked and runs under "no gate until /log". Step 46 checks parity and speed: suite on both lanes, the jq test files, the 949 jq programs, help frames, `otool -L`, scout `matrix-*`. Steps 47 to 50 follow (runtime validation by ARCHITECT, one Auditor run, doxygen pass, final check).
+
+### Completed
+- Catch of an `error(x)` value: the catch body reads the resolved value (`getValue`, `jam_JsonDocument.cpp:191`) in `addAttemptResults` and `addAttemptPaths`. `try error("x") catch .` gives `"x"`; `try error([1]) catch .` gives `[1]` (build fix15 run).
+- Deep recursion: release and debug tables row `mainThreadStackSize` (`-Wl,-stack_size,0x10000000`, `/STACK:0x10000000`) in `project-info.md`; `otool -l` shows LC_MAIN `stacksize 268435456`; depth-10000 `flatten`, `recurse`, `def f`, `setpath | flatten` exit 0; jq.test runs whole with no crash.
+- `getModuleFile` (`ModuleFile`, `jam_JsonDocument.h:54`) is a parameter after `getFileName` in `applyToResults` (`:73`), the `Result` alias (`:774`), every run function, and `Json.cpp` `runFilter`, `runCompiled`, `runCase`, `runProgram`, `runExpected`. No handler reads it yet.
+- Six ruled cases are baseline rows: `test/cases.md:562` (`page-list-languages`), `:680`, `:682`, `:698`, `:870`, `:898`; `test/baseline/<case>/1/stdout` holds saw's output.
+- `--seq` input per RFC 7464 §2.1–2.4 and the jq manual (`manual.yml:215-224`): `Json.cpp` `getRecordFailure`, `addRecordDocument`, `addRecordDocuments`; rows `jsonRecordSkipped`, `jsonRecordTruncated`, `jsonRecordOutside` in `cast/text.md`; `getRecordText` (a copy) deleted. Six witness inputs give jq's stdout (build fix19 run).
+- `@urid` requires valid UTF-8 (`jam_JsonDocument.cpp:6204`). `have_decnum` returns true (`:5195`).
+- Build fix19: `cast cast/spell.md --no-sign` exit 0, no error or warning lines.
+- Results of build fix19: suite CLI lane FAIL `json-read-duplicate`, `json-stream-errors`; MCP lane also FAIL `page-list-languages`. jq.test `483of607 tests passed (15malformed,0 skipped)`. man 233/240, uri 14/20, base64 8/10, onig 50/50, manonig 19/19, optional 3/3.
+
+### Remaining
+1. COUNSELOR: `page-list-languages` on the MCP lane — read why its stdout differs from the CLI baseline (`nvim --headless -l test/run.lua ~/.local/bin/saw mcp`, `scratchpad/suite-mcp-20.txt:258`).
+2. COUNSELOR then Engineer: `--stream-errors` (today an alias of `--stream`, `JsonOptions.cpp:80`). Per the manual (`manual.yml:207-210`) an invalid input yields one `[message, path]` value and exit 0. The path is the open-container stack of the parser at `failureOffset` (`jam_JsonDocument.cpp:1135-1180`). `--stream` also emits close events for containers the input never closed. Case `json-stream-errors` (`test/cases.md:910`).
+3. COUNSELOR then Engineer: `modulemeta` (manual `manual.yml:3900-3910`), `get_search_list`, `get_prog_origin`, `get_jq_origin` have vocabulary rows (`jam/cast/core.md:572`, `:656-658`) and no `getBuiltins` row; today they return the result of `length`. Literal numbers are links into the program document (`jam_JsonDocument.cpp:3690-3691`) and module documents not imported are not in the run registry (`:3141-3147`). The three run facts go into the `variables` document as saw writes `JQ_BUILD_CONFIGURATION` (`Json.cpp:496`). Tests `jq.test:2211`, `:2215`, `:2219`.
+4. COUNSELOR: uri.test L85, L90 still fail after the `@urid` change; man.test L25 fails after the `have_decnum` change. Read both from the code.
+5. COUNSELOR: classify the 124 failing tests of jq.test (`scratchpad/jt20-jq.txt`) as MESSAGE (Ruling 23, not a target), VALUE, or CRASH.
+6. Help frames of the consumers equal; `otool -L ~/.local/bin/saw` shows no GUI framework; scout `matrix-*` timings; the 949 jq programs.
+7. Steps 47 to 50 of the plan.
+8. "fix ling when you done with json".
+
+### Key Decisions
+- "our objective is to add jq and cat/bat feature parity"
+- "feature parity means we want familiarity for args, why always complicate with byte-to-byte translation. FACT: our contract, our topology, our architecture are more consistent, more performant, more deterministic than jq itself."
+- "I SAID NOT FUCKING BYTE-TO-BYTE TRANSLATION"
+- "For a valid program and the same input and clock, its output values equal those of jq. ??? that's not my word"
+- "compareNumbers is foreignSemantics tell me exactly i'm wrong"
+- "DONT BREAK OTHER PROJECT"
+- "why internal refactor in adherence to contract must break all project only for saw?"
+- "mcp first"
+- "fix ling when you done with json. we need ling, you are blocking ling session"
+- "after pathfinder last turn, update the tracker"
+- "yes to both" — the `--stream-errors` error path is the open-container stack of the parser at `failureOffset`, with saw's message text.
+- "a" — duplicate object keys: last key wins in the JSON parser (`setKeyOrder`, `jam_JsonDocument.cpp:1146-1160`), for every JAM consumer of JSON.
+
+### Files Modified
+- `jam/jam_core/json/jam_JsonDocument.h` — `getModuleFile` parameter in `applyToResults`, `Result`, `Builtin`, `PathResult` and every run function.
+- `jam/jam_core/json/jam_JsonDocument.cpp` — `getModuleFile` threaded; catch reads the resolved value; `@urid` UTF-8 check; `have_decnum` true; `addUpdatedPath` parameter.
+- `saw/Source/Json.cpp` — `getModuleFile` threaded; `--seq` record reading; `getRecordText`, `getOwnedDocument` deleted.
+- `saw/cast/text.md` — rows `jsonRecordSkipped`, `jsonRecordTruncated`, `jsonRecordOutside`.
+- `saw/project-info.md` — `win` column widened; rows `mainThreadStackSize` in release and debug.
+- `saw/test/cases.md` — six rows are baseline rows.
+- `saw/test/baseline/{json-num-exact-compare,json-num-nan-compare,json-num-literals,json-print-colour-array,json-print-monochrome,page-list-languages}/1/stdout` — new.
+- `saw/PLAN-one-tool.md` — Step 46 progress block.
+
+### Open Questions
+None.
+
+### Next Steps
+- Start at Remaining item 1 when ARCHITECT resumes the session. Item 2 and item 3 follow, then the duplicate-key fix in `setKeyOrder` (`jam_JsonDocument.cpp:1146-1160`, last key wins), per ARCHITECT's ruling "a".

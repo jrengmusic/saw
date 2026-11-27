@@ -33,10 +33,15 @@ Every design decision in this specification rests on ARCHITECT's verbatim ruling
 - **Scope (`awk`, `sed`, `grep` Replacement):** `"how can we make this as tiny as possible, as fast as possible, with easiest syntax as possible, can this replace awk, sed, grep simultaenously?"`
 - **HELP Page Identity, Dry-Run Default, and Undo:** `"i still like the HELP page. it's our identity. ~10mb still acceptable. why not we make it always dry run by default. so destructive edit must be explicit. agents could still make mistake passing wrong args, so the default run is always safe and undoable"`
 - **Verb Surface:** `"Full 6 verbs: find, replace, lines, fields, patch, undo — covers grep, sed, awk columns/ranges, fix.lua batch, and undo"`
+- **Verb Surface, current:** Ten verbs. `json`, `page`, and `write` (§5.9 to §5.11) join the seven verbs of §5: `find`, `replace`, `lines`, `fields`, `patch`, `undo`, and `excerpt`.
 - **Apply Gate:** `"--apply always requires --expect N (dry-run prints N; mismatch writes 0 bytes)"`
 - **Regex and Directory Traversal:** `"Literal default + -r regex (extend jam::RegExp with findNext/spans) + recursive dir walk skipping .git/.gitignore"`
 - **Undo Store:** `"Rolling cache in app-data dir (cap 32 transactions, verifies post-edit hashes before restoring)"`
 - **Binary File Handling:** `"Skip binary files (NUL byte) in directory walks; fail with an explicit error when named directly"`
+- **Page Verb Scope:** `"saw bat is only cat"`
+- **Lean Scope:** `"saw must stay LEAN and SLIM. substitution failure is not an error. without dynamic library from ling exist, saw still able to cat, with ling's dynamic lib it can render like bat"`
+- **MCP Lane Scope:** `"mcp lane NEVER touch TUI (gui) dll"`
+- **Text mode:** `saw page` prints every byte of a named binary file (§5.10). `-a` reads a NUL byte as text in `find`, `lines`, `fields`, and `excerpt`. Every other verb keeps the refusal.
 - **Line Endings, Permissions, and Symlinks:** `"Preserve each file's LF/CRLF line endings and execute bit; follow symlinks to target (matching cast/scout)"`
 - **`--expect N` Counting Rule:** `"Exact edit operations applied (matches replaced in replace, edit entries in patch, line ops in lines)"`
 - **Stdin Piping Rule:** `"Read stdin when no path is given and stdin is not a TTY (for find, lines, fields, dry-run replace); patch reads stdin or --file"`
@@ -61,7 +66,7 @@ Every design decision in this specification rests on ARCHITECT's verbatim ruling
 ### 1.3 Explicit Non-Goals
 
 - No daemon process. saw is one binary (`"why mcp? not just cli? i meant one SSOT tools for all file manipulation."`). `saw --mcp` (§5.8) gives the same command lines to agents on demand (`"cli isn't enough? need lazy load mcp that never inject anything when idle? never eat context when not being used? always on demand? fine, add one."`). It is a child of its client on stdio, and it holds no state between calls.
-- No embedded scripting language (`BEGIN`/`END` blocks, loops, associative arrays, or arithmetic expressions).
+- No embedded scripting language (`BEGIN`/`END` blocks or associative arrays). The one filter language is the jq language of `saw json` (§5.9).
 - No fuzzy matching, heuristic patching, or silent fallback.
 - No version-control subprocess calls inside SAW.
 - No AST parsing or language-specific linting inside SAW.
@@ -73,8 +78,8 @@ Every design decision in this specification rests on ARCHITECT's verbatim ruling
 - **Language:** C++17 (`CMAKE_CXX_STANDARD 17`).
 - **Project Skeleton:** Run `cast INIT.md ~/Documents/Poems/dev/saw` in `~/Documents/Poems/dev/archetype/cli` (`ARCHETYPE.md:93`). Then add the generation layer in the shape of `~/Documents/Poems/dev/scout/cast/`: `identifiers.md`, `text.md`, `banner.md`, `files.md`, `source.cast`, and the matching rows of `cast/spell.md` (`"Run cast INIT.md ~/Documents/Poems/dev/saw from archetype/cli. Then add the generation layer (identifiers/text/banner/files/source.cast + spell.md rows) to saw, in the same shape as scout/cast/"`).
 - **Build System:** `cast`-generated `CMakeLists.txt`, CMake 3.25+, Ninja, Release LTO (`-O3 -flto`, `-dead_strip` on macOS). Edit `project-info.md`, run `cast`, then configure. Never edit `CMakeLists.txt` by hand.
-- **Frameworks:** JUCE `8.0.17` + JAM (`jam_core` for runtime operations; `jam_tui` renders the `--help` frames at build time: `"i still like the HELP page. it's our identity. ~10mb still acceptable."`).
-- **Linked modules of saw (`## program module` table of `project-info.md`):** `juce_core`, `juce_cryptography` (for `juce::SHA256`), `juce_data_structures`, `juce_events`, `jam_core`, `jam_data_structures`, `jam_terminal`, `jam_model_context_protocol` (for `--mcp`, §5.8). No framework other than the C and C++ system libraries is loaded (`JUCE_USE_FOUNDATION=0`). The parts of the JAM modules that use a GUI module compile only when that module is linked (`JUCE_MODULE_AVAILABLE_*`). The two tables below list the modules of the `saw_HelpFrames` target, a build tool that is not installed.
+- **Frameworks:** JUCE `8.0.17` + JAM (`jam_core` for runtime operations; `jam_syntax_tree` and `jam_git` for the runtime; `jam_tui` renders the `--help` frames at build time: `"i still like the HELP page. it's our identity. ~10mb still acceptable."`). The page renderer is the page library of ling, and the languages come from its token library (§5.10). saw holds no renderer, no language, and no theme.
+- **Linked modules of saw (`## program module` table of `project-info.md`):** `juce_core`, `juce_cryptography` (for `juce::SHA256`), `juce_data_structures`, `juce_events`, `jam_core`, `jam_data_structures`, `jam_terminal`, `jam_syntax_tree` and `jam_git` (for `page`, §5.10), `jam_model_context_protocol` (for `--mcp`, §5.8). No framework other than the C and C++ system libraries is loaded (`JUCE_USE_FOUNDATION=0`). The parts of the JAM modules that use a GUI module compile only when that module is linked (`JUCE_MODULE_AVAILABLE_*`). The two tables below list the modules of the `saw_HelpFrames` target, a build tool that is not installed.
 - **Linked JUCE modules (`## juce module` table of `project-info.md`):** the six rows of `~/Documents/Poems/dev/scout/project-info.md:108-113` (`juce_core`, `juce_data_structures`, `juce_events`, `juce_graphics`, `juce_gui_basics`, `juce_audio_processors`), plus `juce_cryptography` for `juce::SHA256`. scout links `jam_gui`, whose declaration lists `juce_gui_extra` and `juce_animation` (`~/Documents/Poems/dev/jam/user-modules-info.md:90,97`), and scout builds without those two rows. Thus the table does not restate them.
 - **Linked JAM modules (closure of `jam_tui`):** `jam_core`, `jam_document`, `jam_markdown`, `jam_freetype`, `jam_graphics`, `jam_data_structures`, `jam_animation`, `jam_web`, `jam_style`, `jam_gui`, `jam_mermaid_diagram`, `jam_markdown_graphics`, `jam_terminal`, `jam_tui`.
 - **Platforms:** macOS (ARM64 and x86_64) and Windows (x64, MSVC / clang-cl).
@@ -105,7 +110,7 @@ Every design decision in this specification rests on ARCHITECT's verbatim ruling
 - ✅ Check every `FileOutputStream` write result and the stream status after `flush()` before an exchange, a move, or `jam::File::replaceFileIn`.
 - ✅ Follow BLESSED (`MANIFESTO.md`), `CODING.md`, and `NAMES.md`.
 - ❌ Never call `juce::File::replaceWithData()` (it deletes 0-byte targets and ignores `appendData()` errors).
-- ❌ Never spawn external subprocesses (`sed`, `awk`, `grep`, `diff`, `cmp`, `cp`, or any version-control program).
+- ❌ Never spawn external subprocesses (`sed`, `awk`, `grep`, `diff`, `cmp`, `cp`, or any version-control program). The `--pager` option of `saw page` starts no pager.
 - ❌ Never write files on a default run without `--apply` (`"why not we make it always dry run by default. so destructive edit must be explicit."`).
 - ❌ Never store persistent daemon state or repository-local cache files.
 - ❌ Never use a lock, a condition variable, or a sleep on a search, walk, output, or transaction path.
@@ -140,16 +145,20 @@ saw find <pattern> [path...] [options]
 saw replace <find> <with> [path...] [options]
 saw lines <range> [path...] [options]
 saw fields <spec> [path...] [options]
+saw json [options] <filter> [file...]
 saw patch [options]
 saw undo <tx-id> [options]
 saw undo --list
 saw excerpt [target...] [options]
+saw page [<path>...] [options]
+saw write <path> [--apply --expect 1]
 ```
 
 - `saw` with no arguments prints the banner and the frame of `HELP.md` and exits `0`.
 - `saw --help` and `saw -h` print the banner and the frame of `HELP.md` and exit `0`.
 - `saw <verb> --help` prints the frame of `Source/help/<verb>.md` and exits `0`. Each verb frame is one separate binary data entry (`"One embedded markdown per verb (Source/help/find.md … undo.md) as separate binary entries, plus HELP.md for the overview. Uses the existing API with no section extraction"`).
 - When stdout is a terminal, the three help invocations above erase the screen first with the embedded erase sequence (`jam::TerminalEncoder::writeEraseScreen`, rendered at build time). The verbs and `--version` never erase the screen (`"Erase only on the help/banner path (saw, --help, <verb> --help). Never on the six verbs or --version"`).
+- In a pipe and over `--mcp`, `saw <verb> --help` prints `Source/help/<verb>.md` with no escape sequence. The erase sequence is written only to a terminal.
 - `saw --version` and `saw -V` print `saw 0.0.1 (<commit>)` and exit `0` (`"v0.0.1"`).
 - `--` terminates option parsing. Every token after `--` is a positional argument.
 - A value option takes the next token verbatim, whatever it starts with. `--`, `--help` and `-h` have their meaning only outside an option value.
@@ -162,8 +171,11 @@ saw excerpt [target...] [options]
 | Code | Meaning |
 |---|---|
 | `0` | Success (match found on `find`/`fields`; dry-run preview completed; `--apply` succeeded; `undo` succeeded). |
-| `1` | No match found on `find` (matches `grep` convention) or on `fields --match`, an empty `find --files` list, or `--expect N` mismatch on a mutating verb. |
+| `1` | No match found on `find` (matches `grep` convention) or on `fields --match`, an empty `find --files` list, or `--expect N` mismatch on a mutating verb, or a file that `page` cannot print. |
 | `2` | Usage error, unknown flag, invalid regex, invalid JSON, missing file, binary file named directly, edit conflict, undo drift, or I/O error. |
+| `3` | `saw json`: compile error of the filter. |
+| `4` | `saw json -e`: no output. |
+| `5` | `saw json`: parse error, runtime error, or `halt_error`. |
 
 ### 4.3 Diagnostic Format
 
@@ -187,15 +199,17 @@ Rules:
   - Skip dot-prefixed entries (hidden files and folders) unless `--hidden` is set.
   - Sort all collected file paths in ascending byte-lexicographic UTF-8 order before emitting output or writing.
 - **Piped stdin:** When no `path` argument is given and stdin is not a TTY:
-  - `find`, `lines` (read mode), `fields`, and `replace` (dry-run mode) read stdin as a virtual file named `<stdin>`. `find`, `lines`, and `fields` stop the read when the line range or the first match decides the result.
-  - Passing `--apply` with stdin input fails with exit `2`: `saw: cannot --apply on stdin; specify file paths`.
-  - Empty stdin fails with exit `2`: `saw: missing path argument`.
-- **Pipes:** A path that names a pipe fails as an unreadable file. Use stdin.
-- **Unreadable entries:** `find` prints one error for each missing or unreadable file or folder, prints the matches of the readable files, and exits `2`. Every other verb fails on the first one before any output or write.
+  - `find`, `lines` (read mode), `fields`, `replace` (dry-run mode), and `page` read stdin as a virtual file named `<stdin>`. `json` reads stdin as its input stream. `find`, `lines`, and `fields` stop the read when the line range or the first match decides the result.
+  - Passing `--apply` with stdin input fails with exit `2`: `saw: cannot --apply on stdin; specify file paths`. `write` takes its text from stdin and is the exception.
+  - Empty stdin is an empty text. `find` and `fields --match` exit `1`. `lines`, `fields`, and `replace` exit `0` and print nothing.
+- **Pipes:** A path that names a pipe is read one time, to its end.
+- **Unreadable entries:** `find` prints one error for each missing or unreadable file or folder, prints the matches of the readable files, and exits `2`. `page` prints the readable files and exits `1`. `json` reads the other files and exits `2`. Every other verb fails on the first one before any output or write.
 - **No path and stdin is a TTY:**
   - `find` walks the current working directory `.`.
   - `replace`, `lines`, and `fields` fail with exit `2`: `saw: missing path argument`.
   - `patch` reads from `--file <path>` when given, otherwise fails with exit `2`: `saw: patch requires stdin or --file <path>`.
+- **`/dev/null` and a closed descriptor:** `find` walks the current working directory `.`. `lines`, `fields`, and `replace` read an empty text.
+- **`write`:** `write` reads its text from standard input. A terminal fails with `saw: write requires stdin`, exit `2`.
 
 #### 4.4.1 Ignore Rules
 
@@ -254,6 +268,7 @@ Rules:
   - When named explicitly on the command line or in a `patch` entry: abort before any write and exit `2` with `saw: binary file: <path>`.
 - **Empty (0-byte) files:** `Input` holds no bytes. Treat as a valid empty text buffer with 0 lines and no error.
 - **Line endings:** Each untouched line keeps its own ending. A replaced line keeps the ending of the line that it replaces. Every other inserted line takes the dominant ending: the ending of the file's first line (`\r\n` or `\n`), `\n` when the first line has no ending.
+- **Verbatim text:** Text that `--stdin` gives goes into the output with its own bytes. No ending is added or changed, except the ending that an incomplete neighbour line needs.
 - **Trailing newline:** Preserve whether the file ends with a newline unless a line deletion removes the final line.
 - **Metadata:** SAW writes the planned bytes to a new file, flushes it one time, sets the metadata of the target on it (`jam::File::setMetadata`: mode, access control list, extended attributes; on Windows the replace call keeps them), then puts it in place (§6.3).
 - **Hard links:** A target with more than one hard link fails before any write with exit `2`: `saw: hard-linked file: <path>`. A dry run fails the same way.
@@ -368,6 +383,7 @@ saw find <pattern> [path...] [options]
 - **Multiple matches on one line:** Emit that line once. With `-c`, count matching lines (same as `grep -c`).
 - **`--after N` beyond EOF:** Emit nothing and exit `1`.
 - **Line without trailing newline at EOF:** Match and emit normally, terminating stdout line with `\n`.
+- **Line ending:** `find` prints the ending of each source line, LF or CRLF. A last line without an ending gets `\n`. A regex and `--hash` read the line without its ending.
 
 #### Error Handling
 
@@ -785,6 +801,66 @@ Decisions: `"FASTER on ALL CASES. NON-NEGOTIABLE, NO EXCEPTIONS."`, `"cli isn't 
 
 The result is one JSON object: `exitCode`, `output` and `errors`, the exit code, the standard output and the standard error of the same command line in the CLI, byte for byte. Text that is not valid UTF-8 cannot be a JSON string, so its member is `outputBase64` or `errorsBase64` in place of `output` or `errors`. It runs one call at a time and holds no state between calls. `--apply` needs `--expect`, as in the CLI.
 
+### 5.9 Feature: `saw json`
+
+`saw json` runs a jq 1.8.2 filter over JSON input. It takes the arguments and the filter language of `jq` 1.8.2 (`"feature parity means we want familiarity for args, why always complicate with byte-to-byte translation. FACT: our contract, our topology, our architecture are more consistent, more performant, more deterministic than jq itself."`). Its messages are saw's own text (`"I SAID NOT FUCKING BYTE-TO-BYTE TRANSLATION"`). `saw json` never edits a file. Write the result with `saw write`.
+
+Invocation:
+
+```
+saw json [options] <filter> [file...]
+saw json [options] --args <filter> [strings...]
+saw json [options] --jsonargs <filter> [JSON_TEXTS...]
+saw json --run-tests [file] [--skip n] [--take n]
+```
+
+- **Options:** The options of `jq` 1.8.2, as `json.md` lists them. Options go anywhere, and short flags combine.
+- **Input:** Each file, then standard input, is a stream of JSON values. The reader accepts the values that `jq` 1.8.2 accepts, including `nan`, `01`, `.5`, and a byte order mark. The depth limit is 10,000 for all JSON.
+- **Numbers:** A literal keeps its decimal text until arithmetic. `1.000` prints as `1.000`.
+- **Comments:** JSON with comments is an error.
+- **Variables:** `$ENV`, `$ARGS`, `$__loc__`, and the names of `--arg`, `--argjson`, `--slurpfile`, and `--rawfile` are set.
+- **Clock and environment:** `now`, `env`, `$ENV`, `localtime`, and `input_filename` read the clock, the environment, and the file name as inputs.
+- **Exit codes:** `0` success. `1` with `-e` when the last output is `false` or `null`. `2` usage error or missing file. `3` compile error. `4` with `-e` when there is no output. `5` parse error, runtime error, or `halt_error`.
+- **Run tests:** `--run-tests` reads a jq test file in place. It copies no test program. A case that expects a compile failure passes when the filter fails validation. The message text is not compared.
+
+### 5.10 Feature: `saw page`
+
+`saw page` prints the bytes of files, or of standard input, to standard output, as `cat` gives. With a decoration, a colour, or paging on the command line, and the page library of ling, it renders the page.
+
+Invocation:
+
+```
+saw page [<path>...] [options]
+```
+
+- **Bytes:** SAW prints every byte of each file. LF, CRLF, a missing final newline, NUL, invalid UTF-8, and a byte order mark pass unchanged.
+- **Binary file:** In a pipe, a file with a NUL byte prints in full. On a terminal, SAW writes one warning and prints no content. The exit code stays `0`.
+- **Standard input:** `-` names standard input. It is read one time, at its place in the path list.
+- **Line ranges:** `-r` selects lines. The option may repeat. The result is the union of the ranges, in file order. The grammar is the grammar of the table in `page.md`.
+- **Decorations:** `--decorations auto`, `always`, or `never` controls the components of `--style`. `-n` shows line numbers only.
+- **Tabs:** `--tabs` sets the tab width. `--tabs=0` passes tabs through. Tabs expand in the rendered lane only.
+- **Rendered lane:** The rendered lane runs on the command line only, when a decoration, colour, or paging applies: a terminal, `--decorations=always`, `--color=always`, or `--paging=always`. The page library of ling renders it. The MCP lane never loads a library. Without a library, the output is the plain bytes, with exit `0` and no message.
+- **Library:** saw finds the page library (`libpage.dylib` or `page.dll`) and the token library (`libtokens.dylib` or `tokens.dll`) in `~/.config/ling/language/<name>/build/`, then in the cache of ling: `~/.cache/ling/language/*/<name>/` (Windows `%LOCALAPPDATA%\ling\language\*\<name>\`). `<name>` is `page` or `tokens`. ling unpacks them when its daemon loads a language.
+- **Pager:** `--paging auto` (default) scrolls the page inside the terminal when it is higher than the terminal. `always` scrolls always. `never` does not scroll. A pipe never pages. `-P` gives `never`. `--pager` is parsed. No pager command starts. The keys are those of the reader mode of the editor. `q`, Escape, and Ctrl+C end the page.
+- **Themes:** `--theme <name>` names `<name>.css` in the theme folder, or in the folder of the page library (`gfx`, `ansi`). Without a theme file, SAW writes a warning to standard error and uses the default colours. No `.tmTheme` file is read. `--list-themes` prints the names of the style sheets.
+- **Languages:** 183 names. `-l` takes a name or an extension. There is no first-line detection. `--list-languages` prints `name:globs` lines. It prints nothing without the token library.
+- **Colour:** Colours are 24-bit. `--italic-text` is parsed.
+- **Width:** `--terminal-width <n>` sets the width. Without it, the width of the terminal, or 80.
+- **Header:** `File` (path) and `Size` properties of the first block of a file. `STDIN` for standard input. `grid` draws the vertical line. The gutter shows line numbers (`numbers`), changes (`changes`: `+` added, `~` modified, `_` lines removed below, `‾` lines removed above), or both. `snip` makes each range a separate block.
+- **Git diff:** `-d` shows the lines that differ from the Git index, with `--diff-context` lines. saw reads the Git index and the objects inside saw (JAM module `jam_git`). No process starts.
+- **Exit codes:** `0` the content printed. `1` a file is missing, a folder, or unreadable, or a line range is invalid. `2` an option value is invalid. A missing file does not stop the other files.
+
+### 5.11 Feature: `saw write`
+
+`saw write <path> [--apply --expect 1]` writes the complete text from standard input to one file, verbatim.
+
+- **Dry run:** The default prints the unified diff and writes nothing. The diff of an absent target starts with `--- /dev/null`.
+- **Apply:** `--apply --expect 1` creates the file, or replaces it. Missing parent folders are created at commit.
+- **Verbatim:** SAW writes the bytes of standard input as they are. Empty standard input writes an empty file. A NUL byte fails with `saw: binary file: <path>`.
+- **Targets:** A hard-linked or read-only target is refused, as for every write verb. A symbolic link target is written.
+- **Undo:** `saw undo <tx-id>` deletes a created file when its hash equals its `postHash`, and refuses when it differs. It removes each created folder that is empty.
+- **Exit codes:** `0` dry run completed, or `--apply` succeeded. `1` `--expect` mismatch. `2` missing path, extra argument, terminal stdin, NUL byte, refused target, or I/O error.
+
 ---
 
 ## 6. Transaction and Undo Cache Model
@@ -813,7 +889,8 @@ blobs/20261122T103000-a3f9c1-1.blob
 Record fields:
 - `"timestamp"`: ISO-8601 UTC string.
 - `"command"`: short verb summary (e.g. `"replace"`, `"lines"`, `"patch"`).
-- `"files"`: array of `{ "path": "<canonical-absolute-path>", "preHash": "<sha256>", "postHash": "<sha256>", "executable": true|false }`. The backup of entry `i` is `blobs/<tx-id>-<i>.blob`.
+- `"files"`: array of `{ "path": "<canonical-absolute-path>", "preHash": "<sha256>", "postHash": "<sha256>", "executable": true|false, "existing": true|false }`. The backup of entry `i` is `blobs/<tx-id>-<i>.blob`.
+- `"folders"`: array of the folders that the transaction created, from the top down. Rollback and undo remove each one that is empty, bottom up. `preHash` and the backup of a file are absent when its `existing` is `false`.
 
 ### 6.3 Two-Phase Commit Protocol
 
@@ -886,6 +963,12 @@ SAW contains zero CAROL-specific logic. After SAW builds and installs to `~/.loc
 | `undo --apply` of a pending transaction without `--force` | `saw: transaction <tx-id> is pending (pass --force to restore it)` | `2` |
 | Write or verify failure | `saw: write failed for <path>: <reason>; rolled back` | `2` |
 | Rollback failure | `saw: write failed for <path>: <reason>; rollback failed for <paths>; backup kept in <folder>` | `2` |
+| `write` on terminal stdin | `saw: write requires stdin` | `2` |
+| `write` with a NUL byte in stdin | `saw: binary file: <path>` | `2` |
+| `page` on a folder | `saw: '<path>' is a directory.` | `1` |
+| `page` with an invalid line range | `saw: invalid line range: <range>` | `1` |
+| `page` with an invalid `--binary` value | `saw: invalid value for --binary: <value>` | `2` |
+| `page` with an invalid `--nonprintable-notation` value | `saw: invalid value for --nonprintable-notation: <value>` | `2` |
 
 ---
 
@@ -903,6 +986,10 @@ SAW contains zero CAROL-specific logic. After SAW builds and installs to `~/.loc
 - [ ] `saw undo --apply` reverses any applied transaction cleanly and refuses drifted files unless `--force` is passed.
 - [ ] `saw` preserves the line ending of each untouched line, trailing newline state, 0-byte files, symlink targets, file modes, access control lists, and extended attributes. It refuses hard-linked and read-only targets.
 - [ ] Directory walks apply the ignore rules of §4.4.1.
+- [ ] `saw json` gives the output bytes of `jq` 1.8.2 for every `json` row of `test/cases.md`. `saw json --run-tests` passes the 949 programs of the jq reference, except the programs that the reference marks `%%FAIL`, which must fail the same way.
+- [ ] `saw page` gives the bytes of `bat -pp` for every `page` row of `test/cases.md`, and every byte of each input file in a pipe.
+- [ ] `saw write` creates, replaces, and undoes a file as the `write` rows of `test/cases.md` state, from the command line and from `saw --mcp`.
+- [ ] `saw patch` grows linearly from 1,000 to 16,000 entries. A JSON depth of 10,001 exits `2`.
 
 ### Performance and Quality
 
@@ -978,7 +1065,7 @@ Decisions:
 - **Tool:** `scout`. One manifest per pair in `benchmark/`, with `## run` keys `epochs` (11), `command`, `samples`, `output`, and `baseline`.
 - **Command script:** a script per manifest. The script runs the workload once, then writes an empty samples file: `: > "$(dirname "$1")/<name>-samples.md"` (pattern of `scout/benchmark/mcp.sh:8`).
 - **Corpus:** a copy of `~/Documents/Poems/JUCE/modules`, and files of 1 KB, 10 KB, 50 KB, 100 KB, 1 MB, 10 MB and 100 MB cut from it. A mutating workload copies the corpus to a new temporary folder at the start of each epoch.
-- **Gate:** correctness first. The output of each row equals the output of its reference, with 0 differences, before its time counts. Then, in the same run:
+- **Gate:** correctness first. The output of each plain row equals the output of its reference, with 0 differences, before its time counts. Decorated and highlight rows compare by feature (see Highlight). Then, in the same run:
   - the CLI is faster than each reference in every row, at every size (`"FASTER on ALL CASES. NON-NEGOTIABLE, NO EXCEPTIONS."`),
   - `saw --mcp` (§5.8) is faster than each reference in every row, at every size.
 - **Baseline:** each saw manifest names the report of its reference tool as `baseline`. The saw report then holds `change` and `probability` columns.
@@ -999,3 +1086,14 @@ Decisions:
 | Literal replace, tree | `saw replace <a> <b> <corpus> --apply --expect <N>` | `sed` on the files that `rg -l` lists |
 | Line range, one file | `saw lines <A:B> <file>` | `sed -n '<A>,<B>p' <file>`, `awk 'NR>=<A> && NR<=<B>' <file>` |
 | Fields, one file | `saw fields 1,-1 -d <d> <file>` | `awk -F<d> '{print $1 "<d>" $NF}' <file>` |
+| Concatenation, one file | `saw page <file>` | `cat <file>`, `bat -pp <file>` |
+| Line range, one file | `saw page -r <A:B> <file>` | `bat -pp -r <A:B> <file>` |
+| Numbered, decorated | `saw page --decorations=always -n <file>` | `bat --decorations=always -n <file>` |
+| Highlight | `saw page --color=always <file>` | `bat -pp --color=always <file>` |
+| Decorated | `saw page --decorations=always --style=full <file>` | `bat --decorations=always --style=full <file>` |
+| JSON, identity | `saw json . <file>` | `jq . <file>` |
+| JSON, compact | `saw json -c . <file>` | `jq -c . <file>` |
+| JSON, field access | `saw json '.[].id' <file>` | `jq '.[].id' <file>` |
+| JSON, filter and sum | `saw json 'map(select(.active)\|.value)\|add' <file>` | `jq 'map(select(.active)\|.value)\|add' <file>` |
+
+- **Highlight:** Decorated and highlight rows compare by feature after removal of the SGR sequences. Plain rows compare bytes. Each colour class has its own baseline.

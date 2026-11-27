@@ -54,6 +54,7 @@ public:
      *  @param automaton            Matcher state that the caller owns.
      *  @param isExplicit           True when the input was named as a file on the command line.
      *  @param isShowingPathPrefix  True to prefix the output lines with the display path.
+     *  @param source               The source of the input, passed to TextDocument::getInput.
      *
      *  @return Status result, the number of matching lines, and the output documents.
      */
@@ -62,7 +63,8 @@ public:
                                                              const Pattern& pattern,
                                                              jam::RegExpAutomaton& automaton,
                                                              bool isExplicit,
-                                                             bool isShowingPathPrefix) const;
+                                                             bool isShowingPathPrefix,
+                                                             const Input::Source& source) const;
 
     /** @brief Searches the process standard input in blocks of complete lines, as they arrive.
      *
@@ -172,6 +174,9 @@ private:
 
     /** @brief True when each output line carries its hash. */
     bool isShowingHash { false };
+
+    /** @brief True when binary input is formatted rather than reported. */
+    bool isText { false };
 
     /** @brief Lines printed before each match. */
     int beforeContext { 0 };

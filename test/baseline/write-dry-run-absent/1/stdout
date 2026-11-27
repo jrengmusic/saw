@@ -1,0 +1,5 @@
+--- /dev/null
++++ new.txt (planned)
+@@ -0,0 +1 @@
++ax
+saw: dry-run — 1 edit(s) in 1 file(s); nothing written. Pass --apply --expect 1 to write.

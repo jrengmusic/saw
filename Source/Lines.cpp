@@ -50,11 +50,10 @@ static std::pair<juce::Result, juce::Range<int>> getValidatedLineRange (const Ar
     return Arguments::getLineRange (positionals.at (0), arguments.contains (Id::insertAfterOption));
 }
 
-void Lines::appendFormattedLine (std::string& output, int lineNumber, std::string_view line) const
+void Lines::appendFormattedLine (std::string& output, int lineNumber, std::string_view line, std::string_view ending) const
 {
     TextDocument::appendLinePrefix (output, lineNumber, line, static_cast<char> (isShowingHash ? Chars::colon : Chars::tab), isShowingLineNumber, isShowingHash);
-    jam::Format::appendBytes (output, line);
-    jam::Format::appendUtf8 (output, Chars::newline);
+    jam::Format::appendBytes (output, std::string_view { line.data(), line.size() + ending.size() });
 }
 
 std::pair<juce::Result, Stdio::Documents> Lines::getOutputDocuments (std::unique_ptr<Input> input,
@@ -73,38 +72,28 @@ std::pair<juce::Result, Stdio::Documents> Lines::getOutputDocuments (std::unique
         const std::string_view rangeBytes { lineRange.getEnd() == Arguments::openRangeEnd
                                                 ? rest
                                                 : TextDocument::getLeadingLines (rest, lineRange.getLength()) };
-        const bool hasCarriageReturn { jam::simd::findByte (rangeBytes.data(), rangeBytes.size(), 0, static_cast<char> (Chars::carriageReturn)) < rangeBytes.size() };
 
-        if (not hasCarriageReturn)
-        {
-            if (TextDocument::isBinary (bytes.substr (0, firstOffset + rangeBytes.size())))
-                return { TextDocument::getBinaryStatus (displayPath, isExplicit), Stdio::Documents {} };
+        if (not isText and TextDocument::isBinary (bytes.substr (0, firstOffset + rangeBytes.size())))
+            return { TextDocument::getBinaryStatus (displayPath, isExplicit), Stdio::Documents {} };
 
-            Stdio::Documents documents;
+        Stdio::Documents documents;
 
-            if (not rangeBytes.empty())
-            {
-                const bool isNewlineMissing { rangeBytes.back() != static_cast<char> (Chars::newline) };
-                documents.add (TextDocument::fromInput (std::move (input), displayPath, rangeBytes));
+        if (not rangeBytes.empty())
+            documents.add (TextDocument::fromInput (std::move (input), displayPath, rangeBytes));
 
-                if (isNewlineMissing)
-                    documents.add (TextDocument::fromView (Stdio::newline, displayPath));
-            }
-
-            return { juce::Result::ok(), std::move (documents) };
-        }
+        return { juce::Result::ok(), std::move (documents) };
     }
 
     std::string output;
     const size_t readSize { TextDocument::applyToLines (bytes,
                                                         lineRange,
-                                                        [this, &output] (int lineNumber, std::string_view line)
+                                                        [this, bytes, &output] (int lineNumber, std::string_view line)
                                                         {
-                                                            appendFormattedLine (output, lineNumber, line);
+                                                            appendFormattedLine (output, lineNumber, line, TextDocument::getLineEnding (bytes, line));
                                                             return true;
                                                         }) };
 
-    if (TextDocument::isBinary (bytes.substr (0, readSize)))
+    if (not isText and TextDocument::isBinary (bytes.substr (0, readSize)))
         return { TextDocument::getBinaryStatus (displayPath, isExplicit), Stdio::Documents {} };
 
     return { juce::Result::ok(), Stdio::getDocuments (std::move (output), displayPath) };
@@ -112,9 +101,10 @@ std::pair<juce::Result, Stdio::Documents> Lines::getOutputDocuments (std::unique
 
 std::pair<juce::Result, Stdio::Documents> Lines::getFileOutput (const juce::File& file,
                                                                 std::string_view displayPath,
-                                                                bool isExplicit) const
+                                                                bool isExplicit,
+                                                                const Input::Source& source) const
 {
-    auto [inputStatus, input] { TextDocument::getInput (file, displayPath, Input::maxBufferedReadSize) };
+    auto [inputStatus, input] { TextDocument::getInput (file, displayPath, Input::maxBufferedReadSize, source) };
 
     if (inputStatus.failed())
         return { inputStatus, Stdio::Documents {} };
@@ -122,7 +112,7 @@ std::pair<juce::Result, Stdio::Documents> Lines::getFileOutput (const juce::File
     return getOutputDocuments (std::move (input), displayPath, isExplicit);
 }
 
-Stdio::Output Lines::runStandardInput (const std::optional<std::string>& input) const
+Stdio::Output Lines::runStandardInput (const Input::Source& input) const
 {
     if (Stdio::isTerminalInput (input))
         return Stdio::getFailure (text::Diagnostics::failMissingPath);
@@ -140,7 +130,7 @@ Stdio::Output Lines::runStandardInput (const std::optional<std::string>& input) 
     return Stdio::getOutput (Stdio::exitSuccess, std::move (documents));
 }
 
-Stdio::Output Lines::runFiles (juce::Span<const std::string_view> rawPaths) const
+Stdio::Output Lines::runFiles (juce::Span<const std::string_view> rawPaths, const Input::Source& source) const
 {
     const auto [readStatus, files] { Paths::getReadableFiles (rawPaths, {}, {}, false, false) };
 
@@ -154,10 +144,10 @@ Stdio::Output Lines::runFiles (juce::Span<const std::string_view> rawPaths) cons
     results.resize (fileCount);
 
     Jobs::run (fileCount,
-               [this, &pathEntries = files, &statuses, &results] (int index)
+               [this, &pathEntries = files, &source, &statuses, &results] (int index)
                {
                    const auto& [displayPath, targetFile, isExplicit] { pathEntries.at (index) };
-                   auto [fileStatus, fileDocuments] { getFileOutput (targetFile, displayPath, isExplicit) };
+                   auto [fileStatus, fileDocuments] { getFileOutput (targetFile, displayPath, isExplicit, source) };
                    statuses.at (index) = std::move (fileStatus);
                    results.at (index) = std::move (fileDocuments);
                });
@@ -194,7 +184,8 @@ Lines::Lines (const Arguments& arguments, juce::Range<int> newLineRange, std::un
       payloadInput (std::move (newPayloadInput)),
       payloadText (newPayloadText),
       isShowingHash (arguments.contains (Id::hashOption)),
-      isShowingLineNumber (arguments.contains (Id::lineNumberOption))
+      isShowingLineNumber (arguments.contains (Id::lineNumberOption)),
+      isText (arguments.contains (Id::textOption))
 {
 }
 
@@ -217,7 +208,7 @@ static const jam::Function::Map<juce::Identifier, jam::Function::pointerCapacity
 static juce::Result getMutateModeFlagStatus (const Arguments& arguments,
                                            const juce::Identifier& activeMutation)
 {
-    static constexpr std::array readOnlyOptions { Id::lineNumberOption, Id::hashOption };
+    static constexpr std::array readOnlyOptions { Id::lineNumberOption, Id::hashOption, Id::textOption };
 
     for (const auto option : readOnlyOptions)
     {
@@ -308,7 +299,7 @@ juce::Result Lines::addFileMutation (Transaction& transaction, const juce::File&
         return hashStatus;
 
     const auto mutation { getLineMutations().get (activeMutation, effectiveRange, payloadText) };
-    LineDiff diff (*document, [&mutation] (const auto& addChange) { std::apply (addChange, mutation); });
+    LineDiff diff (*document, [&mutation] (const auto& addChange) { std::apply (addChange, mutation); }, payloadInput != nullptr);
     return transaction.addFile (targetFile, std::move (document), std::move (diff), 1);
 }
 
@@ -325,6 +316,9 @@ Stdio::Output Lines::runMutation (const Arguments& arguments) const
     {
         juce::ignoreUnused (isExplicit);
 
+        if (targetFile == juce::File {})
+            return Stdio::getFailure (text::Diagnostics::failMissingPath);
+
         if (transaction.addTarget (targetFile))
         {
             const auto fileStatus { addFileMutation (transaction, targetFile, displayPath) };
@@ -339,7 +333,7 @@ Stdio::Output Lines::runMutation (const Arguments& arguments) const
 
 static std::tuple<juce::Result, std::unique_ptr<Input>, std::string_view> getPayloadText (const Arguments& arguments,
                                                                                          const juce::Identifier& activeMutation,
-                                                                                         const std::optional<std::string>& input)
+                                                                                          const Input::Source& input)
 {
     if (arguments.contains (Id::stdinOption))
     {
@@ -352,18 +346,18 @@ static std::tuple<juce::Result, std::unique_ptr<Input>, std::string_view> getPay
         return { juce::Result::ok(), std::move (standardInput), standardBytes };
     }
 
-    return { juce::Result::ok(), nullptr, arguments.getValueView (jam::Strings::getView (activeMutation.toString())) };
+    return { juce::Result::ok(), nullptr, LineDiff::getTextWithoutSingleTrailingNewline (arguments.getValueView (jam::Strings::getView (activeMutation.toString()))) };
 }
 
 Arguments Lines::getArguments (juce::Span<const std::string_view> argumentList)
 {
     return Arguments { argumentList,
-                       { Id::lineNumberOption, Id::hashOption, Id::deleteOption, Id::stdinOption, Id::applyOption },
+                       { Id::lineNumberOption, Id::hashOption, Id::deleteOption, Id::stdinOption, Id::applyOption, Id::textOption },
                        { Id::verifyHashOption, Id::expectOption },
                        { Id::replaceOption, Id::insertBeforeOption, Id::insertAfterOption } };
 }
 
-Stdio::Output Lines::run (const Arguments& arguments, const std::optional<std::string>& input)
+Stdio::Output Lines::run (const Arguments& arguments, const Input::Source& input)
 {
     if (arguments.getStatus().failed())
         return Stdio::getFailure (arguments.getStatus());
@@ -386,7 +380,7 @@ Stdio::Output Lines::run (const Arguments& arguments, const std::optional<std::s
         if (rawPaths.empty())
             return lines.runStandardInput (input);
 
-        return lines.runFiles (rawPaths);
+        return lines.runFiles (rawPaths, input);
     }
 
     const auto activeMutation { getActiveMutationOption (arguments) };

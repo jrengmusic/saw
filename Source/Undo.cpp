@@ -23,7 +23,7 @@ static const jam::Document::Element& getFilesArray (const jam::JsonDocument& doc
     return *filesElement;
 }
 
-static std::string getMemberString (const jam::JsonDocument& document, const jam::Document::Element& element, std::string_view key)
+static std::string_view getMemberString (const jam::JsonDocument& document, const jam::Document::Element& element, std::string_view key)
 {
     return document.getString (document.get (element, key));
 }
@@ -117,7 +117,7 @@ static std::pair<juce::Result, std::unique_ptr<TextDocument>> getVerifiedOrigina
     const juce::File& blobFile, const juce::File& targetFile, std::string_view txId,
     std::string_view canonicalPath, std::string_view preHash, std::string_view postHash)
 {
-    auto [originalStatus, originalDoc] { TextDocument::fromFile (blobFile, canonicalPath, Input::allBytes) };
+    auto [originalStatus, originalDoc] { TextDocument::fromFile (blobFile, canonicalPath, Input::allBytes, false) };
 
     if (originalStatus.wasOk())
     {
@@ -126,7 +126,7 @@ static std::pair<juce::Result, std::unique_ptr<TextDocument>> getVerifiedOrigina
         if (jam::Strings::getView (blobHash).compare (preHash) == 0)
             return { juce::Result::ok(), std::move (originalDoc) };
 
-        const auto [targetStatus, targetDoc] { TextDocument::fromFile (targetFile, canonicalPath, Input::maxBufferedReadSize) };
+        const auto [targetStatus, targetDoc] { TextDocument::fromFile (targetFile, canonicalPath, Input::maxBufferedReadSize, false) };
 
         if (jam::Strings::getView (blobHash).compare (postHash) == 0 or (targetStatus.wasOk() and jam::Strings::getView (targetDoc->getContentHash()).compare (preHash) == 0))
             return { juce::Result::ok(), nullptr };
@@ -139,7 +139,7 @@ static std::pair<juce::Result, std::unique_ptr<TextDocument>> getExistingCurrent
     const juce::File& targetFile, std::string_view txId, std::string_view canonicalPath,
     std::string_view postHash, bool isForce)
 {
-    auto [currentStatus, currentDoc] { TextDocument::fromFile (targetFile, canonicalPath, Input::allBytes) };
+    auto [currentStatus, currentDoc] { TextDocument::fromFile (targetFile, canonicalPath, Input::allBytes, false) };
 
     if (currentStatus.failed())
         return { currentStatus, nullptr };
@@ -170,8 +170,24 @@ static std::tuple<juce::Result, std::unique_ptr<TextDocument>, bool> getCurrentS
     return { juce::Result::ok(), TextDocument::fromInput (nullptr, canonicalPath), false };
 }
 
-static std::pair<juce::Result, std::optional<StagedFile>> getVerifiedEntry (const jam::JsonDocument& metaDoc, const jam::Document::Element& entryElement,
-                                                                             std::string_view txId, int fileIndex, bool isForce)
+static jam::Array<juce::File> getRecordFolders (const jam::JsonDocument& document, const jam::Document::Element& rootElement)
+{
+    jam::Array<juce::File> folders;
+
+    if (document.contains (rootElement, Id::folders))
+    {
+        const auto* foldersElement { document.getChildByToken (rootElement, document.get (rootElement, Id::folders)) };
+        const auto& folderTokens { *foldersElement->get<jam::Document::Tokens> (Id::tokens) };
+
+        for (int index { 0 }; index < folderTokens.size(); ++index)
+            folders.add (juce::File (jam::Strings::fromView (document.getString (folderTokens.at (index)))));
+    }
+
+    return folders;
+}
+
+static std::pair<juce::Result, std::optional<StagedFile>> getVerifiedExistingEntry (const jam::JsonDocument& metaDoc, const jam::Document::Element& entryElement,
+                                                                                    std::string_view txId, int fileIndex, bool isForce)
 {
     const auto canonicalPath { getMemberString (metaDoc, entryElement, jam::Strings::getView (Id::path.toString())) };
     const auto preHash { getMemberString (metaDoc, entryElement, Id::preHash) };
@@ -197,7 +213,41 @@ static std::pair<juce::Result, std::optional<StagedFile>> getVerifiedEntry (cons
     if (currentStatus.failed())
         return { currentStatus, std::optional<StagedFile> {} };
 
-    return { juce::Result::ok(), std::optional<StagedFile> { StagedFile (targetFile, std::move (currentDoc), std::move (originalDoc), isExecutable, existed, fileIndex) } };
+    return { juce::Result::ok(), std::optional<StagedFile> { StagedFile (targetFile, std::move (currentDoc), std::move (originalDoc), isExecutable, existed, true, fileIndex) } };
+}
+
+static std::pair<juce::Result, std::optional<StagedFile>> getVerifiedCreatedEntry (const jam::JsonDocument& metaDoc, const jam::Document::Element& entryElement,
+                                                                                   std::string_view txId, int fileIndex, bool isForce)
+{
+    const auto canonicalPath { getMemberString (metaDoc, entryElement, jam::Strings::getView (Id::path.toString())) };
+    const auto postHash { getMemberString (metaDoc, entryElement, Id::postHash) };
+    const auto isExecutable { getMemberBoolean (metaDoc, entryElement, Id::executable) };
+    const auto targetFile { juce::File::getCurrentWorkingDirectory().getChildFile (jam::Strings::fromView (canonicalPath)) };
+    const auto writeStatus { Writer::getWriteStatus (targetFile, canonicalPath) };
+
+    if (writeStatus.failed())
+        return { writeStatus, std::optional<StagedFile> {} };
+
+    auto [currentStatus, currentDoc, existed] { getCurrentState (targetFile, txId, canonicalPath, postHash, isForce) };
+
+    if (currentStatus.failed())
+        return { currentStatus, std::optional<StagedFile> {} };
+
+    if (existed)
+        return { juce::Result::ok(), std::optional<StagedFile> { StagedFile (targetFile, std::move (currentDoc), TextDocument::fromInput (nullptr, canonicalPath), isExecutable, true, false, fileIndex) } };
+
+    return { juce::Result::ok(), std::optional<StagedFile> {} };
+}
+
+static std::pair<juce::Result, std::optional<StagedFile>> getVerifiedEntry (const jam::JsonDocument& metaDoc, const jam::Document::Element& entryElement,
+                                                                             std::string_view txId, int fileIndex, bool isForce)
+{
+    const bool isExisting { not metaDoc.contains (entryElement, Id::existing) or getMemberBoolean (metaDoc, entryElement, Id::existing) };
+
+    if (isExisting)
+        return getVerifiedExistingEntry (metaDoc, entryElement, txId, fileIndex, isForce);
+
+    return getVerifiedCreatedEntry (metaDoc, entryElement, txId, fileIndex, isForce);
 }
 
 static std::pair<juce::Result, jam::Array<StagedFile>> getVerifiedEntries (const jam::JsonDocument& metaDoc, std::string_view txId, bool isForce)
@@ -233,9 +283,9 @@ static Stdio::Output runDryRun (std::string_view txId, const jam::Array<StagedFi
     return Stdio::getOutput (Stdio::exitSuccess, std::move (documents));
 }
 
-static Stdio::Output runApply (std::string_view txId, bool isMovedFromUndo, const jam::Array<StagedFile>& stagedFiles)
+static Stdio::Output runApply (std::string_view txId, bool isMovedFromUndo, const jam::Array<StagedFile>& stagedFiles, const jam::Array<juce::File>& folders)
 {
-    const auto [applyStatus, failedPath, unrestoredPaths] { Transaction::applyToStagedFiles (stagedFiles, txId, [&txId] (const StagedFile& stagedFile)
+    const auto [applyStatus, failedPath, unrestoredPaths] { Transaction::applyToStagedFiles (stagedFiles, txId, {}, [&txId] (const StagedFile& stagedFile)
     {
         return stagedFile.undo (txId);
     }) };
@@ -255,6 +305,7 @@ static Stdio::Output runApply (std::string_view txId, bool isMovedFromUndo, cons
         return Stdio::getFailure (Transaction::getRollbackFailure (text::Diagnostics::failUndoWrite, failedPath, applyStatus, unrestoredPaths));
     }
 
+    Transaction::removeEmptyFolders (folders);
     UndoCache::removeTransaction (txId);
     return Stdio::getOutput (Stdio::exitSuccess, Stdio::getDocuments (Stdio::getDiagnostic (text::Diagnostics::summaryUndone,
                                                                                             txId,
@@ -297,7 +348,7 @@ static Stdio::Output runTransaction (const Arguments& arguments)
         return rejectTransaction (verifyStatus, txId, isMovedFromUndo);
 
     if (isApply)
-        return runApply (txId, isMovedFromUndo, stagedFiles);
+        return runApply (txId, isMovedFromUndo, stagedFiles, getRecordFolders (*metaDoc, getRootObject (*metaDoc)));
 
     return runDryRun (txId, stagedFiles);
 }
@@ -307,7 +358,7 @@ Arguments Undo::getArguments (juce::Span<const std::string_view> argumentList)
     return Arguments { argumentList, { Id::listOption, Id::applyOption, Id::forceOption }, {}, {} };
 }
 
-Stdio::Output Undo::run (const Arguments& arguments, const std::optional<std::string>&)
+Stdio::Output Undo::run (const Arguments& arguments, const Input::Source&)
 {
     if (arguments.getStatus().failed())
         return Stdio::getFailure (arguments.getStatus());

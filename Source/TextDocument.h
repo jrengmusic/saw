@@ -33,12 +33,14 @@ public:
      *  @param file        File on disk to read.
      *  @param displayPath Path string stored on the document for diagnostics and output.
      *  @param maxReadSize The largest file size that is read into a buffer. Larger files are mapped.
+     *  @param isText      True when the file is text. A NUL byte then does not make the file binary, and its lines are indexed.
      *
      *  @return Status result paired with the loaded document, or failure with null.
      */
     static std::pair<juce::Result, std::unique_ptr<TextDocument>> fromFile (const juce::File& file,
                                                                             std::string_view displayPath,
-                                                                            size_t maxReadSize);
+                                                                            size_t maxReadSize,
+                                                                            bool isText);
 
     /** @brief Opens an existing file and fails if the bytes contain any NUL byte.
      *
@@ -178,15 +180,30 @@ public:
                                                                      std::string_view displayPath,
                                                                      size_t maxReadSize);
 
+    /** @brief Opens a file as an Input, or reads the source when the file is the empty file.
+     *
+     *  When the file is the empty juce::File, the source is read by Input::create with allLines, and displayPath is not used.
+     *
+     *  @param file        The file to open, or the empty file.
+     *  @param displayPath Path string used in the read failure.
+     *  @param maxReadSize The largest file size that is read into a buffer. Larger files are mapped.
+     *  @param source      The source that is read when the file is the empty file.
+     *
+     *  @return Status result paired with the Input, or failure with null.
+     */
+    static std::pair<juce::Result, std::unique_ptr<Input>> getInput (const juce::File& file,
+                                                                     std::string_view displayPath,
+                                                                     size_t maxReadSize,
+                                                                     const Input::Source& source);
+
     /** @brief Opens the supplied text, or the standard input, as an Input.
      *
-     *  @param source   The supplied text, or nullopt for the process standard input.
+     *  @param source   The standard input, the null device, or a supplied text.
      *  @param numLines The number of newlines to read from standard input that is read. See Input::create.
      *
-     *  @return Status result paired with the Input, or failure with null. The failure reports that standard
-     *          input cannot be read, or that a path is missing when the input holds no bytes.
+     *  @return Status result paired with the Input, or failure with null when standard input cannot be read. See Input::create.
      */
-    static std::pair<juce::Result, std::unique_ptr<Input>> getInput (const std::optional<std::string>& source, int numLines);
+    static std::pair<juce::Result, std::unique_ptr<Input>> getInput (const Input::Source& source, int numLines);
 
     /** @brief Returns one line of bytes without its line ending.
      *
@@ -199,6 +216,14 @@ public:
      *  @return View of the line bytes, excluding the line ending.
      */
     static std::string_view getLine (std::string_view bytes, size_t lineStart, size_t newlinePos);
+    /** @brief Returns the line ending that follows a line in the bytes.
+     *
+     *  @param bytes The bytes that hold the line.
+     *  @param line  The line, as a view into bytes, without its line ending.
+     *
+     *  @return A newline, a CRLF pair, or an empty view when no line ending follows the line.
+     */
+    static std::string_view getLineEnding (std::string_view bytes, std::string_view line);
 
     /** @brief Returns the first lines of bytes, with their line endings.
      *
@@ -291,9 +316,9 @@ public:
      */
     std::string_view getBytes() const noexcept;
 
-    /** @brief Reports whether the buffer contains any NUL byte.
+    /** @brief Reports whether the document is binary: not text, and holding a NUL byte. A binary document has no lines.
      *
-     *  @return True when at least one `\\0` byte is present.
+     *  @return True when the document was built as binary.
      */
     bool isBinary() const noexcept;
 
@@ -383,7 +408,7 @@ private:
     /** @brief Input that owns the bytes, or nullptr when a factory owns them. Kept so the bytes outlive the document. */
     std::unique_ptr<Input> input;
 
-    /** @brief True when the bytes hold a NUL byte, so the document has no lines. */
+    /** @brief True when the document is not text and its bytes hold a NUL byte, so the document has no lines. */
     bool binary { false };
 
     /** @brief The line ending of the first line, returned by getLineEnding. */
@@ -395,6 +420,9 @@ private:
      */
     void setSource (std::string_view text);
 
-    /** @brief Detects a NUL byte, and indexes the line starts and the dominant line ending of text. */
-    void setLineIndex();
+    /** @brief Detects a NUL byte when the document is not text, and indexes the line starts and the dominant line ending.
+     *
+     *  @param isText True when the document is text, so that a NUL byte does not make it binary.
+     */
+    void setLineIndex (bool isText);
 };

@@ -120,8 +120,11 @@ void MatchWriter::appendLinePrefix (int lineNumber, std::string_view line, char 
 void MatchWriter::appendFormattedLine (int lineNumber, std::string_view line, char separator)
 {
     appendLinePrefix (lineNumber, line, separator);
-    jam::Format::appendBytes (output, line);
-    jam::Format::appendUtf8 (output, Chars::newline);
+    const std::string_view ending { TextDocument::getLineEnding (bytes, line) };
+    jam::Format::appendBytes (output, std::string_view { line.data(), line.size() + ending.size() });
+
+    if (ending.empty())
+        jam::Format::appendUtf8 (output, Chars::newline);
 }
 
 juce::Result MatchWriter::appendOnlyMatches (const Pattern& pattern, int lineNumber, std::string_view line)

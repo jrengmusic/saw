@@ -9,6 +9,7 @@
  */
 class IgnoreRules
 {
+    /** @brief Tag type that only the members of IgnoreRules can name, so that only they create a link. */
     struct Access {};
 
 public:
@@ -65,6 +66,23 @@ public:
      *  @return True when the winning rule is not negated. False when no rule matches.
      */
     bool isIgnored (std::string_view relativePath, bool isDirectory) const;
+    /** @brief Returns the folder that holds the git directory, searched upward from the walk root.
+     *
+     *  @param walkRoot The directory where the walk starts.
+     *
+     *  @return The folder that holds the git directory, or the walk root when no ancestor holds one.
+     */
+    static juce::File getTopLevelDirectory (const juce::File& walkRoot);
+
+    /** @brief Returns the value of a key in a section of a config file.
+     *
+     *  @param configFile  The config file. A file that is missing, cannot be read, or holds binary bytes gives an empty value.
+     *  @param sectionName The name of the section.
+     *  @param keyName     The name of the key.
+     *
+     *  @return The value of the key, or an empty string when the key is not found.
+     */
+    static std::string getConfigEntry (const juce::File& configFile, std::string_view sectionName, std::string_view keyName);
 
 private:
     /** @brief One rule of a `.gitignore` line.
@@ -100,17 +118,6 @@ private:
      */
     using RuleIndexes = jam::HashMap<std::string, jam::Array<int>, TransparentStringHash, std::equal_to<>>;
 
-    /** @brief Returns the top level of the repository that holds a walk root.
-     *
-     *  The top level is the nearest directory, from walkRoot upward, that holds a `.git` entry.
-     *  When no directory holds one, walkRoot is the top level.
-     *
-     *  @param walkRoot The directory where the walk starts.
-     *
-     *  @return The top level directory.
-     */
-    static juce::File getTopLevelDirectory (const juce::File& walkRoot);
-
     /** @brief Adds the `.gitignore` link of each directory from the top level down to a directory.
      *
      *  The recursion visits the ancestors of the directory first, so the links are added from the top
@@ -134,16 +141,6 @@ private:
      *  @return The file. The file may not exist.
      */
     static juce::File getGlobalExcludesFile();
-
-    /** @brief Reads the `core.excludesFile` value from one git config file.
-     *
-     *  A file that does not exist, cannot be read, or holds binary bytes gives an empty value.
-     *
-     *  @param configFile The git config file to read.
-     *
-     *  @return The value, or an empty string when none is set.
-     */
-    static std::string getExcludesFileFromConfig (const juce::File& configFile);
 
     /** @brief Creates one link of the rules chain, with the rules of one file.
      *
@@ -186,7 +183,7 @@ private:
     /** @brief Adds one rule from one line of a rules file, in the family that its pattern selects.
      *
      *  A literal name, or a literal after a leading folder wildcard `**`, goes to suffixes. An anchored
-     *  literal path goes to relativePaths. An extension, with or without a leading folder wildcard, goes
+     *  literal path goes to relativePaths. An extension that is not anchored, with or without a leading folder wildcard, goes
      *  to extensions. Any other glob goes to others.
      *  A glob that does not compile adds no rule. A line without a pattern adds no rule.
      *

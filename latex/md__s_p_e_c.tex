@@ -1,0 +1,1497 @@
+\chapter{SAW Specification }
+\hypertarget{md__s_p_e_c}{}\label{md__s_p_e_c}\index{SAW Specification@{SAW Specification}}
+\label{md__s_p_e_c_autotoc_md154}%
+\Hypertarget{md__s_p_e_c_autotoc_md154}%
+
+
+{\bfseries{SAW: Safe Atomic Writer}} {\bfseries{Version:}} 0.\+0.\+1 {\bfseries{Repository:}} {\ttfamily \texorpdfstring{$\sim$}{\string~}/\+\+Documents/\+\+Poems/\+dev/\+saw/} {\bfseries{Binary:}} {\ttfamily \texorpdfstring{$\sim$}{\string~}/.local/\+bin/\+saw}
+
+\DoxyHorRuler{0}
+\hypertarget{md__s_p_e_c_autotoc_md156}{}\doxysection{\texorpdfstring{1. Overview}{1. Overview}}\label{md__s_p_e_c_autotoc_md156}
+{\bfseries{Purpose:}} SAW replaces {\ttfamily sed}, {\ttfamily grep}, and file-\/oriented {\ttfamily awk} with one deterministic, dry-\/run-\/first, atomic CLI tool. {\bfseries{Target End-\/\+User:}} CAROL agents (frontier and local models), CAROL scripts ({\ttfamily bin/\+carol}, JANITOR {\ttfamily fix.\+lua}), and ARCHITECT in the terminal. {\bfseries{Core Workflow:}} Preview exact matches or diffs by default, apply edits only with {\ttfamily -\/-\/apply -\/-\/expect N}, and reverse any applied transaction with {\ttfamily saw undo}.\hypertarget{md__s_p_e_c_autotoc_md157}{}\doxysubsection{\texorpdfstring{1.\+1 Scope and Authority}{1.\+1 Scope and Authority}}\label{md__s_p_e_c_autotoc_md157}
+This document is the specification, and it governs every implementation detail. {\ttfamily Source/\+\+HELP.\+md} derives from this document and holds no independent authority. Where {\ttfamily Source/\+\+HELP.\+md} and this document disagree, this document is correct.
+
+SAW operates on UTF-\/8 and raw-\/byte text files. SAW knows nothing about C++, CAROL, {\ttfamily doxygen-\/protocol}, or version-\/control commits. CAROL hooks enforce CAROL policy outside SAW.\hypertarget{md__s_p_e_c_autotoc_md158}{}\doxysubsection{\texorpdfstring{1.\+2 Locked ARCHITECT Decisions (Verbatim)}{1.\+2 Locked ARCHITECT Decisions (Verbatim)}}\label{md__s_p_e_c_autotoc_md158}
+Every design decision in this specification rests on ARCHITECT\textquotesingle{}s verbatim rulings:
+
+
+\begin{DoxyItemize}
+\item {\bfseries{Repository and Name:}} {\ttfamily "{}\texorpdfstring{$\sim$}{\string~}/\+\+Documents/\+\+Poems/\+dev/\+saw/"{}}
+\item {\bfseries{Version:}} {\ttfamily "{}v0.\+0.\+1"{}}
+\item {\bfseries{CLI-\/\+Only SSOT and Hook Policy:}} {\ttfamily "{}why mcp? not just cli? i meant one SSOT tools for all file manipulation. sed awk immediately rejected hooks, python and lua must ask permission. editing file no need nvim. but use in-\/house cli as must use tools. i think juce already have ootb for mmap, swap, etc why do we need atomic file?"{}}
+\item {\bfseries{Scope ({\ttfamily awk}, {\ttfamily sed}, {\ttfamily grep} Replacement):}} {\ttfamily "{}how can we make this as tiny as possible, as fast as possible, with easiest syntax as possible, can this replace awk, sed, grep simultaenously?"{}}
+\item {\bfseries{HELP Page Identity, Dry-\/\+Run Default, and Undo:}} {\ttfamily "{}i still like the HELP page. it\textquotesingle{}s our identity. \texorpdfstring{$\sim$}{\string~}10mb still acceptable. why not we make it always dry run by default. so destructive edit must be explicit. agents could still make mistake passing wrong args, so the default run is always safe and undoable"{}}
+\item {\bfseries{Verb Surface:}} {\ttfamily "{}Full 6 verbs: find, replace, lines, fields, patch, undo — covers grep, sed, awk columns/\+ranges, fix.\+lua batch, and undo"{}}
+\item {\bfseries{Verb Surface, current:}} Ten verbs. {\ttfamily json}, {\ttfamily page}, and {\ttfamily write} (§5.9 to §5.11) join the seven verbs of §5: {\ttfamily find}, {\ttfamily replace}, {\ttfamily lines}, {\ttfamily fields}, {\ttfamily patch}, {\ttfamily undo}, and {\ttfamily excerpt}.
+\item {\bfseries{Apply Gate:}} {\ttfamily "{}-\/-\/apply always requires -\/-\/expect N (dry-\/run prints N; mismatch writes 0 bytes)"{}}
+\item {\bfseries{Regex and Directory Traversal:}} {\ttfamily "{}Literal default + -\/r regex (extend jam::\+\+Reg\+Exp with find\+Next/\+spans) + recursive dir walk skipping .git/.gitignore"{}}
+\item {\bfseries{Undo Store:}} {\ttfamily "{}Rolling cache in app-\/data dir (cap 32 transactions, verifies post-\/edit hashes before restoring)"{}}
+\item {\bfseries{Binary File Handling:}} {\ttfamily "{}Skip binary files (NUL byte) in directory walks; fail with an explicit error when named directly"{}}
+\item {\bfseries{Page Verb Scope:}} {\ttfamily "{}saw bat is only cat"{}}
+\item {\bfseries{Lean Scope:}} {\ttfamily "{}saw must stay LEAN and SLIM. substitution failure is not an error. without dynamic library from ling exist, saw still able to cat, with ling\textquotesingle{}s dynamic lib it can render like bat"{}}
+\item {\bfseries{MCP Lane Scope:}} {\ttfamily "{}mcp lane NEVER touch TUI (gui) dll"{}}
+\item {\bfseries{Text mode:}} {\ttfamily saw page} prints every byte of a named binary file (§5.10). {\ttfamily -\/a} reads a NUL byte as text in {\ttfamily find}, {\ttfamily lines}, {\ttfamily fields}, and {\ttfamily excerpt}. Every other verb keeps the refusal.
+\item {\bfseries{Line Endings, Permissions, and Symlinks:}} {\ttfamily "{}Preserve each file\textquotesingle{}s LF/\+\+CRLF line endings and execute bit; follow symlinks to target (matching cast/\+scout)"{}}
+\item {\bfseries{{\ttfamily -\/-\/expect N} Counting Rule:}} {\ttfamily "{}Exact edit operations applied (matches replaced in replace, edit entries in patch, line ops in lines)"{}}
+\item {\bfseries{Stdin Piping Rule:}} {\ttfamily "{}Read stdin when no path is given and stdin is not a TTY (for find, lines, fields, dry-\/run replace); patch reads stdin or -\/-\/file"{}}
+\item {\bfseries{Project Skeleton:}} {\ttfamily "{}Run cast INIT.\+md \texorpdfstring{$\sim$}{\string~}/\+\+Documents/\+\+Poems/\+dev/\+saw from archetype/\+cli. Then add the generation layer (identifiers/\+text/\+banner/\+files/\+source.\+cast + spell.\+md rows) to saw, in the same shape as scout/\+cast/"{}}
+\item {\bfseries{Test Harness:}} {\ttfamily "{}why unit test still need lua? scout whatdbg now native mcp"{}}, {\ttfamily "{}so what harness do we need to test? benchmark against sed awk grep rg"{}}, {\ttfamily "{}design comparison runner then. do we need nvim?"{}}, {\ttfamily "{}which is more deterministic? more objective? zsh or nvim with lua?"{}}, {\ttfamily "{}ok nvim lua"{}}
+\item {\bfseries{Screen Erase:}} {\ttfamily "{}Erase only on the help/\+banner path (saw, -\/-\/help, \texorpdfstring{$<$}{<}verb\texorpdfstring{$>$}{>} -\/-\/help). Never on the six verbs or -\/-\/version"{}}
+\item {\bfseries{Regex Scope:}} {\ttfamily "{}Per line: find, replace, fields -\/-\/match run the regex on each line\textquotesingle{}s text without its line ending. Matches never cross a newline (sed/\+grep model). -\/i wraps the pattern as (?i:...)"{}}
+\item {\bfseries{Ignore Rules:}} {\ttfamily "{}Full git semantics, including the global excludes\+File and .git/\+info/\+exclude"{}}, bounded by {\ttfamily "{}Ignore sources: every .gitignore from the repo root down to the path, \$GIT\+\_\+\+DIR/\+info/\+exclude, and core.\+excludes\+File. Precedence per git-\/scm gitignore DESCRIPTION"{}} and {\ttfamily "{}core.\+excludes\+File lookup: \$XDG\+\_\+\+CONFIG\+\_\+\+HOME/\+git/\+config, then \texorpdfstring{$\sim$}{\string~}/.gitconfig (last value wins), with \texorpdfstring{$\sim$}{\string~}/ expansion. Default \$XDG\+\_\+\+CONFIG\+\_\+\+HOME/\+git/\+ignore, else \texorpdfstring{$\sim$}{\string~}/.config/\+git/\+ignore"{}}
+\item {\bfseries{Verb Help:}} {\ttfamily "{}One embedded markdown per verb (Source/\+help/\+find.\+md … undo.\+md) as separate binary entries, plus HELP.\+md for the overview. Uses the existing API with no section extraction"{}}
+\item {\bfseries{Diff Format:}} {\ttfamily "{}GNU-\/exact. \textquotesingle{},1\textquotesingle{} is omitted for one-\/line ranges. An empty range uses the GNU start rule. \textquotesingle{}\textbackslash{} No newline at end of file\textquotesingle{} marks incomplete lines. Hunks merge when their 3-\/line contexts overlap. Output stays valid input for patch and }git apply{\ttfamily "{}}
+\item {\bfseries{Specification Amendment:}} {\ttfamily "{}Yes. ORACLE amends SPEC.\+md first, quoting each of today\textquotesingle{}s rulings verbatim. Then the PLAN is written against the amended SPEC"{}}
+\item {\bfseries{Test Undo Isolation:}} {\ttfamily "{}The runner moves the real \texorpdfstring{$<$}{<}app-\/data\texorpdfstring{$>$}{>}/\+saw/\+undo aside before the run and puts it back after, also on failure. saw gets no new surface"{}}
+\item {\bfseries{Benchmark Corpus:}} {\ttfamily "{}A copy of \texorpdfstring{$\sim$}{\string~}/\+\+Documents/\+\+Poems/\+\+JUCE/\+modules. It is real C++ text, it is present on every machine (CMake\textquotesingle{}s JUCE path is ../../\+\+JUCE), and it is copied to a temporary folder before each mutating epoch"{}}
+\item {\bfseries{CAROL Wiring (§7):}} {\ttfamily "{}carol init on saw repo by ARCHITECT"{}}
+\item {\bfseries{Premise:}} {\ttfamily "{}must exclusively using saw, since it was the fastest, the most reliable, and the safest way to find, edit file?"{}}, {\ttfamily "{}we should fix saw first, so it live to its premise. then we could enforce the protocol."{}}
+\item {\bfseries{Platforms:}} {\ttfamily "{}reminder, must be CROSSPLATFORM"{}}
+\item {\bfseries{Contract:}} {\ttfamily "{}your job is to fix SAW contract, to replace sed, awk, grep, rg to be ALWAYS DETERMINISTICALLY CORRECT and FASTER on ALL CASES. NON-\/\+NEGOTIABLE, NO EXCEPTIONS."{}}, {\ttfamily "{}SPEED, SAFETY, CORRECTNESS is not mutually exclusive, ALL OF THEM ARE THE CONTRACT. there are no discussion about using mutex everywhere."{}}
+\item {\bfseries{Lock-\/\+Free:}} {\ttfamily "{}why cant we have lock free architecture? lock free architecture isnt aspirational, ALL of our project are multi-\/thread with audio architecture discipline, lock free on hot path, PROVEN TO BE FASTEST"{}}, {\ttfamily "{}we have always use lock-\/free on hot path in this domain. FACTUALLY ALWAYS FASTEST AND BETTER"{}}
+\item {\bfseries{Excerpt Lane:}} {\ttfamily "{}the current sed, awk, grep, rg parity STAYS"{}}, {\ttfamily "{}but we have a dedicated lane: formatted to format you EXACTLY need. so agents never wrongly formatted, return verbatim as is"{}}
+\item {\bfseries{Slim Linking:}} {\ttfamily "{}we might be able to design jam\+\_\+core properly for CLI/\+\+TUI project. for example, all of of our CLI actually bring markdown renderer and text editor, what if we have explicit macro to flag CLI/\+\+TUI so they can be more SLIM?"{}}
+\end{DoxyItemize}\hypertarget{md__s_p_e_c_autotoc_md159}{}\doxysubsection{\texorpdfstring{1.\+3 Explicit Non-\/\+Goals}{1.\+3 Explicit Non-\/\+Goals}}\label{md__s_p_e_c_autotoc_md159}
+
+\begin{DoxyItemize}
+\item No daemon process. saw is one binary ({\ttfamily "{}why mcp? not just cli? i meant one SSOT tools for all file manipulation."{}}). {\ttfamily saw -\/-\/mcp} (§5.8) gives the same command lines to agents on demand ({\ttfamily "{}cli isn\textquotesingle{}t enough? need lazy load mcp that never inject anything when idle? never eat context when not being used? always on demand? fine, add one."{}}). It is a child of its client on stdio, and it holds no state between calls.
+\item No embedded scripting language ({\ttfamily BEGIN}/{\ttfamily END} blocks or associative arrays). The one filter language is the jq language of {\ttfamily saw json} (§5.9).
+\item No fuzzy matching, heuristic patching, or silent fallback.
+\item No version-\/control subprocess calls inside SAW.
+\item No AST parsing or language-\/specific linting inside SAW.
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{md__s_p_e_c_autotoc_md161}{}\doxysection{\texorpdfstring{2. Technology Stack and Architecture Constraints}{2. Technology Stack and Architecture Constraints}}\label{md__s_p_e_c_autotoc_md161}
+
+\begin{DoxyItemize}
+\item {\bfseries{Language:}} C++17 ({\ttfamily CMAKE\+\_\+\+CXX\+\_\+\+STANDARD 17}).
+\item {\bfseries{Project Skeleton:}} Run {\ttfamily cast INIT.\+md \texorpdfstring{$\sim$}{\string~}/\+\+Documents/\+\+Poems/\+dev/\+saw} in {\ttfamily \texorpdfstring{$\sim$}{\string~}/\+\+Documents/\+\+Poems/\+dev/\+archetype/\+cli} ({\ttfamily ARCHETYPE.\+md:93}). Then add the generation layer in the shape of {\ttfamily \texorpdfstring{$\sim$}{\string~}/\+\+Documents/\+\+Poems/\+dev/\+scout/\+cast/}: {\ttfamily identifiers.\+md}, {\ttfamily text.\+md}, {\ttfamily banner.\+md}, {\ttfamily files.\+md}, {\ttfamily source.\+cast}, and the matching rows of {\ttfamily cast/\+spell.\+md} ({\ttfamily "{}Run cast INIT.\+md \texorpdfstring{$\sim$}{\string~}/\+\+Documents/\+\+Poems/\+dev/\+saw from archetype/\+cli. Then add the generation layer (identifiers/\+text/\+banner/\+files/\+source.\+cast + spell.\+md rows) to saw, in the same shape as scout/\+cast/"{}}).
+\item {\bfseries{Build System:}} {\ttfamily cast}-\/generated {\ttfamily CMake\+Lists.\+txt}, CMake 3.\+25+, Ninja, Release LTO ({\ttfamily -\/O3 -\/flto}, {\ttfamily -\/dead\+\_\+strip} on mac\+OS). Edit {\ttfamily project-\/info.\+md}, run {\ttfamily cast}, then configure. Never edit {\ttfamily CMake\+Lists.\+txt} by hand.
+\item {\bfseries{Frameworks:}} JUCE {\ttfamily 8.\+0.\+17} + JAM ({\ttfamily jam\+\_\+core} for runtime operations; {\ttfamily jam\+\_\+syntax\+\_\+tree} and {\ttfamily jam\+\_\+git} for the runtime; {\ttfamily jam\+\_\+tui} renders the {\ttfamily -\/-\/help} frames at build time: {\ttfamily "{}i still like the HELP page. it\textquotesingle{}s our identity. \texorpdfstring{$\sim$}{\string~}10mb still acceptable."{}}). The page renderer is the page library of ling, and the languages come from its token library (§5.10). saw holds no renderer, no language, and no theme.
+\item {\bfseries{Linked modules of saw ({\ttfamily \#\# program module} table of {\ttfamily project-\/info.\+md}):}} {\ttfamily juce\+\_\+core}, {\ttfamily juce\+\_\+cryptography} (for {\ttfamily juce::\+\+SHA256}), {\ttfamily juce\+\_\+data\+\_\+structures}, {\ttfamily juce\+\_\+events}, {\ttfamily jam\+\_\+core}, {\ttfamily jam\+\_\+data\+\_\+structures}, {\ttfamily jam\+\_\+terminal}, {\ttfamily jam\+\_\+syntax\+\_\+tree} and {\ttfamily jam\+\_\+git} (for {\ttfamily page}, §5.10), {\ttfamily jam\+\_\+model\+\_\+context\+\_\+protocol} (for {\ttfamily -\/-\/mcp}, §5.8). No framework other than the C and C++ system libraries is loaded ({\ttfamily JUCE\+\_\+\+USE\+\_\+\+FOUNDATION=0}). The parts of the JAM modules that use a GUI module compile only when that module is linked ({\ttfamily JUCE\+\_\+\+MODULE\+\_\+\+AVAILABLE\+\_\+\texorpdfstring{$\ast$}{*}}). The two tables below list the modules of the {\ttfamily saw\+\_\+\+Help\+Frames} target, a build tool that is not installed.
+\item {\bfseries{Linked JUCE modules ({\ttfamily \#\# juce module} table of {\ttfamily project-\/info.\+md}):}} the six rows of {\ttfamily \texorpdfstring{$\sim$}{\string~}/\+\+Documents/\+\+Poems/\+dev/\+scout/\+project-\/info.md:108-\/113} ({\ttfamily juce\+\_\+core}, {\ttfamily juce\+\_\+data\+\_\+structures}, {\ttfamily juce\+\_\+events}, {\ttfamily juce\+\_\+graphics}, {\ttfamily juce\+\_\+gui\+\_\+basics}, {\ttfamily juce\+\_\+audio\+\_\+processors}), plus {\ttfamily juce\+\_\+cryptography} for {\ttfamily juce::\+\+SHA256}. scout links {\ttfamily jam\+\_\+gui}, whose declaration lists {\ttfamily juce\+\_\+gui\+\_\+extra} and {\ttfamily juce\+\_\+animation} ({\ttfamily \texorpdfstring{$\sim$}{\string~}/\+\+Documents/\+\+Poems/\+dev/\+jam/\+user-\/modules-\/info.md:90,97}), and scout builds without those two rows. Thus the table does not restate them.
+\item {\bfseries{Linked JAM modules (closure of {\ttfamily jam\+\_\+tui}):}} {\ttfamily jam\+\_\+core}, {\ttfamily jam\+\_\+document}, {\ttfamily jam\+\_\+markdown}, {\ttfamily jam\+\_\+freetype}, {\ttfamily jam\+\_\+graphics}, {\ttfamily jam\+\_\+data\+\_\+structures}, {\ttfamily jam\+\_\+animation}, {\ttfamily jam\+\_\+web}, {\ttfamily jam\+\_\+style}, {\ttfamily jam\+\_\+gui}, {\ttfamily jam\+\_\+mermaid\+\_\+diagram}, {\ttfamily jam\+\_\+markdown\+\_\+graphics}, {\ttfamily jam\+\_\+terminal}, {\ttfamily jam\+\_\+tui}.
+\item {\bfseries{Platforms:}} mac\+OS (ARM64 and x86\+\_\+64) and Windows (x64, MSVC / clang-\/cl).
+\item {\bfseries{Primary Dependencies (OOTB):}}
+\begin{DoxyItemize}
+\item {\ttfamily Input} for file reads on mac\+OS and Windows: {\ttfamily juce::\+\+Memory\+Mapped\+File} ({\ttfamily read\+Only}) for a file above 256 KB, and {\ttfamily juce::\+\+File\+Input\+Stream} for a smaller one, for a file that cannot be mapped, and for every file that a verb writes ({\ttfamily "{}i think juce already have ootb for mmap, swap, etc"{}}, {\ttfamily "{}why not crossplatfrom using juce? and jam?"{}}). {\ttfamily std::\+filesystem::\+file\+\_\+size} gives the size and refuses a named pipe, a socket and a device before the open, because {\ttfamily juce::\+\+File::\+exists\+As\+File} accepts a named pipe. A folder is refused there on mac\+OS and at the open on Windows. {\ttfamily /\+dev/\+null} is an empty file. A file that becomes shorter during a read gives no fault: on mac\+OS a missing byte of the map reads as NUL, and the file is then binary (§4.5). Windows refuses to shorten a mapped file. A regular file on standard input is mapped from its descriptor on mac\+OS.
+\item {\ttfamily jam::\+\+File::\+swap\+Files} for the atomic exchange of a target and its blob. Where it is not possible: {\ttfamily juce::\+\+Temporary\+File} ({\ttfamily use\+Hidden\+File}) with {\ttfamily jam::\+\+File::\+move\+File\+To} or {\ttfamily jam::\+\+File::\+replace\+File\+In} ({\ttfamily "{}i think juce already have ootb for mmap, swap, etc"{}}). {\ttfamily juce::\+\+File\+Output\+Stream::\+flush()} returns {\ttfamily void}, so SAW reads {\ttfamily get\+Status()} after {\ttfamily flush()}.
+\item Parallel directory walks via {\ttfamily std::\+filesystem::\+directory\+\_\+iterator} on mac\+OS and Windows, skipping {\ttfamily .git} and ignored directories without descending ({\ttfamily "{}why not crossplatfrom using juce? and jam?"{}}). {\ttfamily juce::\+\+Directory\+Entry} has no entry type, so it cannot skip a named pipe or a symbolic link.
+\item Lock-\/free {\ttfamily Jobs::\+run\+Recursive} (atomics and {\ttfamily std::\+thread} workers) for the directory walk: each item is one folder, or one range of the entries of a listed folder, and it adds its subfolders as items. {\ttfamily Find} fuses the walk and the search.
+\item Lock-\/free {\ttfamily Jobs::\+run} ({\ttfamily std::\+atomic\texorpdfstring{$<$}{<}int\texorpdfstring{$>$}{>}} + {\ttfamily std::\+thread} workers, direct calling-\/thread execution for {\ttfamily count == 1}) for parallel work on files and on the chunks of one large file.
+\item No lock anywhere. Each worker owns its state and its result slot. The undo cache publishes by one move of a complete record (§6.3).
+\item {\ttfamily juce::\+\+SHA256} for content and transaction hashes.
+\item Raw UTF-\/8 views ({\ttfamily juce::\+\+Span\texorpdfstring{$<$}{<}const std::\+string\+\_\+view\texorpdfstring{$>$}{>}}) parsed by {\ttfamily Arguments} for the command line (avoiding {\ttfamily juce::\+\+Argument\+List} whitespace trimming, empty-\/argument removal, and short-\/option matching defects).
+\item {\ttfamily jam::\+simd} ({\ttfamily find\+Byte}, {\ttfamily find\+Byte\+Pair}, {\ttfamily find\+Any\+Byte}, {\ttfamily find\+Fingerprint}, {\ttfamily count\+Byte}) and {\ttfamily jam::\+\+Literal\+Set} for SIMD scanning. A literal search looks for its two rarest bytes. A set of literals uses one fingerprint pass.
+\item {\ttfamily jam::\+\+Reg\+Exp} (extended in {\ttfamily jam\+\_\+core} with offset-\/based {\ttfamily find\+Next} returning match spans and captures: {\ttfamily "{}Literal default + -\/r regex (extend jam::\+\+Reg\+Exp with find\+Next/\+spans) + recursive dir walk skipping .git/.gitignore"{}}).
+\item {\ttfamily jam::\+\+Reg\+Exp\+Program} and {\ttfamily jam::\+\+Reg\+Exp\+Automaton} for matching in linear time (§4.8).
+\item {\ttfamily jam::\+\+Json\+Document} and {\ttfamily jam::\+\+Json\+Writer} for {\ttfamily patch} inputs and undo metadata.
+\item {\ttfamily jam::\+\+Terminal\+Page} and {\ttfamily jam::\+\+Markdown\+Document} in {\ttfamily saw\+\_\+\+Help\+Frames}, for the help frames. saw prints the embedded frames.
+\end{DoxyItemize}
+\item {\bfseries{Result of a verb:}} a list of {\ttfamily Text\+Document} (a {\ttfamily jam::\+\+Document}), the failures, and the exit code. The text of a Document is created one time, or it is borrowed from the input. The terminal and the MCP reply read it in place ({\ttfamily "{}why not the AST just using jam::\+\+Document"{}}, {\ttfamily "{}i have never approved copying"{}}).
+\item {\bfseries{Test runtime:}} Neovim 0.\+10 or later ({\ttfamily vim.\+system} exists since 0.\+10). The runner is {\ttfamily nvim -\/-\/headless -\/l test/\+run.\+lua} (§10).
+\item {\bfseries{Benchmark runtime:}} {\ttfamily scout} (§10.3).
+\end{DoxyItemize}\hypertarget{md__s_p_e_c_autotoc_md162}{}\doxysubsection{\texorpdfstring{Architecture Constraints}{Architecture Constraints}}\label{md__s_p_e_c_autotoc_md162}
+
+\begin{DoxyItemize}
+\item ✅ Render every help frame and the erase sequence at build time, in the target {\ttfamily saw\+\_\+\+Help\+Frames}. The frames are binary data of saw.
+\item ✅ Run saw in plain {\ttfamily int main (int argc, char\texorpdfstring{$\ast$}{*} argv\+[])} with zero GUI initialization.
+\item ✅ Use one mechanism for mac\+OS and Windows: JAM first, then JUCE, then the C++17 standard library.
+\item ✅ Erase the screen only on the help path (§4.1).
+\item ✅ Check every {\ttfamily File\+Output\+Stream} write result and the stream status after {\ttfamily flush()} before an exchange, a move, or {\ttfamily jam::\+\+File::\+replace\+File\+In}.
+\item ✅ Follow BLESSED ({\ttfamily MANIFESTO.\+md}), {\ttfamily CODING.\+md}, and {\ttfamily NAMES.\+md}.
+\item ❌ Never call {\ttfamily juce::\+\+File::\+replace\+With\+Data()} (it deletes 0-\/byte targets and ignores {\ttfamily append\+Data()} errors).
+\item ❌ Never spawn external subprocesses ({\ttfamily sed}, {\ttfamily awk}, {\ttfamily grep}, {\ttfamily diff}, {\ttfamily cmp}, {\ttfamily cp}, or any version-\/control program). The {\ttfamily -\/-\/pager} option of {\ttfamily saw page} starts no pager.
+\item ❌ Never write files on a default run without {\ttfamily -\/-\/apply} ({\ttfamily "{}why not we make it always dry run by default. so destructive edit must be explicit."{}}).
+\item ❌ Never store persistent daemon state or repository-\/local cache files.
+\item ❌ Never use a lock, a condition variable, or a sleep on a search, walk, output, or transaction path.
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{md__s_p_e_c_autotoc_md164}{}\doxysection{\texorpdfstring{3. Core Principles}{3. Core Principles}}\label{md__s_p_e_c_autotoc_md164}
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Dry-\/\+Run by Default:}} Every mutating verb previews changes and writes zero bytes unless {\ttfamily -\/-\/apply} appears on the command line ({\ttfamily "{}why not we make it always dry run by default. so destructive edit must be explicit. agents could still make mistake passing wrong args, so the default run is always safe and undoable"{}}).
+\item {\bfseries{Explicit Two-\/\+Gate Write:}} {\ttfamily -\/-\/apply} always requires {\ttfamily -\/-\/expect N} on {\ttfamily replace}, {\ttfamily lines}, and {\ttfamily patch} ({\ttfamily "{}-\/-\/apply always requires -\/-\/expect N (dry-\/run prints N; mismatch writes 0 bytes)"{}}).
+\item {\bfseries{Literal by Default:}} Search and replacement treat patterns as exact bytes unless {\ttfamily -\/r} enables regex ({\ttfamily "{}Literal default + -\/r regex (extend jam::\+\+Reg\+Exp with find\+Next/\+spans) + recursive dir walk skipping .git/.gitignore"{}}).
+\item {\bfseries{Atomic All-\/or-\/\+Nothing Transactions:}} Every write is one atomic exchange or one atomic replace (§6.3). If file {\ttfamily k + 1} fails, SAW restores files {\ttfamily 0..k} immediately.
+\item {\bfseries{Verified Reversible Undo:}} Every {\ttfamily -\/-\/apply} keeps the pre-\/edit file and the post-\/edit SHA-\/256 hashes in a bounded rolling cache ({\ttfamily "{}Rolling cache in app-\/data dir (cap 32 transactions, verifies post-\/edit hashes before restoring)"{}}).
+\item {\bfseries{Deterministic Output:}} Parallel per-\/file work emits results sorted by normalized UTF-\/8 path, then line number, then byte offset.
+\item {\bfseries{Exact Preservation:}} SAW preserves the line ending of each untouched line, trailing newline presence, symlink target resolution, and the metadata of each target: file mode, access control list, extended attributes. A target with more than one hard link is refused, because a swap breaks the link ({\ttfamily "{}Preserve each file\textquotesingle{}s LF/\+\+CRLF line endings and execute bit; follow symlinks to target (matching cast/\+scout)"{}}).
+\end{DoxyEnumerate}
+
+\DoxyHorRuler{0}
+\hypertarget{md__s_p_e_c_autotoc_md166}{}\doxysection{\texorpdfstring{4. Global CLI Contract}{4. Global CLI Contract}}\label{md__s_p_e_c_autotoc_md166}
+\hypertarget{md__s_p_e_c_autotoc_md167}{}\doxysubsection{\texorpdfstring{4.\+1 Invocation}{4.\+1 Invocation}}\label{md__s_p_e_c_autotoc_md167}
+Decision: {\ttfamily "{}Full 6 verbs: find, replace, lines, fields, patch, undo — covers grep, sed, awk columns/\+ranges, fix.\+lua batch, and undo"{}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{saw}
+\DoxyCodeLine{saw\ -\/-\/help}
+\DoxyCodeLine{saw\ <verb>\ -\/-\/help}
+\DoxyCodeLine{saw\ -\/-\/version}
+\DoxyCodeLine{saw\ -\/-\/mcp}
+\DoxyCodeLine{saw\ find\ <pattern>\ [path...]\ [options]}
+\DoxyCodeLine{saw\ replace\ <find>\ <with>\ [path...]\ [options]}
+\DoxyCodeLine{saw\ lines\ <range>\ [path...]\ [options]}
+\DoxyCodeLine{saw\ fields\ <spec>\ [path...]\ [options]}
+\DoxyCodeLine{saw\ json\ [options]\ <filter>\ [file...]}
+\DoxyCodeLine{saw\ patch\ [options]}
+\DoxyCodeLine{saw\ undo\ <tx-\/id>\ [options]}
+\DoxyCodeLine{saw\ undo\ -\/-\/list}
+\DoxyCodeLine{saw\ excerpt\ [target...]\ [options]}
+\DoxyCodeLine{saw\ page\ [<path>...]\ [options]}
+\DoxyCodeLine{saw\ write\ <path>\ [-\/-\/apply\ -\/-\/expect\ 1]}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyItemize}
+\item {\ttfamily saw} with no arguments prints the banner and the frame of {\ttfamily HELP.\+md} and exits {\ttfamily 0}.
+\item {\ttfamily saw -\/-\/help} and {\ttfamily saw -\/h} print the banner and the frame of {\ttfamily HELP.\+md} and exit {\ttfamily 0}.
+\item {\ttfamily saw \texorpdfstring{$<$}{<}verb\texorpdfstring{$>$}{>} -\/-\/help} prints the frame of {\ttfamily Source/\+help/\texorpdfstring{$<$}{<}verb\texorpdfstring{$>$}{>}.md} and exits {\ttfamily 0}. Each verb frame is one separate binary data entry ({\ttfamily "{}One embedded markdown per verb (Source/\+help/\+find.\+md … undo.\+md) as separate binary entries, plus HELP.\+md for the overview. Uses the existing API with no section extraction"{}}).
+\item When stdout is a terminal, the three help invocations above erase the screen first with the embedded erase sequence ({\ttfamily jam::\+\+Terminal\+Encoder::\+write\+Erase\+Screen}, rendered at build time). The verbs and {\ttfamily -\/-\/version} never erase the screen ({\ttfamily "{}Erase only on the help/\+banner path (saw, -\/-\/help, \texorpdfstring{$<$}{<}verb\texorpdfstring{$>$}{>} -\/-\/help). Never on the six verbs or -\/-\/version"{}}).
+\item In a pipe and over {\ttfamily -\/-\/mcp}, {\ttfamily saw \texorpdfstring{$<$}{<}verb\texorpdfstring{$>$}{>} -\/-\/help} prints {\ttfamily Source/\+help/\texorpdfstring{$<$}{<}verb\texorpdfstring{$>$}{>}.md} with no escape sequence. The erase sequence is written only to a terminal.
+\item {\ttfamily saw -\/-\/version} and {\ttfamily saw -\/V} print {\ttfamily saw 0.\+0.\+1 (\texorpdfstring{$<$}{<}commit\texorpdfstring{$>$}{>})} and exit {\ttfamily 0} ({\ttfamily "{}v0.\+0.\+1"{}}).
+\item {\ttfamily -\/-\/} terminates option parsing. Every token after {\ttfamily -\/-\/} is a positional argument.
+\item A value option takes the next token verbatim, whatever it starts with. {\ttfamily -\/-\/}, {\ttfamily -\/-\/help} and {\ttfamily -\/h} have their meaning only outside an option value.
+\item One dash with several letters is a group of short flags ({\ttfamily -\/rn} is {\ttfamily -\/r -\/n}). The last flag of a group can take a value.
+\item A positional that starts with a dash needs {\ttfamily -\/-\/} before it. A dash directly followed by a digit is a positional ({\ttfamily fields -\/1}).
+\item Arguments are raw bytes on mac\+OS. On Windows, SAW converts the UTF-\/16 command line to UTF-\/8.
+\end{DoxyItemize}\hypertarget{md__s_p_e_c_autotoc_md168}{}\doxysubsection{\texorpdfstring{4.\+2 Exit Codes}{4.\+2 Exit Codes}}\label{md__s_p_e_c_autotoc_md168}
+
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Code  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Meaning  \\
+{\ttfamily 0}  &Success (match found on {\ttfamily find}/{\ttfamily fields}; dry-\/run preview completed; {\ttfamily -\/-\/apply} succeeded; {\ttfamily undo} succeeded).  \\
+{\ttfamily 1}  &No match found on {\ttfamily find} (matches {\ttfamily grep} convention) or on {\ttfamily fields -\/-\/match}, an empty {\ttfamily find -\/-\/files} list, or {\ttfamily -\/-\/expect N} mismatch on a mutating verb, or a file that {\ttfamily page} cannot print.  \\
+{\ttfamily 2}  &Usage error, unknown flag, invalid regex, invalid JSON, missing file, binary file named directly, edit conflict, undo drift, or I/\+O error.  \\
+{\ttfamily 3}  &{\ttfamily saw json}: compile error of the filter.  \\
+{\ttfamily 4}  &{\ttfamily saw json -\/e}: no output.  \\
+{\ttfamily 5}  &{\ttfamily saw json}: parse error, runtime error, or {\ttfamily halt\+\_\+error}.  \\
+\end{DoxyTable}
+\hypertarget{md__s_p_e_c_autotoc_md169}{}\doxysubsection{\texorpdfstring{4.\+3 Diagnostic Format}{4.\+3 Diagnostic Format}}\label{md__s_p_e_c_autotoc_md169}
+
+\begin{DoxyItemize}
+\item All errors write to {\ttfamily stderr} with the prefix {\ttfamily saw: }.
+\item Successful command data, dry-\/run diffs, and the summary lines ({\ttfamily saw: dry-\/run …}, {\ttfamily saw: applied …}, {\ttfamily saw: undone …}, {\ttfamily saw: dry-\/run undo …}, {\ttfamily saw: no content changed; nothing written}) write to {\ttfamily stdout}.
+\item Each error writes one concise line to {\ttfamily stderr} and exits with code {\ttfamily 1} or {\ttfamily 2} per §4.2.
+\end{DoxyItemize}\hypertarget{md__s_p_e_c_autotoc_md170}{}\doxysubsection{\texorpdfstring{4.\+4 Input Sources and Stdin Rules}{4.\+4 Input Sources and Stdin Rules}}\label{md__s_p_e_c_autotoc_md170}
+Decisions:
+\begin{DoxyItemize}
+\item {\ttfamily "{}Literal default + -\/r regex (extend jam::\+\+Reg\+Exp with find\+Next/\+spans) + recursive dir walk skipping .git/.gitignore"{}}
+\item {\ttfamily "{}Preserve each file\textquotesingle{}s LF/\+\+CRLF line endings and execute bit; follow symlinks to target (matching cast/\+scout)"{}}
+\item {\ttfamily "{}Read stdin when no path is given and stdin is not a TTY (for find, lines, fields, dry-\/run replace); patch reads stdin or -\/-\/file"{}}
+\end{DoxyItemize}
+
+Rules:
+\begin{DoxyItemize}
+\item {\bfseries{Explicit file paths:}} Resolve relative paths against the current working directory. Resolve symbolic links to their final target with {\ttfamily std::\+filesystem::\+canonical}, which follows a link before it applies a {\ttfamily ..} that comes after it. Ignore rules (§4.4.\+1) never skip an explicit file path.
+\item {\bfseries{Explicit directory paths:}} Walk in parallel with one item for each folder ({\ttfamily Paths::\+apply\+To\+Directories} and {\ttfamily Jobs::\+run\+Recursive}, using {\ttfamily std::\+filesystem::\+directory\+\_\+iterator}, one walk for all given directories). {\ttfamily Find} searches each file in the walk, also when several paths are given. The other verbs process the collected files in parallel via {\ttfamily Jobs::\+run}.
+\begin{DoxyItemize}
+\item Skip symbolic links.
+\item Skip {\ttfamily .git} entries always.
+\item Skip files and directories that the ignore rules (§4.4.\+1) exclude, unless {\ttfamily -\/-\/no-\/ignore} is set. Never descend into an excluded directory.
+\item Skip dot-\/prefixed entries (hidden files and folders) unless {\ttfamily -\/-\/hidden} is set.
+\item Sort all collected file paths in ascending byte-\/lexicographic UTF-\/8 order before emitting output or writing.
+\end{DoxyItemize}
+\item {\bfseries{Piped stdin:}} When no {\ttfamily path} argument is given and stdin is not a TTY:
+\begin{DoxyItemize}
+\item {\ttfamily find}, {\ttfamily lines} (read mode), {\ttfamily fields}, {\ttfamily replace} (dry-\/run mode), and {\ttfamily page} read stdin as a virtual file named {\ttfamily \texorpdfstring{$<$}{<}stdin\texorpdfstring{$>$}{>}}. {\ttfamily json} reads stdin as its input stream. {\ttfamily find}, {\ttfamily lines}, and {\ttfamily fields} stop the read when the line range or the first match decides the result.
+\item Passing {\ttfamily -\/-\/apply} with stdin input fails with exit {\ttfamily 2}: {\ttfamily saw: cannot -\/-\/apply on stdin; specify file paths}. {\ttfamily write} takes its text from stdin and is the exception.
+\item Empty stdin is an empty text. {\ttfamily find} and {\ttfamily fields -\/-\/match} exit {\ttfamily 1}. {\ttfamily lines}, {\ttfamily fields}, and {\ttfamily replace} exit {\ttfamily 0} and print nothing.
+\end{DoxyItemize}
+\item {\bfseries{Pipes:}} A path that names a pipe is read one time, to its end.
+\item {\bfseries{Unreadable entries:}} {\ttfamily find} prints one error for each missing or unreadable file or folder, prints the matches of the readable files, and exits {\ttfamily 2}. {\ttfamily page} prints the readable files and exits {\ttfamily 1}. {\ttfamily json} reads the other files and exits {\ttfamily 2}. Every other verb fails on the first one before any output or write.
+\item {\bfseries{No path and stdin is a TTY:}}
+\begin{DoxyItemize}
+\item {\ttfamily find} walks the current working directory {\ttfamily .}.
+\item {\ttfamily replace}, {\ttfamily lines}, and {\ttfamily fields} fail with exit {\ttfamily 2}: {\ttfamily saw: missing path argument}.
+\item {\ttfamily patch} reads from {\ttfamily -\/-\/file \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}} when given, otherwise fails with exit {\ttfamily 2}: {\ttfamily saw: patch requires stdin or -\/-\/file \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}.
+\end{DoxyItemize}
+\item {\bfseries{{\ttfamily /\+dev/\+null} and a closed descriptor:}} {\ttfamily find} walks the current working directory {\ttfamily .}. {\ttfamily lines}, {\ttfamily fields}, and {\ttfamily replace} read an empty text.
+\item {\bfseries{{\ttfamily write}:}} {\ttfamily write} reads its text from standard input. A terminal fails with {\ttfamily saw: write requires stdin}, exit {\ttfamily 2}.
+\end{DoxyItemize}\hypertarget{md__s_p_e_c_autotoc_md171}{}\doxysubsubsection{\texorpdfstring{4.\+4.\+1 Ignore Rules}{4.\+4.\+1 Ignore Rules}}\label{md__s_p_e_c_autotoc_md171}
+Decisions:
+\begin{DoxyItemize}
+\item {\ttfamily "{}Full git semantics, including the global excludes\+File and .git/\+info/\+exclude"{}}
+\item {\ttfamily "{}Ignore sources: every .gitignore from the repo root down to the path, \$GIT\+\_\+\+DIR/\+info/\+exclude, and core.\+excludes\+File. Precedence per git-\/scm gitignore DESCRIPTION"{}}
+\item {\ttfamily "{}core.\+excludes\+File lookup: \$XDG\+\_\+\+CONFIG\+\_\+\+HOME/\+git/\+config, then \texorpdfstring{$\sim$}{\string~}/.gitconfig (last value wins), with \texorpdfstring{$\sim$}{\string~}/ expansion. Default \$XDG\+\_\+\+CONFIG\+\_\+\+HOME/\+git/\+ignore, else \texorpdfstring{$\sim$}{\string~}/.config/\+git/\+ignore"{}}
+\end{DoxyItemize}
+
+Source: git-\/scm.\+com/\+docs/\+gitignore (DESCRIPTION, PATTERN FORMAT) and git-\/scm.\+com/\+docs/\+git-\/config (FILES, Syntax, {\ttfamily core.\+excludes\+File}, pathname values).
+
+{\bfseries{Top level.}} The top level is the nearest ancestor of the walk root, the walk root included, that holds an entry named {\ttfamily .git}. When no ancestor holds one, the walk root is the top level.
+
+{\bfseries{Sources, from highest to lowest precedence.}} Within one level, the last matching pattern decides the outcome.
+
+
+\begin{DoxyEnumerate}
+\item Each {\ttfamily .gitignore} file from the top level down to the directory of the path. A pattern in a lower-\/level file overrides a pattern in a higher-\/level file. Each pattern matches relative to the folder of its {\ttfamily .gitignore} file.
+\item {\ttfamily \texorpdfstring{$<$}{<}top level\texorpdfstring{$>$}{>}/.git/\+info/\+exclude}, when that file exists.
+\item The file that {\ttfamily core.\+excludes\+File} names.
+\end{DoxyEnumerate}
+
+Patterns from sources 2 and 3 act as if they were at the top level. A leading {\ttfamily /} in them anchors at the top level.
+
+{\bfseries{{\ttfamily core.\+excludes\+File} lookup.}}
+
+
+\begin{DoxyEnumerate}
+\item Read {\ttfamily \$XDG\+\_\+\+CONFIG\+\_\+\+HOME/\+git/\+config}. When {\ttfamily XDG\+\_\+\+CONFIG\+\_\+\+HOME} is not set or is empty, read {\ttfamily \$HOME/.config/\+git/\+config}.
+\item Then read {\ttfamily \texorpdfstring{$\sim$}{\string~}/.gitconfig}.
+\item The last {\ttfamily excludes\+File} value in a {\ttfamily \+[core]} section wins. Section names and key names compare case-\/insensitively.
+\item A value that starts with {\ttfamily \texorpdfstring{$\sim$}{\string~}/} expands {\ttfamily \texorpdfstring{$\sim$}{\string~}} to {\ttfamily \$HOME}.
+\item When no file sets the key, use {\ttfamily \$XDG\+\_\+\+CONFIG\+\_\+\+HOME/\+git/\+ignore}. When {\ttfamily XDG\+\_\+\+CONFIG\+\_\+\+HOME} is not set or is empty, use {\ttfamily \$HOME/.config/\+git/\+ignore}.
+\item SAW reads no other configuration file. SAW does not follow {\ttfamily \+[include]} or {\ttfamily \+[include\+If]}. SAW reads no system or repository configuration.
+\end{DoxyEnumerate}
+
+{\bfseries{Configuration syntax that SAW reads.}} A section header is {\ttfamily \+[name]} or {\ttfamily \+[name "{}subsection"{}]}. A variable line is {\ttfamily name = value}, or {\ttfamily name} alone. {\ttfamily \#} and {\ttfamily ;} start a comment to the end of the line. Whitespace around the name, the {\ttfamily =}, and the value is discarded. A value in double quotes keeps its whitespace and decodes {\ttfamily \textbackslash{}"{}$<$/\+tt$>$, $<$tt$>$\textbackslash{}\textbackslash{}\textbackslash{}\textbackslash{}$<$/\+tt$>$, $<$tt$>$\textbackslash{}\textbackslash{}n$<$/\+tt$>$, $<$tt$>$\textbackslash{}\textbackslash{}t$<$/\+tt$>$, and $<$tt$>$\textbackslash{}\textbackslash{}b$<$/\+tt$>$. A backslash at the end of a line continues the value on the next line.  $<$strong$>$\+Pattern format.$<$/\+strong$>$  -\/ A blank line matches no file. -\/ A line that starts with $<$tt$>$\textbackslash{}\+\#$<$/\+tt$>$ is a comment. $<$tt$>$\textbackslash{}\textbackslash{}\textbackslash{}\+\#$<$/\+tt$>$ starts a pattern with a literal $<$tt$>$\textbackslash{}\+\#$<$/\+tt$>$. -\/ Trailing spaces are ignored unless a backslash quotes them. -\/ A backslash escapes the next character. A backslash at the end of a pattern makes a pattern that never matches. -\/ A leading $<$tt$>$!$<$/\+tt$>$ negates the pattern. A path that a previous pattern excluded becomes included again. A file cannot be included again when a parent directory of the file is excluded. $<$tt$>$\textbackslash{}\textbackslash{}!$<$/\+tt$>$ starts a pattern with a literal $<$tt$>$!$<$/\+tt$>$. -\/ A $<$tt$>$/\+$<$/\+tt$>$ at the beginning or in the middle makes the pattern relative to the folder of its source. Otherwise the pattern can match at any level below that folder. -\/ A $<$tt$>$/\+$<$/\+tt$>$ at the end makes the pattern match directories only. -\/ $<$tt$>$\texorpdfstring{$\ast$}{*}$<$/\+tt$>$ matches anything except $<$tt$>$/\+$<$/\+tt$>$. $<$tt$>$?$<$/\+tt$>$ matches one character except $<$tt$>$/\+$<$/\+tt$>$. $<$tt$>$\+[a-\/z\+A-\/\+Z]\+$<$/\+tt$>$ matches one character of the range. -\/ A leading $<$tt$>$\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}/\+$<$/\+tt$>$ matches in all directories. A trailing $<$tt$>$/\+\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}$<$/\+tt$>$ matches everything inside. $<$tt$>$/\+\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}/\+$<$/\+tt$>$ matches zero or more directories. Other consecutive asterisks act as single asterisks. -\/ Matching is case-\/sensitive. SAW compares paths with $<$tt$>$/\+$<$/\+tt$>$ as the separator on every platform.  @subsection autotoc\+\_\+md172 4.\+5 Binary Files, Empty Files, Line Endings, and Permissions  \+Decisions:\+ -\/ $<$tt$>$\textbackslash{}"{}\+Skip binary files (\+NUL byte) in directory walks; fail with an explicit error when named directly\textbackslash{}"{}$<$/\+tt$>$ -\/ $<$tt$>$\textbackslash{}"{}\+Preserve each file\textquotesingle{}s LF/\+\+CRLF line endings and execute bit; follow symlinks to target (matching cast/\+scout)\textbackslash{}"{}$<$/\+tt$>$  \+Rules:\+ -\/ $<$strong$>$\+Binary detection:\+$<$/\+strong$>$ A file is binary when the bytes that the command reads contain a NUL byte ($<$tt$>$0x00$<$/\+tt$>$). SAW scans them with $<$tt$>$jam::\+simd::\+find\+Byte (data, size, 0, \textquotesingle{}\textbackslash{}\textbackslash{}0\textquotesingle{})$<$/\+tt$>$.   -\/ A command that writes, and $<$tt$>$excerpt$<$/\+tt$>$, read the whole file.   -\/ $<$tt$>$find$<$/\+tt$>$, $<$tt$>$lines$<$/\+tt$>$ and $<$tt$>$fields$<$/\+tt$>$ read the file to the end of the last line that the answer needs. $<$tt$>$find -\/q$<$/\+tt$>$, $<$tt$>$find -\/l$<$/\+tt$>$, $<$tt$>$-\/-\/first$<$/\+tt$>$ and a bounded line range stop early, as $<$tt$>$grep -\/q$<$/\+tt$>$, $<$tt$>$grep -\/l$<$/\+tt$>$, $<$tt$>$grep -\/m 1$<$/\+tt$>$ and $<$tt$>$sed 20q$<$/\+tt$>$ do. Every other search reads the whole file.   -\/ During a directory walk:\+ skip binary files silently.   -\/ When named explicitly on the command line or in a $<$tt$>$patch$<$/\+tt$>$ entry:\+ abort before any write and exit $<$tt$>$2$<$/\+tt$>$ with $<$tt$>$saw:\+ binary file:\+ \textbackslash{}$<$path\textbackslash{}$>$$<$/\+tt$>$. -\/ $<$strong$>$\+Empty (0-\/byte) files:\+$<$/\+strong$>$ $<$tt$>$\+Input$<$/\+tt$>$ holds no bytes. Treat as a valid empty text buffer with 0 lines and no error. -\/ $<$strong$>$\+Line endings:\+$<$/\+strong$>$ Each untouched line keeps its own ending. A replaced line keeps the ending of the line that it replaces. Every other inserted line takes the dominant ending:\+ the ending of the file\textquotesingle{}s first line ($<$tt$>$\textbackslash{}\textbackslash{}r\textbackslash{}\textbackslash{}n$<$/\+tt$>$ or $<$tt$>$\textbackslash{}\textbackslash{}n$<$/\+tt$>$), $<$tt$>$\textbackslash{}\textbackslash{}n$<$/\+tt$>$ when the first line has no ending. -\/ $<$strong$>$\+Verbatim text:\+$<$/\+strong$>$ Text that $<$tt$>$-\/-\/stdin$<$/\+tt$>$ gives goes into the output with its own bytes. No ending is added or changed, except the ending that an incomplete neighbour line needs. -\/ $<$strong$>$\+Trailing newline:\+$<$/\+strong$>$ Preserve whether the file ends with a newline unless a line deletion removes the final line. -\/ $<$strong$>$\+Metadata:\+$<$/\+strong$>$ SAW writes the planned bytes to a new file, flushes it one time, sets the metadata of the target on it ($<$tt$>$jam::\+\+File::\+set\+Metadata$<$/\+tt$>$:\+ mode, access control list, extended attributes; on Windows the replace call keeps them), then puts it in place (§6.\+3). -\/ $<$strong$>$\+Hard links:\+$<$/\+strong$>$ A target with more than one hard link fails before any write with exit $<$tt$>$2$<$/\+tt$>$:\+ $<$tt$>$saw:\+ hard-\/linked file:\+ \textbackslash{}$<$path\textbackslash{}$>$$<$/\+tt$>$. A dry run fails the same way. -\/ $<$strong$>$\+Read-\/only files:\+$<$/\+strong$>$ A target without write access fails before any write with exit $<$tt$>$2$<$/\+tt$>$:\+ $<$tt$>$saw:\+ read-\/only file:\+ \textbackslash{}$<$path\textbackslash{}$>$$<$/\+tt$>$.  @subsection autotoc\+\_\+md173 4.\+6 Line Hash Format ($<$tt$>$-\/-\/hash$<$/\+tt$>$)  -\/ Line content hash is a 4-\/character lowercase hexadecimal prefix of the line\textquotesingle{}s SHA-\/256 digest computed over the line text without its trailing $<$tt$>$\textbackslash{}\textbackslash{}r$<$/\+tt$>$ or $<$tt$>$\textbackslash{}\textbackslash{}n$<$/\+tt$>$. -\/ Formatted prefix for line $<$tt$>$\+L$<$/\+tt$>$ with hash $<$tt$>$hhhh$<$/\+tt$>$:\+ $<$tt$>$\textbackslash{}$<$\+L\textbackslash{}$>$:\+\textbackslash{}$<$hhhh\textbackslash{}$>$\texorpdfstring{$\vert$}{|}\textbackslash{}$<$line-\/text\textbackslash{}$>$$<$/\+tt$>$. -\/ Example:\+ $<$tt$>$42:\+a7c1\texorpdfstring{$\vert$}{|}    return result;$<$/\+tt$>$  @subsection autotoc\+\_\+md174 4.\+7 Unified Diff Format (\+Dry-\/\+Run Preview)  \+Decision:\+ $<$tt$>$\textbackslash{}"{}\+GNU-\/exact. \textquotesingle{},1\textquotesingle{} is omitted for one-\/line ranges. An empty range uses the GNU start rule. \textquotesingle{}\textbackslash{}\textbackslash{} No newline at end of file\textquotesingle{} marks incomplete lines. Hunks merge when their 3-\/line contexts overlap. Output stays valid input for patch and $<$/\+tt$>$git apply$<$tt$>$\textbackslash{}"{}$<$/\+tt$>$.  \+Every mutating dry-\/run writes unified diff hunks to $<$tt$>$stdout$<$/\+tt$>$:\+  @icode  -\/-\/-\/ $<$path$>$ +++ $<$path$>$ (planned) @@ -\/$<$old\+Start$>$\+[,$<$old\+Count$>$]\+ +$<$new\+Start$>$\+[,$<$new\+Count$>$]\+ @@  $<$context$>$ -\/$<$removed$>$ +$<$added$>$ @endicode   -\/ Context is 3 unchanged lines around each change. -\/ Two changes whose context ranges overlap or touch go into one hunk. -\/ A range that holds exactly one line writes its start line only:\+ $<$tt$>$\textbackslash{}@\textbackslash{}@ -\/1 +1 \textbackslash{}@\textbackslash{}@$<$/\+tt$>$. -\/ A range that holds zero lines writes $<$tt$>$\textbackslash{}$<$line\textbackslash{}$>$,0$<$/\+tt$>$, where $<$tt$>$\textbackslash{}$<$line\textbackslash{}$>$$<$/\+tt$>$ is the number of the line before the range:\+ an insertion after line 3 writes $<$tt$>$\textbackslash{}@\textbackslash{}@ -\/3,0 +4 \textbackslash{}@\textbackslash{}@$<$/\+tt$>$, and an insertion into an empty file writes $<$tt$>$\textbackslash{}@\textbackslash{}@ -\/0,0 +1 \textbackslash{}@\textbackslash{}@$<$/\+tt$>$. -\/ A last line that has no line ending is followed by the line $<$tt$>$\textbackslash{}\textbackslash{} No newline at end of file$<$/\+tt$>$. -\/ Each diff line carries the original line text without its line ending. Each diff line ends with $<$tt$>$\textbackslash{}\textbackslash{}n$<$/\+tt$>$. -\/ Runtime evidence for these rules:\+ $<$tt$>$diff -\/\+U0$<$/\+tt$>$ and $<$tt$>$diff -\/u$<$/\+tt$>$ output of the system $<$tt$>$diff$<$/\+tt$>$ ("{}Apple diff (based on Free\+BSD diff)"{}) on 2026-\/11-\/22, which writes $<$tt$>$\textbackslash{}@\textbackslash{}@ -\/3,0 +4 \textbackslash{}@\textbackslash{}@$<$/\+tt$>$, $<$tt$>$\textbackslash{}@\textbackslash{}@ -\/0,0 +1 \textbackslash{}@\textbackslash{}@$<$/\+tt$>$, $<$tt$>$\textbackslash{}@\textbackslash{}@ -\/1 +1 \textbackslash{}@\textbackslash{}@$<$/\+tt$>$, and $<$tt$>$\textbackslash{}\textbackslash{} No newline at end of file$<$/\+tt$>$. -\/ After all file hunks, dry-\/run prints one summary footer line:\+   -\/ When edits $>$ 0:\+ $<$tt$>$saw:\+ dry-\/run — \textbackslash{}$<$\+E\textbackslash{}$>$ edit(s) in \textbackslash{}$<$\+F\textbackslash{}$>$ file(s); nothing written. Pass -\/-\/apply -\/-\/expect \textbackslash{}$<$\+E\textbackslash{}$>$ to write.$<$/\+tt$>$   -\/ When edits == 0:\+ $<$tt$>$saw:\+ dry-\/run — 0 edits; nothing written.$<$/\+tt$>$  @subsection autotoc\+\_\+md175 4.\+8 Pattern Matching  \+Decisions:\+ -\/ $<$tt$>$\textbackslash{}"{}\+Literal default + -\/r regex (extend jam::\+\+Reg\+Exp with find\+Next/\+spans) + recursive dir walk skipping .\+git/\+.\+gitignore\textbackslash{}"{}$<$/\+tt$>$ -\/ $<$tt$>$\textbackslash{}"{}\+Per line:\+ find, replace, fields -\/-\/match run the regex on each line\textquotesingle{}s text without its line ending. Matches never cross a newline (sed/\+grep model). -\/i wraps the pattern as (?i:\+...)\textbackslash{}"{}$<$/\+tt$>$  \+Rules:\+ -\/ $<$tt$>$find$<$/\+tt$>$, $<$tt$>$replace$<$/\+tt$>$, and $<$tt$>$fields -\/-\/match$<$/\+tt$>$ match each line on its own. The line text excludes its $<$tt$>$\textbackslash{}\textbackslash{}n$<$/\+tt$>$ or $<$tt$>$\textbackslash{}\textbackslash{}r\textbackslash{}\textbackslash{}n$<$/\+tt$>$ ending. No match crosses a line ending. -\/ $<$strong$>$\+Literal mode (default):\+$<$/\+strong$>$ the pattern is exact bytes. $<$tt$>$-\/i$<$/\+tt$>$ compares ASCII letters $<$tt$>$\+A$<$/\+tt$>$–$<$tt$>$\+Z$<$/\+tt$>$ and $<$tt$>$a$<$/\+tt$>$–$<$tt$>$z$<$/\+tt$>$ without case. Every other byte compares exactly. -\/ $<$strong$>$\+Regex mode ($<$tt$>$-\/r$<$/\+tt$>$):\+$<$/\+strong$>$ the pattern is a $<$tt$>$jam::\+\+Reg\+Exp$<$/\+tt$>$ pattern. $<$tt$>$\texorpdfstring{$^\wedge$}{\string^}$<$/\+tt$>$ matches at the start of the line text. $<$tt$>$\textbackslash{}\$$<$/\+tt$>$ matches at the end of the line text. -\/ $<$strong$>$\+Inline flags:\+$<$/\+strong$>$ $<$tt$>$(?i)$<$/\+tt$>$, $<$tt$>$(?m)$<$/\+tt$>$ and $<$tt$>$(?s)$<$/\+tt$>$ are accepted. $<$tt$>$-\/$<$/\+tt$>$ removes a flag, as in $<$tt$>$(?i-\/s)$<$/\+tt$>$. A flag applies to the end of its group and to the later alternatives of that group. $<$tt$>$(?x)$<$/\+tt$>$ is invalid. -\/ $<$strong$>$\+POSIX classes:\+$<$/\+strong$>$ $<$tt$>$\+[\+[:\+digit:\+]\+]\+$<$/\+tt$>$ and $<$tt$>$\+[\+[:\+\texorpdfstring{$^\wedge$}{\string^}digit:\+]\+]\+$<$/\+tt$>$, with each POSIX class name. -\/ $<$strong$>$\+Text start:\+$<$/\+strong$>$ $<$tt$>$\textbackslash{}\textbackslash{}\+A$<$/\+tt$>$ matches at the start of the line text. -\/ $<$strong$>$\+Regex mode with $<$tt$>$-\/i$<$/\+tt$>$:\+$<$/\+strong$>$ SAW compiles $<$tt$>$(?i:\+$<$/\+tt$>$ + pattern + $<$tt$>$)$<$/\+tt$>$. -\/ An invalid regex fails with exit $<$tt$>$2$<$/\+tt$>$:\+ $<$tt$>$saw:\+ invalid regex:\+ \textbackslash{}$<$detail\textbackslash{}$>$$<$/\+tt$>$, where $<$tt$>$\textbackslash{}$<$detail\textbackslash{}$>$$<$/\+tt$>$ is the text of the parser error. -\/ A pattern that holds a newline can never match. It fails with exit $<$tt$>$2$<$/\+tt$>$:\+ $<$tt$>$saw:\+ pattern cannot contain a newline$<$/\+tt$>$. -\/ A regex matches in time linear in the text, with three exceptions:\+ a backreference, a lookaround that holds more than one character, and a pattern that compiles to more than 2048 instructions. For the exceptions, and for the match spans of a repeated group that can be empty ($<$tt$>$(a\texorpdfstring{$\ast$}{*})\texorpdfstring{$\ast$}{*}$<$/\+tt$>$), the backtracker runs. It has a step limit for each subject byte and a depth limit. Over a limit, SAW exits $<$tt$>$2$<$/\+tt$>$:\+ $<$tt$>$saw:\+ regex exceeded its step limit:\+ \textbackslash{}$<$pattern\textbackslash{}$>$$<$/\+tt$>$. -\/ A regex with more than 250 nested groups is invalid.  $<$hr$>$  @section autotoc\+\_\+md177 5. Feature Specifications  @subsection autotoc\+\_\+md178 5.\+1 Feature:\+ $<$tt$>$find$<$/\+tt$>$  \+Search files or stdin for literal strings or regex patterns ($<$tt$>$\textbackslash{}"{}\+Literal default + -\/r regex (extend jam::\+\+Reg\+Exp with find\+Next/\+spans) + recursive dir walk skipping .\+git/\+.\+gitignore\textbackslash{}"{}$<$/\+tt$>$).  @subsubsection autotoc\+\_\+md179 Invocation and Options  @icode  saw find $<$pattern$>$ \+[path...]\+ \+[options]\+ @endicode   $<$table class="{}markdown\+Table"{}$>$   $<$tr class="{}markdown\+Table\+Head"{}$>$    $<$th class="{}markdown\+Table\+Head\+None"{}\texorpdfstring{$>$}{>} Option  }
+
+{\ttfamily  }
+
+{\ttfamily  Effect  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  {\ttfamily -\/r}, {\ttfamily -\/-\/regex}  }
+
+{\ttfamily  }
+
+{\ttfamily  Interpret {\ttfamily \texorpdfstring{$<$}{<}pattern\texorpdfstring{$>$}{>}} as a {\ttfamily jam::\+\+Reg\+Exp} pattern instead of literal bytes.  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  {\ttfamily -\/i}, {\ttfamily -\/-\/ignore-\/case}  }
+
+{\ttfamily  }
+
+{\ttfamily  Match ASCII letters case-\/insensitively.  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  {\ttfamily -\/x}, {\ttfamily -\/-\/exact}  }
+
+{\ttfamily  }
+
+{\ttfamily  Match only when {\ttfamily \texorpdfstring{$<$}{<}pattern\texorpdfstring{$>$}{>}} covers the entire line (excluding line ending).  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  {\ttfamily -\/v}, {\ttfamily -\/-\/invert}  }
+
+{\ttfamily  }
+
+{\ttfamily  Emit lines that do not match {\ttfamily \texorpdfstring{$<$}{<}pattern\texorpdfstring{$>$}{>}}.  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  {\ttfamily -\/c}, {\ttfamily -\/-\/count}  }
+
+{\ttfamily  }
+
+{\ttfamily  Print {\ttfamily \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}count\texorpdfstring{$>$}{>}} (or {\ttfamily \texorpdfstring{$<$}{<}count\texorpdfstring{$>$}{>}} for single input) instead of matching lines. A walked file with count 0 prints no row.  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  {\ttfamily -\/l}, {\ttfamily -\/-\/files-\/with-\/matches}  }
+
+{\ttfamily  }
+
+{\ttfamily  Print only the path of each input with a match.  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  {\ttfamily -\/o}, {\ttfamily -\/-\/only-\/matching}  }
+
+{\ttfamily  }
+
+{\ttfamily  Print only each matched text, one for each output line.  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  {\ttfamily -\/w}, {\ttfamily -\/-\/word}  }
+
+{\ttfamily  }
+
+{\ttfamily  Match only where no word byte ({\ttfamily A}–{\ttfamily Z}, {\ttfamily a}–{\ttfamily z}, {\ttfamily 0}–{\ttfamily 9}, {\ttfamily \_}) is directly before or after the match.  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  {\ttfamily -\/e \texorpdfstring{$<$}{<}pattern\texorpdfstring{$>$}{>}}, {\ttfamily -\/-\/pattern \texorpdfstring{$<$}{<}pattern\texorpdfstring{$>$}{>}}  }
+
+{\ttfamily  }
+
+{\ttfamily  Add a pattern. Repeatable. With {\ttfamily -\/e}, every positional is a path. A line matches when one pattern matches.  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  {\ttfamily -\/-\/files}  }
+
+{\ttfamily  }
+
+{\ttfamily  Print the files that the walk reads, sorted. Takes paths only. With {\ttfamily -\/q}, print nothing. Exit {\ttfamily 0} when the list holds a file, {\ttfamily 1} when it is empty.  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  {\ttfamily -\/q}, {\ttfamily -\/-\/quiet}  }
+
+{\ttfamily  }
+
+{\ttfamily  Emit nothing to stdout; exit {\ttfamily 0} on first match or {\ttfamily 1} on no match.  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  {\ttfamily -\/n}, {\ttfamily -\/-\/line-\/number}  }
+
+{\ttfamily  }
+
+{\ttfamily  Prefix output with 1-\/based line numbers (default: on).  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  }
+
+{\ttfamily  {\ttfamily -\/-\/no-\/line-\/number}  }
+
+{\ttfamily  }
+
+{\ttfamily  Omit line numbers from output.  }
+
+{\ttfamily  }
+
+{\ttfamily }
+
+{\ttfamily  \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/hash} \texorpdfstring{$\vert$}{|} Prefix each matched line with {\ttfamily \texorpdfstring{$<$}{<}line\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}hhhh\texorpdfstring{$>$}{>}\texorpdfstring{$\vert$}{|}} instead of {\ttfamily \texorpdfstring{$<$}{<}line\texorpdfstring{$>$}{>}:}. \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/C \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}}, {\ttfamily -\/-\/context \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}} \texorpdfstring{$\vert$}{|} Show {\ttfamily N} lines of context before and after each match ({\ttfamily N \texorpdfstring{$>$}{>}= 0}). \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/A \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}}, {\ttfamily -\/-\/after-\/context \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}} \texorpdfstring{$\vert$}{|} Show {\ttfamily N} lines of context after each match. Overrides {\ttfamily -\/C} for that side. \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/B \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}}, {\ttfamily -\/-\/before-\/context \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}} \texorpdfstring{$\vert$}{|} Show {\ttfamily N} lines of context before each match. Overrides {\ttfamily -\/C} for that side. \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/after \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}} \texorpdfstring{$\vert$}{|} Inspect only lines with 1-\/based line number strictly greater than {\ttfamily N} ({\ttfamily line \texorpdfstring{$>$}{>} N}). \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/lines \texorpdfstring{$<$}{<}A:B\texorpdfstring{$>$}{>}} \texorpdfstring{$\vert$}{|} Restrict search to 1-\/based inclusive line range {\ttfamily A} through {\ttfamily B}. \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/first} \texorpdfstring{$\vert$}{|} Stop after the first match per input file (or first overall when one input). \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/include \texorpdfstring{$<$}{<}glob\texorpdfstring{$>$}{>}} \texorpdfstring{$\vert$}{|} Include only files whose name, path relative to the walk root, or printed path matches {\ttfamily \texorpdfstring{$<$}{<}glob\texorpdfstring{$>$}{>}}. Repeatable. \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/exclude \texorpdfstring{$<$}{<}glob\texorpdfstring{$>$}{>}} \texorpdfstring{$\vert$}{|} Exclude files whose name, path relative to the walk root, or printed path matches {\ttfamily \texorpdfstring{$<$}{<}glob\texorpdfstring{$>$}{>}}. Repeatable. \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/hidden} \texorpdfstring{$\vert$}{|} Include dot-\/prefixed files and directories in directory walks. \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/no-\/ignore} \texorpdfstring{$\vert$}{|} Do not apply {\ttfamily .gitignore} filters in directory walks. \texorpdfstring{$\vert$}{|}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md180}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Happy Path}}{{\ttfamily Happy Path}}}\label{md__s_p_e_c_autotoc_md180}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyEnumerate}
+\item User runs {\ttfamily saw find "{}DEBT-\/"{} DEBT.\+md}.
+\item SAW reads {\ttfamily DEBT.\+md} as {\ttfamily Input} (§2), checks for NUL bytes, and scans for {\ttfamily "{}DEBT-\/"{}} with {\ttfamily jam::\+\+Literal\+Set}.
+\item SAW computes 1-\/based line numbers lazily for matched byte offsets.
+\item SAW writes {\ttfamily \texorpdfstring{$<$}{<}line\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}text\texorpdfstring{$>$}{>}} (single file) or {\ttfamily \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}line\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}text\texorpdfstring{$>$}{>}} (multiple files or directory walk) to stdout and exits {\ttfamily 0}.
+\end{DoxyEnumerate}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md181}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Edge Cases}}{{\ttfamily Edge Cases}}}\label{md__s_p_e_c_autotoc_md181}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item {\bfseries{No match found:}} Write nothing to stdout (or {\ttfamily 0} with {\ttfamily -\/c}) and exit {\ttfamily 1}.
+\item {\bfseries{{\ttfamily -\/q} with a match and an unreadable entry:}} Print no error and exit {\ttfamily 0}. Without a match, print the errors and exit {\ttfamily 2}.
+\item {\bfseries{{\ttfamily -\/c}, {\ttfamily -\/l}, {\ttfamily -\/o}, {\ttfamily -\/q} together:}} the order {\ttfamily -\/q}, {\ttfamily -\/l}, {\ttfamily -\/c}, {\ttfamily -\/o} decides. {\ttfamily -\/o} prints no context lines. {\ttfamily -\/v} with {\ttfamily -\/o} prints nothing.
+\item {\bfseries{Empty pattern {\ttfamily "{}"{}}:}} Reject with exit {\ttfamily 2}: {\ttfamily saw: pattern cannot be empty}.
+\item {\bfseries{Invalid regex with {\ttfamily -\/r}:}} Reject with exit {\ttfamily 2}: {\ttfamily saw: invalid regex: \texorpdfstring{$<$}{<}detail\texorpdfstring{$>$}{>}}.
+\item {\bfseries{Multiple matches on one line:}} Emit that line once. With {\ttfamily -\/c}, count matching lines (same as {\ttfamily grep -\/c}).
+\item {\bfseries{{\ttfamily -\/-\/after N} beyond EOF:}} Emit nothing and exit {\ttfamily 1}.
+\item {\bfseries{Line without trailing newline at EOF:}} Match and emit normally, terminating stdout line with {\ttfamily \textbackslash{}n}.
+\item {\bfseries{Line ending:}} {\ttfamily find} prints the ending of each source line, LF or CRLF. A last line without an ending gets {\ttfamily \textbackslash{}n}. A regex and {\ttfamily -\/-\/hash} read the line without its ending.
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md182}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Error Handling}}{{\ttfamily Error Handling}}}\label{md__s_p_e_c_autotoc_md182}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Condition  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Stderr Message  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Exit  \\
+Missing {\ttfamily \texorpdfstring{$<$}{<}pattern\texorpdfstring{$>$}{>}}  &{\ttfamily saw: find requires \texorpdfstring{$<$}{<}pattern\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Empty {\ttfamily \texorpdfstring{$<$}{<}pattern\texorpdfstring{$>$}{>}}  &{\ttfamily saw: pattern cannot be empty}  &{\ttfamily 2}  \\
+Newline in {\ttfamily \texorpdfstring{$<$}{<}pattern\texorpdfstring{$>$}{>}}  &{\ttfamily saw: pattern cannot contain a newline}  &{\ttfamily 2}  \\
+Invalid regex  &{\ttfamily saw: invalid regex: \texorpdfstring{$<$}{<}detail\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Regex over its step limit  &{\ttfamily saw: regex exceeded its step limit: \texorpdfstring{$<$}{<}pattern\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Invalid {\ttfamily -\/A}, {\ttfamily -\/B}, {\ttfamily -\/C} or {\ttfamily -\/-\/after} integer  &{\ttfamily saw: invalid integer for \texorpdfstring{$<$}{<}flag\texorpdfstring{$>$}{>}: \texorpdfstring{$<$}{<}value\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Named path does not exist  &{\ttfamily saw: not found: \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Unreadable file or folder  &{\ttfamily saw: cannot read \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Named file is binary  &{\ttfamily saw: binary file: \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+\end{DoxyTable}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md183}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Acceptance Criteria}}{{\ttfamily Acceptance Criteria}}}\label{md__s_p_e_c_autotoc_md183}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw find "{}needle"{} file.\+txt} finds literal matches without escaping regex metacharacters.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw find -\/x -\/-\/after 12 -\/-\/first -\/-\/ "{}-\/-\/-\/"{} DEBT.\+md} returns the exact line number of the first {\ttfamily -\/-\/-\/} after line 12.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw find -\/q -\/x "{}entry"{} .gitignore} exits {\ttfamily 0} when present and {\ttfamily 1} when absent with empty stdout.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw find -\/v -\/x "{}entry"{} .gitignore} emits every line except exact {\ttfamily "{}entry"{}}.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] A directory walk with parallel per-\/file work emits identical output order across repeated runs.
+\end{DoxyItemize}}
+
+{\ttfamily \DoxyHorRuler{0}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md185}{}\doxysubsection{\texorpdfstring{{\ttfamily 5.\+2 Feature: {\ttfamily replace}}}{{\ttfamily 5.\+2 Feature: {\ttfamily replace}}}}\label{md__s_p_e_c_autotoc_md185}
+{\ttfamily }
+
+{\ttfamily Replace literal strings or regex matches across one or more files, with dry-\/run by default and explicit two-\/gate apply ({\ttfamily "{}-\/-\/apply always requires -\/-\/expect N (dry-\/run prints N; mismatch writes 0 bytes)"{}}).}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md186}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Invocation and Options}}{{\ttfamily Invocation and Options}}}\label{md__s_p_e_c_autotoc_md186}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{saw\ replace\ <find>\ <with>\ [path...]\ [options]}
+
+\end{DoxyCode}
+}
+
+{\ttfamily 
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Option  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Effect  \\
+{\ttfamily -\/r}, {\ttfamily -\/-\/regex}  &Interpret {\ttfamily \texorpdfstring{$<$}{<}find\texorpdfstring{$>$}{>}} as {\ttfamily jam::\+\+Reg\+Exp}. Expand {\ttfamily \$0}..{\ttfamily \$9} and {\ttfamily \$\{n\}} captures and {\ttfamily \$\$} (literal {\ttfamily \$}) in {\ttfamily \texorpdfstring{$<$}{<}with\texorpdfstring{$>$}{>}}. A backslash is literal.  \\
+{\ttfamily -\/i}, {\ttfamily -\/-\/ignore-\/case}  &Match ASCII letters case-\/insensitively.  \\
+{\ttfamily -\/-\/lines \texorpdfstring{$<$}{<}A:B\texorpdfstring{$>$}{>}}  &Restrict replacements to 1-\/based inclusive line range {\ttfamily A} through {\ttfamily B}.  \\
+{\ttfamily -\/-\/with-\/stdin}  &Read {\ttfamily \texorpdfstring{$<$}{<}with\texorpdfstring{$>$}{>}} payload verbatim from stdin (requires explicit file paths; {\ttfamily \texorpdfstring{$<$}{<}with\texorpdfstring{$>$}{>}} positional arg omitted).  \\
+{\ttfamily -\/-\/with-\/file \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &Read {\ttfamily \texorpdfstring{$<$}{<}with\texorpdfstring{$>$}{>}} payload verbatim from {\ttfamily \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}} ({\ttfamily \texorpdfstring{$<$}{<}with\texorpdfstring{$>$}{>}} positional arg omitted).  \\
+{\ttfamily -\/-\/include \texorpdfstring{$<$}{<}glob\texorpdfstring{$>$}{>}}  &Include only matching files when a directory path is given. Repeatable.  \\
+{\ttfamily -\/-\/exclude \texorpdfstring{$<$}{<}glob\texorpdfstring{$>$}{>}}  &Exclude matching files when a directory path is given. Repeatable.  \\
+{\ttfamily -\/-\/hidden}  &Include dot-\/prefixed files and directories in directory walks.  \\
+{\ttfamily -\/-\/no-\/ignore}  &Do not apply {\ttfamily .gitignore} filters in directory walks.  \\
+{\ttfamily -\/-\/apply}  &Write planned edits to disk. Requires {\ttfamily -\/-\/expect N}.  \\
+{\ttfamily -\/-\/expect \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}}  &Exact count of match replacements expected across all target files ({\ttfamily N \texorpdfstring{$>$}{>}= 0}, integer: {\ttfamily "{}Exact edit operations applied (matches replaced in replace, edit entries in patch, line ops in lines)"{}}).  \\
+\end{DoxyTable}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md187}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Happy Path (Dry-\/\+Run Default)}}{{\ttfamily Happy Path (Dry-\/\+Run Default)}}}\label{md__s_p_e_c_autotoc_md187}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyEnumerate}
+\item User runs {\ttfamily saw replace "{}DBG"{} "{}debug::\+\+Log"{} src/\+\+Foo.\+cpp}.
+\item SAW reads {\ttfamily src/\+\+Foo.\+cpp} into a buffer, locates all non-\/overlapping literal matches in left-\/to-\/right order, and builds the planned buffer in memory.
+\item SAW prints unified diff hunks and summary: {\ttfamily saw: dry-\/run — 3 edit(s) in 1 file(s); nothing written. Pass -\/-\/apply -\/-\/expect 3 to write.}
+\item Zero bytes change on disk. Exit {\ttfamily 0}.
+\end{DoxyEnumerate}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md188}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Happy Path (Apply)}}{{\ttfamily Happy Path (Apply)}}}\label{md__s_p_e_c_autotoc_md188}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyEnumerate}
+\item User runs {\ttfamily saw replace "{}DBG"{} "{}debug::\+\+Log"{} src/\+\+Foo.\+cpp -\/-\/apply -\/-\/expect 3}.
+\item SAW computes all planned buffers and counts total replacement operations ({\ttfamily actual == 3}).
+\item Because {\ttfamily actual == expected}, SAW stages and commits one transaction (§6.3): the planned bytes are written one time, the metadata is kept, the files are exchanged, and the bytes are verified.
+\item SAW prints {\ttfamily saw: applied 3 edit(s) in 1 file(s) (tx: \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>})} and exits {\ttfamily 0}.
+\end{DoxyEnumerate}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md189}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Edge Cases}}{{\ttfamily Edge Cases}}}\label{md__s_p_e_c_autotoc_md189}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item {\bfseries{{\ttfamily -\/-\/apply} without {\ttfamily -\/-\/expect}:}} Fail before touching disk with exit {\ttfamily 2}: {\ttfamily saw: -\/-\/apply requires -\/-\/expect \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}}.
+\item {\bfseries{{\ttfamily -\/-\/expect N} mismatch:}} Print the dry-\/run unified diff to stdout, print {\ttfamily saw: expected \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>} edit(s), found \texorpdfstring{$<$}{<}actual\texorpdfstring{$>$}{>}; nothing written} to stderr, write zero bytes, and exit {\ttfamily 1}.
+\item {\bfseries{{\ttfamily -\/-\/apply -\/-\/expect 0} when 0 matches exist:}} Write zero files, create no undo transaction, print {\ttfamily saw: applied 0 edit(s) in 0 file(s)}, and exit {\ttfamily 0}.
+\item {\bfseries{{\ttfamily \texorpdfstring{$<$}{<}find\texorpdfstring{$>$}{>}} equals {\ttfamily \texorpdfstring{$<$}{<}with\texorpdfstring{$>$}{>}} (no-\/op replacement):}} Count matches normally on dry-\/run; with {\ttfamily -\/-\/apply}, skip disk write for byte-\/identical files and print {\ttfamily saw: no content changed; nothing written} (exit {\ttfamily 0}).
+\item {\bfseries{One file named two times ({\ttfamily h1 ./\+h1}):}} SAW edits and counts it one time.
+\item {\bfseries{Overlapping matches (e.\+g. {\ttfamily "{}aa"{}} in {\ttfamily "{}aaa"{}}):}} Advance cursor past the end of each matched span (non-\/overlapping, left-\/to-\/right; {\ttfamily "{}aaa"{}} yields 1 match).
+\item {\bfseries{Regex zero-\/length match (e.\+g. {\ttfamily \texorpdfstring{$^\wedge$}{\string^}} or {\ttfamily \$}):}} Apply at current position and advance cursor by one code point to prevent infinite loops. A match never splits a UTF-\/8 character.
+\item {\bfseries{Invalid capture reference ({\ttfamily \$5} when regex has 2 groups):}} Fail before any write with exit {\ttfamily 2}: {\ttfamily saw: invalid capture group \$5 in replacement}.
+\item {\bfseries{Target file modified externally after its plan:}} {\ttfamily pre\+Hash} is the hash of the bytes before the plan. A changed file is not written. Roll back all written files from pre-\/edit snapshots and exit {\ttfamily 2}.
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md190}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Error Handling}}{{\ttfamily Error Handling}}}\label{md__s_p_e_c_autotoc_md190}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Condition  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Stderr Message  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Exit  \\
+Empty {\ttfamily \texorpdfstring{$<$}{<}find\texorpdfstring{$>$}{>}}  &{\ttfamily saw: pattern cannot be empty}  &{\ttfamily 2}  \\
+{\ttfamily -\/-\/apply} without {\ttfamily -\/-\/expect}  &{\ttfamily saw: -\/-\/apply requires -\/-\/expect \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily -\/-\/expect} not a non-\/negative integer  &{\ttfamily saw: invalid integer for -\/-\/expect: \texorpdfstring{$<$}{<}value\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily -\/-\/expect N} mismatch  &{\ttfamily saw: expected \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>} edit(s), found \texorpdfstring{$<$}{<}actual\texorpdfstring{$>$}{>}; nothing written}  &{\ttfamily 1}  \\
+{\ttfamily -\/-\/apply} on stdin  &{\ttfamily saw: cannot -\/-\/apply on stdin; specify file paths}  &{\ttfamily 2}  \\
+Named file is binary  &{\ttfamily saw: binary file: \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Invalid regex  &{\ttfamily saw: invalid regex: \texorpdfstring{$<$}{<}detail\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Invalid capture group  &{\ttfamily saw: invalid capture group \$\texorpdfstring{$<$}{<}k\texorpdfstring{$>$}{>} in replacement}  &{\ttfamily 2}  \\
+File not writable or swap failed  &{\ttfamily saw: write failed for \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}: \texorpdfstring{$<$}{<}reason\texorpdfstring{$>$}{>}; rolled back}  &{\ttfamily 2}  \\
+\end{DoxyTable}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md191}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Acceptance Criteria}}{{\ttfamily Acceptance Criteria}}}\label{md__s_p_e_c_autotoc_md191}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Default {\ttfamily saw replace} writes zero bytes on disk and prints unified diff plus exact {\ttfamily -\/-\/apply -\/-\/expect N} hint.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw replace "{}a/\+b"{} "{}c/\+d"{} file.\+txt -\/-\/apply -\/-\/expect 2} requires zero slash escaping.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw replace -\/r "{}\texorpdfstring{$^\wedge$}{\string^}model: .\texorpdfstring{$\ast$}{*}"{} "{}model: opus"{} agent.\+md -\/-\/apply -\/-\/expect 1} works identically on mac\+OS and Windows.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Multi-\/file failure on file 2 restores file 1 to bit-\/identical pre-\/edit bytes.
+\end{DoxyItemize}}
+
+{\ttfamily \DoxyHorRuler{0}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md193}{}\doxysubsection{\texorpdfstring{{\ttfamily 5.\+3 Feature: {\ttfamily lines}}}{{\ttfamily 5.\+3 Feature: {\ttfamily lines}}}}\label{md__s_p_e_c_autotoc_md193}
+{\ttfamily }
+
+{\ttfamily Read, delete, replace, or insert exact 1-\/based line ranges in one or more files.}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md194}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Range Grammar}}{{\ttfamily Range Grammar}}}\label{md__s_p_e_c_autotoc_md194}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Form  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Meaning  \\
+{\ttfamily A}  &Single 1-\/based line {\ttfamily A}.  \\
+{\ttfamily A:B}  &Inclusive 1-\/based lines {\ttfamily A} through {\ttfamily B} ({\ttfamily A \texorpdfstring{$<$}{<}= B}).  \\
+{\ttfamily A:}  &From line {\ttfamily A} through the final line of the file.  \\
+{\ttfamily :B}  &From line {\ttfamily 1} through line {\ttfamily B}.  \\
+\end{DoxyTable}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md195}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Invocation and Options}}{{\ttfamily Invocation and Options}}}\label{md__s_p_e_c_autotoc_md195}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{saw\ lines\ <range>\ [path...]\ [options]}
+
+\end{DoxyCode}
+}
+
+{\ttfamily 
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Option  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Mode  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Effect  \\
+{\ttfamily -\/n}, {\ttfamily -\/-\/line-\/number}  &Read  &Prefix each line with {\ttfamily \texorpdfstring{$<$}{<}line\texorpdfstring{$>$}{>}\textbackslash{}t}.  \\
+\end{DoxyTable}
+\texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/hash} \texorpdfstring{$\vert$}{|} Read \texorpdfstring{$\vert$}{|} Prefix each line with {\ttfamily \texorpdfstring{$<$}{<}line\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}hhhh\texorpdfstring{$>$}{>}\texorpdfstring{$\vert$}{|}} (§4.6). \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/delete} \texorpdfstring{$\vert$}{|} Mutate \texorpdfstring{$\vert$}{|} Delete all lines in {\ttfamily \texorpdfstring{$<$}{<}range\texorpdfstring{$>$}{>}}. \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/replace \texorpdfstring{$<$}{<}text\texorpdfstring{$>$}{>}} \texorpdfstring{$\vert$}{|} Mutate \texorpdfstring{$\vert$}{|} Replace lines in {\ttfamily \texorpdfstring{$<$}{<}range\texorpdfstring{$>$}{>}} with {\ttfamily \texorpdfstring{$<$}{<}text\texorpdfstring{$>$}{>}}. \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/insert-\/before \texorpdfstring{$<$}{<}text\texorpdfstring{$>$}{>}} \texorpdfstring{$\vert$}{|} Mutate \texorpdfstring{$\vert$}{|} Insert {\ttfamily \texorpdfstring{$<$}{<}text\texorpdfstring{$>$}{>}} before line {\ttfamily A} (requires single line {\ttfamily A}). \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/insert-\/after \texorpdfstring{$<$}{<}text\texorpdfstring{$>$}{>}} \texorpdfstring{$\vert$}{|} Mutate \texorpdfstring{$\vert$}{|} Insert {\ttfamily \texorpdfstring{$<$}{<}text\texorpdfstring{$>$}{>}} after line {\ttfamily A} (requires single line {\ttfamily A}, or {\ttfamily 0} to prepend at top of file). \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/stdin} \texorpdfstring{$\vert$}{|} Mutate \texorpdfstring{$\vert$}{|} Read replacement or inserted text verbatim from stdin. A text option directly followed by {\ttfamily -\/-\/stdin}, or after a parsed {\ttfamily -\/-\/stdin}, takes no {\ttfamily \texorpdfstring{$<$}{<}text\texorpdfstring{$>$}{>}}. \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/verify-\/hash \texorpdfstring{$<$}{<}hhhh\texorpdfstring{$>$}{>}} \texorpdfstring{$\vert$}{|} Mutate \texorpdfstring{$\vert$}{|} Require line {\ttfamily A} to have content hash {\ttfamily \texorpdfstring{$<$}{<}hhhh\texorpdfstring{$>$}{>}} before mutating. \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/apply} \texorpdfstring{$\vert$}{|} Mutate \texorpdfstring{$\vert$}{|} Write planned edits to disk. Requires {\ttfamily -\/-\/expect N}. \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily -\/-\/expect \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}} \texorpdfstring{$\vert$}{|} Mutate \texorpdfstring{$\vert$}{|} Exact count of line operations applied ({\ttfamily "{}Exact edit operations applied (matches replaced in replace, edit entries in patch, line ops in lines)"{}}). \texorpdfstring{$\vert$}{|}}
+
+{\ttfamily Mutating flags ({\ttfamily -\/-\/delete}, {\ttfamily -\/-\/replace}, {\ttfamily -\/-\/insert-\/before}, {\ttfamily -\/-\/insert-\/after}) are mutually exclusive.}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md196}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Happy Path (Read)}}{{\ttfamily Happy Path (Read)}}}\label{md__s_p_e_c_autotoc_md196}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyEnumerate}
+\item User runs {\ttfamily saw lines 10:25 -\/-\/hash Source/\+\+Main.\+cpp}.
+\item SAW reads {\ttfamily Source/\+\+Main.\+cpp} as {\ttfamily Input} (§2), locates lines 10 through 25 using {\ttfamily jam::\+simd::\+find\+Byte} on {\ttfamily \textbackslash{}n}, computes 4-\/hex SHA-\/256 hashes per line, writes {\ttfamily 10:a1b2\texorpdfstring{$\vert$}{|}...} through {\ttfamily 25:c3d4\texorpdfstring{$\vert$}{|}...}, and exits {\ttfamily 0}.
+\end{DoxyEnumerate}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md197}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Happy Path (Mutate)}}{{\ttfamily Happy Path (Mutate)}}}\label{md__s_p_e_c_autotoc_md197}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyEnumerate}
+\item User runs {\ttfamily saw lines 15:22 -\/-\/delete DEBT.\+md} → prints unified diff and {\ttfamily saw: dry-\/run — 1 edit(s) in 1 file(s); nothing written. Pass -\/-\/apply -\/-\/expect 1 to write.}
+\item User runs {\ttfamily saw lines 15:22 -\/-\/delete DEBT.\+md -\/-\/apply -\/-\/expect 1} → removes lines 15–22 atomically, saves undo snapshot, prints {\ttfamily saw: applied 1 edit(s) in 1 file(s) (tx: \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>})}, exits {\ttfamily 0}.
+\end{DoxyEnumerate}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md198}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Edge Cases}}{{\ttfamily Edge Cases}}}\label{md__s_p_e_c_autotoc_md198}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item {\bfseries{Range out of bounds on read:}} If {\ttfamily A \texorpdfstring{$>$}{>} line\+Count}, emit nothing and exit {\ttfamily 0}. If {\ttfamily B \texorpdfstring{$>$}{>} line\+Count}, clamp {\ttfamily B} to {\ttfamily line\+Count}.
+\item {\bfseries{Range out of bounds on mutate:}} Fail before any write with exit {\ttfamily 2}: {\ttfamily saw: line range \texorpdfstring{$<$}{<}range\texorpdfstring{$>$}{>} out of bounds for \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>} (\texorpdfstring{$<$}{<}line\+Count\texorpdfstring{$>$}{>} lines)}.
+\item {\bfseries{{\ttfamily -\/-\/insert-\/after 0} on empty 0-\/byte file:}} Valid; inserts text as line 1 of the file (counts as 1 edit).
+\item {\bfseries{{\ttfamily -\/-\/insert-\/before} / {\ttfamily -\/-\/insert-\/after} with range {\ttfamily A:B}:}} Fail with exit {\ttfamily 2}: {\ttfamily saw: insert requires a single line number, got \texorpdfstring{$<$}{<}range\texorpdfstring{$>$}{>}}.
+\item {\bfseries{{\ttfamily -\/-\/verify-\/hash} mismatch:}} Fail before any write with exit {\ttfamily 2}: {\ttfamily saw: hash mismatch at \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}A\texorpdfstring{$>$}{>}: expected \texorpdfstring{$<$}{<}expected\texorpdfstring{$>$}{>}, got \texorpdfstring{$<$}{<}actual\texorpdfstring{$>$}{>}}.
+\item {\bfseries{Multiple mutating flags together:}} Fail with exit {\ttfamily 2}: {\ttfamily saw: specify at most one of -\/-\/delete, -\/-\/replace, -\/-\/insert-\/before, -\/-\/insert-\/after}.
+\item {\bfseries{Pure insertion ({\ttfamily -\/-\/insert-\/after}):}} Counts as {\ttfamily 1} edit (fixes {\ttfamily diff \texorpdfstring{$\vert$}{|} grep -\/c \textquotesingle{}\texorpdfstring{$^\wedge$}{\string^}\texorpdfstring{$<$}{<}\textquotesingle{}} counting {\ttfamily 0}).
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md199}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Error Handling}}{{\ttfamily Error Handling}}}\label{md__s_p_e_c_autotoc_md199}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Condition  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Stderr Message  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Exit  \\
+Invalid range syntax or {\ttfamily A \texorpdfstring{$>$}{>} B} or {\ttfamily A \texorpdfstring{$<$}{<} 1} (except {\ttfamily 0} for {\ttfamily -\/-\/insert-\/after})  &{\ttfamily saw: invalid line range: \texorpdfstring{$<$}{<}range\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Out-\/of-\/bounds range on mutate  &{\ttfamily saw: line range \texorpdfstring{$<$}{<}range\texorpdfstring{$>$}{>} out of bounds for \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>} (\texorpdfstring{$<$}{<}line\+Count\texorpdfstring{$>$}{>} lines)}  &{\ttfamily 2}  \\
+Hash precondition failed  &{\ttfamily saw: hash mismatch at \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}line\texorpdfstring{$>$}{>}: expected \texorpdfstring{$<$}{<}expected\texorpdfstring{$>$}{>}, got \texorpdfstring{$<$}{<}actual\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily -\/-\/apply} without {\ttfamily -\/-\/expect}  &{\ttfamily saw: -\/-\/apply requires -\/-\/expect \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily -\/-\/expect} mismatch  &{\ttfamily saw: expected \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>} edit(s), found \texorpdfstring{$<$}{<}actual\texorpdfstring{$>$}{>}; nothing written}  &{\ttfamily 1}  \\
+\end{DoxyTable}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md200}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Acceptance Criteria}}{{\ttfamily Acceptance Criteria}}}\label{md__s_p_e_c_autotoc_md200}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw lines 1:10 DEBT.\+md} replaces {\ttfamily sed -\/n \textquotesingle{}1,10p\textquotesingle{} DEBT.\+md}.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw lines 15:22 -\/-\/delete DEBT.\+md -\/-\/apply -\/-\/expect 1} replaces {\ttfamily sed \textquotesingle{}15,22d\textquotesingle{} DEBT.\+md}.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw lines 4 -\/-\/insert-\/after -\/-\/stdin DEBT.\+md -\/-\/apply -\/-\/expect 1} inserts multiline text cleanly and counts as 1 edit.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw lines 10:20 -\/-\/hash file.\+cpp} emits deterministic 4-\/hex content hashes matching {\ttfamily patch} and {\ttfamily -\/-\/verify-\/hash}.
+\end{DoxyItemize}}
+
+{\ttfamily \DoxyHorRuler{0}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md202}{}\doxysubsection{\texorpdfstring{{\ttfamily 5.\+4 Feature: {\ttfamily fields}}}{{\ttfamily 5.\+4 Feature: {\ttfamily fields}}}}\label{md__s_p_e_c_autotoc_md202}
+{\ttfamily }
+
+{\ttfamily Extract and format delimited columns from lines (replaces file-\/oriented {\ttfamily awk -\/F} and {\ttfamily cut}). Read-\/only.}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md203}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Invocation and Options}}{{\ttfamily Invocation and Options}}}\label{md__s_p_e_c_autotoc_md203}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{saw\ fields\ <spec>\ [path...]\ [options]}
+
+\end{DoxyCode}
+}
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item {\ttfamily \texorpdfstring{$<$}{<}spec\texorpdfstring{$>$}{>}}: Comma-\/separated 1-\/based field indices. Negative indices count from the end ({\ttfamily -\/1} equals {\ttfamily awk}\textquotesingle{}s {\ttfamily \$NF}, {\ttfamily -\/2} equals {\ttfamily \$(NF-\/1)}). Example: {\ttfamily 1,3,-\/1}.
+\end{DoxyItemize}}
+
+{\ttfamily 
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Option  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Effect  \\
+{\ttfamily -\/d \texorpdfstring{$<$}{<}delim\texorpdfstring{$>$}{>}}, {\ttfamily -\/-\/delimiter \texorpdfstring{$<$}{<}delim\texorpdfstring{$>$}{>}}  &Split lines on literal {\ttfamily \texorpdfstring{$<$}{<}delim\texorpdfstring{$>$}{>}}. When omitted, split on runs of ASCII space/\+tab and trim leading/\+trailing whitespace (matches {\ttfamily awk} default).  \\
+{\ttfamily -\/o \texorpdfstring{$<$}{<}out\texorpdfstring{$>$}{>}}, {\ttfamily -\/-\/output-\/delimiter \texorpdfstring{$<$}{<}out\texorpdfstring{$>$}{>}}  &Join extracted fields with {\ttfamily \texorpdfstring{$<$}{<}out\texorpdfstring{$>$}{>}}. Defaults to single space when {\ttfamily -\/d} is omitted, or {\ttfamily \texorpdfstring{$<$}{<}delim\texorpdfstring{$>$}{>}} when {\ttfamily -\/d} is given.  \\
+{\ttfamily -\/-\/match \texorpdfstring{$<$}{<}pattern\texorpdfstring{$>$}{>}}  &Process only lines matching {\ttfamily \texorpdfstring{$<$}{<}pattern\texorpdfstring{$>$}{>}} (literal default; {\ttfamily -\/r} for regex).  \\
+{\ttfamily -\/r}, {\ttfamily -\/-\/regex}  &Interpret {\ttfamily -\/-\/match \texorpdfstring{$<$}{<}pattern\texorpdfstring{$>$}{>}} as {\ttfamily jam::\+\+Reg\+Exp}.  \\
+{\ttfamily -\/-\/lines \texorpdfstring{$<$}{<}A:B\texorpdfstring{$>$}{>}}  &Restrict processing to 1-\/based line range {\ttfamily A:B}.  \\
+{\ttfamily -\/-\/after \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}}  &Process only lines after line {\ttfamily N}.  \\
+{\ttfamily -\/-\/first}  &Stop after the first emitted output line per file.  \\
+{\ttfamily -\/-\/strict}  &Fail with exit {\ttfamily 2} if any processed line lacks a requested field index. Default: omit missing fields as empty strings.  \\
+\end{DoxyTable}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md204}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Happy Path}}{{\ttfamily Happy Path}}}\label{md__s_p_e_c_autotoc_md204}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyEnumerate}
+\item User runs {\ttfamily saw fields 1,-\/1 -\/d "{}:"{} /\+path/\+to/\+file.txt}.
+\item SAW splits each line on {\ttfamily :}, selects field 1 and the last field, joins with {\ttfamily :}, writes to stdout, and exits {\ttfamily 0}.
+\end{DoxyEnumerate}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md205}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Edge Cases}}{{\ttfamily Edge Cases}}}\label{md__s_p_e_c_autotoc_md205}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item {\bfseries{Empty line with default whitespace delimiter:}} Produces 0 fields; emits empty line (or fails under {\ttfamily -\/-\/strict}).
+\item {\bfseries{Index {\ttfamily 0} in {\ttfamily \texorpdfstring{$<$}{<}spec\texorpdfstring{$>$}{>}}:}} Fail with exit {\ttfamily 2}: {\ttfamily saw: invalid field spec: \texorpdfstring{$<$}{<}spec\texorpdfstring{$>$}{>} (1-\/based or negative)}.
+\item {\bfseries{Negative index magnitude exceeds field count:}} Emits empty string (or fails under {\ttfamily -\/-\/strict} with {\ttfamily saw: field \texorpdfstring{$<$}{<}idx\texorpdfstring{$>$}{>} out of range at \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}line\texorpdfstring{$>$}{>}}).
+\item {\bfseries{No lines matched {\ttfamily -\/-\/match}:}} Emit nothing and exit {\ttfamily 1}.
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md206}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Error Handling}}{{\ttfamily Error Handling}}}\label{md__s_p_e_c_autotoc_md206}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Condition  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Stderr Message  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Exit  \\
+Invalid {\ttfamily \texorpdfstring{$<$}{<}spec\texorpdfstring{$>$}{>}}  &{\ttfamily saw: invalid field spec: \texorpdfstring{$<$}{<}spec\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Empty {\ttfamily -\/d "{}"{}}  &{\ttfamily saw: delimiter cannot be empty}  &{\ttfamily 2}  \\
+Missing field under {\ttfamily -\/-\/strict}  &{\ttfamily saw: field \texorpdfstring{$<$}{<}idx\texorpdfstring{$>$}{>} out of range at \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}line\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Named file is binary  &{\ttfamily saw: binary file: \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+\end{DoxyTable}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md207}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Acceptance Criteria}}{{\ttfamily Acceptance Criteria}}}\label{md__s_p_e_c_autotoc_md207}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw fields 2 -\/d \textquotesingle{}"{}\textquotesingle{} version.\+txt} extracts quoted field 2 identically on mac\+OS and Windows.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw fields 1,-\/1 data.\+txt} splits on whitespace runs and returns first and last column without {\ttfamily awk}.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily -\/-\/match} + {\ttfamily -\/-\/first} extracts the target field in one single pass.
+\end{DoxyItemize}}
+
+{\ttfamily \DoxyHorRuler{0}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md209}{}\doxysubsection{\texorpdfstring{{\ttfamily 5.\+5 Feature: {\ttfamily patch}}}{{\ttfamily 5.\+5 Feature: {\ttfamily patch}}}}\label{md__s_p_e_c_autotoc_md209}
+{\ttfamily }
+
+{\ttfamily Apply a structured, multi-\/file batch of exact column-\/span, line-\/range, delete, or insert edits in one atomic transaction ({\ttfamily "{}Read stdin when no path is given and stdin is not a TTY (for find, lines, fields, dry-\/run replace); patch reads stdin or -\/-\/file"{}}).}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md210}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Invocation and Options}}{{\ttfamily Invocation and Options}}}\label{md__s_p_e_c_autotoc_md210}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{saw\ patch\ [options]}
+
+\end{DoxyCode}
+}
+
+{\ttfamily 
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Option  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Effect  \\
+{\ttfamily -\/-\/file \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &Read JSON edit batch from {\ttfamily \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}} instead of stdin.  \\
+{\ttfamily -\/-\/apply}  &Write planned edits to disk. Requires {\ttfamily -\/-\/expect N}.  \\
+{\ttfamily -\/-\/expect \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}}  &Exact number of edit entries in the JSON array ({\ttfamily N == array.\+length}: {\ttfamily "{}Exact edit operations applied (matches replaced in replace, edit entries in patch, line ops in lines)"{}}).  \\
+\end{DoxyTable}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md211}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Batch JSON Schema}}{{\ttfamily Batch JSON Schema}}}\label{md__s_p_e_c_autotoc_md211}
+{\ttfamily }
+
+{\ttfamily Input is a JSON array of edit objects (validated via {\ttfamily jam::\+\+Json\+Document}). Every object requires {\ttfamily "{}file"{}} (string path) and one of four mutually exclusive operation shapes:}
+
+{\ttfamily 
+\begin{DoxyEnumerate}
+\item {\bfseries{Column-\/span edit}} (matches {\ttfamily fix.\+lua:26-\/60}, 1-\/based line, 0-\/based byte columns {\ttfamily \+[start\+Col, end\+Col)}): 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{\ "{}file"{}:\ "{}src/Foo.cpp"{},\ "{}line"{}:\ 42,\ "{}startCol"{}:\ 8,\ "{}endCol"{}:\ 10,\ "{}text"{}:\ "{}not\ "{}\ \}}
+
+\end{DoxyCode}
+ Optional precondition: {\ttfamily "{}hash"{}: "{}a7c1"{}} (verified against original line 42 before applying).
+\item {\bfseries{Line delete}} (1-\/based single line or inclusive range): 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{\ "{}file"{}:\ "{}src/Foo.cpp"{},\ "{}line"{}:\ 12,\ "{}delete"{}:\ true\ \}}
+
+\end{DoxyCode}
+ or {\ttfamily \{ "{}file"{}: "{}src/\+\+Foo.\+cpp"{}, "{}start\+Line"{}: 12, "{}end\+Line"{}: 15, "{}delete"{}: true \}} with optional {\ttfamily "{}hash"{}} on the starting line.
+\item {\bfseries{Line-\/range replace}} (1-\/based inclusive): 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{\ "{}file"{}:\ "{}src/Foo.cpp"{},\ "{}startLine"{}:\ 10,\ "{}endLine"{}:\ 12,\ "{}text"{}:\ "{}new\ line\ 1\(\backslash\)nnew\ line\ 2"{},\ "{}hash"{}:\ "{}a7c1"{}\ \}}
+
+\end{DoxyCode}
+
+\item {\bfseries{Line insert}} (1-\/based line; {\ttfamily 0} allowed for {\ttfamily insert\+After} to prepend at top): 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{\ "{}file"{}:\ "{}src/Foo.cpp"{},\ "{}insertAfter"{}:\ 10,\ "{}text"{}:\ "{}//\ banner"{},\ "{}hash"{}:\ "{}a7c1"{}\ \}}
+
+\end{DoxyCode}
+ or {\ttfamily "{}insert\+Before"{}: 10}.
+\end{DoxyEnumerate}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md212}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Validation and Application Rules}}{{\ttfamily Validation and Application Rules}}}\label{md__s_p_e_c_autotoc_md212}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyEnumerate}
+\item Parse and validate the entire JSON array before reading or writing any file.
+\item Check {\ttfamily -\/-\/expect N} against the total number of edit entries ({\ttfamily entries.\+size()}).
+\item Group edits by resolved target file path (preserving deterministic sorted file order).
+\item For each target file, verify all bounds ({\ttfamily line}, {\ttfamily start\+Line \texorpdfstring{$<$}{<}= end\+Line}, {\ttfamily 0 \texorpdfstring{$<$}{<}= start\+Col \texorpdfstring{$<$}{<}= end\+Col \texorpdfstring{$<$}{<}= line\+Byte\+Length}), verify optional {\ttfamily "{}hash"{}} against original lines, and reject conflicts:
+\begin{DoxyItemize}
+\item Two column-\/span edits on the same line with {\ttfamily prev.\+end\+Col \texorpdfstring{$>$}{>} curr.\+start\+Col} or {\ttfamily prev.\+start\+Col == curr.\+start\+Col}.
+\item Any column-\/span edit combined with a delete or range-\/replace on the same line.
+\item Overlapping line ranges ({\ttfamily delete} or {\ttfamily replace}) in the same file.
+\item An insert whose line is in a deleted or replaced line range.
+\item Two inserts with the same line number.
+\end{DoxyItemize}
+\item Apply the non-\/overlapping column-\/span edits of each line. Each span counts bytes of the original line. Then assemble the full planned file buffer in memory.
+\item {\bfseries{Dry-\/run (default):}} Print unified diff hunks for every modified file + summary {\ttfamily saw: dry-\/run — \texorpdfstring{$<$}{<}E\texorpdfstring{$>$}{>} edit(s) in \texorpdfstring{$<$}{<}F\texorpdfstring{$>$}{>} file(s); nothing written. Pass -\/-\/apply -\/-\/expect \texorpdfstring{$<$}{<}E\texorpdfstring{$>$}{>} to write.} Exit {\ttfamily 0}.
+\item {\bfseries{{\ttfamily -\/-\/apply -\/-\/expect N}:}} Stage and commit one transaction that covers all touched files (§6.3), print {\ttfamily saw: applied \texorpdfstring{$<$}{<}E\texorpdfstring{$>$}{>} edit(s) in \texorpdfstring{$<$}{<}F\texorpdfstring{$>$}{>} file(s) (tx: \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>})}, exit {\ttfamily 0}.
+\end{DoxyEnumerate}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md213}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Edge Cases}}{{\ttfamily Edge Cases}}}\label{md__s_p_e_c_autotoc_md213}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item {\bfseries{Empty JSON array {\ttfamily \+[]}:}} Dry-\/run prints {\ttfamily saw: dry-\/run — 0 edits; nothing written.} (exit {\ttfamily 0}). {\ttfamily -\/-\/apply -\/-\/expect 0} writes nothing and exits {\ttfamily 0}.
+\item {\bfseries{Same file referenced via relative path and symlink:}} Resolve to the final link target (§4.4) so all edits to the same canonical file group together and check conflicts accurately.
+\item {\bfseries{Cross-\/file rename batch (e.\+g. {\ttfamily fix.\+lua} + {\ttfamily ling}):}} All touched files apply in one transaction and roll back together if any single file fails.
+\item {\bfseries{Multi-\/line {\ttfamily "{}text"{}} inside column-\/span edit:}} Allowed (matches {\ttfamily namespace-\/enclosure-\/format.\+lua} inserting {\ttfamily \textbackslash{}n} on a line). Line endings normalize to the file\textquotesingle{}s detected line ending.
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md214}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Error Handling}}{{\ttfamily Error Handling}}}\label{md__s_p_e_c_autotoc_md214}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Condition  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Stderr Message  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Exit  \\
+Invalid JSON or root is not an array  &{\ttfamily saw: invalid patch JSON: \texorpdfstring{$<$}{<}detail\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Missing/\+unknown/\+conflicting fields on entry {\ttfamily i}  &{\ttfamily saw: invalid patch entry \texorpdfstring{$<$}{<}i\texorpdfstring{$>$}{>}: \texorpdfstring{$<$}{<}reason\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Overlapping edits on same line/\+range  &{\ttfamily saw: conflicting edits in \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>} at line \texorpdfstring{$<$}{<}line\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Column or line out of bounds  &{\ttfamily saw: out of bounds in \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>} at entry \texorpdfstring{$<$}{<}i\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Hash precondition failed  &{\ttfamily saw: hash mismatch at \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}line\texorpdfstring{$>$}{>}: expected \texorpdfstring{$<$}{<}expected\texorpdfstring{$>$}{>}, got \texorpdfstring{$<$}{<}actual\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily -\/-\/apply} without {\ttfamily -\/-\/expect}  &{\ttfamily saw: -\/-\/apply requires -\/-\/expect \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily -\/-\/expect N} mismatch  &{\ttfamily saw: expected \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>} edit(s), found \texorpdfstring{$<$}{<}actual\texorpdfstring{$>$}{>}; nothing written}  &{\ttfamily 1}  \\
+Named file missing or binary  &{\ttfamily saw: not found: \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}} / {\ttfamily saw: binary file: \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+\end{DoxyTable}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md215}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Acceptance Criteria}}{{\ttfamily Acceptance Criteria}}}\label{md__s_p_e_c_autotoc_md215}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily fix.\+lua} applies an entire multi-\/file batch in one {\ttfamily saw patch -\/-\/apply -\/-\/expect N} invocation with zero {\ttfamily sed} or {\ttfamily diff} subprocesses.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Overlapping column spans on line {\ttfamily L} fail cleanly with exit {\ttfamily 2} and zero bytes written.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] A write failure on file 3 of a 5-\/file batch restores files 1 and 2 to exact pre-\/edit bytes.
+\end{DoxyItemize}}
+
+{\ttfamily \DoxyHorRuler{0}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md217}{}\doxysubsection{\texorpdfstring{{\ttfamily 5.\+6 Feature: {\ttfamily undo}}}{{\ttfamily 5.\+6 Feature: {\ttfamily undo}}}}\label{md__s_p_e_c_autotoc_md217}
+{\ttfamily }
+
+{\ttfamily Inspect and safely reverse applied SAW transactions from the bounded rolling undo cache ({\ttfamily "{}Rolling cache in app-\/data dir (cap 32 transactions, verifies post-\/edit hashes before restoring)"{}}).}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md218}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Invocation and Options}}{{\ttfamily Invocation and Options}}}\label{md__s_p_e_c_autotoc_md218}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{saw\ undo\ <tx-\/id>\ [options]}
+\DoxyCodeLine{saw\ undo\ -\/-\/list}
+
+\end{DoxyCode}
+}
+
+{\ttfamily 
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Option  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Effect  \\
+{\ttfamily -\/-\/list}  &Print stored transactions (newest first) as {\ttfamily \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}\textbackslash{}t\texorpdfstring{$<$}{<}timestamp\texorpdfstring{$>$}{>}\textbackslash{}t\texorpdfstring{$<$}{<}files\texorpdfstring{$>$}{>} file(s)\textbackslash{}t\texorpdfstring{$<$}{<}command\texorpdfstring{$>$}{>}} and exit {\ttfamily 0}.  \\
+{\ttfamily -\/-\/apply}  &Execute the restore on disk. Without {\ttfamily -\/-\/apply}, {\ttfamily saw undo} runs as dry-\/run and prints the reverse unified diff.  \\
+{\ttfamily -\/-\/force}  &Skip post-\/edit hash verification on {\ttfamily -\/-\/apply} (explicit override when user chooses to overwrite newer disk edits).  \\
+\end{DoxyTable}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md219}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Happy Path (Dry-\/\+Run Default)}}{{\ttfamily Happy Path (Dry-\/\+Run Default)}}}\label{md__s_p_e_c_autotoc_md219}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyEnumerate}
+\item User runs {\ttfamily saw undo \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}}.
+\item SAW loads {\ttfamily \texorpdfstring{$<$}{<}undo-\/root\texorpdfstring{$>$}{>}/\texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}.json} and verifies each target file\textquotesingle{}s current SHA-\/256 matches {\ttfamily post\+Hash}.
+\item SAW prints the reverse unified diff ({\ttfamily current -\/\texorpdfstring{$>$}{>} original}) and summary: {\ttfamily saw: dry-\/run undo (\texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}) — \texorpdfstring{$<$}{<}F\texorpdfstring{$>$}{>} file(s); nothing written. Pass -\/-\/apply to restore.}
+\item Exit {\ttfamily 0}.
+\end{DoxyEnumerate}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md220}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Happy Path (Apply)}}{{\ttfamily Happy Path (Apply)}}}\label{md__s_p_e_c_autotoc_md220}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyEnumerate}
+\item User runs {\ttfamily saw undo \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>} -\/-\/apply}.
+\item SAW verifies current disk SHA-\/256 equals {\ttfamily post\+Hash} for every file in the transaction (unless {\ttfamily -\/-\/force}).
+\item SAW exchanges every file with its backup (§6.3). The file keeps its current mode, access control list and extended attributes. A file that {\ttfamily -\/-\/force} creates again gets the recorded POSIX execute bit. If file {\ttfamily k + 1} fails, files {\ttfamily 0..k} revert to their pre-\/undo bytes.
+\item SAW removes the record and the backups of the restored transaction from the undo cache.
+\item SAW prints {\ttfamily saw: undone \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>} — restored \texorpdfstring{$<$}{<}F\texorpdfstring{$>$}{>} file(s)} and exits {\ttfamily 0}.
+\end{DoxyEnumerate}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md221}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Edge Cases}}{{\ttfamily Edge Cases}}}\label{md__s_p_e_c_autotoc_md221}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item {\bfseries{No {\ttfamily \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}}:}} Print {\ttfamily saw: undo requires \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}} to stderr and exit {\ttfamily 2}. The cache is shared by every folder, so the newest transaction is not a safe default.
+\item {\bfseries{No transactions stored:}} {\ttfamily -\/-\/list} prints nothing and exits {\ttfamily 0}.
+\item {\bfseries{Corrupt transaction in {\ttfamily -\/-\/list}:}} Print its error, print the other transactions, and exit {\ttfamily 2}.
+\item {\bfseries{Rollback of a failed restore fails:}} Print {\ttfamily saw: undo failed for \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}: \texorpdfstring{$<$}{<}reason\texorpdfstring{$>$}{>}; rollback failed for \texorpdfstring{$<$}{<}paths\texorpdfstring{$>$}{>}; backup kept in \texorpdfstring{$<$}{<}folder\texorpdfstring{$>$}{>}} to stderr and exit {\ttfamily 2}.
+\item {\bfseries{Unknown {\ttfamily \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}}:}} Print {\ttfamily saw: unknown transaction: \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}} to stderr and exit {\ttfamily 2}.
+\item {\bfseries{File modified after {\ttfamily -\/-\/apply} (hash drift):}} Refuse restoration before writing any file, print {\ttfamily saw: cannot undo \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}: \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>} changed since apply (pass -\/-\/force to overwrite)} to stderr, and exit {\ttfamily 2}.
+\item {\bfseries{Target file deleted after {\ttfamily -\/-\/apply}:}} Under default check, fail with hash drift ({\ttfamily \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>} missing since apply}). Under {\ttfamily -\/-\/force}, recreate the file with original bytes via {\ttfamily juce::\+\+Temporary\+File}.
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md222}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Error Handling}}{{\ttfamily Error Handling}}}\label{md__s_p_e_c_autotoc_md222}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Condition  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Stderr Message  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Exit  \\
+Missing {\ttfamily \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}}  &{\ttfamily saw: undo requires \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Unknown {\ttfamily \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}}  &{\ttfamily saw: unknown transaction: \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily -\/-\/apply} of a pending {\ttfamily \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}} without {\ttfamily -\/-\/force}  &{\ttfamily saw: transaction \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>} is pending (pass -\/-\/force to restore it)}  &{\ttfamily 2}  \\
+Corrupt record or missing blob  &{\ttfamily saw: corrupt transaction \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}: \texorpdfstring{$<$}{<}detail\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+File drifted since {\ttfamily -\/-\/apply}  &{\ttfamily saw: cannot undo \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}: \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>} changed since apply (pass -\/-\/force to overwrite)}  &{\ttfamily 2}  \\
+Restore write failure  &{\ttfamily saw: undo failed for \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}: \texorpdfstring{$<$}{<}reason\texorpdfstring{$>$}{>}; rolled back}  &{\ttfamily 2}  \\
+\end{DoxyTable}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md223}{}\doxysubsubsection{\texorpdfstring{{\ttfamily Acceptance Criteria}}{{\ttfamily Acceptance Criteria}}}\label{md__s_p_e_c_autotoc_md223}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw undo} defaults to dry-\/run and writes zero bytes.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw undo \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>} -\/-\/apply} restores bit-\/identical original files after any {\ttfamily replace}, {\ttfamily lines}, or {\ttfamily patch} apply, and keeps the mode of each file.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Editing a file externally after {\ttfamily saw replace -\/-\/apply} causes {\ttfamily saw undo -\/-\/apply} to refuse with exit {\ttfamily 2} and leave the newer edit intact.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Rolling cache never exceeds 32 published transactions.
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md224}{}\doxysubsection{\texorpdfstring{{\ttfamily 5.\+7 {\ttfamily saw excerpt}}}{{\ttfamily 5.\+7 {\ttfamily saw excerpt}}}}\label{md__s_p_e_c_autotoc_md224}
+{\ttfamily }
+
+{\ttfamily Decision: {\ttfamily "{}but we have a dedicated lane: formatted to format you EXACTLY need. so agents never wrongly formatted, return verbatim as is"{}}. The other verbs do not change: {\ttfamily "{}the current sed, awk, grep, rg parity STAYS"{}}.}
+
+{\ttfamily 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{saw\ excerpt\ [target...]\ [-\/-\/context\ <N>]}
+
+\end{DoxyCode}
+}
+
+{\ttfamily Targets come from the arguments, or one per line from stdin when no argument is given. A target is one of:}
+
+{\ttfamily 
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Target  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Gives  \\
+{\ttfamily \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &The whole file.  \\
+{\ttfamily \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}A\texorpdfstring{$>$}{>}} or {\ttfamily \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}A\texorpdfstring{$>$}{>}-\/\texorpdfstring{$<$}{<}B\texorpdfstring{$>$}{>}}  &Line {\ttfamily A}, or lines {\ttfamily A} through {\ttfamily B}. {\ttfamily B} beyond the last line clamps to it.  \\
+{\ttfamily \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>} \texorpdfstring{$\sim$}{\string~} \texorpdfstring{$<$}{<}literal\texorpdfstring{$>$}{>}}  &Each line that holds the literal, with {\ttfamily -\/-\/context} lines on each side (default {\ttfamily 0}). Overlapping ranges merge.  \\
+\end{DoxyTable}
+}
+
+{\ttfamily The range suffix is the last {\ttfamily :} followed only by digits, or by digits, {\ttfamily -\/} and digits. Thus a Windows drive letter is part of the path.}
+
+{\ttfamily Output on stdout, and nothing else:}
+
+{\ttfamily 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\#\ <n>\ targets,\ <f>\ found,\ <m>\ missing}
+\DoxyCodeLine{\#\#\ <i>\ <path>:<A>-\/<B>\ of\ <lines>\ sha256:<16\ hex>}
+\DoxyCodeLine{<line\ number><TAB><line\ bytes>}
+\DoxyCodeLine{\#\#\ <i>\ <path>\ NOT\ FOUND}
+
+\end{DoxyCode}
+}
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item The receipt line comes first. {\ttfamily \texorpdfstring{$<$}{<}n\texorpdfstring{$>$}{>}} is the count of targets given.
+\item Blocks keep the target order. {\ttfamily \texorpdfstring{$<$}{<}i\texorpdfstring{$>$}{>}} counts targets from 1. A literal target prints one block for each merged range, with the same {\ttfamily \texorpdfstring{$<$}{<}i\texorpdfstring{$>$}{>}}.
+\item The hash is the first 16 hex digits of the SHA-\/256 of the bytes of the block lines, line endings included.
+\item In place of a range: {\ttfamily NOT FOUND}, {\ttfamily UNREADABLE}, {\ttfamily BINARY}, {\ttfamily EMPTY} (a 0-\/byte file), {\ttfamily NO MATCH} (a literal target), {\ttfamily OUT OF RANGE} (the range starts at {\ttfamily 0}, ends before it starts, does not fit an integer, or starts beyond the last line).
+\item A line that is not valid UTF-\/8 prints each invalid byte as {\ttfamily \textbackslash{}x\+NN}, and the header of its block ends with {\ttfamily  escaped}. Every other line prints its bytes without its line ending, then {\ttfamily \textbackslash{}n}.
+\item Exit {\ttfamily 0} when every target gives a block of lines, {\ttfamily 1} when one target does not, {\ttfamily 2} on a usage error. No target and empty stdin: {\ttfamily saw: excerpt requires \texorpdfstring{$<$}{<}target\texorpdfstring{$>$}{>}}, exit {\ttfamily 2}.
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md225}{}\doxysubsection{\texorpdfstring{{\ttfamily 5.\+8 Model Context Protocol ({\ttfamily saw -\/-\/mcp})}}{{\ttfamily 5.\+8 Model Context Protocol ({\ttfamily saw -\/-\/mcp})}}}\label{md__s_p_e_c_autotoc_md225}
+{\ttfamily }
+
+{\ttfamily Decisions: {\ttfamily "{}FASTER on ALL CASES. NON-\/\+NEGOTIABLE, NO EXCEPTIONS."{}}, {\ttfamily "{}cli isn\textquotesingle{}t enough? need lazy load mcp that never inject anything when idle? never eat context when not being used? always on demand? fine, add one."{}}, {\ttfamily "{}mcp isn\textquotesingle{}t new pattern, module is."{}}, {\ttfamily "{}there are no saw\+\_\+\+Tool\+Serve anymore, we use native mcp. all carol CLI use -\/-\/mcp"{}}}
+
+{\ttfamily {\ttfamily saw -\/-\/mcp} serves the Model Context Protocol on stdio, built on {\ttfamily jam::\+\+Model\+Context\+Server}, in the form of {\ttfamily scout -\/-\/mcp}. It ends when stdin closes. It gives one tool, {\ttfamily run}:}
+
+{\ttfamily 
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Argument  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Meaning  \\
+{\ttfamily arguments}  &Array of strings: the saw command line, verb first.  \\
+{\ttfamily directory}  &Absolute path of the working directory for relative paths.  \\
+{\ttfamily stdin}  &Optional text for standard input.  \\
+\end{DoxyTable}
+}
+
+{\ttfamily The result is one JSON object: {\ttfamily exit\+Code}, {\ttfamily output} and {\ttfamily errors}, the exit code, the standard output and the standard error of the same command line in the CLI, byte for byte. Text that is not valid UTF-\/8 cannot be a JSON string, so its member is {\ttfamily output\+Base64} or {\ttfamily errors\+Base64} in place of {\ttfamily output} or {\ttfamily errors}. It runs one call at a time and holds no state between calls. {\ttfamily -\/-\/apply} needs {\ttfamily -\/-\/expect}, as in the CLI.}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md226}{}\doxysubsection{\texorpdfstring{{\ttfamily 5.\+9 Feature: {\ttfamily saw json}}}{{\ttfamily 5.\+9 Feature: {\ttfamily saw json}}}}\label{md__s_p_e_c_autotoc_md226}
+{\ttfamily }
+
+{\ttfamily {\ttfamily saw json} runs a jq 1.\+8.\+2 filter over JSON input. It takes the arguments and the filter language of {\ttfamily jq} 1.\+8.\+2 ({\ttfamily "{}feature parity means we want familiarity for args, why always complicate with byte-\/to-\/byte translation. FACT: our contract, our topology, our architecture are more consistent, more performant, more deterministic than jq itself."{}}). Its messages are saw\textquotesingle{}s own text ({\ttfamily "{}I SAID NOT FUCKING BYTE-\/\+TO-\/\+BYTE TRANSLATION"{}}). {\ttfamily saw json} never edits a file. Write the result with {\ttfamily saw write}.}
+
+{\ttfamily Invocation:}
+
+{\ttfamily 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{saw\ json\ [options]\ <filter>\ [file...]}
+\DoxyCodeLine{saw\ json\ [options]\ -\/-\/args\ <filter>\ [strings...]}
+\DoxyCodeLine{saw\ json\ [options]\ -\/-\/jsonargs\ <filter>\ [JSON\_TEXTS...]}
+\DoxyCodeLine{saw\ json\ -\/-\/run-\/tests\ [file]\ [-\/-\/skip\ n]\ [-\/-\/take\ n]}
+
+\end{DoxyCode}
+}
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item {\bfseries{Options:}} The options of {\ttfamily jq} 1.\+8.\+2, as {\ttfamily json.\+md} lists them. Options go anywhere, and short flags combine.
+\item {\bfseries{Input:}} Each file, then standard input, is a stream of JSON values. The reader accepts the values that {\ttfamily jq} 1.\+8.\+2 accepts, including {\ttfamily nan}, {\ttfamily 01}, {\ttfamily .5}, and a byte order mark. The depth limit is 10,000 for all JSON.
+\item {\bfseries{Numbers:}} A literal keeps its decimal text until arithmetic. {\ttfamily 1.\+000} prints as {\ttfamily 1.\+000}.
+\item {\bfseries{Comments:}} JSON with comments is an error.
+\item {\bfseries{Variables:}} {\ttfamily \$ENV}, {\ttfamily \$ARGS}, {\ttfamily \$\+\_\+\+\_\+loc\+\_\+\_}, and the names of {\ttfamily -\/-\/arg}, {\ttfamily -\/-\/argjson}, {\ttfamily -\/-\/slurpfile}, and {\ttfamily -\/-\/rawfile} are set.
+\item {\bfseries{Clock and environment:}} {\ttfamily now}, {\ttfamily env}, {\ttfamily \$ENV}, {\ttfamily localtime}, and {\ttfamily input\+\_\+filename} read the clock, the environment, and the file name as inputs.
+\item {\bfseries{Exit codes:}} {\ttfamily 0} success. {\ttfamily 1} with {\ttfamily -\/e} when the last output is {\ttfamily false} or {\ttfamily null}. {\ttfamily 2} usage error or missing file. {\ttfamily 3} compile error. {\ttfamily 4} with {\ttfamily -\/e} when there is no output. {\ttfamily 5} parse error, runtime error, or {\ttfamily halt\+\_\+error}.
+\item {\bfseries{Run tests:}} {\ttfamily -\/-\/run-\/tests} reads a jq test file in place. It copies no test program. A case that expects a compile failure passes when the filter fails validation. The message text is not compared.
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md227}{}\doxysubsection{\texorpdfstring{{\ttfamily 5.\+10 Feature: {\ttfamily saw page}}}{{\ttfamily 5.\+10 Feature: {\ttfamily saw page}}}}\label{md__s_p_e_c_autotoc_md227}
+{\ttfamily }
+
+{\ttfamily {\ttfamily saw page} prints the bytes of files, or of standard input, to standard output, as {\ttfamily cat} gives. With a decoration, a colour, or paging on the command line, and the page library of ling, it renders the page.}
+
+{\ttfamily Invocation:}
+
+{\ttfamily 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{saw\ page\ [<path>...]\ [options]}
+
+\end{DoxyCode}
+}
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item {\bfseries{Bytes:}} SAW prints every byte of each file. LF, CRLF, a missing final newline, NUL, invalid UTF-\/8, and a byte order mark pass unchanged.
+\item {\bfseries{Binary file:}} In a pipe, a file with a NUL byte prints in full. On a terminal, SAW writes one warning and prints no content. The exit code stays {\ttfamily 0}.
+\item {\bfseries{Standard input:}} {\ttfamily -\/} names standard input. It is read one time, at its place in the path list.
+\item {\bfseries{Line ranges:}} {\ttfamily -\/r} selects lines. The option may repeat. The result is the union of the ranges, in file order. The grammar is the grammar of the table in {\ttfamily page.\+md}.
+\item {\bfseries{Decorations:}} {\ttfamily -\/-\/decorations auto}, {\ttfamily always}, or {\ttfamily never} controls the components of {\ttfamily -\/-\/style}. {\ttfamily -\/n} shows line numbers only.
+\item {\bfseries{Tabs:}} {\ttfamily -\/-\/tabs} sets the tab width. {\ttfamily -\/-\/tabs=0} passes tabs through. Tabs expand in the rendered lane only.
+\item {\bfseries{Rendered lane:}} The rendered lane runs on the command line only, when a decoration, colour, or paging applies: a terminal, {\ttfamily -\/-\/decorations=always}, {\ttfamily -\/-\/color=always}, or {\ttfamily -\/-\/paging=always}. The page library of ling renders it. The MCP lane never loads a library. Without a library, the output is the plain bytes, with exit {\ttfamily 0} and no message.
+\item {\bfseries{Library:}} saw finds the page library ({\ttfamily libpage.\+dylib} or {\ttfamily page.\+dll}) and the token library ({\ttfamily libtokens.\+dylib} or {\ttfamily tokens.\+dll}) in {\ttfamily \texorpdfstring{$\sim$}{\string~}/.config/\+ling/\+language/\texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}/\+build/}, then in the cache of ling: {\ttfamily \texorpdfstring{$\sim$}{\string~}/.cache/\+ling/\+language/\+\texorpdfstring{$\ast$}{*}/\texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}/} (Windows {\ttfamily LOCALAPPDATA\%\textbackslash{}ling\textbackslash{}language\textbackslash{}\texorpdfstring{$\ast$}{*}\textbackslash{}\texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}\textbackslash{}}). {\ttfamily \texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}} is {\ttfamily page} or {\ttfamily tokens}. ling unpacks them when its daemon loads a language.
+\item {\bfseries{Pager:}} {\ttfamily -\/-\/paging auto} (default) scrolls the page inside the terminal when it is higher than the terminal. {\ttfamily always} scrolls always. {\ttfamily never} does not scroll. A pipe never pages. {\ttfamily -\/P} gives {\ttfamily never}. {\ttfamily -\/-\/pager} is parsed. No pager command starts. The keys are those of the reader mode of the editor. {\ttfamily q}, Escape, and Ctrl+C end the page.
+\item {\bfseries{Themes:}} {\ttfamily -\/-\/theme \texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}} names {\ttfamily \texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}.css} in the theme folder, or in the folder of the page library ({\ttfamily gfx}, {\ttfamily ansi}). Without a theme file, SAW writes a warning to standard error and uses the default colours. No {\ttfamily .tm\+Theme} file is read. {\ttfamily -\/-\/list-\/themes} prints the names of the style sheets.
+\item {\bfseries{Languages:}} 183 names. {\ttfamily -\/l} takes a name or an extension. There is no first-\/line detection. {\ttfamily -\/-\/list-\/languages} prints {\ttfamily name:globs} lines. It prints nothing without the token library.
+\item {\bfseries{Colour:}} Colours are 24-\/bit. {\ttfamily -\/-\/italic-\/text} is parsed.
+\item {\bfseries{Width:}} {\ttfamily -\/-\/terminal-\/width \texorpdfstring{$<$}{<}n\texorpdfstring{$>$}{>}} sets the width. Without it, the width of the terminal, or 80.
+\item {\bfseries{Header:}} {\ttfamily File} (path) and {\ttfamily Size} properties of the first block of a file. {\ttfamily STDIN} for standard input. {\ttfamily grid} draws the vertical line. The gutter shows line numbers ({\ttfamily numbers}), changes ({\ttfamily changes}: {\ttfamily +} added, {\ttfamily \texorpdfstring{$\sim$}{\string~}} modified, {\ttfamily \_} lines removed below, {\ttfamily ‾} lines removed above), or both. {\ttfamily snip} makes each range a separate block.
+\item {\bfseries{Git diff:}} {\ttfamily -\/d} shows the lines that differ from the Git index, with {\ttfamily -\/-\/diff-\/context} lines. saw reads the Git index and the objects inside saw (JAM module {\ttfamily jam\+\_\+git}). No process starts.
+\item {\bfseries{Exit codes:}} {\ttfamily 0} the content printed. {\ttfamily 1} a file is missing, a folder, or unreadable, or a line range is invalid. {\ttfamily 2} an option value is invalid. A missing file does not stop the other files.
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md228}{}\doxysubsection{\texorpdfstring{{\ttfamily 5.\+11 Feature: {\ttfamily saw write}}}{{\ttfamily 5.\+11 Feature: {\ttfamily saw write}}}}\label{md__s_p_e_c_autotoc_md228}
+{\ttfamily }
+
+{\ttfamily {\ttfamily saw write \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>} \+[-\/-\/apply -\/-\/expect 1]} writes the complete text from standard input to one file, verbatim.}
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item {\bfseries{Dry run:}} The default prints the unified diff and writes nothing. The diff of an absent target starts with {\ttfamily -\/-\/-\/ /\+dev/\+null}.
+\item {\bfseries{Apply:}} {\ttfamily -\/-\/apply -\/-\/expect 1} creates the file, or replaces it. Missing parent folders are created at commit.
+\item {\bfseries{Verbatim:}} SAW writes the bytes of standard input as they are. Empty standard input writes an empty file. A NUL byte fails with {\ttfamily saw: binary file: \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}.
+\item {\bfseries{Targets:}} A hard-\/linked or read-\/only target is refused, as for every write verb. A symbolic link target is written.
+\item {\bfseries{Undo:}} {\ttfamily saw undo \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}} deletes a created file when its hash equals its {\ttfamily post\+Hash}, and refuses when it differs. It removes each created folder that is empty.
+\item {\bfseries{Exit codes:}} {\ttfamily 0} dry run completed, or {\ttfamily -\/-\/apply} succeeded. {\ttfamily 1} {\ttfamily -\/-\/expect} mismatch. {\ttfamily 2} missing path, extra argument, terminal stdin, NUL byte, refused target, or I/\+O error.
+\end{DoxyItemize}}
+
+{\ttfamily \DoxyHorRuler{0}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md230}{}\doxysection{\texorpdfstring{{\ttfamily 6. Transaction and Undo Cache Model}}{{\ttfamily 6. Transaction and Undo Cache Model}}}\label{md__s_p_e_c_autotoc_md230}
+{\ttfamily }
+
+{\ttfamily Decision: {\ttfamily "{}Rolling cache in app-\/data dir (cap 32 transactions, verifies post-\/edit hashes before restoring)"{}}.}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md231}{}\doxysubsection{\texorpdfstring{{\ttfamily 6.\+1 Cache Location and Bound}}{{\ttfamily 6.\+1 Cache Location and Bound}}}\label{md__s_p_e_c_autotoc_md231}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item {\bfseries{Root path:}} {\ttfamily jam::\+\+File::\+get\+User\+Application\+Data\+Directory().get\+Child\+File ("{}saw"{}).get\+Child\+File ("{}undo"{})}.
+\begin{DoxyItemize}
+\item mac\+OS: {\ttfamily \texorpdfstring{$\sim$}{\string~}/\+\+Library/\+\+Application Support/\+saw/\+undo/}
+\item Windows: {\ttfamily APPDATA\%\textbackslash{}saw\textbackslash{}undo\textbackslash{}}
+\end{DoxyItemize}
+\item {\bfseries{Pending path:}} the folder {\ttfamily pending} beside {\ttfamily undo}. It holds the record of each transaction that is not yet published and of each transaction that an {\ttfamily undo} run has claimed. {\ttfamily undo -\/-\/list} lists each complete one, and {\ttfamily undo \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}} reads it, so the backup of a process that stopped is always reachable.
+\item {\bfseries{Blob path:}} the folder {\ttfamily blobs} beside {\ttfamily undo}. It holds the backups.
+\item {\bfseries{Bound:}} Maximum {\ttfamily 32} published transactions. After each committed {\ttfamily -\/-\/apply}, SAW deletes the oldest published transactions beyond 32 (ordered by UTC timestamp prefix). Prune never reads the pending folder.
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md232}{}\doxysubsection{\texorpdfstring{{\ttfamily 6.\+2 Transaction Layout}}{{\ttfamily 6.\+2 Transaction Layout}}}\label{md__s_p_e_c_autotoc_md232}
+{\ttfamily }
+
+{\ttfamily Each transaction has one id, {\ttfamily \texorpdfstring{$<$}{<}YYYYMMDDTHHMMSS\texorpdfstring{$>$}{>}-\/\texorpdfstring{$<$}{<}6-\/hex-\/id\texorpdfstring{$>$}{>}}, one immutable record, and one backup for each file. The name of a file gives the id and the index, so the record does not repeat them.}
+
+{\ttfamily 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{undo/20261122T103000-\/a3f9c1.json}
+\DoxyCodeLine{blobs/20261122T103000-\/a3f9c1-\/0.blob}
+\DoxyCodeLine{blobs/20261122T103000-\/a3f9c1-\/1.blob}
+
+\end{DoxyCode}
+}
+
+{\ttfamily Record fields:
+\begin{DoxyItemize}
+\item {\ttfamily "{}timestamp"{}}: ISO-\/8601 UTC string.
+\item {\ttfamily "{}command"{}}: short verb summary (e.\+g. {\ttfamily "{}replace"{}}, {\ttfamily "{}lines"{}}, {\ttfamily "{}patch"{}}).
+\item {\ttfamily "{}files"{}}: array of {\ttfamily \{ "{}path"{}: "{}\texorpdfstring{$<$}{<}canonical-\/absolute-\/path\texorpdfstring{$>$}{>}"{}, "{}pre\+Hash"{}: "{}\texorpdfstring{$<$}{<}sha256\texorpdfstring{$>$}{>}"{}, "{}post\+Hash"{}: "{}\texorpdfstring{$<$}{<}sha256\texorpdfstring{$>$}{>}"{}, "{}executable"{}: true\texorpdfstring{$\vert$}{|}false, "{}existing"{}: true\texorpdfstring{$\vert$}{|}false \}}. The backup of entry {\ttfamily i} is {\ttfamily blobs/\texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}-\/\texorpdfstring{$<$}{<}i\texorpdfstring{$>$}{>}.blob}.
+\item {\ttfamily "{}folders"{}}: array of the folders that the transaction created, from the top down. Rollback and undo remove each one that is empty, bottom up. {\ttfamily pre\+Hash} and the backup of a file are absent when its {\ttfamily existing} is {\ttfamily false}.
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md233}{}\doxysubsection{\texorpdfstring{{\ttfamily 6.\+3 Two-\/\+Phase Commit Protocol}}{{\ttfamily 6.\+3 Two-\/\+Phase Commit Protocol}}}\label{md__s_p_e_c_autotoc_md233}
+{\ttfamily }
+
+{\ttfamily No lock exists. Ownership is one exclusive creation. The creation of a name that exists fails, so one process wins.}
+
+{\ttfamily 
+\begin{DoxyEnumerate}
+\item {\bfseries{Plan phase (memory only):}} Read every target file, verify preconditions ({\ttfamily -\/-\/expect N}, hashes, bounds, non-\/binary), and compute planned buffers. Any error aborts with zero disk touches. A file whose access list or flags deny its deletion, in a folder that can be written, is refused here with {\ttfamily saw: write failed for \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}: overwrite failed; rolled back}, because no replace can take its place.
+\item {\bfseries{Stage phase:}} Create {\ttfamily pending/\texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}.json} exclusively. The hex id is the microsecond of the second. When {\ttfamily pending/\texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}.json} or {\ttfamily undo/\texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}.json} exists, the id advances by 1 and the creation runs again. Then write the record, with one {\ttfamily pre\+Hash} and one {\ttfamily post\+Hash} for each file, and every {\ttfamily blobs/\texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}-\/\texorpdfstring{$<$}{<}i\texorpdfstring{$>$}{>}.blob}, in parallel. Flush each file. When the target and the cache are on one volume of a system with an atomic file exchange (mac\+OS), the blob holds the planned bytes and the metadata of the target. When the group of the target folder differs from the group of the cache, SAW creates the blob in the target folder and moves it. In every other case the blob holds the pre-\/edit bytes. A pending record that is not complete, or whose blobs do not all exist, is a transaction that changed no file. {\ttfamily undo -\/-\/list} does not list it, so a reader never sees a partial transaction.
+\item {\bfseries{Commit phase:}} Release every mapping of a target. For each file {\ttfamily 0..M-\/1}:
+\begin{DoxyItemize}
+\item {\bfseries{Exchange:}} exchange the target and its blob in one system call. Thus the original file becomes the backup, and no byte of it is copied. Verify that the bytes of the blob equal the pre-\/edit bytes: a write by another process before the exchange is found here, and SAW exchanges the files back. Verify that the bytes of the target equal the planned bytes.
+\item {\bfseries{Replace}} (no exchange on this volume or system, or the exchange fails): the blob holds the pre-\/edit bytes. Verify that the bytes of the target equal the pre-\/edit bytes. Write the planned bytes to a new {\ttfamily juce::\+\+Temporary\+File (target, Temporary\+File::\+use\+Hidden\+File)}, set the metadata, flush one time, and replace the target by one {\ttfamily rename} (Windows: {\ttfamily juce::\+\+File::\+replace\+File\+In}). A target that did not exist before the run must still not exist before the write. Verify that the bytes of the target equal the planned bytes.
+\item After the last file, publish: move {\ttfamily pending/\texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}.json} to {\ttfamily undo/\texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}.json}.
+\item On any failure at index {\ttfamily k}: restore files {\ttfamily 0..k-\/1} by the same exchange or replace, and verify each target and each blob. A target that another process changed after the exchange keeps that change, and the restore counts as failed, so its backup is kept. A blob that does not hold the pre-\/edit bytes is never discarded. When every restore holds, delete the record and the blobs and exit {\ttfamily 2}. When one restore fails, keep them and exit {\ttfamily 2} with {\ttfamily saw: write failed for \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}: \texorpdfstring{$<$}{<}reason\texorpdfstring{$>$}{>}; rollback failed for \texorpdfstring{$<$}{<}paths\texorpdfstring{$>$}{>}; backup kept in \texorpdfstring{$<$}{<}folder\texorpdfstring{$>$}{>}}.
+\end{DoxyItemize}
+\item {\bfseries{Prune phase:}} Delete the oldest published transactions beyond 32, each record before its blobs. The delete of the record is the claim: when the record is gone (an {\ttfamily undo} run moved it), SAW keeps the blobs.
+\end{DoxyEnumerate}}
+
+{\ttfamily {\ttfamily undo -\/-\/apply} creates {\ttfamily pending/\texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}.json} exclusively and moves {\ttfamily undo/\texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}.json} over it first. The process that wins the creation restores the files and deletes the record and the blobs. A failed restore moves the record back. A transaction that is already in the pending folder can belong to a running process, so {\ttfamily undo -\/-\/apply} refuses it with {\ttfamily saw: transaction \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>} is pending (pass -\/-\/force to restore it)} and exit {\ttfamily 2}. {\ttfamily -\/-\/force} restores it in place.}
+
+{\ttfamily A process that stops between stage and commit leaves blobs in one of two states. The hash of the blob tells which one: {\ttfamily pre\+Hash} is a backup, so {\ttfamily undo} restores it; {\ttfamily post\+Hash} is a file that was not exchanged, so its target was not changed and {\ttfamily undo} does nothing to it. A blob with another hash, whose target has {\ttfamily pre\+Hash}, is also restored already. Any other hash is a corrupt transaction.}
+
+{\ttfamily \DoxyHorRuler{0}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md235}{}\doxysection{\texorpdfstring{{\ttfamily 7. CAROL Integration Contract (Downstream — Outside SAW Binary)}}{{\ttfamily 7. CAROL Integration Contract (Downstream — Outside SAW Binary)}}}\label{md__s_p_e_c_autotoc_md235}
+{\ttfamily }
+
+{\ttfamily Decision: {\ttfamily "{}sed awk immediately rejected hooks, python and lua must ask permission. editing file no need nvim. but use in-\/house cli as must use tools."{}}}
+
+{\ttfamily Ownership: {\ttfamily "{}carol init on saw repo by ARCHITECT"{}}. ARCHITECT runs this wiring. The SAW implementation plan does not include it.}
+
+{\ttfamily SAW contains zero CAROL-\/specific logic. After SAW builds and installs to {\ttfamily \texorpdfstring{$\sim$}{\string~}/.local/\+bin/\+saw}, CAROL wires SAW in one follow-\/up pass:}
+
+{\ttfamily 
+\begin{DoxyEnumerate}
+\item {\bfseries{{\ttfamily \texorpdfstring{$\sim$}{\string~}/.carol/\+hooks/\+register.\+js} and {\ttfamily \texorpdfstring{$\sim$}{\string~}/.carol/\+agy/\+hooks/\+agy-\/gate.\+mjs}:}}
+\begin{DoxyItemize}
+\item Deny {\ttfamily sed} and {\ttfamily awk} invocations in Bash and direct agents to {\ttfamily saw}.
+\item Add {\ttfamily saw find} to {\ttfamily TEXT\+\_\+\+SEARCH\+\_\+\+PATTERN} so C++ source files remain governed by {\ttfamily doxygen-\/protocol} (only string literals {\ttfamily "{}} and {\ttfamily \#} directives allowed).
+\end{DoxyItemize}
+\item {\bfseries{{\ttfamily \texorpdfstring{$\sim$}{\string~}/.config/\+claude/\+settings.\+json} ({\ttfamily permissions.\+ask}):}}
+\begin{DoxyItemize}
+\item Add {\ttfamily Bash(python\texorpdfstring{$\ast$}{*})}, {\ttfamily Bash(python3\texorpdfstring{$\ast$}{*})}, and {\ttfamily Bash(lua\texorpdfstring{$\ast$}{*})} so disposable script runners require explicit ARCHITECT approval.
+\end{DoxyItemize}
+\item {\bfseries{{\ttfamily \texorpdfstring{$\sim$}{\string~}/.carol/\+bin/\+carol}:}}
+\begin{DoxyItemize}
+\item Delegate {\ttfamily cmd\+\_\+apply} and internal {\ttfamily sed}/{\ttfamily awk}/{\ttfamily grep} file operations to {\ttfamily saw}.
+\end{DoxyItemize}
+\item {\bfseries{{\ttfamily \texorpdfstring{$\sim$}{\string~}/.carol/\+local/\+janitor/\+fix.\+lua}:}}
+\begin{DoxyItemize}
+\item Replace {\ttfamily get\+Sed\+Script}, {\ttfamily sed} dry-\/run, {\ttfamily diff} line counting, and {\ttfamily carol apply} ({\ttfamily fix.\+lua:82-\/192}) with one {\ttfamily saw patch -\/-\/apply -\/-\/expect N} invocation.
+\end{DoxyItemize}
+\end{DoxyEnumerate}}
+
+{\ttfamily \DoxyHorRuler{0}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md237}{}\doxysection{\texorpdfstring{{\ttfamily 8. Global Error Reference}}{{\ttfamily 8. Global Error Reference}}}\label{md__s_p_e_c_autotoc_md237}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Condition  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Exact Stderr String  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Exit  \\
+Unknown verb  &{\ttfamily saw: unknown command: \texorpdfstring{$<$}{<}verb\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Unknown flag  &{\ttfamily saw: unknown flag: \texorpdfstring{$<$}{<}flag\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Missing flag value  &{\ttfamily saw: flag requires a value: \texorpdfstring{$<$}{<}flag\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Missing path argument  &{\ttfamily saw: missing path argument}  &{\ttfamily 2}  \\
+Extra argument  &{\ttfamily saw: unexpected argument: \texorpdfstring{$<$}{<}argument\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily replace} without its arguments  &{\ttfamily saw: replace requires \texorpdfstring{$<$}{<}find\texorpdfstring{$>$}{>} and \texorpdfstring{$<$}{<}with\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Two replacement sources  &{\ttfamily saw: specify at most one of -\/-\/with-\/stdin, -\/-\/with-\/file}  &{\ttfamily 2}  \\
+{\ttfamily lines} without a range  &{\ttfamily saw: lines requires \texorpdfstring{$<$}{<}range\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily fields} without a spec  &{\ttfamily saw: fields requires \texorpdfstring{$<$}{<}spec\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Unreadable stdin  &{\ttfamily saw: cannot read stdin}  &{\ttfamily 2}  \\
+Unwritable stdout  &{\ttfamily saw: cannot write stdout}  &{\ttfamily 2}  \\
+{\ttfamily excerpt} without a target  &{\ttfamily saw: excerpt requires \texorpdfstring{$<$}{<}target\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Missing file or directory  &{\ttfamily saw: not found: \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Unreadable file or directory  &{\ttfamily saw: cannot read \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Binary file named directly  &{\ttfamily saw: binary file: \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Hard-\/linked target  &{\ttfamily saw: hard-\/linked file: \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Read-\/only target  &{\ttfamily saw: read-\/only file: \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Empty search pattern  &{\ttfamily saw: pattern cannot be empty}  &{\ttfamily 2}  \\
+Newline in search pattern  &{\ttfamily saw: pattern cannot contain a newline}  &{\ttfamily 2}  \\
+Invalid regex  &{\ttfamily saw: invalid regex: \texorpdfstring{$<$}{<}detail\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+Regex over its step limit  &{\ttfamily saw: regex exceeded its step limit: \texorpdfstring{$<$}{<}pattern\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily -\/-\/apply} without {\ttfamily -\/-\/expect}  &{\ttfamily saw: -\/-\/apply requires -\/-\/expect \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily -\/-\/apply} with stdin  &{\ttfamily saw: cannot -\/-\/apply on stdin; specify file paths}  &{\ttfamily 2}  \\
+{\ttfamily -\/-\/expect} mismatch  &{\ttfamily saw: expected \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>} edit(s), found \texorpdfstring{$<$}{<}actual\texorpdfstring{$>$}{>}; nothing written}  &{\ttfamily 1}  \\
+Hash precondition mismatch  &{\ttfamily saw: hash mismatch at \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}line\texorpdfstring{$>$}{>}: expected \texorpdfstring{$<$}{<}expected\texorpdfstring{$>$}{>}, got \texorpdfstring{$<$}{<}actual\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily undo -\/-\/apply} of a pending transaction without {\ttfamily -\/-\/force}  &{\ttfamily saw: transaction \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>} is pending (pass -\/-\/force to restore it)}  &{\ttfamily 2}  \\
+Write or verify failure  &{\ttfamily saw: write failed for \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}: \texorpdfstring{$<$}{<}reason\texorpdfstring{$>$}{>}; rolled back}  &{\ttfamily 2}  \\
+Rollback failure  &{\ttfamily saw: write failed for \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}: \texorpdfstring{$<$}{<}reason\texorpdfstring{$>$}{>}; rollback failed for \texorpdfstring{$<$}{<}paths\texorpdfstring{$>$}{>}; backup kept in \texorpdfstring{$<$}{<}folder\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily write} on terminal stdin  &{\ttfamily saw: write requires stdin}  &{\ttfamily 2}  \\
+{\ttfamily write} with a NUL byte in stdin  &{\ttfamily saw: binary file: \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily page} on a folder  &{\ttfamily saw: \textquotesingle{}\texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}\textquotesingle{} is a directory.}  &{\ttfamily 1}  \\
+{\ttfamily page} with an invalid line range  &{\ttfamily saw: invalid line range: \texorpdfstring{$<$}{<}range\texorpdfstring{$>$}{>}}  &{\ttfamily 1}  \\
+{\ttfamily page} with an invalid {\ttfamily -\/-\/binary} value  &{\ttfamily saw: invalid value for -\/-\/binary: \texorpdfstring{$<$}{<}value\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+{\ttfamily page} with an invalid {\ttfamily -\/-\/nonprintable-\/notation} value  &{\ttfamily saw: invalid value for -\/-\/nonprintable-\/notation: \texorpdfstring{$<$}{<}value\texorpdfstring{$>$}{>}}  &{\ttfamily 2}  \\
+\end{DoxyTable}
+}
+
+{\ttfamily \DoxyHorRuler{0}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md239}{}\doxysection{\texorpdfstring{{\ttfamily 9. Success Criteria}}{{\ttfamily 9. Success Criteria}}}\label{md__s_p_e_c_autotoc_md239}
+{\ttfamily }
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md240}{}\doxysubsection{\texorpdfstring{{\ttfamily Functional}}{{\ttfamily Functional}}}\label{md__s_p_e_c_autotoc_md240}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw}, {\ttfamily saw -\/-\/help}, and {\ttfamily saw \texorpdfstring{$<$}{<}verb\texorpdfstring{$>$}{>} -\/-\/help} print the frames that {\ttfamily jam::\+\+Terminal\+Page} rendered at build time and exit {\ttfamily 0}.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw -\/-\/version} prints {\ttfamily saw 0.\+0.\+1 (\texorpdfstring{$<$}{<}commit\texorpdfstring{$>$}{>})} and exits {\ttfamily 0}.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] All 7 verbs ({\ttfamily find}, {\ttfamily replace}, {\ttfamily lines}, {\ttfamily fields}, {\ttfamily patch}, {\ttfamily undo}, {\ttfamily excerpt}) pass every case of {\ttfamily test/\+cases.\+md} through the runner (§10) on mac\+OS and Windows, from the command line and from {\ttfamily saw -\/-\/mcp}.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Every mutating verb defaults to dry-\/run and touches zero bytes without {\ttfamily -\/-\/apply}.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily -\/-\/apply} without {\ttfamily -\/-\/expect N} fails with exit {\ttfamily 2} and writes zero bytes on {\ttfamily replace}, {\ttfamily lines}, and {\ttfamily patch}.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Every {\ttfamily -\/-\/expect N} mismatch writes zero bytes and exits {\ttfamily 1}.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Multi-\/file failure during commit rolls back all prior files to bit-\/identical pre-\/edit bytes.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw undo -\/-\/apply} reverses any applied transaction cleanly and refuses drifted files unless {\ttfamily -\/-\/force} is passed.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw} preserves the line ending of each untouched line, trailing newline state, 0-\/byte files, symlink targets, file modes, access control lists, and extended attributes. It refuses hard-\/linked and read-\/only targets.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Directory walks apply the ignore rules of §4.4.\+1.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw json} gives the output bytes of {\ttfamily jq} 1.\+8.\+2 for every {\ttfamily json} row of {\ttfamily test/\+cases.\+md}. {\ttfamily saw json -\/-\/run-\/tests} passes the 949 programs of the jq reference, except the programs that the reference marks {\ttfamily \%FAIL}, which must fail the same way.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw page} gives the bytes of {\ttfamily bat -\/pp} for every {\ttfamily page} row of {\ttfamily test/\+cases.\+md}, and every byte of each input file in a pipe.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw write} creates, replaces, and undoes a file as the {\ttfamily write} rows of {\ttfamily test/\+cases.\+md} state, from the command line and from {\ttfamily saw -\/-\/mcp}.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily saw patch} grows linearly from 1,000 to 16,000 entries. A JSON depth of 10,001 exits {\ttfamily 2}.
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md241}{}\doxysubsection{\texorpdfstring{{\ttfamily Performance and Quality}}{{\ttfamily Performance and Quality}}}\label{md__s_p_e_c_autotoc_md241}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Every verb runs without {\ttfamily juce::\+\+Scoped\+Juce\+Initialiser\+\_\+\+GUI}. The help frames are rendered at build time.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Every row of the §10.3 gate holds, with the same output as its reference.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] The saw binary loads no mac\+OS or Windows GUI framework ({\ttfamily otool -\/L}, {\ttfamily dumpbin /\+dependents}).
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] No lock exists in {\ttfamily Source/} and in the JAM code that a verb runs.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Literal {\ttfamily find} and {\ttfamily replace} scan the file bytes through views with zero whole-\/file string copies on read.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] {\ttfamily jam::\+\+Reg\+Exp} exposes offset-\/based {\ttfamily find\+Next} returning match spans and captures. Runner cases on {\ttfamily find -\/r} and {\ttfamily replace -\/r} cover several matches on one line, capture groups, and zero-\/length matches.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] One scout report exists for each benchmark pair of §10.3.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Downstream, after §7: JANITOR v2 full-\/contract benchmark ({\ttfamily fix.\+lua} calling {\ttfamily saw patch -\/-\/apply -\/-\/expect N}) matches {\ttfamily truth-\/v2} with {\ttfamily 0} wrong edits and faster wall time than {\ttfamily sed} + {\ttfamily carol apply}.
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Zero BLESSED, {\ttfamily CODING.\+md}, or {\ttfamily NAMES.\+md} violations at post-\/implementation audit.
+\end{DoxyItemize}}
+
+{\ttfamily \DoxyHorRuler{0}
+}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md243}{}\doxysection{\texorpdfstring{{\ttfamily 10. Test and Benchmark Harness}}{{\ttfamily 10. Test and Benchmark Harness}}}\label{md__s_p_e_c_autotoc_md243}
+{\ttfamily }
+
+{\ttfamily Decisions:
+\begin{DoxyItemize}
+\item {\ttfamily "{}why unit test still need lua? scout whatdbg now native mcp"{}}
+\item {\ttfamily "{}so what harness do we need to test? benchmark against sed awk grep rg"{}}
+\item {\ttfamily "{}design comparison runner then. do we need nvim?"{}}
+\item {\ttfamily "{}which is more deterministic? more objective? zsh or nvim with lua?"{}}
+\item {\ttfamily "{}ok nvim lua"{}}
+\item {\ttfamily "{}The runner moves the real \texorpdfstring{$<$}{<}app-\/data\texorpdfstring{$>$}{>}/\+saw/\+undo aside before the run and puts it back after, also on failure. saw gets no new surface"{}}
+\item {\ttfamily "{}A copy of \texorpdfstring{$\sim$}{\string~}/\+\+Documents/\+\+Poems/\+\+JUCE/\+modules. It is real C++ text, it is present on every machine (CMake\textquotesingle{}s JUCE path is ../../\+\+JUCE), and it is copied to a temporary folder before each mutating epoch"{}}
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md244}{}\doxysubsection{\texorpdfstring{{\ttfamily 10.\+1 Runner}}{{\ttfamily 10.\+1 Runner}}}\label{md__s_p_e_c_autotoc_md244}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item {\bfseries{Files:}} {\ttfamily test/\+run.\+lua}, {\ttfamily test/\+cases.\+md}, {\ttfamily test/\+fixture/\texorpdfstring{$<$}{<}fixture\texorpdfstring{$>$}{>}/}, {\ttfamily test/\+stdin/\texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}, {\ttfamily test/\+baseline/\texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}/}.
+\item {\bfseries{Invocation:}} {\ttfamily nvim -\/-\/headless -\/l test/\+run.\+lua \texorpdfstring{$<$}{<}saw-\/binary\texorpdfstring{$>$}{>}}. {\ttfamily nvim -\/-\/headless -\/l test/\+run.\+lua \texorpdfstring{$<$}{<}saw-\/binary\texorpdfstring{$>$}{>} mcp} runs each saw step through {\ttfamily saw -\/-\/mcp}, and expects the same bytes. A step whose arguments or stdin are not UTF-\/8 runs on the CLI. Neovim 0.\+10 or later. {\ttfamily -\/l} skips the user configuration and disables plugins.
+\item {\bfseries{Output:}} one line per case: {\ttfamily PASS \texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}} or {\ttfamily FAIL \texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}: \texorpdfstring{$<$}{<}first difference\texorpdfstring{$>$}{>}}.
+\item {\bfseries{Exit code:}} {\ttfamily 0} when every case passes, {\ttfamily 1} when one case fails. The runner calls {\ttfamily os.\+exit}.
+\item {\bfseries{Process calls:}} {\ttfamily vim.\+system} with {\ttfamily text = false}, {\ttfamily stdin} set to a string, and a {\ttfamily cwd}. The runner always passes a stdin string, empty when the {\ttfamily stdin} cell is empty. Thus saw never sees a terminal on stdin in a test run. The terminal branches of §4.4 have no runner case.
+\item {\bfseries{Byte comparison:}} Lua string {\ttfamily ==}. Lua strings are 8-\/bit clean.
+\item {\bfseries{Undo isolation:}} before the first case, the runner renames {\ttfamily \texorpdfstring{$<$}{<}app-\/data\texorpdfstring{$>$}{>}/\+saw/\+undo} to {\ttfamily \texorpdfstring{$<$}{<}app-\/data\texorpdfstring{$>$}{>}/\+saw/\+undo-\/runner-\/\texorpdfstring{$<$}{<}pid\texorpdfstring{$>$}{>}} when it exists, and {\ttfamily pending} and {\ttfamily blobs} in the same way. After the last case, also after a Lua error, the runner deletes the {\ttfamily undo}, {\ttfamily pending} and {\ttfamily blobs} folders that the run made and renames the saved folders back. {\ttfamily \texorpdfstring{$<$}{<}app-\/data\texorpdfstring{$>$}{>}} is {\ttfamily \$HOME/\+\+Library/\+\+Application Support} on mac\+OS and {\ttfamily APPDATA\%} on Windows.
+\end{DoxyItemize}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md245}{}\doxysubsection{\texorpdfstring{{\ttfamily 10.\+2 Case Manifest}}{{\ttfamily 10.\+2 Case Manifest}}}\label{md__s_p_e_c_autotoc_md245}
+{\ttfamily }
+
+{\ttfamily {\ttfamily test/\+cases.\+md} holds one grid table under {\ttfamily \#\# cases}. Each row is one line of text between two border lines. The runner reads each cell by the column offsets of the {\ttfamily +-\/-\/-\/+} border line.}
+
+{\ttfamily 
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Column  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Meaning  \\
+{\ttfamily name}  &Case name. Rows with the same name are steps of one case. They run in row order, in one temporary folder.  \\
+{\ttfamily fixture}  &Folder under {\ttfamily test/\+fixture/}. The runner copies it to a new temporary folder before the first step of a case.  \\
+{\ttfamily command}  &The saw arguments. Whitespace separates arguments. A span in double quotes stays one argument, and the runner removes the quote marks. {\ttfamily \{n\}} is the process index, {\ttfamily \{tx\}} the newest transaction id, {\ttfamily \{newline\}} a line feed, {\ttfamily \{xff\}} the byte {\ttfamily 0xff}.  \\
+{\ttfamily stdin}  &File under {\ttfamily test/\+stdin/} whose bytes go to stdin, or empty.  \\
+{\ttfamily exit}  &The expected exit code.  \\
+{\ttfamily reference}  &Empty, or a reference command (program and arguments, same split rule).  \\
+{\ttfamily compare}  &Empty, {\ttfamily stdout}, {\ttfamily lines} (sorted lines of stdout), or {\ttfamily file:\texorpdfstring{$<$}{<}relative path\texorpdfstring{$>$}{>}}.  \\
+{\ttfamily setup}  &Actions before the step, in both folders: {\ttfamily mode:\texorpdfstring{$<$}{<}octal\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}, {\ttfamily link:\texorpdfstring{$<$}{<}source\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}, {\ttfamily mkdir:\texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}, {\ttfamily xattr:\texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}value\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}, {\ttfamily acl:\texorpdfstring{$<$}{<}entry\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}, {\ttfamily copy:\texorpdfstring{$<$}{<}source\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}.  \\
+{\ttfamily check}  &Checks after the step: {\ttfamily mode:\texorpdfstring{$<$}{<}octal\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}, {\ttfamily links:\texorpdfstring{$<$}{<}n\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}, {\ttfamily xattr:\texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}value\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}, {\ttfamily bytes:\texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}:\texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}, {\ttfamily transactions:\texorpdfstring{$<$}{<}n\texorpdfstring{$>$}{>}}.  \\
+{\ttfamily parallel}  &Process count, {\ttfamily 1} when empty. The runner compares the exit codes and the checks, not stdout.  \\
+{\ttfamily platform}  &Empty, {\ttfamily posix}, or {\ttfamily mac}. Another platform skips the case and prints {\ttfamily SKIP \texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}}.  \\
+\end{DoxyTable}
+}
+
+{\ttfamily {\bfseries{Baseline mode ({\ttfamily reference} empty).}}}
+
+{\ttfamily 
+\begin{DoxyEnumerate}
+\item The runner compares the stdout of step {\ttfamily \texorpdfstring{$<$}{<}k\texorpdfstring{$>$}{>}} (1-\/based) with {\ttfamily test/\+baseline/\texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}/\texorpdfstring{$<$}{<}k\texorpdfstring{$>$}{>}/\+stdout}, and its stderr with {\ttfamily test/\+baseline/\texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}/\texorpdfstring{$<$}{<}k\texorpdfstring{$>$}{>}/\+stderr}.
+\item The runner compares the exit code with the {\ttfamily exit} cell. A step that a signal ends fails.
+\item After the last step, the runner compares the temporary folder with {\ttfamily test/\+baseline/\texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}/\+files/}, file by file, byte by byte. When {\ttfamily files/} does not exist, the expected folder is the fixture without change.
+\item Before the comparison, the runner replaces each transaction id ({\ttfamily \texorpdfstring{$<$}{<}8 digits\texorpdfstring{$>$}{>}T\texorpdfstring{$<$}{<}6 digits\texorpdfstring{$>$}{>}-\/\texorpdfstring{$<$}{<}6 hex digits\texorpdfstring{$>$}{>}}) with {\ttfamily \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}} and the temporary folder path with {\ttfamily \texorpdfstring{$<$}{<}root\texorpdfstring{$>$}{>}}.
+\end{DoxyEnumerate}}
+
+{\ttfamily {\bfseries{Reference mode ({\ttfamily reference} set).}}}
+
+{\ttfamily 
+\begin{DoxyEnumerate}
+\item The runner copies the fixture again to a second temporary folder and runs the reference command there.
+\item The reference process gets {\ttfamily clear\+\_\+env = true} and an {\ttfamily env} with only {\ttfamily LC\+\_\+\+ALL=C}, {\ttfamily PATH}, and {\ttfamily HOME} from the runner.
+\item {\ttfamily compare = stdout}: saw stdout must equal reference stdout.
+\item {\ttfamily compare = file:\texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}}: the bytes of {\ttfamily \texorpdfstring{$<$}{<}path\texorpdfstring{$>$}{>}} in the saw folder after the run must equal reference stdout.
+\item The saw exit code must equal the {\ttfamily exit} cell. The reference exit code must equal the {\ttfamily exit} cell when {\ttfamily compare} is {\ttfamily stdout} or {\ttfamily lines}.
+\item Reference commands use only syntax that BSD and GNU tools share. They never use {\ttfamily sed -\/i}, BRE {\ttfamily \textbackslash{}+} or {\ttfamily \textbackslash{}?}, or {\ttfamily grep -\/P}.
+\end{DoxyEnumerate}}
+
+{\ttfamily }\hypertarget{md__s_p_e_c_autotoc_md246}{}\doxysubsection{\texorpdfstring{{\ttfamily 10.\+3 Benchmark}}{{\ttfamily 10.\+3 Benchmark}}}\label{md__s_p_e_c_autotoc_md246}
+{\ttfamily }
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item {\bfseries{Tool:}} {\ttfamily scout}. One manifest per pair in {\ttfamily benchmark/}, with {\ttfamily \#\# run} keys {\ttfamily epochs} (11), {\ttfamily command}, {\ttfamily samples}, {\ttfamily output}, and {\ttfamily baseline}.
+\item {\bfseries{Command script:}} a script per manifest. The script runs the workload once, then writes an empty samples file: {\ttfamily : \texorpdfstring{$>$}{>} "{}\$(dirname "{}\$1"{})/\texorpdfstring{$<$}{<}name\texorpdfstring{$>$}{>}-\/samples.\+md"{}} (pattern of {\ttfamily scout/\+benchmark/\+mcp.\+sh:8}).
+\item {\bfseries{Corpus:}} a copy of {\ttfamily \texorpdfstring{$\sim$}{\string~}/\+\+Documents/\+\+Poems/\+\+JUCE/\+modules}, and files of 1 KB, 10 KB, 50 KB, 100 KB, 1 MB, 10 MB and 100 MB cut from it. A mutating workload copies the corpus to a new temporary folder at the start of each epoch.
+\item {\bfseries{Gate:}} correctness first. The output of each plain row equals the output of its reference, with 0 differences, before its time counts. Decorated and highlight rows compare by feature (see Highlight). Then, in the same run:
+\begin{DoxyItemize}
+\item the CLI is faster than each reference in every row, at every size ({\ttfamily "{}FASTER on ALL CASES. NON-\/\+NEGOTIABLE, NO EXCEPTIONS."{}}),
+\item {\ttfamily saw -\/-\/mcp} (§5.8) is faster than each reference in every row, at every size.
+\end{DoxyItemize}
+\item {\bfseries{Baseline:}} each saw manifest names the report of its reference tool as {\ttfamily baseline}. The saw report then holds {\ttfamily change} and {\ttfamily probability} columns.
+\item {\bfseries{Pairs:}}
+\end{DoxyItemize}}
+
+{\ttfamily 
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Workload  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}saw  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Reference  \\
+Literal search, tree  &{\ttfamily saw find \texorpdfstring{$<$}{<}literal\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>}}  &{\ttfamily grep -\/rn \texorpdfstring{$<$}{<}literal\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>}}, {\ttfamily rg -\/n \texorpdfstring{$<$}{<}literal\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>}}  \\
+Regex search, tree  &{\ttfamily saw find -\/r \texorpdfstring{$<$}{<}regex\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>}}  &{\ttfamily grep -\/rnE \texorpdfstring{$<$}{<}regex\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>}}, {\ttfamily rg -\/n \texorpdfstring{$<$}{<}regex\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>}}  \\
+Regex without a literal, tree  &{\ttfamily saw find -\/r \textquotesingle{}\+[0-\/9]\{3,\}\textquotesingle{} \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>}}  &{\ttfamily rg -\/n \textquotesingle{}\+[0-\/9]\{3,\}\textquotesingle{} \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>}}  \\
+Alternation, tree  &{\ttfamily saw find -\/r \textquotesingle{}TODO\textbackslash{}\texorpdfstring{$\vert$}{|}\+FIXME\textquotesingle{} \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>}}  &{\ttfamily rg -\/n \textquotesingle{}TODO\textbackslash{}\texorpdfstring{$\vert$}{|}\+FIXME\textquotesingle{} \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>}}  \\
+Ignore case, tree  &{\ttfamily saw find -\/i juce\+\_\+api \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>}}  &{\ttfamily rg -\/n -\/i juce\+\_\+api \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>}}  \\
+Context, tree  &{\ttfamily saw find -\/C 2 JUCE\+\_\+\+API \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>}}  &{\ttfamily rg -\/n -\/C 2 JUCE\+\_\+\+API \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>}}  \\
+Literal search, one small file  &{\ttfamily saw find \texorpdfstring{$<$}{<}literal\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  &{\ttfamily grep -\/n}, {\ttfamily rg -\/n}  \\
+Line range, one small file  &{\ttfamily saw lines \texorpdfstring{$<$}{<}A:B\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  &{\ttfamily sed -\/n \textquotesingle{}\texorpdfstring{$<$}{<}A\texorpdfstring{$>$}{>},\texorpdfstring{$<$}{<}B\texorpdfstring{$>$}{>}p\textquotesingle{} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  \\
+Literal replace, one small file  &{\ttfamily saw replace \texorpdfstring{$<$}{<}a\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}b\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>} -\/-\/apply -\/-\/expect \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}}  &{\ttfamily sed} to a temporary file, then {\ttfamily mv}  \\
+Batch, one small file  &one {\ttfamily saw patch} of N edits  &N {\ttfamily sed} calls  \\
+Literal replace, tree  &{\ttfamily saw replace \texorpdfstring{$<$}{<}a\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}b\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}corpus\texorpdfstring{$>$}{>} -\/-\/apply -\/-\/expect \texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}}  &{\ttfamily sed} on the files that {\ttfamily rg -\/l} lists  \\
+Line range, one file  &{\ttfamily saw lines \texorpdfstring{$<$}{<}A:B\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  &{\ttfamily sed -\/n \textquotesingle{}\texorpdfstring{$<$}{<}A\texorpdfstring{$>$}{>},\texorpdfstring{$<$}{<}B\texorpdfstring{$>$}{>}p\textquotesingle{} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}, {\ttfamily awk \textquotesingle{}NR\texorpdfstring{$>$}{>}=\texorpdfstring{$<$}{<}A\texorpdfstring{$>$}{>} \&\& NR\texorpdfstring{$<$}{<}=\texorpdfstring{$<$}{<}B\texorpdfstring{$>$}{>}\textquotesingle{} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  \\
+Fields, one file  &{\ttfamily saw fields 1,-\/1 -\/d \texorpdfstring{$<$}{<}d\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  &{\ttfamily awk -\/F\texorpdfstring{$<$}{<}d\texorpdfstring{$>$}{>} \textquotesingle{}\{print \$1 "{}\texorpdfstring{$<$}{<}d\texorpdfstring{$>$}{>}"{} \$NF\}\textquotesingle{} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  \\
+Concatenation, one file  &{\ttfamily saw page \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  &{\ttfamily cat \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}, {\ttfamily bat -\/pp \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  \\
+Line range, one file  &{\ttfamily saw page -\/r \texorpdfstring{$<$}{<}A:B\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  &{\ttfamily bat -\/pp -\/r \texorpdfstring{$<$}{<}A:B\texorpdfstring{$>$}{>} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  \\
+Numbered, decorated  &{\ttfamily saw page -\/-\/decorations=always -\/n \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  &{\ttfamily bat -\/-\/decorations=always -\/n \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  \\
+Highlight  &{\ttfamily saw page -\/-\/color=always \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  &{\ttfamily bat -\/pp -\/-\/color=always \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  \\
+Decorated  &{\ttfamily saw page -\/-\/decorations=always -\/-\/style=full \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  &{\ttfamily bat -\/-\/decorations=always -\/-\/style=full \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  \\
+JSON, identity  &{\ttfamily saw json . \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  &{\ttfamily jq . \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  \\
+JSON, compact  &{\ttfamily saw json -\/c . \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  &{\ttfamily jq -\/c . \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  \\
+JSON, field access  &{\ttfamily saw json \textquotesingle{}.\+[].id\textquotesingle{} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  &{\ttfamily jq \textquotesingle{}.\+[].id\textquotesingle{} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  \\
+JSON, filter and sum  &{\ttfamily saw json \textquotesingle{}map(select(.active)\textbackslash{}\texorpdfstring{$\vert$}{|}.value)\textbackslash{}\texorpdfstring{$\vert$}{|}add\textquotesingle{} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  &{\ttfamily jq \textquotesingle{}map(select(.active)\textbackslash{}\texorpdfstring{$\vert$}{|}.value)\textbackslash{}\texorpdfstring{$\vert$}{|}add\textquotesingle{} \texorpdfstring{$<$}{<}file\texorpdfstring{$>$}{>}}  \\
+\end{DoxyTable}
+}
+
+{\ttfamily 
+\begin{DoxyItemize}
+\item {\bfseries{Highlight:}} Decorated and highlight rows compare by feature after removal of the SGR sequences. Plain rows compare bytes. Each colour class has its own baseline. 
+\end{DoxyItemize}}

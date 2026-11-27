@@ -2,6 +2,7 @@
 #include "generated/Generated.h"
 
 static constexpr int contextLineCount { 3 };
+static constexpr int firstIndex { 0 };
 
 static std::string_view getLineWithoutCarriageReturn (std::string_view line)
 {
@@ -265,19 +266,20 @@ std::tuple<int, int, std::optional<std::string_view>> LineDiff::getDeletion (juc
 
 std::tuple<int, int, std::optional<std::string_view>> LineDiff::getReplacement (juce::Range<int> lineRange, std::string_view text)
 {
-    return { lineRange.getStart() - 1, lineRange.getLength(), getTextWithoutSingleTrailingNewline (text) };
+    return { lineRange.getStart() - 1, lineRange.getLength(), text };
 }
 
 std::tuple<int, int, std::optional<std::string_view>> LineDiff::getInsertion (int start, std::string_view text)
 {
-    return { start, 0, getTextWithoutSingleTrailingNewline (text) };
+    return { start, 0, text };
 }
 
 std::optional<std::string_view> LineDiff::appendChange (const TextDocument& original,
                                                         int start,
                                                         int length,
                                                         std::optional<std::string_view> insertedText,
-                                                        std::optional<std::string_view> lastEnding)
+                                                        std::optional<std::string_view> lastEnding,
+                                                        bool isVerbatim)
 {
     assert (changes.isEmpty() or changes.last().start <= start);
     const int nextOriginalLine { changes.isEmpty() ? 0 : changes.last().start + changes.last().length };
@@ -291,33 +293,64 @@ std::optional<std::string_view> LineDiff::appendChange (const TextDocument& orig
     if (insertedText.has_value())
     {
         const std::string_view text { *insertedText };
-        size_t cursor { 0 };
-        int pieceIndex { 0 };
-
-        while (true)
-        {
-            const size_t newlineIndex { jam::simd::findByte (text.data(), text.size(), cursor, static_cast<char> (Chars::newline)) };
-            auto lineView { text.substr (cursor, newlineIndex - cursor) };
-
-            if (newlineIndex < text.size())
-                lineView = getLineWithoutCarriageReturn (lineView);
-
-            const auto ending { pieceIndex < length ? getOriginalEnding (original, start + pieceIndex + 1) : original.getLineEnding() };
-            appendWithEnding (original, lineView, ending, lastEnding);
-            lastEnding = ending;
-            insertedLines.add (std::pair<size_t, size_t> { plannedText.size() - ending.size() - lineView.size(), lineView.size() });
-            ++pieceIndex;
-
-            if (newlineIndex == text.size())
-                break;
-
-            cursor = newlineIndex + 1;
-        }
-
+        lastEnding = isVerbatim ? appendVerbatimText (original, text, lastEnding)
+                                : appendInsertedText (original, start, length, text, lastEnding);
         change.insertedRange.setEnd (insertedLines.size());
     }
 
     changes.add (std::move (change));
+    return lastEnding;
+}
+
+std::optional<std::string_view> LineDiff::appendInsertedText (const TextDocument& original,
+                                                              int start,
+                                                              int length,
+                                                              std::string_view text,
+                                                              std::optional<std::string_view> lastEnding)
+{
+    size_t cursor { 0 };
+    int pieceIndex { 0 };
+
+    while (true)
+    {
+        const size_t newlineIndex { jam::simd::findByte (text.data(), text.size(), cursor, static_cast<char> (Chars::newline)) };
+        auto lineView { text.substr (cursor, newlineIndex - cursor) };
+
+        if (newlineIndex < text.size())
+            lineView = getLineWithoutCarriageReturn (lineView);
+
+        const auto ending { pieceIndex < length ? getOriginalEnding (original, start + pieceIndex + 1) : original.getLineEnding() };
+        appendWithEnding (original, lineView, ending, lastEnding);
+        lastEnding = ending;
+        insertedLines.add (std::pair<size_t, size_t> { plannedText.size() - ending.size() - lineView.size(), lineView.size() });
+        ++pieceIndex;
+
+        if (newlineIndex == text.size())
+            break;
+
+        cursor = newlineIndex + 1;
+    }
+
+    return lastEnding;
+}
+
+std::optional<std::string_view> LineDiff::appendVerbatimText (const TextDocument& original,
+                                                              std::string_view text,
+                                                              std::optional<std::string_view> lastEnding)
+{
+    size_t cursor { 0 };
+
+    while (cursor < text.size())
+    {
+        const size_t newlinePos { jam::simd::findByte (text.data(), text.size(), cursor, static_cast<char> (Chars::newline)) };
+        const std::string_view lineView { TextDocument::getLine (text, cursor, newlinePos) };
+        const std::string_view ending { TextDocument::getLineEnding (text, lineView) };
+        appendWithEnding (original, lineView, ending, lastEnding);
+        lastEnding = ending;
+        insertedLines.add (std::pair<size_t, size_t> { plannedText.size() - ending.size() - lineView.size(), lineView.size() });
+        cursor = newlinePos < text.size() ? newlinePos + 1 : text.size();
+    }
+
     return lastEnding;
 }
 
@@ -349,7 +382,7 @@ void LineDiff::appendWithEnding (const TextDocument& original,
     jam::Format::appendBytes (plannedText, ending);
 }
 
-void LineDiff::setPlannedEnd (const TextDocument& original, std::optional<std::string_view> lastEnding)
+void LineDiff::setPlannedEnd (const TextDocument& original, std::optional<std::string_view> lastEnding, bool isVerbatim)
 {
     if (not changes.isEmpty())
     {
@@ -361,7 +394,7 @@ void LineDiff::setPlannedEnd (const TextDocument& original, std::optional<std::s
                                       and changes.last().start + changes.last().length >= numLines };
         const bool isNewlineAppended { numLines == 0 or original.hasTrailingNewline() or deletedFinalLine };
 
-        if (lastEnding.has_value())
+        if (lastEnding.has_value() and not isVerbatim)
         {
             if (isNewlineAppended and lastEnding->empty())
                 jam::Format::appendBytes (plannedText, original.getLineEnding());
@@ -402,6 +435,51 @@ LineDiff::LineDiff (const TextDocument& original, const TextDocument& target)
 std::string_view LineDiff::getPlannedBytes() const noexcept
 {
     return plannedText;
+}
+
+void LineDiff::setRemovedMark (jam::Array<int>& lineChanges, int plannedBefore)
+{
+    if (plannedBefore == firstIndex)
+    {
+        if (not lineChanges.isEmpty())
+            lineChanges.set (firstIndex, map::LineChange::removedAbove);
+    }
+    else
+    {
+        lineChanges.set (plannedBefore - 1, map::LineChange::removedBelow);
+    }
+}
+
+void LineDiff::setInsertedMarks (jam::Array<int>& lineChanges, int plannedBefore, int length, int insertedLength)
+{
+    const int mark { length == 0 ? map::LineChange::added : map::LineChange::modified };
+
+    for (int offset { 0 }; offset < insertedLength; ++offset)
+        lineChanges.set (plannedBefore + offset, mark);
+}
+
+void LineDiff::setChangeMarks (jam::Array<int>& lineChanges, int plannedBefore, int length, juce::Range<int> insertedRange)
+{
+    if (insertedRange.isEmpty())
+        setRemovedMark (lineChanges, plannedBefore);
+    else
+        setInsertedMarks (lineChanges, plannedBefore, length, insertedRange.getLength());
+}
+
+jam::Array<int> LineDiff::getLineChanges (int numLines) const
+{
+    jam::Array<int> lineChanges;
+    lineChanges.resize (numLines);
+    int plannedShift { 0 };
+
+    applyToChanges ([&lineChanges, &plannedShift] (int start, int length, juce::Range<int> insertedRange)
+    {
+        const int plannedBefore { start + plannedShift };
+        setChangeMarks (lineChanges, plannedBefore, length, insertedRange);
+        plannedShift += insertedRange.getLength() - length;
+    });
+
+    return lineChanges;
 }
 
 void LineDiff::appendHunkRange (std::string& output, int zeroBasedStart, int lineCount)
@@ -464,17 +542,21 @@ void LineDiff::appendHunkBody (std::string& output,
     appendContextLines (output, original, originalLine, oldEnd);
 }
 
-void LineDiff::appendUnifiedDiff (std::string& output, const TextDocument& original, std::string_view plannedBytes) const
+void LineDiff::appendUnifiedDiff (std::string& output, const TextDocument& original, std::string_view plannedBytes, bool isOriginalExisting, bool isPlannedExisting) const
 {
     if (not changes.isEmpty())
     {
         const int incompletePlannedLine { getIncompleteLineNumber (plannedBytes) };
         jam::Format::appendBytes (output, text::Formats::diffOldHeader);
-        jam::Format::appendBytes (output, original.getDisplayPath());
+        jam::Format::appendBytes (output, isOriginalExisting ? original.getDisplayPath() : Id::nullDevice);
         jam::Format::appendUtf8 (output, Chars::newline);
         jam::Format::appendBytes (output, text::Formats::diffNewHeader);
-        jam::Format::appendBytes (output, original.getDisplayPath());
-        jam::Format::appendBytes (output, text::Formats::diffPlanned);
+        jam::Format::appendBytes (output, isPlannedExisting ? original.getDisplayPath() : Id::nullDevice);
+
+        if (isPlannedExisting)
+            jam::Format::appendBytes (output, text::Formats::diffPlanned);
+        else
+            jam::Format::appendUtf8 (output, Chars::newline);
         int cumulativeDelta { 0 };
         int hunkStart { 0 };
 

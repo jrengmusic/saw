@@ -1,0 +1,433 @@
+\chapter{RFC — SAW must live to its premise }
+\hypertarget{md__r_f_c-live-to-premise}{}\label{md__r_f_c-live-to-premise}\index{RFC — SAW must live to its premise@{RFC — SAW must live to its premise}}
+\label{md__r_f_c-live-to-premise_autotoc_md129}%
+\Hypertarget{md__r_f_c-live-to-premise_autotoc_md129}%
+
+
+Date: 2026-\/11-\/24 Status: Implemented. {\ttfamily PLAN-\/native-\/mcp.\+md} continues it. Author: MACHINIST Targets: {\ttfamily saw} v0.\+0.\+1 ({\ttfamily 7a7039f}), and {\ttfamily jam\+\_\+core} where this document names it\hypertarget{md__r_f_c-live-to-premise_autotoc_md130}{}\doxysection{\texorpdfstring{Problem Statement}{Problem Statement}}\label{md__r_f_c-live-to-premise_autotoc_md130}
+ARCHITECT\textquotesingle{}s words that govern this RFC:
+
+
+\begin{DoxyItemize}
+\item {\itshape "{}can we enforce CAROL with hooks, or whatever claude code tools, so using sed, awk, grep, rg, writing custom py script for batch editing, any editing without saw are forbidden? must exclusively using saw, since it was the fastest, the most reliable, and the safest way to find, edit file?"{}}
+\item {\itshape "{}either way, verify first."{}}
+\item {\itshape "{}we should fix saw first, so it live to its premise. then we could enforce the protocol."{}}
+\item {\itshape "{}what is the defect?"{}}, {\itshape "{}what is currently lacking?"{}}, {\itshape "{}what it cant do?"{}}
+\item {\itshape "{}write comprehensive RFC with solution to saw repo"{}}
+\end{DoxyItemize}
+
+The premise has three claims. Each claim fails today in part.
+
+
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Claim  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Verdict  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Evidence  \\
+Fastest  &Fails on one small file, on a regex tree search with no required literal, and on tree replace against python. Holds on literal tree search against {\ttfamily rg} and {\ttfamily grep}, and against {\ttfamily sed} run for each matching file.  &Section S1 to S5  \\
+Most reliable  &Fails. One unreadable file ends a tree search with no output. A search with no path reports no match.  &R1 to R9  \\
+Safest  &Fails. A write breaks hard links, widens file modes, drops extended attributes, and changes line endings outside the edit. Parallel applies lose undo history.  &D1 to D8  \\
+\end{DoxyTable}
+
+
+What holds (observed):
+
+
+\begin{DoxyItemize}
+\item The functional suite passes 91/\+91 ({\ttfamily nvim -\/-\/headless -\/l test/\+run.\+lua \texorpdfstring{$\sim$}{\string~}/.local/\+bin/\+saw}, exit 0).
+\item For 10 of 11 patterns on a 3,079-\/file corpus, {\ttfamily saw find} gives the same lines as {\ttfamily rg}, after CR removal, path prefix removal and a sort. The other pattern is {\ttfamily (?i)juce\+\_\+api} (R7).
+\item A wrong or missing {\ttfamily -\/-\/expect} writes zero bytes. A failed second file leaves the first file at its original bytes.
+\item {\ttfamily undo} refuses a file that changed after the apply.
+\item Eight parallel applies to one file: one applied, seven refused at {\ttfamily pre\+Hash}, no corruption.
+\end{DoxyItemize}\hypertarget{md__r_f_c-live-to-premise_autotoc_md131}{}\doxysection{\texorpdfstring{Research Summary}{Research Summary}}\label{md__r_f_c-live-to-premise_autotoc_md131}
+\hypertarget{md__r_f_c-live-to-premise_autotoc_md132}{}\doxysubsection{\texorpdfstring{Method}{Method}}\label{md__r_f_c-live-to-premise_autotoc_md132}
+
+\begin{DoxyItemize}
+\item Machine: Apple M4, 10 cores, mac\+OS 27.\+2.\+1, zsh. Release binary {\ttfamily \texorpdfstring{$\sim$}{\string~}/.local/\+bin/\+saw} (universal, signed).
+\item Timing: {\ttfamily scout}, 11 epochs, medians, run by Pathfinder one at a time. "{}\+Per call"{} is the epoch divided by 100 calls in a bash loop.
+\item Corpus: a copy of {\ttfamily JUCE/\+modules} without binary assets: 3,079 files, 50 MB. Small file: a copy of {\ttfamily CAROL.\+md}, 23,063 bytes, 452 lines.
+\item {\ttfamily ugrep} is the {\ttfamily grep} that Claude Code runs in its shell (shell function, seen with {\ttfamily type grep}). Its tree output goes through a pipe, because {\ttfamily /\+dev/\+null} gave a false 8.\+3 ms.
+\item Behavior: a battery of commands in a scratch folder, compared with {\ttfamily grep}, {\ttfamily rg}, or {\ttfamily sed} where the table says so.
+\item scout\textquotesingle{}s {\ttfamily probability} column is not used. It gave 0.\+071 for tree replace, where the two sample ranges do not overlap (saw max 1.\+263 s, reference min 1.\+774 s). The cause is not known. {\ttfamily saw/\+carol/\+\+SPRINT-\/\+LOG.\+md:146} cites a probability from this column.
+\end{DoxyItemize}\hypertarget{md__r_f_c-live-to-premise_autotoc_md133}{}\doxysubsection{\texorpdfstring{What the sprint benchmark measured}{What the sprint benchmark measured}}\label{md__r_f_c-live-to-premise_autotoc_md133}
+
+\begin{DoxyItemize}
+\item The sprint log claims parity with {\ttfamily rg}, not a win: {\itshape "{}reaches statistical parity with \`{}rg\`{} (+2.\+4\%, \`{}p = 0.\+082\`{})"{}} ({\ttfamily carol/\+\+SPRINT-\/\+LOG.\+md:146}).
+\item {\ttfamily benchmark/\+ref-\/sed-\/replace.\+sh} runs one {\ttfamily sed} for each file of the tree. That run takes 9.\+33 s. {\ttfamily sed} on the files that {\ttfamily rg -\/l} lists takes 1.\+79 s.
+\item {\ttfamily benchmark/\+saw-\/find-\/regex.\+sh} uses {\ttfamily class +JUCE\+\_\+\+API}. This pattern has a required literal, so it takes the fast path ({\ttfamily Pattern.\+cpp:140-\/168}). No pair covers alternation, a pattern with no literal, {\ttfamily -\/i}, {\ttfamily -\/C}, or a small file.
+\end{DoxyItemize}\hypertarget{md__r_f_c-live-to-premise_autotoc_md134}{}\doxysubsection{\texorpdfstring{S — Speed}{S — Speed}}\label{md__r_f_c-live-to-premise_autotoc_md134}
+\hypertarget{md__r_f_c-live-to-premise_autotoc_md135}{}\doxysubsubsection{\texorpdfstring{S1. Small-\/file calls are slow (per call)}{S1. Small-\/file calls are slow (per call)}}\label{md__r_f_c-live-to-premise_autotoc_md135}
+
+\begin{DoxyTable}{10}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Task  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}saw  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}sed  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}awk  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}grep  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}rg  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}ugrep  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}perl  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}python  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}carol apply  \\
+Search  &5.\+66 ms  &&&1.\+47  &2.\+75  &5.\+49  &&&\\
+Read 41 lines  &5.\+59 ms  &1.\+45  &1.\+80  &&&&&&\\
+Replace and write  &14.\+4 ms  &4.\+73  &&&&&6.\+16  &14.\+0  &31.\+3  \\
+\end{DoxyTable}
+
+
+The replace row includes one {\ttfamily cp} (1.\+63 ms). {\ttfamily sed} and {\ttfamily perl} write a temporary file, then run {\ttfamily mv}.\hypertarget{md__r_f_c-live-to-premise_autotoc_md136}{}\doxysubsubsection{\texorpdfstring{S2. Where the startup goes (per call, the same loop)}{S2. Where the startup goes (per call, the same loop)}}\label{md__r_f_c-live-to-premise_autotoc_md136}
+
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Probe  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}ms  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}What it adds  \\
+{\ttfamily /\+usr/\+bin/\+true}  &1.\+28  &\\
+Empty C program  &1.\+58  &Process start  \\
+Empty program + libc++  &1.\+57  &\\
+Empty program + Foundation, IOKit, Security  &2.\+30  &\\
+Empty program + the frameworks that {\ttfamily juce\+\_\+core} declares ({\ttfamily Cocoa Foundation IOKit Security})  &2.\+46  &\\
+Empty program + the 17 frameworks of saw\textquotesingle{}s link line  &2.\+79  &+1.\+20 over empty  \\
+saw relinked, first initializer calls {\ttfamily \+\_\+exit}  &4.\+66  &+1.\+87: load of the 22 MB image  \\
+saw relinked, control, {\ttfamily -\/-\/version}  &5.\+57  &+0.\+91: 286 static initializers, {\ttfamily main}, exit  \\
+saw relinked with {\ttfamily -\/Wl,-\/dead\+\_\+strip\+\_\+dylibs}  &5.\+22  &−0.34  \\
+saw installed, {\ttfamily -\/-\/version}  &5.\+50  &\\
+\end{DoxyTable}
+
+
+
+\begin{DoxyItemize}
+\item The binary links 24 libraries, Web\+Kit, Core\+MIDI, Metal, Metal\+Kit and App\+Kit among them ({\ttfamily otool -\/L}). {\ttfamily scout}, {\ttfamily cast} and {\ttfamily ling} each link 24 too.
+\item The binary runs 286 of its own initializers before {\ttfamily main} ({\ttfamily DYLD\+\_\+\+PRINT\+\_\+\+INITIALIZERS} count; {\ttfamily \+\_\+\+\_\+mod\+\_\+init\+\_\+func} is 2288 bytes).
+\item scout sampling of the replace loop finds {\ttfamily jam\+\_\+terminal.\+mm}, {\ttfamily jam\+\_\+core.\+mm}, {\ttfamily Colour\+Id} and string pool initializers. {\ttfamily find} uses none of the terminal, style, or colour code.
+\item The image load is not split further. The page map, the code signature and the fixups are candidates. None of them was measured alone.
+\item The cause: one help page. {\ttfamily Main.\+cpp:35-\/60} renders {\ttfamily -\/-\/help} through {\ttfamily jam::\+\+Terminal\+Page}. The {\ttfamily \#\# user module} table lists 14 JAM modules ({\ttfamily project-\/info.\+md:121-\/135}). The verb sources name only {\ttfamily jam\+\_\+core} types: {\ttfamily Strings}, {\ttfamily Array}, {\ttfamily Document}, {\ttfamily Json\+Document}, {\ttfamily Json\+Validator}, {\ttfamily Json\+Writer}, {\ttfamily Format}, {\ttfamily simd}, {\ttfamily Reg\+Exp}, {\ttfamily Hash\+Map}, {\ttfamily Hash\+Set}, {\ttfamily Hash}, {\ttfamily Function}, {\ttfamily File}. {\ttfamily Markdown\+Document}, {\ttfamily Terminal\+Page} and {\ttfamily Terminal\+Encoder} occur only in {\ttfamily Main.\+cpp}, on the help path. SPEC §2 already forbids GUI initialization on the six verbs ({\ttfamily SPEC.\+md:91}). The modules still load.
+\end{DoxyItemize}
+
+{\bfseries{Facts that bound the target.}}
+
+
+\begin{DoxyItemize}
+\item A {\ttfamily juce\+\_\+core} program cannot start in less than about 2.\+46 ms in this loop. {\ttfamily rg} takes 2.\+75 ms for a whole search. {\ttfamily sed} takes 1.\+45 ms and {\ttfamily grep} takes 1.\+47 ms.
+\item An empty C program takes 1.\+58 ms. That is more than {\ttfamily grep} takes for a whole search. A third-\/party binary cannot beat Apple\textquotesingle{}s {\ttfamily grep} and {\ttfamily sed} on one call to one small file in this loop.
+\item Thus "{}fastest"{} on one small file is out of reach. "{}\+Fastest for one batch in one process"{} is in reach.
+\end{DoxyItemize}\hypertarget{md__r_f_c-live-to-premise_autotoc_md137}{}\doxysubsubsection{\texorpdfstring{S3. Regex without a required literal is slow (tree, output to a pipe)}{S3. Regex without a required literal is slow (tree, output to a pipe)}}\label{md__r_f_c-live-to-premise_autotoc_md137}
+
+\begin{DoxyTable}{4}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Pattern  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}saw  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}rg  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Ratio  \\
+Literal {\ttfamily JUCE\+\_\+\+API} (no pipe)  &37.\+9 ms  &43.\+1  &0.\+88  \\
+{\ttfamily \+[0-\/9]\{3,\}}  &312.\+9 ms  &53.\+5  &5.\+8  \\
+{\ttfamily TODO\textbackslash{}\texorpdfstring{$\vert$}{|}\+FIXME}  &325.\+6 ms  &40.\+0  &8.\+1  \\
+{\ttfamily -\/i juce\+\_\+api}  &45.\+8 ms  &43.\+2  &1.\+06  \\
+{\ttfamily -\/C 2 JUCE\+\_\+\+API}  &45.\+8 ms  &43.\+1  &1.\+06  \\
+\end{DoxyTable}
+
+
+
+\begin{DoxyItemize}
+\item {\ttfamily get\+Required\+Literal} returns empty for any pattern with a {\ttfamily \texorpdfstring{$\vert$}{|}} ({\ttfamily Pattern.\+cpp:149}), and for any pattern with no literal run of 2 bytes ({\ttfamily Pattern.\+cpp:167}).
+\item {\ttfamily -\/i} disables the regex prefilter ({\ttfamily Pattern.\+cpp:276}).
+\item With no prefilter, saw leaves the fused path ({\ttfamily Find.\+cpp:565-\/575}) and runs {\ttfamily jam::\+\+Reg\+Exp} on each line. {\ttfamily Reg\+Exp::\+find\+Next} starts the backtracking matcher at each position, and each step goes through a continuation and a hash lookup ({\ttfamily jam\+\_\+\+Reg\+Exp.\+cpp:23-\/72}).
+\end{DoxyItemize}
+
+Literal tree search for reference: {\ttfamily ugrep} 31.\+7 ms (piped), saw 37.\+9, rg 43.\+1, {\ttfamily grep} 141.\+0.\hypertarget{md__r_f_c-live-to-premise_autotoc_md138}{}\doxysubsubsection{\texorpdfstring{S4. The matcher is exponential}{S4. The matcher is exponential}}\label{md__r_f_c-live-to-premise_autotoc_md138}
+
+\begin{DoxyItemize}
+\item {\ttfamily saw find -\/r \textquotesingle{}(a+)+\$\textquotesingle{}} on one line of 40 {\ttfamily a} and one {\ttfamily b} did not finish in 10 s. An alarm stopped it. {\ttfamily (a\texorpdfstring{$\vert$}{|}aa)+\$} gave the same result.
+\item {\ttfamily rg -\/c \textquotesingle{}(a+)+\$\textquotesingle{}} on the same file finished in 10 ms.
+\item {\ttfamily Reg\+Exp::\+find\+Next} has no step limit ({\ttfamily jam\+\_\+\+Reg\+Exp.\+cpp:23-\/42}). One bad pattern hangs an agent until its tool times out.
+\end{DoxyItemize}\hypertarget{md__r_f_c-live-to-premise_autotoc_md139}{}\doxysubsubsection{\texorpdfstring{S5. The apply phase costs 6.\+9 ms}{S5. The apply phase costs 6.\+9 ms}}\label{md__r_f_c-live-to-premise_autotoc_md139}
+
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Step  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}ms  \\
+Replace, dry run  &6.\+04  \\
+Replace, apply (the 1.\+63 ms {\ttfamily cp} subtracted from 14.\+58)  &12.\+95  \\
+\end{DoxyTable}
+
+
+
+\begin{DoxyItemize}
+\item {\ttfamily fsync} is not the cause. 300 write-\/and-\/rename cycles of a 23 KB file take 37.\+3 ms without {\ttfamily fsync} and 37.\+7 ms with it.
+\item SHA-\/256 is not the cause. Its frames have value 0 in the sample.
+\item The sampled apply frames are {\ttfamily Transaction::\+run} 5, {\ttfamily Undo\+Cache::\+add\+Transaction} 3, {\ttfamily get\+Sorted\+Directory\+Names} 3. The counts are low. They point at the undo folder listing.
+\item Each apply lists the undo folder twice: {\ttfamily get\+Next\+Hex\+Suffix} ({\ttfamily Undo\+Cache.\+cpp:26}) and {\ttfamily remove\+Oldest\+Transactions} ({\ttfamily Undo\+Cache.\+cpp:323}).
+\item The commit is serial over files, and each file is read and hashed two more times ({\ttfamily Transaction.\+cpp:99-\/109}, {\ttfamily :125-\/145}).
+\item Tree replace, 912 edits in 494 files, with a clone copy of the tree (476 ms alone): python 825 ms, saw 921 ms, {\ttfamily rg} + {\ttfamily sed} 1,790 ms. saw gives hashes, undo and atomic swaps in that time. Python gives none.
+\end{DoxyItemize}\hypertarget{md__r_f_c-live-to-premise_autotoc_md140}{}\doxysubsubsection{\texorpdfstring{S6. Undo preview memory is quadratic}{S6. Undo preview memory is quadratic}}\label{md__r_f_c-live-to-premise_autotoc_md140}
+
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Lines changed  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Peak memory  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Time  \\
+1,000  &37 MB  &0.\+01 s  \\
+2,000  &136 MB  &0.\+04 s  \\
+4,000  &532 MB  &0.\+12 s  \\
+\end{DoxyTable}
+
+
+{\ttfamily get\+Myers\+Trace} stores a full copy of {\ttfamily furthestX} for each edit distance ({\ttfamily Line\+Diff.\+cpp:77-\/83}).\hypertarget{md__r_f_c-live-to-premise_autotoc_md141}{}\doxysubsection{\texorpdfstring{D — Safety defects (data is changed or lost)}{D — Safety defects (data is changed or lost)}}\label{md__r_f_c-live-to-premise_autotoc_md141}
+
+\begin{DoxyTable}{4}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}ID  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Defect  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Observed  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Cause  \\
+D1  &A write breaks hard links  &{\ttfamily ln hard hard2}, then replace on {\ttfamily hard}: {\ttfamily hard} = {\ttfamily X}, {\ttfamily hard2} = {\ttfamily alpha}, link count 1  &{\ttfamily Writer.\+cpp:11,28} swaps with {\ttfamily juce::\+\+Temporary\+File}, which calls {\ttfamily rename} ({\ttfamily juce\+\_\+\+Shared\+Code\+\_\+posix.\+h}, {\ttfamily move\+Internal})  \\
+D2  &A write changes the file mode  &600→644, 640→644, 750→755, 444→644  &The temporary file gets the default mode. {\ttfamily Writer.\+cpp:26} restores only the execute bit. {\ttfamily SPEC.\+md:232} requires the original mode  \\
+D3  &A write drops extended attributes  &{\ttfamily com.\+test.\+k} set before, absent after  &Same swap. No metadata copy  \\
+D4  &A write changes line endings outside the edit  &{\ttfamily alpha CRLF, beta LF, alpha LF, gamma CRLF} → every line CRLF. The line {\ttfamily beta} was not edited  &{\ttfamily Line\+Diff::\+get\+Planned\+Text} writes one ending after every line ({\ttfamily Line\+Diff.\+cpp:402-\/418}). {\ttfamily Text\+Document.\+cpp:37-\/38} sets it from the first line  \\
+D5  &Parallel applies share one transaction id  &8 applies to 8 files: one id. 64 applies to 64 files: 5 ids  &{\ttfamily get\+Next\+Hex\+Suffix} lists, then adds 1 ({\ttfamily Undo\+Cache.\+cpp:24-\/46}). {\ttfamily get\+Or\+Create\+Directory} accepts an existing folder ({\ttfamily Undo\+Cache.\+cpp:261}). {\ttfamily juce::\+\+File::\+create\+Directory} returns {\ttfamily ok} for an existing folder  \\
+D6  &Undo history is lost under D5  &8 applies reported "{}applied"{}. The list shows one row with 1 file. The undo data of 7 edits does not exist  &Each process writes {\ttfamily 0.\+blob} and {\ttfamily meta.\+json} over the others  \\
+D7  &Rollback failure is silent, and the backup is deleted  &Read, not run. The failure needs a write error during the rollback  &{\ttfamily rollback\+Files} discards every result ({\ttfamily Transaction.\+cpp:70}). Then {\ttfamily tx\+Dir.\+delete\+Recursively} removes the only backup ({\ttfamily Transaction.\+cpp:139}), and the message says "{}rolled back"{}. {\ttfamily Undo.\+cpp:265-\/271} also discards the result  \\
+D8  &{\ttfamily undo} with no id crosses projects  &Apply in {\ttfamily pa}, then in {\ttfamily pb}, then {\ttfamily undo -\/-\/apply} in {\ttfamily pa}: it restored {\ttfamily pb/\+f}  &{\ttfamily get\+Selected\+Transaction\+Id} takes the newest id of one machine-\/wide cache ({\ttfamily Undo.\+cpp:101-\/115})  \\
+\end{DoxyTable}
+
+
+Live impact of D1: {\ttfamily \texorpdfstring{$\sim$}{\string~}/.carol/\+\+MANIFESTO.\+md} and {\ttfamily \texorpdfstring{$\sim$}{\string~}/.carol/\+\+CODING.\+md} each have 24 links ({\ttfamily stat -\/f l}). Commit {\ttfamily a808ac3} made project reference documents hard links. One saw edit of {\ttfamily CODING.\+md} detaches one copy and leaves the other 23 old. No message tells the agent.\hypertarget{md__r_f_c-live-to-premise_autotoc_md142}{}\doxysubsection{\texorpdfstring{R — Reliability defects (the result is wrong or missing)}{R — Reliability defects (the result is wrong or missing)}}\label{md__r_f_c-live-to-premise_autotoc_md142}
+
+\begin{DoxyTable}{4}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}ID  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Defect  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Observed  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Cause  \\
+R1  &No path and stdin not a TTY: saw searches empty stdin  &In a folder with matches: saw exit 1 with no output. {\ttfamily rg -\/n needle} and {\ttfamily grep -\/rn needle} find 3 lines. Agent shells have no TTY on stdin  &{\ttfamily Find.\+cpp:895}. The rule is SPEC §4.4, from ARCHITECT\textquotesingle{}s ruling {\itshape "{}\+Read stdin when no path is given and stdin is not a TTY"{}}  \\
+R2  &One unreadable file ends a tree search  &3 files with a match, one with mode 000: saw prints only {\ttfamily saw: not found: tree/\+b}, exit 2. {\ttfamily grep} and {\ttfamily rg} print the 2 good files and exit 2  &{\ttfamily Find.\+cpp:724-\/730} stops the walk. {\ttfamily Find.\+cpp:747-\/754} prints no match  \\
+R3  &One missing path ends a multi-\/path search  &{\ttfamily find needle tree/\+a missing tree/\+c}: no match printed. {\ttfamily grep} prints both matches and exits 2  &{\ttfamily Paths.\+cpp:620-\/627}, {\ttfamily Find.\+cpp:624-\/631}  \\
+R4  &An unreadable folder is skipped with no message  &saw exit 0. {\ttfamily rg} prints {\ttfamily Permission denied} and exits 2  &A failed {\ttfamily opendir} falls through ({\ttfamily Paths.\+cpp:191-\/193}). A missing result looks like no match  \\
+R5  &A permission error says "{}not found"{}  &{\ttfamily find z np} on a mode-\/000 file: {\ttfamily saw: not found: np}  &{\ttfamily Find.\+cpp:450-\/455} maps every {\ttfamily open} error to {\ttfamily fail\+Not\+Found}  \\
+R6  &Option values and {\ttfamily -\/-\/} collide  &{\ttfamily lines 1 -\/-\/replace "{}-\/-\/"{} dd}: {\ttfamily flag requires a value}. {\ttfamily lines 1 -\/-\/replace "{}-\/h"{} dd} prints the help page. The SPEC example {\ttfamily find -\/x "{}-\/-\/-\/"{} -\/-\/after 12 -\/-\/first} fails: {\ttfamily unknown flag: -\/-\/-\/}  &The terminator and help scans ignore option values ({\ttfamily Arguments.\+cpp:9}, {\ttfamily :69-\/82}, {\ttfamily :213-\/222}). {\ttfamily is\+Option\+Argument} rejects any leading dash ({\ttfamily Arguments.\+cpp:224-\/229}). {\ttfamily SPEC.\+md:343} requires the example  \\
+R7  &Some regex syntax is rejected  &{\ttfamily (?i)foo}, {\ttfamily \+[\+[:digit:]]+}, {\ttfamily \textbackslash{}A}, {\ttfamily (?m)}, {\ttfamily (?x)}: {\ttfamily invalid regex}, exit 2. Lookaround, backreference, named group, {\ttfamily \textbackslash{}p\{L\}}, {\ttfamily \textbackslash{}b} and lazy quantifiers work  &{\ttfamily jam::\+\+Reg\+Exp} grammar  \\
+R8  &A raw non-\/\+UTF-\/8 byte in a pattern does not match  &{\ttfamily find \$\textquotesingle{}caf\textbackslash{}xe9\textquotesingle{} lat}: exit 1, the bytes are in the file  &Arguments go through {\ttfamily juce::\+\+String::\+from\+UTF8} ({\ttfamily Main.\+cpp:153-\/154}). SPEC §1.1 says raw-\/byte text. A replace on such a file keeps the byte  \\
+R9  &The undo cache ignores {\ttfamily HOME}  &{\ttfamily HOME=\texorpdfstring{$<$}{<}scratch\texorpdfstring{$>$}{>} saw undo -\/-\/list} shows the real cache  &Path from {\ttfamily juce::\+\+File::\+get\+Special\+Location}, through {\ttfamily jam::\+\+File::\+get\+User\+Application\+Data\+Directory} ({\ttfamily Undo\+Cache.\+cpp:218}). A test or benchmark that makes 33 applies evicts the user\textquotesingle{}s history. The sprint benchmark left 22 transactions of 494 files in it  \\
+\end{DoxyTable}
+
+
+R9 also affected this research: the battery evicted the cache. The cache was restored from a copy taken first, and {\ttfamily diff -\/rq} reports no difference.\hypertarget{md__r_f_c-live-to-premise_autotoc_md143}{}\doxysubsection{\texorpdfstring{L — What saw lacks (the tool it replaces has it)}{L — What saw lacks (the tool it replaces has it)}}\label{md__r_f_c-live-to-premise_autotoc_md143}
+
+\begin{DoxyTable}{4}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}ID  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Missing  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Today  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Replaces  \\
+L1  &Match across lines  &A literal with a newline: {\ttfamily find} exit 1, {\ttfamily replace} 0 edits, exit 0. No message says the pattern can never match  &The {\ttfamily Edit} tool\textquotesingle{}s multi-\/line string, {\ttfamily rg -\/U}  \\
+L2  &List files that match  &{\ttfamily unknown flag: -\/l}  &{\ttfamily grep -\/l}, {\ttfamily rg -\/l}  \\
+L3  &Print only the match  &{\ttfamily unknown flag: -\/o}  &{\ttfamily grep -\/o}  \\
+L4  &Word match  &{\ttfamily unknown flag: -\/w}  &{\ttfamily grep -\/w}  \\
+L5  &Context before, after  &{\ttfamily -\/A}, {\ttfamily -\/B} unknown. Only {\ttfamily -\/C}  &{\ttfamily grep -\/A}, {\ttfamily -\/B}  \\
+L6  &Combined short flags  &{\ttfamily unknown flag: -\/rn}  &{\ttfamily grep -\/rn}  \\
+L7  &More than one pattern  &Only {\ttfamily -\/r \textquotesingle{}a\textbackslash{}\texorpdfstring{$\vert$}{|}b\textquotesingle{}}, which is 8.\+1× slower than rg (S3)  &{\ttfamily grep -\/e a -\/e b}  \\
+L8  &Count without zero rows  &{\ttfamily -\/c} on a tree prints one row for each file. 2,573 of 3,067 rows were {\ttfamily :0}  &{\ttfamily rg -\/c}  \\
+L9  &{\ttfamily -\/-\/hidden}, {\ttfamily -\/-\/no-\/ignore} on {\ttfamily replace}  &{\ttfamily unknown flag: -\/-\/hidden}. A tree replace cannot reach {\ttfamily .claude/} or an ignored file. {\ttfamily Replace.\+cpp:344-\/348} passes {\ttfamily false, false}  &{\ttfamily sed} on a file list  \\
+L10  &Capture names in a replacement  &{\ttfamily \$\{2\}} is literal text. {\ttfamily \$10} and {\ttfamily \$1x} are ambiguous  &{\ttfamily sed}, python {\ttfamily re}  \\
+L11  &Escapes in a replacement  &{\ttfamily \textbackslash{}n} is literal text  &{\ttfamily sed}, {\ttfamily perl}  \\
+\end{DoxyTable}
+\hypertarget{md__r_f_c-live-to-premise_autotoc_md144}{}\doxysubsection{\texorpdfstring{N — What saw cannot do}{N — What saw cannot do}}\label{md__r_f_c-live-to-premise_autotoc_md144}
+
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}ID  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Cannot do  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Note  \\
+N1  &Create a file  &{\ttfamily saw: not found: newfile}. {\ttfamily -\/-\/insert-\/after 0} needs an existing file. {\ttfamily Write} stays necessary  \\
+N2  &Delete, move, or rename a file  &No verb. Outside its scope: {\ttfamily SPEC.\+md:14} names edits  \\
+N3  &List files in a tree  &{\ttfamily -\/-\/files} unknown. {\ttfamily rg -\/-\/files}, {\ttfamily fd}  \\
+N4  &Compute (sum, group, join)  &SPEC §1.3 excludes an embedded language. {\ttfamily awk} programs and python stay outside  \\
+N5  &Change a file that it must keep hard-\/linked  &D1  \\
+N6  &Beat {\ttfamily grep} or {\ttfamily sed} on one small file  &S2 bounds  \\
+N7  &Reach a role with no Bash  &{\ttfamily agents/\+counselor.\+md:6} lists no Bash. SPEC §1.3 excludes MCP: {\itshape "{}why mcp? not just cli?"{}}  \\
+N8  &Run on Windows today  &{\ttfamily dev/\+\+Release} and {\ttfamily \+\_\+\+\_\+\+\_\+builds\+\_\+\+\_\+\_} hold only a mac\+OS saw. The Windows walk is one branch and serial ({\ttfamily Paths.\+cpp:588}). Nothing on Windows was run here. SPEC §9 requires mac\+OS and Windows  \\
+\end{DoxyTable}
+\hypertarget{md__r_f_c-live-to-premise_autotoc_md145}{}\doxysubsection{\texorpdfstring{T — What the tests do not cover}{T — What the tests do not cover}}\label{md__r_f_c-live-to-premise_autotoc_md145}
+{\ttfamily test/\+cases.\+md} holds no case for a hard link, a file mode other than the execute bit, an extended attribute, mixed line endings, two processes at once, undo across folders, an unreadable file or folder, a missing path among several, an option value that starts with a dash, or an exponential regex. Each of D1 to D6, D8, R1 to R6 passed the 91 cases unseen.
+
+{\ttfamily saw/\+\+CLAUDE.\+md} is stale. It says the folder {\itshape "{}holds no source code yet"{}} and that the plans are {\ttfamily pending}.\hypertarget{md__r_f_c-live-to-premise_autotoc_md146}{}\doxysection{\texorpdfstring{Principles and Rationale}{Principles and Rationale}}\label{md__r_f_c-live-to-premise_autotoc_md146}
+
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Pillar  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Application  \\
+{\bfseries{B — Bound}}  &A transaction owns its folder. The owner creates it exclusively, so two processes never share it (D5, D6). The backup lives until every restore is verified (D7).  \\
+{\bfseries{L — Lean}}  &The verbs pay for nothing that they do not use. The help page must not load 13 other JAM modules into a search (S2).  \\
+{\bfseries{E — Explicit}}  &No silent result. A read that fails says so (R2 to R5). A pattern that can never match says so (L1). A failed rollback says so (D7).  \\
+{\bfseries{S — SSOT}}  &The file is the truth for its mode, its attributes and its line endings. saw restates none of them (D2, D3, D4).  \\
+{\bfseries{S — Stateless}}  &The undo cache is state shared by every session on the machine. {\ttfamily undo} with no id then depends on other sessions (D8).  \\
+{\bfseries{E — Encapsulation}}  &Untouched bytes are data in transit. MANIFESTO: {\itshape "{}\+No copy … No mutation"{}}. D4 rebuilds every line ending.  \\
+{\bfseries{D — Deterministic}}  &The same input gives the same output. A search result that depends on one unrelated unreadable file (R2), or an undo target that depends on another session (D8), is not deterministic. An exponential matcher has no time bound (S4).  \\
+\end{DoxyTable}
+
+
+Considered and rejected:
+
+
+\begin{DoxyItemize}
+\item {\bfseries{Remove {\ttfamily fsync} to speed up the apply.}} Rejected by measurement: it costs nothing here (S5).
+\item {\bfseries{{\ttfamily -\/dead\+\_\+strip\+\_\+dylibs} alone.}} It saves 0.\+34 ms of 5.\+57 (S2). It does not remove the image or the initializers.
+\item {\bfseries{A daemon.}} {\ttfamily SPEC.\+md:57} excludes it.
+\item {\bfseries{{\ttfamily sed}-\/style in-\/place write for every file.}} It loses the atomic swap. Only a hard-\/linked file needs it (Open Question 1).
+\item {\bfseries{A defensive retry in {\ttfamily undo}.}} MANIFESTO D: the invariant belongs at the owner. The owner is the exclusive folder create (D5).
+\end{DoxyItemize}\hypertarget{md__r_f_c-live-to-premise_autotoc_md147}{}\doxysubsection{\texorpdfstring{Proposed solutions, in order}{Proposed solutions, in order}}\label{md__r_f_c-live-to-premise_autotoc_md147}
+{\bfseries{Phase 1 — Safety. Nothing else starts before it.}}
+
+
+\begin{DoxyEnumerate}
+\item {\bfseries{D2, D3:}} copy the metadata of the target to the temporary file before the swap. On mac\+OS one call does mode, ACL and attributes: {\ttfamily copyfile (target, temp, nullptr, COPYFILE\+\_\+\+SECURITY \texorpdfstring{$\vert$}{|} COPYFILE\+\_\+\+XATTR)}. On Windows JUCE already calls {\ttfamily Replace\+File}. Its effect on ACLs and attributes was not run. The owner is {\ttfamily Writer::\+to\+File}.
+\item {\bfseries{D1:}} Open Question 1.
+\item {\bfseries{D4:}} {\ttfamily Line\+Diff::\+get\+Planned\+Text} copies each untouched run as one byte range of the original, each line with its own ending. Only inserted lines take an ending. This removes the rebuild of unchanged lines.
+\item {\bfseries{D5, D6:}} create the transaction folder exclusively. The system call that fails on an existing folder is the owner of the invariant: {\ttfamily mkdir} (POSIX), {\ttfamily Create\+DirectoryW} (Windows). 64 parallel {\ttfamily mkdir} calls gave one winner in this session. On failure the suffix advances by 1. The id format and the LIFO order within one second stay ({\ttfamily undo-\/lifo-\/two-\/transactions}).
+\item {\bfseries{D7:}} check each rollback result. Keep the transaction folder when a restore fails. State the folder in the message (Open Question 2).
+\item {\bfseries{D8:}} Open Question 3.
+\item {\bfseries{T:}} one case for each of D1 to D8. The exclusive create and the mode checks need the runner to run two processes and to read modes.
+\end{DoxyEnumerate}
+
+{\bfseries{Phase 2 — Reliability.}}
+
+
+\begin{DoxyEnumerate}
+\item {\bfseries{R2, R3:}} continue after a failed file. Print each error on stderr and the matches on stdout. Exit 2 when any error happened. {\ttfamily grep} and {\ttfamily rg} do this (observed).
+\item {\bfseries{R4:}} report a failed {\ttfamily opendir} the same way.
+\item {\bfseries{R5:}} one message for each cause. The text is ARCHITECT\textquotesingle{}s (Open Question 2).
+\item {\bfseries{R1:}} Open Question 4.
+\item {\bfseries{R6:}} one parse pass. A value option takes the next argument verbatim. The terminator and the help flag count only outside a value. The SPEC example is Open Question 5.
+\item {\bfseries{R8:}} keep arguments as raw bytes ({\ttfamily std::\+string\+\_\+view} over {\ttfamily argv}) for patterns and replacements. Windows needs its own conversion from UTF-\/16.
+\item {\bfseries{R9:}} Open Question 6.
+\end{DoxyEnumerate}
+
+{\bfseries{Phase 3 — Speed.}}
+
+
+\begin{DoxyEnumerate}
+\item {\bfseries{S2, S1:}} render the help pages at build time and embed the frames. {\ttfamily jam::\+\+Terminal\+Page} has a fixed width ({\itshape "{}\+The page width is the Markdown column width"{}}, {\ttfamily jam\+\_\+\+Terminal\+Page.\+h}), and two piped {\ttfamily -\/-\/help} runs gave identical bytes (55,222). The runtime prints one embedded frame. {\ttfamily -\/-\/help} keeps its look. saw then drops every JAM module except {\ttfamily jam\+\_\+core}. {\ttfamily write\+Screen\+Erase} ({\ttfamily Main.\+cpp:18-\/27}) uses {\ttfamily jam::\+\+Terminal\+Encoder}, so the erase sequence joins the embedded data. Open Question 7.
+\item {\bfseries{S2:}} {\ttfamily jam\+\_\+core} includes {\ttfamily juce\+\_\+graphics} ({\ttfamily jam\+\_\+core.\+h:53-\/56}), which declares Cocoa and Quartz\+Core. All that the verbs use from JAM is in {\ttfamily jam\+\_\+core} (S2). Open Question 8.
+\item {\bfseries{S3:}} a prefilter for an alternation is the set of required literals of each branch. {\ttfamily TODO\texorpdfstring{$\vert$}{|}\+FIXME} has two. A prefilter for {\ttfamily -\/i} uses {\ttfamily find\+Ignore\+Case\+Bytes}, which exists ({\ttfamily Pattern.\+cpp:198}). Both keep the fused path.
+\item {\bfseries{S4, S3:}} the matcher. Open Question 9.
+\item {\bfseries{S5:}} one listing of the undo folder for each apply, after the commit. The exclusive create needs no listing.
+\item {\bfseries{S6:}} linear-\/space Myers (E. Myers 1986, the linear-\/space refinement), in place of the stored trace.
+\item {\bfseries{Literal tree search against {\ttfamily ugrep}:}} the walk gives one job to each top-\/level subfolder ({\ttfamily Paths.\+cpp:544-\/557}). One large subfolder then limits the speed-\/up. This is a hypothesis. A scout {\ttfamily \#\# sample} run confirms or rejects it before any change.
+\item {\bfseries{Benchmark:}} SPEC §10.3 gets the pairs of S1, S3 and S5, with {\ttfamily sed} on the {\ttfamily rg -\/l} list in place of one {\ttfamily sed} for each file.
+\end{DoxyEnumerate}
+
+{\bfseries{Phase 4 — Coverage.}} L1 to L11 and N1, N3 as ARCHITECT selects (Open Questions 10 to 13).
+
+{\bfseries{Phase 5 — Platform.}} The Windows build, the suite, and the benchmark (N8, Open Question 14).
+
+{\bfseries{Phase 6 — CAROL wiring (SPEC §7).}} It starts after Phases 1, 2 and 5.\hypertarget{md__r_f_c-live-to-premise_autotoc_md148}{}\doxysection{\texorpdfstring{Scaffold}{Scaffold}}\label{md__r_f_c-live-to-premise_autotoc_md148}
+\hypertarget{md__r_f_c-live-to-premise_autotoc_md149}{}\doxysubsection{\texorpdfstring{Metadata-\/preserving write (ran in this session, mac\+OS)}{Metadata-\/preserving write (ran in this session, mac\+OS)}}\label{md__r_f_c-live-to-premise_autotoc_md149}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }stat\ info;}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (stat\ (target,\ \&info)\ !=\ 0)\ \textcolor{keywordflow}{return}\ 2;}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (info.st\_nlink\ >\ 1)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{int}\ fd\ =\ open\ (target,\ O\_WRONLY\ |\ O\_TRUNC);}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}\ (fd\ <\ 0\ ||\ write\ (fd,\ bytes,\ strlen\ (bytes))\ <\ 0\ ||\ fsync\ (fd)\ !=\ 0\ ||\ close\ (fd)\ !=\ 0)\ \textcolor{keywordflow}{return}\ 2;}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ fd\ =\ open\ (temp,\ O\_CREAT\ |\ O\_EXCL\ |\ O\_WRONLY,\ 0600);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (fd\ <\ 0\ ||\ write\ (fd,\ bytes,\ strlen\ (bytes))\ <\ 0\ ||\ fsync\ (fd)\ !=\ 0\ ||\ close\ (fd)\ !=\ 0)\ \textcolor{keywordflow}{return}\ 2;}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (copyfile\ (target,\ temp,\ NULL,\ COPYFILE\_SECURITY\ |\ COPYFILE\_XATTR)\ !=\ 0)\ \textcolor{keywordflow}{return}\ 2;}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (rename\ (temp,\ target)\ !=\ 0)\ \textcolor{keywordflow}{return}\ 2;}
+
+\end{DoxyCode}
+
+
+Observed: modes 600, 640, 750 and 444 unchanged. The attribute and the ACL ({\ttfamily everyone deny delete}) unchanged. A hard-\/linked pair: both names hold the new bytes, link count 2. The in-\/place branch is option A of Open Question 1. It is not atomic.\hypertarget{md__r_f_c-live-to-premise_autotoc_md150}{}\doxysubsection{\texorpdfstring{Reproduction commands}{Reproduction commands}}\label{md__r_f_c-live-to-premise_autotoc_md150}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\#\ D1}
+\DoxyCodeLine{echo\ alpha\ >\ h;\ ln\ h\ h2;\ saw\ replace\ alpha\ X\ h\ -\/-\/apply\ -\/-\/expect\ 1;\ cat\ h2;\ stat\ -\/f\ \%l\ h}
+\DoxyCodeLine{\#\ D2}
+\DoxyCodeLine{echo\ alpha\ >\ m;\ chmod\ 600\ m;\ saw\ replace\ alpha\ X\ m\ -\/-\/apply\ -\/-\/expect\ 1;\ stat\ -\/f\ \%Lp\ m}
+\DoxyCodeLine{\#\ D3}
+\DoxyCodeLine{echo\ alpha\ >\ x;\ xattr\ -\/w\ com.test.k\ v\ x;\ saw\ replace\ alpha\ X\ x\ -\/-\/apply\ -\/-\/expect\ 1;\ xattr\ -\/p\ com.test.k\ x}
+\DoxyCodeLine{\#\ D4}
+\DoxyCodeLine{printf\ 'alpha\(\backslash\)r\(\backslash\)nbeta\(\backslash\)nalpha\(\backslash\)ngamma\(\backslash\)r\(\backslash\)n'\ >\ mix;\ saw\ replace\ alpha\ X\ mix\ -\/-\/apply\ -\/-\/expect\ 2;\ od\ -\/c\ mix}
+\DoxyCodeLine{\#\ D5,\ D6}
+\DoxyCodeLine{for\ i\ in\ 1\ 2\ 3\ 4\ 5\ 6\ 7\ 8;\ do\ echo\ alpha\ >\ p\$i;\ done}
+\DoxyCodeLine{for\ i\ in\ 1\ 2\ 3\ 4\ 5\ 6\ 7\ 8;\ do\ saw\ replace\ alpha\ X\ p\$i\ -\/-\/apply\ -\/-\/expect\ 1\ \&\ done;\ wait;\ saw\ undo\ -\/-\/list}
+\DoxyCodeLine{\#\ R1}
+\DoxyCodeLine{mkdir\ t;\ echo\ needle\ >\ t/a;\ cd\ t;\ saw\ find\ needle\ <\ /dev/null;\ echo\ \$?}
+\DoxyCodeLine{\#\ R2}
+\DoxyCodeLine{mkdir\ u;\ echo\ needle\ >\ u/a;\ echo\ needle\ >\ u/b;\ chmod\ 000\ u/b;\ saw\ find\ needle\ u}
+\DoxyCodeLine{\#\ R6}
+\DoxyCodeLine{saw\ lines\ 1\ -\/-\/replace\ "{}-\/h"{}\ file}
+\DoxyCodeLine{\#\ S4}
+\DoxyCodeLine{python3\ -\/c\ 'print("{}a"{}*40+"{}b"{})'\ >\ c;\ saw\ find\ -\/r\ '(a+)+\$'\ c}
+
+\end{DoxyCode}
+
+
+The commands write to the live undo cache (R9). Copy the cache first.\hypertarget{md__r_f_c-live-to-premise_autotoc_md151}{}\doxysection{\texorpdfstring{BLESSED Compliance Checklist}{BLESSED Compliance Checklist}}\label{md__r_f_c-live-to-premise_autotoc_md151}
+State of v0.\+0.\+1 (unchecked = a finding above breaks it):
+
+
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Bounds — D5, D6, D7
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Lean — S2
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Explicit — R2, R3, R4, R5, L1, D7
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] SSOT — D2, D3, D4
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Stateless — D8, R9
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Encapsulation — D4
+\end{DoxyItemize}
+\begin{DoxyItemize}
+\item[\DoxyUnchecked] Deterministic — R1, R2, D8, S4
+\end{DoxyItemize}\hypertarget{md__r_f_c-live-to-premise_autotoc_md152}{}\doxysection{\texorpdfstring{Open Questions}{Open Questions}}\label{md__r_f_c-live-to-premise_autotoc_md152}
+ARCHITECT settles each question. The questions touch ARCHITECT rulings in SPEC §1.2, a format, or a message text.
+
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Hard-\/linked target (D1).}} The ruling {\itshape "{}juce already have ootb for mmap, swap, etc"{}} selects the swap. A swap cannot keep a link.
+\begin{DoxyItemize}
+\item A. Write in place when the link count is above 1. The undo blob covers a crash. The write is not atomic.
+\item B. Refuse with exit 2 when the link count is above 1. CAROL documents stay out of reach of saw.
+\end{DoxyItemize}
+\item {\bfseries{Message texts (D7, R5).}} The text for a failed rollback, and for a permission error. The formats in {\ttfamily cast/\+text.\+md} own them.
+\item {\bfseries{Default target of {\ttfamily undo} (D8).}}
+\begin{DoxyItemize}
+\item A. The newest transaction whose files are all below the working folder.
+\item B. Require the id. MANIFESTO E (Explicit): {\itshape "{}nothing pulled from implicit context"{}}. This is the option that BLESSED selects. It changes SPEC §5.6, where {\ttfamily saw undo} selects the latest, and the {\ttfamily undo-\/lifo-\/two-\/transactions} case.
+\item C. Keep the machine-\/wide newest, and print the file paths before the restore.
+\end{DoxyItemize}
+\item {\bfseries{No path, stdin not a TTY (R1).}} The current rule is ARCHITECT\textquotesingle{}s ruling.
+\begin{DoxyItemize}
+\item A. Read stdin only when it is a pipe or a regular file. Walk {\ttfamily .} otherwise. {\ttfamily rg} walked the folder with {\ttfamily /\+dev/\+null} on stdin (observed).
+\item B. No path and empty stdin: exit 2 {\ttfamily saw: missing path argument}.
+\item C. Keep the rule, and let the CAROL hook deny a {\ttfamily saw find} with no path.
+\end{DoxyItemize}
+\item {\bfseries{A pattern that starts with a dash (R6).}}
+\begin{DoxyItemize}
+\item A. Amend SPEC §5.1 examples to {\ttfamily saw find -\/x -\/-\/after 12 -\/-\/first -\/-\/ "{}-\/-\/-\/"{} DEBT.\+md}. Section 4.\+1 already defines {\ttfamily -\/-\/}.
+\item B. Accept a dash token as a positional when no flag matches it. A mistyped flag then becomes a pattern. MANIFESTO E (Explicit, fail fast) selects A.
+\end{DoxyItemize}
+\item {\bfseries{Undo cache of a test or a benchmark (R9).}} SPEC §1.2 rules {\itshape "{}saw gets no new surface"{}}, and the runner moves the real cache. The benchmark scripts do not.
+\begin{DoxyItemize}
+\item A. The benchmark scripts move the cache aside, as the runner does. This keeps the ruling.
+\item B. An environment variable selects the cache root. This is new surface. MANIFESTO L (YAGNI) selects A.
+\end{DoxyItemize}
+\item {\bfseries{How the help frames are built (S2).}} The output must stay identical to {\ttfamily jam::\+\+Terminal\+Page}.
+\begin{DoxyItemize}
+\item A. A cast step renders each help document, and the frames are binary data.
+\item B. A second target in the saw project renders them before the main target builds. Either one needs a host program that links {\ttfamily jam\+\_\+tui}. Where that program lives is ARCHITECT\textquotesingle{}s.
+\end{DoxyItemize}
+\item {\bfseries{{\ttfamily jam\+\_\+core} depends on {\ttfamily juce\+\_\+graphics} (S2).}}
+\begin{DoxyItemize}
+\item A. Split the modules that need no graphics ({\ttfamily Reg\+Exp}, {\ttfamily simd}, {\ttfamily Strings}, {\ttfamily Format}, {\ttfamily json}, {\ttfamily document}) into a module on {\ttfamily juce\+\_\+core} alone.
+\item B. Keep {\ttfamily jam\+\_\+core} whole. saw keeps the graphics frameworks. Floor: between 2.\+46 and 2.\+79 ms plus the image load. This is a JAM decision. It also concerns {\ttfamily scout}, {\ttfamily cast} and {\ttfamily ling}, which link the same 24 libraries.
+\end{DoxyItemize}
+\item {\bfseries{The regex matcher (S3, S4).}}
+\begin{DoxyItemize}
+\item A. A step budget in {\ttfamily jam::\+\+Reg\+Exp}. A pattern over the budget ends with exit 2 and a message. No speed change for ordinary patterns.
+\item B. A linear-\/time engine in {\ttfamily jam\+\_\+core} for a pattern with no backreference and no lookaround. The current matcher, with the budget of A, stays for the others. MANIFESTO D requires a bound. A gives the bound. B gives the bound and the speed of S3.
+\end{DoxyItemize}
+\item {\bfseries{Multi-\/line match (L1).}}
+\begin{DoxyItemize}
+\item A. A flag that searches the whole file. The per-\/line ruling {\itshape "{}\+Matches never cross a newline (sed/\+grep model)"{}} stays the default.
+\item B. Keep the ruling, and reject a pattern that holds a newline with exit 2. {\ttfamily patch} covers the edit. MANIFESTO E (Explicit) requires at least B.
+\end{DoxyItemize}
+\item {\bfseries{{\ttfamily find} flags (L2 to L8).}} Which of them to add, and their names. L6 changes the parser.
+\item {\bfseries{{\ttfamily replace} (L9 to L11).}} Add {\ttfamily -\/-\/hidden} and {\ttfamily -\/-\/no-\/ignore}. Add {\ttfamily \$\{n\}}. Add escapes or keep them literal.
+\item {\bfseries{File creation (N1), file list (N3).}} SPEC §1.2 rules {\itshape "{}\+Full 6 verbs"{}}. Creation is a new operation of {\ttfamily lines} or {\ttfamily patch}, or stays with the {\ttfamily Write} tool.
+\item {\bfseries{Windows (N8).}} Who builds and runs the suite on Windows, and whether enforcement waits for it.
+\item {\bfseries{Regex syntax (R7).}} Add inline flags, POSIX classes and {\ttfamily \textbackslash{}A}, or document the ECMAScript grammar in {\ttfamily find.\+md}.
+\item {\bfseries{The speed premise (S2, N6).}} The acceptance target. Candidates:
+\begin{DoxyItemize}
+\item A. Not slower than {\ttfamily rg} on every tree pattern of S3, and not slower than {\ttfamily rg} on one small file (2.\+75 ms).
+\item B. A, and fastest for a batch: one {\ttfamily patch} of N edits against N {\ttfamily sed} calls.
+\end{DoxyItemize}
+\item {\bfseries{Undo cap (S5, D6).}} Keep 32 for the machine, or count per working folder. One parallel agent run of 33 applies evicts every other session\textquotesingle{}s history.
+\end{DoxyEnumerate}\hypertarget{md__r_f_c-live-to-premise_autotoc_md153}{}\doxysection{\texorpdfstring{Handoff Notes}{Handoff Notes}}\label{md__r_f_c-live-to-premise_autotoc_md153}
+
+\begin{DoxyItemize}
+\item {\bfseries{Order:}} Phase 1 first. Until D1 is fixed, saw must not edit {\ttfamily \texorpdfstring{$\sim$}{\string~}/.carol/\+\texorpdfstring{$\ast$}{*}.md}, because a saw edit detaches one copy of a 24-\/link document.
+\item {\bfseries{Enforcement (CAROL side) waits.}} ARCHITECT: {\itshape "{}we should fix saw first, so it live to its premise. then we could enforce the protocol."{}} Facts for that later pass:
+\begin{DoxyItemize}
+\item COUNSELOR has no Bash (N7). A ban on {\ttfamily Edit} locks it out.
+\item A hook reads command text, not intent. It does not see inside {\ttfamily bash script.\+sh}.
+\item The gates exist three times: {\ttfamily \texorpdfstring{$\sim$}{\string~}/.carol/\+hooks/\+register.\+js}, {\ttfamily \texorpdfstring{$\sim$}{\string~}/.carol/\+agy/\+hooks/\+agy-\/gate.\+mjs}, {\ttfamily \texorpdfstring{$\sim$}{\string~}/.carol/\+opencode/\+plugins/\+carol/\+gate.\+js}. SPEC §7 names two of them.
+\item SPEC §7 uses {\ttfamily permissions.\+ask} for {\ttfamily python\texorpdfstring{$\ast$}{*}} and {\ttfamily lua\texorpdfstring{$\ast$}{*}}. {\ttfamily settings.\+json} runs {\ttfamily bypass\+Permissions}. Whether {\ttfamily ask} prompts there was not tested.
+\item {\ttfamily carol apply} (31.\+3 ms) and {\ttfamily fix.\+lua} are the callers that SPEC §7 moves to saw.
+\end{DoxyItemize}
+\item {\bfseries{Not run:}} D7, every Windows claim, the composition of the 1.\+87 ms image load, the walk-\/balance hypothesis (Phase 3, item 7), and the effect of {\ttfamily Replace\+File}.
+\item {\bfseries{scout:}} the {\ttfamily probability} column contradicts disjoint samples (Method). It is a scout defect, outside this RFC.
+\item {\bfseries{Measurement artifacts}} were in the session scratchpad and are not kept. The reproduction commands above give every D and R finding. The scout pairs of S1, S3 and S5 belong in {\ttfamily benchmark/} (Phase 3, item 8).
+\item {\bfseries{Session corrections:}} {\ttfamily fsync} was the first suspect for S5 and was rejected by measurement. The first claim that the binary loads 22 frameworks was wrong. It loads 24 libraries, of which 21 are frameworks.
+\item {\bfseries{Working tree:}} {\ttfamily CMake\+Lists.\+txt} was modified before this session (a patch comment). This RFC is the only file that this session added to the repository. 
+\end{DoxyItemize}

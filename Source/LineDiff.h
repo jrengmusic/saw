@@ -42,18 +42,19 @@ public:
      *  @tparam Function   Callable that accepts the addChange callable.
      *  @param original    The document before the changes.
      *  @param addChanges  The callable that adds the changes.
+     *  @param isVerbatim   True to write the inserted text through its own line endings, instead of the endings of the original lines.
      */
     template <typename Function>
-    LineDiff (const TextDocument& original, const Function& addChanges)
+    LineDiff (const TextDocument& original, const Function& addChanges, bool isVerbatim = false)
     {
         std::optional<std::string_view> lastEnding;
-        const auto addChange { [this, &original, &lastEnding] (int start, int length, std::optional<std::string_view> insertedText)
+        const auto addChange { [this, &original, &lastEnding, isVerbatim] (int start, int length, std::optional<std::string_view> insertedText)
         {
-            lastEnding = appendChange (original, start, length, insertedText, lastEnding);
+            lastEnding = appendChange (original, start, length, insertedText, lastEnding, isVerbatim);
         } };
 
         addChanges (addChange);
-        setPlannedEnd (original, lastEnding);
+        setPlannedEnd (original, lastEnding, isVerbatim);
     }
 
     /** @brief Computes the shortest line-level edit script from @p original to @p target using Myers diff.
@@ -74,19 +75,33 @@ public:
      */
     std::string_view getPlannedBytes() const noexcept;
 
-    /** @brief Appends unified diff hunks between @p original and @p plannedBytes.
+    /** @brief Returns one mark for each planned line, which shows where the changes fall.
      *
-     *  Changes that lie within 2 * 3 unchanged lines of each other share one hunk. Each hunk
-     *  has up to three unchanged context lines before and after its changes, limited by the document bounds.
+     *  A removal marks the planned line above it, or the first line when none is above it. An insertion marks its lines as added,
+     *  and a replacement marks its lines as modified.
      *
-     *  @param output       The text that receives the unified diff. Nothing is appended when the diff holds no changes.
-     *  @param original     Document before changes.
-     *  @param plannedBytes The bytes that the inserted lines index: getPlannedBytes() for the callable constructor,
-     *                      or the bytes of the target document for the Myers constructor.
+     *  @param numLines The number of lines of the planned document.
+     *
+     *  @return One mark for each planned line.
+     */
+    jam::Array<int> getLineChanges (int numLines) const;
+
+    /** @brief Appends the unified diff of the changes, with one hunk for each group of changes that lie close together.
+     *
+     *  Nothing is appended when there are no changes. The header names the original and the planned file. A file that does not exist
+     *  is named by the null device. Changes whose gap is at most twice the context line count share one hunk.
+     *
+     *  @param output             The text that receives the unified diff.
+     *  @param original           The document before the changes.
+     *  @param plannedBytes       The planned bytes that the inserted lines index.
+     *  @param isOriginalExisting True when the original file exists.
+     *  @param isPlannedExisting  True when the planned file exists.
      */
     void appendUnifiedDiff (std::string& output,
                             const TextDocument& original,
-                            std::string_view plannedBytes) const;
+                            std::string_view plannedBytes,
+                            bool isOriginalExisting = true,
+                            bool isPlannedExisting = true) const;
 
     /** @brief Builds the change shape of a deletion, for the addChange callable of the callable constructor.
      *
@@ -100,26 +115,25 @@ public:
 
     /** @brief Builds the change shape of a replacement, for the addChange callable of the callable constructor.
      *
-     *  The one-based line range is converted to the zero-based start here. The text is passed through
-     *  getTextWithoutSingleTrailingNewline, so a trailing line feed of the text adds no empty line.
+     *  The one-based line range is converted to the zero-based start here. The text is used as it is.
+     *  A caller that must drop a trailing line feed passes the text through getTextWithoutSingleTrailingNewline first.
      *
      *  @param lineRange One-based half-open range of the original lines to replace.
      *  @param text      The replacement text.
      *
-     *  @return The zero-based start, the number of replaced lines, and the text without its trailing line ending.
+     *  @return The zero-based start, the number of replaced lines, and the text as given.
      */
     static std::tuple<int, int, std::optional<std::string_view>> getReplacement (juce::Range<int> lineRange, std::string_view text);
 
     /** @brief Builds the change shape of an insertion, for the addChange callable of the callable constructor.
      *
      *  @param start The zero-based index of the original line before which the text is inserted.
-     *  @param text  The inserted text. It is passed through getTextWithoutSingleTrailingNewline.
+     *  @param text  The inserted text, used as it is.
      *
-     *  @return The start, zero lines replaced, and the text without its trailing line ending.
+     *  @return The start, zero lines replaced, and the text as given.
      */
     static std::tuple<int, int, std::optional<std::string_view>> getInsertion (int start, std::string_view text);
 
-private:
     /** @brief Removes one trailing line feed from a payload text, and the carriage returns beside it.
      *
      *  Each inserted line takes a line ending from the document. A payload that ends in a line feed would
@@ -132,6 +146,22 @@ private:
      */
     static std::string_view getTextWithoutSingleTrailingNewline (std::string_view text);
 
+    /** @brief Calls a function with the change shape of each change, in order.
+     *
+     *  @tparam Function Callable accepting `(int start, int length, juce::Range<int> insertedRange)`.
+     *  @param function  The callable for each change.
+     */
+    template <typename Function>
+    void applyToChanges (const Function& function) const
+    {
+        for (int index { 0 }; index < changes.size(); ++index)
+        {
+            const auto& change { changes.at (index) };
+            function (change.start, change.length, change.insertedRange);
+        }
+    }
+
+private:
     /** @brief Appends the original lines before a change, then the inserted lines of the change.
      *
      *  Each inserted line takes the line ending of the original line that it replaces, or the document line ending
@@ -143,6 +173,7 @@ private:
      *  @param length       The number of original lines that the change replaces.
      *  @param insertedText The inserted text, or nullopt for a deletion.
      *  @param lastEnding   The line ending of the last piece that was appended, or nullopt before the first piece.
+     *  @param isVerbatim   True to write the inserted text through its own line endings, instead of the endings of the original lines.
      *
      *  @return The line ending of the last piece that was appended. An empty ending is an incomplete last line.
      */
@@ -150,7 +181,38 @@ private:
                                                   int start,
                                                   int length,
                                                   std::optional<std::string_view> insertedText,
-                                                  std::optional<std::string_view> lastEnding);
+                                                  std::optional<std::string_view> lastEnding,
+                                                  bool isVerbatim);
+
+    /** @brief Appends the inserted text, with each line given the line ending of the original line that it replaces.
+     *
+     *  The lines beyond the replaced lines take the line ending of the document. Each inserted line is recorded in insertedLines.
+     *
+     *  @param original   The document before the changes.
+     *  @param start      The first original line that the change replaces.
+     *  @param length     The number of original lines that the change replaces.
+     *  @param text       The inserted text.
+     *  @param lastEnding The line ending of the last piece that was appended, or nullopt before the first piece.
+     *
+     *  @return The line ending of the last piece that was appended.
+     */
+    std::optional<std::string_view> appendInsertedText (const TextDocument& original,
+                                                        int start,
+                                                        int length,
+                                                        std::string_view text,
+                                                        std::optional<std::string_view> lastEnding);
+
+    /** @brief Appends the text as it is, with the line ending that each of its lines carries.
+     *
+     *  @param original   The document before the changes.
+     *  @param text       The inserted text.
+     *  @param lastEnding The line ending of the last piece that was appended, or nullopt before the first piece.
+     *
+     *  @return The line ending of the last piece that was appended.
+     */
+    std::optional<std::string_view> appendVerbatimText (const TextDocument& original,
+                                                        std::string_view text,
+                                                        std::optional<std::string_view> lastEnding);
 
     /** @brief Appends the original lines from startLine up to endLine, which the changes do not touch.
      *
@@ -193,8 +255,9 @@ private:
      *
      *  @param original   The document before the changes.
      *  @param lastEnding The line ending of the last piece that was appended.
+     *  @param isVerbatim The mode that the changes were built in, as given to the callable constructor.
      */
-    void setPlannedEnd (const TextDocument& original, std::optional<std::string_view> lastEnding);
+    void setPlannedEnd (const TextDocument& original, std::optional<std::string_view> lastEnding, bool isVerbatim);
 
     /** @brief Appends the body of one hunk: the context lines between the changes, and the changes themselves.
      *
@@ -257,4 +320,29 @@ private:
      *  @param lineCount      The number of lines in the range.
      */
     static void appendHunkRange (std::string& output, int zeroBasedStart, int lineCount);
+
+    /** @brief Marks the planned line above a removal, or the first line when no line is above it.
+     *
+     *  @param lineChanges   The line marks that receive the removal.
+     *  @param plannedBefore The planned index of the line that follows the removal.
+     */
+    static void setRemovedMark (jam::Array<int>& lineChanges, int plannedBefore);
+
+    /** @brief Marks the planned lines of an insertion or a replacement, as added or as modified.
+     *
+     *  @param lineChanges    The line marks that receive the insertion.
+     *  @param plannedBefore  The planned index of the first inserted line.
+     *  @param length         The number of original lines that the change replaces.
+     *  @param insertedLength The number of inserted lines.
+     */
+    static void setInsertedMarks (jam::Array<int>& lineChanges, int plannedBefore, int length, int insertedLength);
+
+    /** @brief Marks the planned lines of one change: a removal when no line is inserted, otherwise an insertion or a replacement.
+     *
+     *  @param lineChanges   The line marks that receive the change.
+     *  @param plannedBefore The planned index of the first line of the change.
+     *  @param length        The number of original lines that the change replaces.
+     *  @param insertedRange The range of inserted lines of the change.
+     */
+    static void setChangeMarks (jam::Array<int>& lineChanges, int plannedBefore, int length, juce::Range<int> insertedRange);
 };

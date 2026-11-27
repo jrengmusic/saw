@@ -1,0 +1,37 @@
+\chapter{saw }
+\hypertarget{md__c_l_a_u_d_e}{}\label{md__c_l_a_u_d_e}\index{saw@{saw}}
+\label{md__c_l_a_u_d_e_autotoc_md40}%
+\Hypertarget{md__c_l_a_u_d_e_autotoc_md40}%
+\hypertarget{md__c_l_a_u_d_e_autotoc_md41}{}\doxysection{\texorpdfstring{Identity}{Identity}}\label{md__c_l_a_u_d_e_autotoc_md41}
+
+\begin{DoxyItemize}
+\item {\bfseries{Name:}} saw (SAW: Safe Atomic Writer)
+\item {\bfseries{Root:}} {\ttfamily /\+\+Users/\+jreng/\+\+Documents/\+\+Poems/\+dev/\+saw}
+\end{DoxyItemize}\hypertarget{md__c_l_a_u_d_e_autotoc_md42}{}\doxysection{\texorpdfstring{Purpose}{Purpose}}\label{md__c_l_a_u_d_e_autotoc_md42}
+SAW is a command-\/line tool, written in C++17 with JUCE and JAM. It replaces {\ttfamily sed}, {\ttfamily grep}, and file-\/oriented {\ttfamily awk}. It runs on mac\+OS and Windows.
+
+Every mutating command previews its changes by default. A write needs {\ttfamily -\/-\/apply -\/-\/expect N}. {\ttfamily saw undo \texorpdfstring{$<$}{<}tx-\/id\texorpdfstring{$>$}{>}} previews the reverse of an applied transaction, and {\ttfamily -\/-\/apply} restores it.
+
+{\ttfamily SPEC.\+md} holds the behavior. {\ttfamily Source/} holds the program.\hypertarget{md__c_l_a_u_d_e_autotoc_md43}{}\doxysection{\texorpdfstring{Contents}{Contents}}\label{md__c_l_a_u_d_e_autotoc_md43}
+
+\begin{DoxyItemize}
+\item {\ttfamily SPEC.\+md}: the specification of saw v0.\+0.\+1.
+\item {\ttfamily RFC-\/live-\/to-\/premise.\+md}, {\ttfamily PLAN-\/native-\/mcp.\+md}: the defects against the premise, and the plan that fixes them.
+\item {\ttfamily Source/}: the program, its help documents, and the generated headers ({\ttfamily Source/\+generated/}, written by cast).
+\item {\ttfamily help/\+\+Help\+Frames.\+cpp}: the {\ttfamily saw\+\_\+\+Help\+Frames} target, which renders the help frames at build time.
+\item {\ttfamily cast/}, {\ttfamily project-\/info.\+md}: the vocabulary, texts, and build tables that cast reads.
+\item {\ttfamily test/}: the runner {\ttfamily run.\+lua}, the case table {\ttfamily cases.\+md}, fixtures, and baselines.
+\item {\ttfamily benchmark/}: the scout manifests, scripts, and reports.
+\item {\ttfamily carol/}: the sprint log and the CAROL configuration.
+\item {\ttfamily .claude/}: agents, commands, and settings for Claude Code.
+\end{DoxyItemize}\hypertarget{md__c_l_a_u_d_e_autotoc_md44}{}\doxysection{\texorpdfstring{Key documents}{Key documents}}\label{md__c_l_a_u_d_e_autotoc_md44}
+
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Document  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Purpose  \\
+{\ttfamily SPEC.\+md}  &Behavior, commands, exit codes, and undo model of saw.  \\
+{\ttfamily PLAN-\/native-\/mcp.\+md}  &Execution plan of the native MCP and the clean-\/up.  \\
+{\ttfamily AGENTS.\+md}  &CAROL project instructions.  \\
+{\ttfamily carol/\+\+SPRINT-\/\+LOG.\+md}  &Sprint log.  \\
+{\ttfamily carol/\+config.\+yml}  &CAROL configuration.  \\
+{\ttfamily \texorpdfstring{$\sim$}{\string~}/.carol/\+\+CODING.\+md}, {\ttfamily \texorpdfstring{$\sim$}{\string~}/.carol/\+\+MANIFESTO.\+md}, {\ttfamily \texorpdfstring{$\sim$}{\string~}/.carol/\+\+NAMES.\+md}  &Contract for C++ code.  \\
+\end{DoxyTable}

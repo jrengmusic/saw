@@ -35,24 +35,34 @@ static std::tuple<jam::Strings, jam::Array<juce::File>, jam::Array<jam::Array<in
     jam::Array<juce::File> groupFiles;
     jam::Array<jam::Array<int>> groupEntryIndices;
     jam::HashMap<juce::String, int> groupIndexByCanonicalPath;
+    jam::HashMap<std::string_view, int> groupIndexByPath;
 
     for (int entryIndex { 0 }; entryIndex < entryTokens.size(); ++entryIndex)
     {
         const auto* entry { jsonDoc.getChildByToken (rootArray, entryTokens.at (entryIndex)) };
         const auto filePath { jsonDoc.getString (jsonDoc.get (*entry, jam::Strings::getView (Id::file.toString()))) };
-        const auto targetFile { Paths::getLinkedTarget (filePath) };
-        const auto [groupEntry, isInserted] { groupIndexByCanonicalPath.try_emplace (targetFile.getFullPathName(), groupFiles.size()) };
+        const auto [pathEntry, isPathInserted] { groupIndexByPath.try_emplace (filePath, 0) };
+        auto& [pathKey, pathGroupIndex] { *pathEntry };
+        juce::ignoreUnused (pathKey);
 
-        if (isInserted)
+        if (isPathInserted)
         {
-            groupDisplayPaths.add (Paths::getDisplayPath (filePath));
-            groupFiles.add (targetFile);
-            groupEntryIndices.add (jam::Array<int> {});
+            const auto targetFile { Paths::getLinkedTarget (filePath) };
+            const auto [groupEntry, isInserted] { groupIndexByCanonicalPath.try_emplace (targetFile.getFullPathName(), groupFiles.size()) };
+
+            if (isInserted)
+            {
+                groupDisplayPaths.add (Paths::getDisplayPath (filePath));
+                groupFiles.add (targetFile);
+                groupEntryIndices.add (jam::Array<int> {});
+            }
+
+            auto& [groupCanonicalPath, canonicalGroupIndex] { *groupEntry };
+            juce::ignoreUnused (groupCanonicalPath);
+            pathGroupIndex = canonicalGroupIndex;
         }
 
-        auto& [groupCanonicalPath, groupIndex] { *groupEntry };
-        juce::ignoreUnused (groupCanonicalPath);
-        groupEntryIndices.at (groupIndex).add (entryIndex);
+        groupEntryIndices.at (pathGroupIndex).add (entryIndex);
     }
 
     return { std::move (groupDisplayPaths), std::move (groupFiles), std::move (groupEntryIndices) };
@@ -71,7 +81,7 @@ static std::tuple<int, int, std::optional<std::string_view>> getReplaceChange (c
                                                                                const jam::Document::Element& entry,
                                                                                std::string_view text)
 {
-    return LineDiff::getReplacement (PatchValidator::getEntryLineRange (jsonDoc, entry), text);
+    return LineDiff::getReplacement (PatchValidator::getEntryLineRange (jsonDoc, entry), LineDiff::getTextWithoutSingleTrailingNewline (text));
 }
 
 static std::tuple<int, int, std::optional<std::string_view>> getInsertChange (const juce::Identifier& key,
@@ -82,7 +92,7 @@ static std::tuple<int, int, std::optional<std::string_view>> getInsertChange (co
     static const juce::Identifier insertBeforeKey { jam::Strings::fromView (Id::insertBefore) };
     const int line { PatchValidator::getIntMember (jsonDoc, entry, jam::Strings::getView (key.toString())) };
     const int changeStart { key == insertBeforeKey ? line - 1 : line };
-    return LineDiff::getInsertion (changeStart, text);
+    return LineDiff::getInsertion (changeStart, LineDiff::getTextWithoutSingleTrailingNewline (text));
 }
 
 static const jam::Function::Map<juce::Identifier,
@@ -106,11 +116,11 @@ getEntryChanges()
     return entryChanges;
 }
 
-static std::string getEntryText (const jam::JsonDocument& jsonDoc, const jam::Document::Element& entry)
+static std::string_view getEntryText (const jam::JsonDocument& jsonDoc, const jam::Document::Element& entry)
 {
     return jsonDoc.contains (entry, jam::Strings::getView (Id::text.toString()))
                ? jsonDoc.getString (jsonDoc.get (entry, jam::Strings::getView (Id::text.toString())))
-               : std::string {};
+               : std::string_view {};
 }
 
 static const jam::Document::Element& getEntryAt (const jam::JsonDocument& jsonDoc,
@@ -325,7 +335,7 @@ static Stdio::Output runFile (const Arguments& arguments)
     return runJson (arguments, document->getBytes());
 }
 
-static Stdio::Output runStandardInput (const Arguments& arguments, const std::optional<std::string>& input)
+static Stdio::Output runStandardInput (const Arguments& arguments, const Input::Source& input)
 {
     if (Stdio::isTerminalInput (input))
         return Stdio::getFailure (text::Diagnostics::failPatchRequiresInput);
@@ -343,7 +353,7 @@ Arguments Patch::getArguments (juce::Span<const std::string_view> argumentList)
     return Arguments { argumentList, { Id::applyOption }, { Id::fileOption, Id::expectOption }, {} };
 }
 
-Stdio::Output Patch::run (const Arguments& arguments, const std::optional<std::string>& input)
+Stdio::Output Patch::run (const Arguments& arguments, const Input::Source& input)
 {
     if (arguments.getStatus().failed())
         return Stdio::getFailure (arguments.getStatus());

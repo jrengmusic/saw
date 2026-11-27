@@ -50,7 +50,7 @@ static bool hasValidString (const jam::JsonDocument& document,
 static bool hasEarlierKey (const jam::JsonDocument& document,
                            const jam::Document::Tokens& tokens,
                            int index,
-                           const std::string& keyText)
+                           std::string_view keyText)
 {
     for (int earlierIndex { 0 }; earlierIndex < index; earlierIndex += jam::JsonDocument::numMemberTokens)
         if (document.getString (tokens.at (earlierIndex)).compare (keyText) == 0)

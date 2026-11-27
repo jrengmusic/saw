@@ -363,6 +363,11 @@ local setupActions = {
     copy = function (rootDir, fields)
         copyFile (vim.fs.joinpath (rootDir, fields[2]), vim.fs.joinpath (rootDir, fields[3]))
     end,
+    pipe = function (rootDir, fields)
+        local result = vim.system ({ "mkfifo", vim.fs.joinpath (rootDir, fields[2]) }):wait ()
+        assert (result.code == 0, "mkfifo failed: " .. fields[2])
+        vim.system ({ "sh", "-c", 'printf "%s\\n" "$1" > "$2"', "sh", fields[3], vim.fs.joinpath (rootDir, fields[2]) })
+    end,
 }
 
 local checkActions = {
@@ -460,7 +465,7 @@ end
 local function startToolCall (sawArgs, stdinBytes, tempRoot)
     local toolArguments = { arguments = sawArgs, directory = tempRoot }
 
-    if stdinBytes ~= "" then
+    if stdinBytes ~= nil then
         toolArguments.stdin = stdinBytes
     end
 
@@ -510,10 +515,10 @@ local function startSawProcesses (step, stdinBytes, tempRoot)
         commandText = commandText:gsub ("{xff}", function () return "\255" end)
         local sawArgs = splitCommand (commandText)
 
-        if isMcpLane and not hasNonUtf8Byte (commandText) and not hasNonUtf8Byte (stdinBytes) then
+        if isMcpLane and not hasNonUtf8Byte (commandText) and (stdinBytes == nil or not hasNonUtf8Byte (stdinBytes)) and step.stdin ~= "{closed}" then
             processes[processIndex] = startToolCall (sawArgs, stdinBytes, tempRoot)
         else
-            local sawCmd = { sawBinary }
+            local sawCmd = step.stdin == "{closed}" and { "sh", "-c", 'exec "$@" <&-', "sh", sawBinary } or { sawBinary }
             for index = 1, #sawArgs do sawCmd[#sawCmd + 1] = sawArgs[index] end
             processes[processIndex] = vim.system (sawCmd, { stdin = stdinBytes, text = false, cwd = tempRoot })
         end
@@ -627,7 +632,7 @@ local function runReferenceStep (step, stepIndex, initialFixture, stdinBytes, te
     local ok, matched, reason = pcall (function ()
         copyFixture (initialFixture, refRoot)
         runSetup (refRoot, step.setup)
-        local refResult = vim.system (splitCommand (step.reference), {
+        local refResult = vim.system (vim.list_extend (step.stdin == "{closed}" and { "sh", "-c", 'exec "$@" <&-', "sh" } or {}, splitCommand ((step.reference:gsub ("{project}", function () return vim.fs.dirname (testDir) end)))), {
             stdin = stdinBytes,
             text = false,
             cwd = refRoot,
@@ -653,7 +658,14 @@ local function runStep (caseEntry, stepIndex, initialFixture, tempRoot)
 
     runSetup (tempRoot, step.setup)
 
-    local stdinBytes = step.stdin ~= "" and assert (readBinaryFile (vim.fs.joinpath (stdinRoot, step.stdin)), "missing stdin file: " .. step.stdin) or ""
+    local stdinBytes = ""
+
+    if step.stdin == "{null}" then
+        stdinBytes = nil
+    elseif step.stdin ~= "" and step.stdin ~= "{closed}" then
+        stdinBytes = assert (readBinaryFile (vim.fs.joinpath (stdinRoot, step.stdin)), "missing stdin file: " .. step.stdin)
+    end
+
     local results = waitSawProcesses (startSawProcesses (step, stdinBytes, tempRoot))
 
     local matchedExit, exitReason = compareExitCodes (step, stepIndex, results)

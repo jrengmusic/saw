@@ -55,8 +55,8 @@ public:
 private:
     /** @brief Runs one command line from a `run` request, and sends the result to the client.
      *
-     *  The request names the folder and the arguments. The folder must be an absolute path that
-     *  can be set as the working folder. Otherwise the call sends a tool error. The result holds
+     *  The request names the folder and the arguments, and optionally the standard input. Without it, the null device is the input.
+     *  The folder must be an absolute path that can be set as the working folder. Otherwise the call sends a tool error. The result holds
      *  the exit code, the output, and the errors. The bytes of the output documents are read in
      *  place and sent as one text. When that text is not valid UTF-8, the bytes are sent as one
      *  base64 text instead. The failures are sent as diagnostic lines, under the same rule.

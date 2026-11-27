@@ -21,9 +21,9 @@ struct Patch
      *  from the file of `--file`, or else from standard input, which must not be a terminal.
      *
      *  @param arguments The parsed arguments from getArguments.
-     *  @param input     The supplied input text, or nullopt for the process standard input.
+     *  @param input     The standard input, the null device, or a supplied text.
      *
      *  @return The exit code, the output text, and the diagnostics.
      */
-    static Stdio::Output run (const Arguments& arguments, const std::optional<std::string>& input);
+    static Stdio::Output run (const Arguments& arguments, const Input::Source& input);
 };

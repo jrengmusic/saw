@@ -6,6 +6,11 @@
 #include "TextDocument.h"
 #include "generated/Generated.h"
 
+static bool isPlainText (std::string_view bytes)
+{
+    return jam::Utf8::isValid (bytes) and not TextDocument::isBinary (bytes);
+}
+
 static void appendLine (std::string& output, int lineNumber, std::string_view line)
 {
     constexpr unsigned char hexRadix { 16 };
@@ -13,7 +18,7 @@ static void appendLine (std::string& output, int lineNumber, std::string_view li
     jam::Format::appendDecimal (output, lineNumber);
     jam::Format::appendUtf8 (output, Chars::tab);
 
-    if (jam::Utf8::isValid (line))
+    if (isPlainText (line))
     {
         jam::Format::appendBytes (output, line);
     }
@@ -26,7 +31,7 @@ static void appendLine (std::string& output, int lineNumber, std::string_view li
             const size_t maximumLength { std::min (maximumUtf8Length, line.size() - index) };
             size_t length { 1 };
 
-            while (length <= maximumLength and not jam::Utf8::isValid (line.substr (index, length)))
+            while (length <= maximumLength and not isPlainText (line.substr (index, length)))
                 ++length;
 
             if (length <= maximumLength)
@@ -60,7 +65,7 @@ static void appendBlock (std::string& output,
 {
     constexpr int blockHashLength { 16 };
     const auto blockBytes { document.getLineBytes (juce::Range<int> { startLine, endLine + 1 }) };
-    const std::string_view escapedMarker { jam::Utf8::isValid (blockBytes) ? std::string_view {} : std::string_view { text::Diagnostics::excerptEscaped } };
+    const std::string_view escapedMarker { isPlainText (blockBytes) ? std::string_view {} : std::string_view { text::Diagnostics::excerptEscaped } };
     jam::Format::appendBytes (output, text::Formats::excerptHeader);
     jam::Format::appendDecimal (output, targetNumber);
     jam::Format::appendUtf8 (output, Chars::space);
@@ -93,14 +98,14 @@ static std::pair<bool, Stdio::Documents> getStateBlock (int targetNumber, std::s
     return { false, Stdio::getDocuments (std::move (output), path) };
 }
 
-static std::pair<std::string_view, std::unique_ptr<TextDocument>> getLoadedDocument (std::string_view path)
+static std::pair<std::string_view, std::unique_ptr<TextDocument>> getLoadedDocument (std::string_view path, bool isText)
 {
     const auto targetFile { Paths::getLinkedTarget (path) };
 
     if (not targetFile.exists())
         return { text::Diagnostics::excerptNotFound, nullptr };
 
-    auto [documentStatus, document] { TextDocument::fromFile (targetFile, path, Input::maxBufferedReadSize) };
+    auto [documentStatus, document] { TextDocument::fromFile (targetFile, path, Input::maxBufferedReadSize, isText) };
 
     if (documentStatus.failed())
         return { text::Diagnostics::excerptUnreadable, nullptr };
@@ -117,9 +122,10 @@ static std::pair<std::string_view, std::unique_ptr<TextDocument>> getLoadedDocum
 static std::pair<bool, Stdio::Documents> getLiteralBlock (int targetNumber,
                                                           std::string_view path,
                                                           std::string_view literal,
-                                                          int contextLines)
+                                                          int contextLines,
+                                                          bool isText)
 {
-    auto [documentState, loadedDocument] { getLoadedDocument (path) };
+    auto [documentState, loadedDocument] { getLoadedDocument (path, isText) };
 
     if (not documentState.empty())
         return getStateBlock (targetNumber, path, documentState);
@@ -209,7 +215,7 @@ static std::optional<std::pair<int, int>> getSpan (std::string_view spanText)
     return std::nullopt;
 }
 
-static std::pair<bool, Stdio::Documents> getRangeBlock (int targetNumber, std::string_view target)
+static std::pair<bool, Stdio::Documents> getRangeBlock (int targetNumber, std::string_view target, bool isText)
 {
     const auto colonIndex { target.rfind (static_cast<char> (Chars::colon)) };
     const auto suffix { colonIndex == std::string_view::npos ? std::string_view {} : target.substr (colonIndex + 1) };
@@ -220,7 +226,7 @@ static std::pair<bool, Stdio::Documents> getRangeBlock (int targetNumber, std::s
     if (not span)
         return getStateBlock (targetNumber, path, text::Diagnostics::excerptOutOfRange);
 
-    auto [documentState, loadedDocument] { getLoadedDocument (path) };
+    auto [documentState, loadedDocument] { getLoadedDocument (path, isText) };
 
     if (not documentState.empty())
         return getStateBlock (targetNumber, path, documentState);
@@ -237,21 +243,22 @@ static std::pair<bool, Stdio::Documents> getRangeBlock (int targetNumber, std::s
     return { true, Stdio::getDocuments (std::move (output), path) };
 }
 
-static std::pair<bool, Stdio::Documents> getTargetBlock (int targetNumber, std::string_view target, int contextLines)
+static std::pair<bool, Stdio::Documents> getTargetBlock (int targetNumber, std::string_view target, int contextLines, bool isText)
 {
     constexpr std::string_view literalSeparator { " ~ " };
     const auto separatorIndex { target.find (literalSeparator) };
 
     if (separatorIndex == std::string_view::npos)
-        return getRangeBlock (targetNumber, target);
+        return getRangeBlock (targetNumber, target, isText);
 
     return getLiteralBlock (targetNumber,
                             target.substr (0, separatorIndex),
                             target.substr (separatorIndex + literalSeparator.size()),
-                            contextLines);
+                            contextLines,
+                            isText);
 }
 
-static std::tuple<juce::Result, std::unique_ptr<Input>, jam::Array<std::string_view>> getTargets (const std::optional<std::string>& input)
+static std::tuple<juce::Result, std::unique_ptr<Input>, jam::Array<std::string_view>> getTargets (const Input::Source& input)
 {
     if (Stdio::isTerminalInput (input))
         return { Stdio::fail (text::Diagnostics::failExcerptRequiresTarget), nullptr, jam::Array<std::string_view> {} };
@@ -278,7 +285,7 @@ static std::tuple<juce::Result, std::unique_ptr<Input>, jam::Array<std::string_v
     return { juce::Result::ok(), std::move (standardInput), std::move (targets) };
 }
 
-static Stdio::Output getOutput (juce::Span<const std::string_view> targets, int contextLines)
+static Stdio::Output getOutput (juce::Span<const std::string_view> targets, int contextLines, bool isText)
 {
     const int targetCount { static_cast<int> (targets.size()) };
     jam::Array<bool> foundFlags;
@@ -286,9 +293,9 @@ static Stdio::Output getOutput (juce::Span<const std::string_view> targets, int 
     jam::Array<Stdio::Documents> blockDocuments;
     blockDocuments.resize (targetCount);
 
-    Jobs::run (targetCount, [targets, contextLines, &foundFlags, &blockDocuments] (int index)
+    Jobs::run (targetCount, [targets, contextLines, isText, &foundFlags, &blockDocuments] (int index)
                {
-                   auto [isFound, documents] { getTargetBlock (index + 1, targets[static_cast<size_t> (index)], contextLines) };
+                   auto [isFound, documents] { getTargetBlock (index + 1, targets[static_cast<size_t> (index)], contextLines, isText) };
                    foundFlags.at (index) = isFound;
                    blockDocuments.at (index) = std::move (documents);
                });
@@ -321,10 +328,10 @@ static Stdio::Output getOutput (juce::Span<const std::string_view> targets, int 
 
 Arguments Excerpt::getArguments (juce::Span<const std::string_view> argumentList)
 {
-    return Arguments { argumentList, {}, { Id::contextOption }, {} };
+    return Arguments { argumentList, { Id::textOption }, { Id::contextOption }, {} };
 }
 
-Stdio::Output Excerpt::run (const Arguments& arguments, const std::optional<std::string>& input)
+Stdio::Output Excerpt::run (const Arguments& arguments, const Input::Source& input)
 {
     if (arguments.getStatus().failed())
         return Stdio::getFailure (arguments.getStatus());
@@ -334,6 +341,8 @@ Stdio::Output Excerpt::run (const Arguments& arguments, const std::optional<std:
     if (contextStatus.failed())
         return Stdio::getFailure (contextStatus);
 
+    const bool isText { arguments.contains (Id::textOption) };
+
     if (arguments.getPositionals (0).empty())
     {
         const auto [targetStatus, standardInput, standardTargets] { getTargets (input) };
@@ -341,8 +350,8 @@ Stdio::Output Excerpt::run (const Arguments& arguments, const std::optional<std:
         if (targetStatus.failed())
             return Stdio::getFailure (targetStatus);
 
-        return getOutput (standardTargets, contextLines);
+        return getOutput (standardTargets, contextLines, isText);
     }
 
-    return getOutput (arguments.getPositionals (0), contextLines);
+    return getOutput (arguments.getPositionals (0), contextLines, isText);
 }

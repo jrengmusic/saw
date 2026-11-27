@@ -46,6 +46,25 @@ public:
                           LineDiff diff,
                           int fileEditCount);
 
+    /** @brief Records an edit of a file from a planned document, and stages the file when it is new or its bytes change.
+     *
+     *  The edit count is added to the total even when the bytes do not change. The file is staged when it does not exist before the edit,
+     *  or when the planned bytes differ from the original bytes.
+     *
+     *  @param targetFile       Destination file on disk.
+     *  @param originalDocument Pre-edit document snapshot; must not be null.
+     *  @param plannedDocument  The document of the planned bytes; must not be null.
+     *  @param isExisting       True when the target exists before the edit.
+     *  @param fileEditCount    Logical edit count added to the `--expect` total.
+     *
+     *  @return Ok when the file is staged or needs no change. Otherwise the failure that Writer::getWriteStatus reports.
+     */
+    juce::Result addFile (const juce::File& targetFile,
+                          std::unique_ptr<TextDocument> originalDocument,
+                          std::unique_ptr<TextDocument> plannedDocument,
+                          bool isExisting,
+                          int fileEditCount);
+
     /** @brief Runs the transaction: a checked dry run, or a commit with `--apply`.
      *
      *  Without `--apply`, the command prints the unified diff of each staged file and writes nothing.
@@ -92,19 +111,20 @@ public:
      */
     static juce::Result getRollbackFailure (std::string_view failure, std::string_view failedPath, const juce::Result& status, const jam::Strings& unrestoredPaths);
 
-    /** @brief Calls a function for each staged file in order, and restores the files before a failure.
+    /** @brief Applies a step to each staged file in order, and stops at the first failure.
      *
-     *  The loop stops at the first failure. The files before the failure are restored. The failing file is
-     *  restored too when its call reports true. A restore that fails does not stop the other restores.
+     *  The files before the failure are restored. The failing file is restored too when its step reports that it changed the target.
+     *  The paths that cannot be restored are returned with the failure, and the folders are removed.
      *
      *  @param stagedFiles   The staged files, in transaction order.
-     *  @param transactionId The transaction whose blob files the restore reads.
-     *  @param function      The operation for one staged file. Its bool is true when the target may have changed.
+     *  @param transactionId The transaction whose blob files are used by the restore.
+     *  @param folders       The folders that the transaction created, removed after a failure.
+     *  @param function      The step for each file. It returns the status, and true when the target changed.
      *
-     *  @return Tuple of: the failure, or ok; the display path of the file that failed; and the display paths
-     *          that could not be restored. The path is empty and the list is empty when every call succeeds.
+     *  @return The failure of the first file that failed, the display path of that file, and the paths that could not be restored.
+     *          The status is ok, with an empty path and no paths, when every step succeeded.
      */
-    static std::tuple<juce::Result, std::string_view, jam::Strings> applyToStagedFiles (const jam::Array<StagedFile>& stagedFiles, std::string_view transactionId, const std::function<std::pair<juce::Result, bool> (const StagedFile&)>& function);
+    static std::tuple<juce::Result, std::string_view, jam::Strings> applyToStagedFiles (const jam::Array<StagedFile>& stagedFiles, std::string_view transactionId, const jam::Array<juce::File>& folders, const std::function<std::pair<juce::Result, bool> (const StagedFile&)>& function);
 
     /** @brief Builds the unified diff of each staged file whose diff is not empty.
      *
@@ -113,6 +133,12 @@ public:
      *  @return One document for each staged file whose diff is not empty, in transaction order.
      */
     static Stdio::Documents getDiffDocuments (const jam::Array<StagedFile>& stagedFiles);
+
+    /** @brief Deletes the folders in reverse order, so that a child folder is deleted before its parent.
+     *
+     *  @param folders The folders to delete, sorted so that a parent comes before its child.
+     */
+    static void removeEmptyFolders (const jam::Array<juce::File>& folders);
 
 private:
     /** @brief Builds the output of a dry run: the diff documents and the summary.
@@ -136,6 +162,12 @@ private:
      *  @return Status result paired with the transaction id. The id is empty when staging or writing failed.
      */
     std::pair<juce::Result, std::string> commit();
+
+    /** @brief Returns the folders that the new files of the transaction need, and that do not exist yet.
+     *
+     *  @return The missing parent folders of the files that do not exist before the transaction, sorted so that a parent comes before its child.
+     */
+    jam::Array<juce::File> getMissingFolders() const;
 
     /** @brief Mutating subcommand name, recorded with the undo record on commit. */
     std::string commandName;

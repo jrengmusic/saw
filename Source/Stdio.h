@@ -25,24 +25,25 @@ struct Stdio
     /** @brief Ordered documents of the standard output of one command, one for each piece of output. */
     using Documents = jam::Array<std::unique_ptr<TextDocument>>;
 
-    /** @brief Result of a command: exit code, the documents of the standard output, and the failures.
+    /** @brief Result of a command: exit code, the documents of the standard output, the failures, and the documents of the standard error.
      *
-     *  The documents are written as they are, and the failures are written as diagnostic lines on
+     *  The documents are written as they are. The error documents are written first, then the failures as diagnostic lines on
      *  standard error. No copy is made between the creation of the output and its write.
      */
-    using Output = std::tuple<int, Documents, jam::Array<juce::Result>>;
+    using Output = std::tuple<int, Documents, jam::Array<juce::Result>, Documents>;
 
     /** @brief Builds an Output from the documents and the failures of a command.
      *
-     *  Both are moved into the Output.
+     *  All of them are moved into the Output.
      *
      *  @param exitCode  The exit code of the command.
      *  @param documents The documents of the standard output, in write order. It is empty when no output is written.
      *  @param failures  The failures, each written as a diagnostic line on standard error. It is empty when there is none.
+     *  @param errorDocuments The documents of the standard error, written before the failures. It is empty when there is none.
      *
      *  @return The exit code, the documents, and the failures.
      */
-    static Output getOutput (int exitCode, Documents documents = {}, jam::Array<juce::Result> failures = {});
+    static Output getOutput (int exitCode, Documents documents = {}, jam::Array<juce::Result> failures = {}, Documents errorDocuments = {});
 
     /** @brief Wraps text in one document, or returns no document when the text is empty.
      *
@@ -74,15 +75,21 @@ struct Stdio
      */
     static bool isTerminalOutput() noexcept;
 
+    /** @brief Returns the version line: the program name, the version, and the commit in parentheses, ended by a newline.
+     *
+     *  @return The version line.
+     */
+    static std::string getVersionLine();
+
     /** @brief Checks whether the input of a command is an interactive terminal.
      *
      *  Supplied input is never a terminal. Only the process standard input can be one.
      *
-     *  @param input The supplied input, or nullopt when the process standard input is read.
+     *  @param input The standard input, the null device, or a supplied text.
      *
-     *  @return True when no input is supplied and standard input is a TTY.
+     *  @return True when the input is the standard input and standard input is a terminal.
      */
-    static bool isTerminalInput (const std::optional<std::string>& input);
+    static bool isTerminalInput (const Input::Source& input);
 
     /** @brief Formats a diagnostic line with the program name as its prefix.
      *
@@ -144,8 +151,8 @@ struct Stdio
 
     /** @brief Writes both streams of an Output and returns the exit code.
      *
-     *  A failed write of the standard output gives exitError, and the failure is reported on
-     *  standard error. A closed pipe is not a failure.
+     *  The documents of the standard output are written first, then the error documents and the failures to standard error.
+     *  A failed write of the standard output gives exitError, and that failure is reported on standard error.
      *
      *  @param output The command result to write.
      *

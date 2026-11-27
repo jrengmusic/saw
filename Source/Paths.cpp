@@ -24,7 +24,7 @@ static std::string getNormalizedDisplayPrefix (std::string_view rawPath)
     return normalized;
 }
 
-static bool matchesWildcard (std::string_view wildcard, std::string_view text) noexcept
+bool Paths::isWildcardMatch (std::string_view wildcard, std::string_view text) noexcept
 {
     size_t wildIndex { 0 };
     size_t textIndex { 0 };
@@ -72,7 +72,7 @@ static bool matchesAnyGlob (std::string_view fileName,
 {
     for (const auto& glob : globs)
     {
-        if (matchesWildcard (glob, fileName) or matchesWildcard (glob, displayPath) or matchesWildcard (glob, relativePath))
+        if (Paths::isWildcardMatch (glob, fileName) or Paths::isWildcardMatch (glob, displayPath) or Paths::isWildcardMatch (glob, relativePath))
             return true;
     }
 
@@ -118,7 +118,7 @@ static bool shouldVisitEntry (std::string_view name,
 static constexpr int entriesPerItem { 64 };
 
 using Folder = std::tuple<std::string, std::string, std::string, size_t, std::shared_ptr<const IgnoreRules>>;
-using Listing = std::tuple<std::string, jam::Array<std::tuple<size_t, size_t, bool>>, bool>;
+using Listing = std::tuple<std::string, jam::Array<std::tuple<size_t, size_t, bool>>, bool, int>;
 using ListedFolder = std::pair<Folder, Listing>;
 using FolderRange = std::pair<std::shared_ptr<const ListedFolder>, juce::Range<int>>;
 using WalkItem = std::variant<Folder, FolderRange>;
@@ -154,6 +154,7 @@ static std::optional<Listing> getDirectoryListing (const std::string& fullPath,
     std::string names;
     jam::Array<std::tuple<size_t, size_t, bool>> entries;
     bool hasGitignore { false };
+    int skippedCount { 0 };
 
     for (; listingError.value() == 0 and entry != std::filesystem::directory_iterator {} and not shouldStop.load (std::memory_order_relaxed); entry.increment (listingError))
     {
@@ -173,20 +174,24 @@ static std::optional<Listing> getDirectoryListing (const std::string& fullPath,
             entries.add (std::tuple<size_t, size_t, bool> { names.size(), name->size(), isDirectory });
             jam::Format::appendBytes (names, *name);
         }
+        else if ((isDirectory or isRegularFile) and name->compare (gitDirectoryName) != 0)
+        {
+            ++skippedCount;
+        }
     }
 
     if (listingError.value() != 0)
         return std::nullopt;
 
-    return Listing { std::move (names), std::move (entries), hasGitignore };
+    return Listing { std::move (names), std::move (entries), hasGitignore, skippedCount };
 }
 
 static std::shared_ptr<const ListedFolder> getListedFolder (Folder folder, Listing listing)
 {
     auto& [folderFull, folderDisplay, folderRel, displayPrefixSize, folderRules] { folder };
     const bool isWalkRoot { folderDisplay.size() == displayPrefixSize };
-    const auto& [names, entries, hasGitignore] { listing };
-    juce::ignoreUnused (names, entries);
+    const auto& [names, entries, hasGitignore, skippedCount] { listing };
+    juce::ignoreUnused (names, entries, skippedCount);
 
     if (folderRules != nullptr and hasGitignore and not isWalkRoot)
         folderRules = IgnoreRules::getChildRules (folderRules,
@@ -200,8 +205,8 @@ template <typename AddItem>
 static void addFolderRanges (const std::shared_ptr<const ListedFolder>& listedFolder, const AddItem& addItem)
 {
     const auto& [folder, listing] { *listedFolder };
-    const auto& [names, entries, hasGitignore] { listing };
-    juce::ignoreUnused (folder, names, hasGitignore);
+    const auto& [names, entries, hasGitignore, skippedCount] { listing };
+    juce::ignoreUnused (folder, names, hasGitignore, skippedCount);
     const int numEntries { entries.size() };
 
     for (int entryStart { entriesPerItem }; entryStart < numEntries; entryStart += entriesPerItem)
@@ -209,19 +214,20 @@ static void addFolderRanges (const std::shared_ptr<const ListedFolder>& listedFo
 }
 
 template <typename AddItem, typename OnFile>
-static void applyToListing (int workerIndex,
-                            const ListedFolder& listedFolder,
-                            juce::Range<int> entryRange,
-                            const std::atomic<bool>& shouldStop,
-                            juce::Span<const std::string_view> includeGlobs,
-                            juce::Span<const std::string_view> excludeGlobs,
-                            const AddItem& addItem,
-                            const OnFile& onFile)
+static int applyToListing (int workerIndex,
+                           const ListedFolder& listedFolder,
+                           juce::Range<int> entryRange,
+                           const std::atomic<bool>& shouldStop,
+                           juce::Span<const std::string_view> includeGlobs,
+                           juce::Span<const std::string_view> excludeGlobs,
+                           const AddItem& addItem,
+                           const OnFile& onFile)
 {
     const auto& [folder, listing] { listedFolder };
     const auto& [folderFull, folderDisplay, folderRel, displayPrefixSize, childRules] { folder };
-    const auto& [names, entries, hasGitignore] { listing };
-    juce::ignoreUnused (hasGitignore);
+    const auto& [names, entries, hasGitignore, skippedCount] { listing };
+    juce::ignoreUnused (hasGitignore, skippedCount);
+    int ignoredCount { 0 };
     const int entryEnd { std::min (entryRange.getEnd(), entries.size()) };
     std::string fullPath { folderFull };
     std::string displayBuffer { folderDisplay };
@@ -242,6 +248,8 @@ static void applyToListing (int workerIndex,
             jam::Format::appendBytes (relBuffer, name);
 
         const bool isIncluded { childRules == nullptr or not childRules->isIgnored (relBuffer, isDirectory) };
+
+        if (not isIncluded) ++ignoredCount;
 
         if (isIncluded and isDirectory)
         {
@@ -266,6 +274,8 @@ static void applyToListing (int workerIndex,
         displayBuffer.resize (savedDisplaySize);
         relBuffer.resize (savedRelSize);
     }
+
+    return ignoredCount;
 }
 
 static std::string_view getDirectoryDisplayPath (std::string_view displayPrefix)
@@ -320,8 +330,8 @@ void Paths::applyToFileNames (const juce::File& directory, const std::function<v
 
     if (const auto listing { getDirectoryListing (fullPath, {}, {}, false, shouldStop) })
     {
-        const auto& [names, entries, hasGitignore] { *listing };
-        juce::ignoreUnused (hasGitignore);
+        const auto& [names, entries, hasGitignore, skippedCount] { *listing };
+        juce::ignoreUnused (hasGitignore, skippedCount);
 
         for (const auto& [start, length, isDirectory] : entries)
         {
@@ -347,14 +357,14 @@ static Folder getRootFolder (std::string_view rawPathView, const juce::File& roo
     return { std::string { jam::Strings::getView (rootDirectory.getFullPathName()) }, std::move (displayBuffer), std::move (relBuffer), displayPrefixSize, std::move (rules) };
 }
 
-Paths::Failures Paths::applyToDirectories (const jam::Array<std::pair<std::string_view, juce::File>>& roots,
-                                           juce::Span<const std::string_view> includeGlobs,
-                                           juce::Span<const std::string_view> excludeGlobs,
-                                           bool isIncludingHidden,
-                                           bool isIgnoringRules,
-                                           const std::function<void (int)>& onWorkerCount,
-                                           const std::function<void (int, const std::string&, std::string_view)>& onFile,
-                                           const std::atomic<bool>& shouldStop)
+std::pair<Paths::Failures, int> Paths::applyToDirectories (const jam::Array<std::pair<std::string_view, juce::File>>& roots,
+                                                           juce::Span<const std::string_view> includeGlobs,
+                                                           juce::Span<const std::string_view> excludeGlobs,
+                                                           bool isIncludingHidden,
+                                                           bool isIgnoringRules,
+                                                           const std::function<void (int)>& onWorkerCount,
+                                                           const std::function<void (int, const std::string&, std::string_view)>& onFile,
+                                                           const std::atomic<bool>& shouldStop)
 {
     const std::string_view gitDirectoryName { Id::gitDirectory };
     const std::string_view gitignoreName { Id::gitignoreFile };
@@ -364,14 +374,16 @@ Paths::Failures Paths::applyToDirectories (const jam::Array<std::pair<std::strin
     onWorkerCount (workerCount);
     jam::Array<Failures> workerFailures;
     workerFailures.resize (workerCount);
+    jam::Array<int> workerSkippedCounts;
+    workerSkippedCounts.resize (workerCount);
 
-    const auto walkFolder { [&includeGlobs, &excludeGlobs, gitDirectoryName, gitignoreName, isIncludingHidden, &workingDirectory, &workerFailures, &onFile, &shouldStop]
+    const auto walkFolder { [&includeGlobs, &excludeGlobs, gitDirectoryName, gitignoreName, isIncludingHidden, &workingDirectory, &workerFailures, &workerSkippedCounts, &onFile, &shouldStop]
                             (int workerIndex, WalkItem& walkItem, auto& addItem)
     {
         if (auto* folderRange { std::get_if<FolderRange> (&walkItem) })
         {
             const auto& [listedFolder, entryRange] { *folderRange };
-            applyToListing (workerIndex, *listedFolder, entryRange, shouldStop, includeGlobs, excludeGlobs, addItem, onFile);
+            workerSkippedCounts.at (workerIndex) += applyToListing (workerIndex, *listedFolder, entryRange, shouldStop, includeGlobs, excludeGlobs, addItem, onFile);
         }
         else
         {
@@ -385,9 +397,12 @@ Paths::Failures Paths::applyToDirectories (const jam::Array<std::pair<std::strin
 
                 if (listing.has_value())
                 {
+                    const auto& [listedNames, listedEntries, listedHasGitignore, listedSkippedCount] { *listing };
+                    juce::ignoreUnused (listedNames, listedEntries, listedHasGitignore);
+                    workerSkippedCounts.at (workerIndex) += listedSkippedCount;
                     const auto listedFolder { getListedFolder (std::move (folder), std::move (*listing)) };
                     addFolderRanges (listedFolder, addItem);
-                    applyToListing (workerIndex, *listedFolder, juce::Range<int> { 0, entriesPerItem }, shouldStop, includeGlobs, excludeGlobs, addItem, onFile);
+                    workerSkippedCounts.at (workerIndex) += applyToListing (workerIndex, *listedFolder, juce::Range<int> { 0, entriesPerItem }, shouldStop, includeGlobs, excludeGlobs, addItem, onFile);
                 }
                 else
                 {
@@ -412,7 +427,12 @@ Paths::Failures Paths::applyToDirectories (const jam::Array<std::pair<std::strin
     for (auto& worker : workerFailures)
         addFailures (failures, std::move (worker));
 
-    return failures;
+    int skippedCount { 0 };
+
+    for (const auto workerSkippedCount : workerSkippedCounts)
+        skippedCount += workerSkippedCount;
+
+    return { std::move (failures), skippedCount };
 }
 
 std::tuple<Paths::Failures, jam::Array<Paths::Entry>, jam::Array<std::pair<std::string_view, juce::File>>> Paths::getClassifiedPaths (juce::Span<const std::string_view> rawPaths)
@@ -424,39 +444,53 @@ std::tuple<Paths::Failures, jam::Array<Paths::Entry>, jam::Array<std::pair<std::
 
     for (const auto& rawPathView : rawPaths)
     {
-        auto targetFile { Paths::getLinkedTarget (rawPathView) };
-
-        if (not targetFile.exists())
+        if (rawPathView.compare (Id::stdinArgument) == 0)
         {
-            failurePaths.add (rawPathView);
-            failureResults.add (TextDocument::getReadFailure (targetFile, rawPathView));
-        }
-        else if (targetFile.isDirectory())
-        {
-            folders.add (std::pair<std::string_view, juce::File> { rawPathView, std::move (targetFile) });
+            if (std::none_of (files.begin(), files.end(), [] (const Entry& entry)
+                {
+                    const auto& [displayPath, file, isExplicit] { entry };
+                    juce::ignoreUnused (displayPath, isExplicit);
+                    return file == juce::File {};
+                }))
+                files.add (Entry { std::string { Id::stdinPath }, juce::File {}, true });
         }
         else
         {
-            files.add (Entry { Paths::getDisplayPath (rawPathView), std::move (targetFile), true });
+            auto targetFile { Paths::getLinkedTarget (rawPathView) };
+
+            if (not targetFile.exists())
+            {
+                failurePaths.add (rawPathView);
+                failureResults.add (TextDocument::getReadFailure (targetFile, rawPathView));
+            }
+            else if (targetFile.isDirectory())
+            {
+                folders.add (std::pair<std::string_view, juce::File> { rawPathView, std::move (targetFile) });
+            }
+            else
+            {
+                files.add (Entry { Paths::getDisplayPath (rawPathView), std::move (targetFile), true });
+            }
         }
     }
 
     return { std::move (failures), std::move (files), std::move (folders) };
 }
 
-std::pair<Paths::Failures, jam::Array<Paths::Entry>> Paths::getFiles (juce::Span<const std::string_view> rawPaths,
-                                                                      juce::Span<const std::string_view> includeGlobs,
-                                                                      juce::Span<const std::string_view> excludeGlobs,
-                                                                      bool isIncludingHidden,
-                                                                      bool isIgnoringRules)
+std::tuple<Paths::Failures, jam::Array<Paths::Entry>, int> Paths::getFiles (juce::Span<const std::string_view> rawPaths,
+                                                                            juce::Span<const std::string_view> includeGlobs,
+                                                                            juce::Span<const std::string_view> excludeGlobs,
+                                                                            bool isIncludingHidden,
+                                                                            bool isIgnoringRules)
 {
     auto [failures, entries, roots] { getClassifiedPaths (rawPaths) };
+    int skippedCount { 0 };
 
     if (not roots.isEmpty())
     {
         jam::Array<jam::Array<Entry>> workerEntries;
         const std::atomic<bool> shouldStop { false };
-        auto walkFailures (applyToDirectories (roots,
+        auto [walkFailures, walkSkippedCount] { applyToDirectories (roots,
                                                includeGlobs,
                                                excludeGlobs,
                                                isIncludingHidden,
@@ -469,7 +503,7 @@ std::pair<Paths::Failures, jam::Array<Paths::Entry>> Paths::getFiles (juce::Span
                                                {
                                                    workerEntries.at (workerIndex).add (Entry { std::string { fileDisplayPath }, juce::File { jam::Strings::fromView (fileFullPath) }, false });
                                                },
-                                               shouldStop));
+                                               shouldStop) };
 
         int totalCount { 0 };
 
@@ -485,6 +519,7 @@ std::pair<Paths::Failures, jam::Array<Paths::Entry>> Paths::getFiles (juce::Span
         }
 
         addFailures (failures, std::move (walkFailures));
+        skippedCount = walkSkippedCount;
     }
 
     std::sort (entries.begin(), entries.end(), [] (const Entry& firstEntry, const Entry& secondEntry)
@@ -509,7 +544,7 @@ std::pair<Paths::Failures, jam::Array<Paths::Entry>> Paths::getFiles (juce::Span
         entries.removeRange (uniqueCount, entries.size() - uniqueCount);
     }
 
-    return { std::move (failures), std::move (entries) };
+    return { std::move (failures), std::move (entries), skippedCount };
 }
 
 std::pair<juce::Result, jam::Array<Paths::Entry>> Paths::getReadableFiles (juce::Span<const std::string_view> rawPaths,
@@ -518,7 +553,8 @@ std::pair<juce::Result, jam::Array<Paths::Entry>> Paths::getReadableFiles (juce:
                                                                            bool isIncludingHidden,
                                                                            bool isIgnoringRules)
 {
-    auto [pathFailures, entries] { getFiles (rawPaths, includeGlobs, excludeGlobs, isIncludingHidden, isIgnoringRules) };
+    auto [pathFailures, entries, skippedCount] { getFiles (rawPaths, includeGlobs, excludeGlobs, isIncludingHidden, isIgnoringRules) };
+    juce::ignoreUnused (skippedCount);
     const auto& [failurePaths, failureResults] { pathFailures };
 
     if (not failureResults.isEmpty())
@@ -535,4 +571,43 @@ std::pair<juce::Result, jam::Array<Paths::Entry>> Paths::getReadableFiles (juce:
     }
 
     return { juce::Result::ok(), std::move (entries) };
+}
+
+static juce::File getCarriedCacheFolder()
+{
+#if JUCE_WINDOWS
+    return juce::File { juce::SystemStats::getEnvironmentVariable ("LOCALAPPDATA", {}) }.getChildFile (jam::Strings::fromView (files::lingLocalCache));
+#else
+    return juce::File::getSpecialLocation (juce::File::userHomeDirectory).getChildFile (jam::Strings::fromView (files::lingCache));
+#endif
+}
+
+static juce::File getCarriedFileInCache (const juce::File& cacheFolder, std::string_view libraryName, std::string_view fileName)
+{
+    const auto languageFolders (cacheFolder.getChildFile (jam::Strings::fromView (files::language)).findChildFiles (juce::File::findDirectories, false));
+
+    for (const auto& languageFolder : languageFolders)
+    {
+        const auto carriedFile { languageFolder.getChildFile (jam::Strings::fromView (libraryName)).getChildFile (jam::Strings::fromView (fileName)) };
+
+        if (carriedFile.existsAsFile())
+            return carriedFile;
+    }
+
+    return juce::File {};
+}
+
+juce::File Paths::getCarriedFile (std::string_view libraryName, std::string_view fileName)
+{
+    const auto configuredFile { juce::File::getSpecialLocation (juce::File::userHomeDirectory)
+                                    .getChildFile (jam::Strings::fromView (files::lingConfig))
+                                    .getChildFile (jam::Strings::fromView (files::language))
+                                    .getChildFile (jam::Strings::fromView (libraryName))
+                                    .getChildFile (jam::Strings::fromView (files::libraryBuild))
+                                    .getChildFile (jam::Strings::fromView (fileName)) };
+
+    if (configuredFile.existsAsFile())
+        return configuredFile;
+
+    return getCarriedFileInCache (getCarriedCacheFolder(), libraryName, fileName);
 }

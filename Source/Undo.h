@@ -21,9 +21,9 @@ struct Undo
      *  Otherwise one transaction is previewed, or restored with `--apply`. The input is not read.
      *
      *  @param arguments The parsed arguments from getArguments.
-     *  @param input     The supplied input text. Undo does not read it.
+     *  @param input     The input source. Undo does not read it.
      *
      *  @return The exit code, the output text, and the diagnostics.
      */
-    static Stdio::Output run (const Arguments& arguments, const std::optional<std::string>& input);
+    static Stdio::Output run (const Arguments& arguments, const Input::Source& input);
 };

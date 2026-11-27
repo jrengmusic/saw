@@ -1,9 +1,9 @@
 #include "FindOutcome.h"
 #include "Stdio.h"
 
-void FindOutcome::addFile (const juce::File& file, std::string_view displayPath, const Pattern& pattern, const Search& search, bool isExplicit, bool isShowingPathPrefix)
+void FindOutcome::addFile (const juce::File& file, std::string_view displayPath, const Pattern& pattern, const Search& search, bool isExplicit, bool isShowingPathPrefix, const Input::Source& source)
 {
-    auto [status, matchCount, documents] { search.runFile (file, displayPath, pattern, automaton, isExplicit, isShowingPathPrefix) };
+    auto [status, matchCount, documents] { search.runFile (file, displayPath, pattern, automaton, isExplicit, isShowingPathPrefix, source) };
 
     if (status.failed())
     {

@@ -145,17 +145,21 @@ Every field is a complete literal; nothing downstream derives, concatenates, or 
 | events                  | juce_events                |
 | jamCore                 | jam_core                   |
 | jamDataStructures       | jam_data_structures        |
+| jamGit                  | jam_git                    |
+| jamSyntaxTree           | jam_syntax_tree            |
 | jamTerminal             | jam_terminal               |
 | jamModelContextProtocol | jam_model_context_protocol |
 +-------------------------+----------------------------+
 
 ## program user module
 
-+--------------+----------------------------+------------------------------------------+
-| root         | name                       | description                              |
-+==============+============================+==========================================+
-| @user-module | jam_model_context_protocol | Model Context Protocol server over stdio |
-+--------------+----------------------------+------------------------------------------+
++--------------+----------------------------+----------------------------------------------------------------+
+| root         | name                       | description                                                    |
++==============+============================+================================================================+
+| @user-module | jam_git                    | Git index and object reader over jam::Document                 |
+| @user-module | jam_model_context_protocol | Model Context Protocol server over stdio                       |
+| @user-module | jam_syntax_tree            | Programming-language tokenizers and parsers over jam::Document |
++--------------+----------------------------+----------------------------------------------------------------+
 
 ## source glob
 
@@ -186,6 +190,7 @@ Every field is a complete literal; nothing downstream derives, concatenates, or 
 | juceCoreIncludeComSmartPtr         | `$<$<PLATFORM_ID:Windows>:JUCE_CORE_INCLUDE_COM_SMART_PTR=1>`        | Windows COM smart pointer helpers                             |
 | haveFreetype                       | HAVE_FREETYPE                                                        | FreeType font backend, consumed by juce_graphics_Harfbuzz.cpp |
 | haveUnistdH                        | `$<$<NOT:$<PLATFORM_ID:Windows>>:HAVE_UNISTD_H>`                     | POSIX unistd.h present, non-Windows                           |
+| jamUsingJsonFilter                 | JAM_USING_JSON_FILTER=1                                              | JAM json filter, program, and automaton                       |
 +------------------------------------+----------------------------------------------------------------------+---------------------------------------------------------------+
 
 ## include
@@ -210,8 +215,11 @@ Every field is a complete literal; nothing downstream derives, concatenates, or 
 | linesHelp   | Source/help/lines.md          | Lines verb help document           |
 | fieldsHelp  | Source/help/fields.md         | Fields verb help document          |
 | patchHelp   | Source/help/patch.md          | Patch verb help document           |
+| writeHelp   | Source/help/write.md          | Write verb help document           |
+| pageHelp    | Source/help/page.md           | Page verb help document            |
 | undoHelp    | Source/help/undo.md           | Undo verb help document            |
 | excerptHelp | Source/help/excerpt.md        | Excerpt verb help document         |
+| jsonHelp    | Source/help/json.md           | Json verb help document            |
 | styleSheet  | ../jam/jam_tui/page/style.css | Stylesheet, embedded as BinaryData |
 +-------------+-------------------------------+------------------------------------+
 
@@ -268,92 +276,96 @@ Every field is a complete literal; nothing downstream derives, concatenates, or 
 
 ## release
 
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| name                    | mac                            | win            | stage  | description                                      |
-+=========================+================================+================+========+==================================================+
-| shadow                  | -Wno-shadow                    | /wd4456        |        | Lambda captures / declarations mayshadow         |
-|                         |                                |                |        |  intentionally                                   |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| unusedParameter         | -Wno-unused-parameter          | /wd4100        |        | Debug/template code may not use                  |
-|                         |                                |                |        |  allparameters                                   |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| floatEqual              | -Wno-float-equal               |                |        | DSP exact float comparisons for                  |
-|                         |                                |                |        |  bypassdetection                                 |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| signConversion          | -Wno-sign-conversion           |                |        | Array indexing, safe in this context             |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| switchEnum              | -Wno-switch-enum               |                |        | Not every filter type needs every                |
-|                         |                                |                |        |  casehandled                                     |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| floatToDoubleConversion | -Wno-implicit-float-conversion | /wd4244        |        | DSP double/float conversions                     |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| macroRedefined          | -Wno-macro-redefined           | /wd4005        |        | Macro redefinition                               |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| permissiveMinus         |                                | /permissive-   |        | Standards conformance matching clang —           |
-|                         |                                |                |        | Function::Map identity-cast                      |
-|                         |                                |                |        |  deductionneeds it                               |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| rvalueCast              |                                | /Zc:rvalueCast |        | Off by default, not implied by /                 |
-|                         |                                |                |        | permissive- — needed for correct                 |
-|                         |                                |                |        |  Tdeduction                                      |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| warningLevel4           |                                | /W4            |        | Warning level 4                                  |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| fullPathInPdb           |                                | /FC            |        | Full path in PDB, required for                   |
-|                         |                                |                |        |  debuggersource-line resolution                  |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| optimization            | -O3                            | /O2            |        | Full optimization                                |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| linkTimeOptimization    | -flto                          | /GL            |        | Link-time optimization codegen                   |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| linkTimeCodegen         |                                | /LTCG          | linker | MSVC whole-program link-time codegen             |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| deadCodeStripping       | -dead_strip                    | /OPT:REF       | linker | Strip unreferenced functions and data            |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| deadDylibStripping      | -Wl,-dead_strip_dylibs         |                | linker | Drop the libraries that no live code references. |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| exportedSymbols         | -Wl,-exported_symbol,_main     |                | linker | Export the entry point only.                     |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
-| identicalCodeFolding    |                                | /OPT:ICF       | linker | Fold identical COMDATs                           |
-+-------------------------+--------------------------------+----------------+--------+--------------------------------------------------+
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| name                    | mac                            | win               | stage  | description                                      |
++=========================+================================+===================+========+==================================================+
+| shadow                  | -Wno-shadow                    | /wd4456           |        | Lambda captures / declarations mayshadow         |
+|                         |                                |                   |        |  intentionally                                   |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| unusedParameter         | -Wno-unused-parameter          | /wd4100           |        | Debug/template code may not use                  |
+|                         |                                |                   |        |  allparameters                                   |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| floatEqual              | -Wno-float-equal               |                   |        | DSP exact float comparisons for                  |
+|                         |                                |                   |        |  bypassdetection                                 |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| signConversion          | -Wno-sign-conversion           |                   |        | Array indexing, safe in this context             |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| switchEnum              | -Wno-switch-enum               |                   |        | Not every filter type needs every                |
+|                         |                                |                   |        |  casehandled                                     |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| floatToDoubleConversion | -Wno-implicit-float-conversion | /wd4244           |        | DSP double/float conversions                     |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| macroRedefined          | -Wno-macro-redefined           | /wd4005           |        | Macro redefinition                               |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| permissiveMinus         |                                | /permissive-      |        | Standards conformance matching clang —           |
+|                         |                                |                   |        | Function::Map identity-cast                      |
+|                         |                                |                   |        |  deductionneeds it                               |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| rvalueCast              |                                | /Zc:rvalueCast    |        | Off by default, not implied by /                 |
+|                         |                                |                   |        | permissive- — needed for correct                 |
+|                         |                                |                   |        |  Tdeduction                                      |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| warningLevel4           |                                | /W4               |        | Warning level 4                                  |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| fullPathInPdb           |                                | /FC               |        | Full path in PDB, required for                   |
+|                         |                                |                   |        |  debuggersource-line resolution                  |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| optimization            | -O3                            | /O2               |        | Full optimization                                |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| linkTimeOptimization    | -flto                          | /GL               |        | Link-time optimization codegen                   |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| linkTimeCodegen         |                                | /LTCG             | linker | MSVC whole-program link-time codegen             |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| deadCodeStripping       | -dead_strip                    | /OPT:REF          | linker | Strip unreferenced functions and data            |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| deadDylibStripping      | -Wl,-dead_strip_dylibs         |                   | linker | Drop the libraries that no live code references. |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| exportedSymbols         | -Wl,-exported_symbol,_main     |                   | linker | Export the entry point only.                     |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| identicalCodeFolding    |                                | /OPT:ICF          | linker | Fold identical COMDATs                           |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
+| mainThreadStackSize     | -Wl,-stack_size,0x10000000     | /STACK:0x10000000 | linker | Main thread stack for deep jq recursion          |
++-------------------------+--------------------------------+-------------------+--------+--------------------------------------------------+
 
 ## debug
 
-+-------------------------+--------------------------------+----------------+-------+------------------------------------------+
-| name                    | mac                            | win            | stage | description                              |
-+=========================+================================+================+=======+==========================================+
-| shadow                  | -Wno-shadow                    | /wd4456        |       | Lambda captures / declarations mayshadow |
-|                         |                                |                |       |  intentionally                           |
-+-------------------------+--------------------------------+----------------+-------+------------------------------------------+
-| unusedParameter         | -Wno-unused-parameter          | /wd4100        |       | Debug/template code may not use          |
-|                         |                                |                |       |  allparameters                           |
-+-------------------------+--------------------------------+----------------+-------+------------------------------------------+
-| floatEqual              | -Wno-float-equal               |                |       | DSP exact float comparisons for          |
-|                         |                                |                |       |  bypassdetection                         |
-+-------------------------+--------------------------------+----------------+-------+------------------------------------------+
-| signConversion          | -Wno-sign-conversion           |                |       | Array indexing, safe in this context     |
-+-------------------------+--------------------------------+----------------+-------+------------------------------------------+
-| switchEnum              | -Wno-switch-enum               |                |       | Not every filter type needs every        |
-|                         |                                |                |       |  casehandled                             |
-+-------------------------+--------------------------------+----------------+-------+------------------------------------------+
-| floatToDoubleConversion | -Wno-implicit-float-conversion | /wd4244        |       | DSP double/float conversions             |
-+-------------------------+--------------------------------+----------------+-------+------------------------------------------+
-| macroRedefined          | -Wno-macro-redefined           | /wd4005        |       | Macro redefinition                       |
-+-------------------------+--------------------------------+----------------+-------+------------------------------------------+
-| permissiveMinus         |                                | /permissive-   |       | Standards conformance matching clang —   |
-|                         |                                |                |       | Function::Map identity-cast              |
-|                         |                                |                |       |  deductionneeds it                       |
-+-------------------------+--------------------------------+----------------+-------+------------------------------------------+
-| rvalueCast              |                                | /Zc:rvalueCast |       | Off by default, not implied by /         |
-|                         |                                |                |       | permissive- — needed for correct         |
-|                         |                                |                |       |  Tdeduction                              |
-+-------------------------+--------------------------------+----------------+-------+------------------------------------------+
-| warningLevel4           |                                | /W4            |       | Warning level 4                          |
-+-------------------------+--------------------------------+----------------+-------+------------------------------------------+
-| fullPathInPdb           |                                | /FC            |       | Full path in PDB, required for           |
-|                         |                                |                |       |  debuggersource-line resolution          |
-+-------------------------+--------------------------------+----------------+-------+------------------------------------------+
-| optimization            | -O0                            | /Od            |       | No optimization                          |
-+-------------------------+--------------------------------+----------------+-------+------------------------------------------+
-| debugSymbols            | -g                             | /Zi            |       | Debug symbols                            |
-+-------------------------+--------------------------------+----------------+-------+------------------------------------------+
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+
+| name                    | mac                            | win               | stage  | description                              |
++=========================+================================+===================+========+==========================================+
+| shadow                  | -Wno-shadow                    | /wd4456           |        | Lambda captures / declarations mayshadow |
+|                         |                                |                   |        |  intentionally                           |
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+
+| unusedParameter         | -Wno-unused-parameter          | /wd4100           |        | Debug/template code may not use          |
+|                         |                                |                   |        |  allparameters                           |
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+
+| floatEqual              | -Wno-float-equal               |                   |        | DSP exact float comparisons for          |
+|                         |                                |                   |        |  bypassdetection                         |
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+
+| signConversion          | -Wno-sign-conversion           |                   |        | Array indexing, safe in this context     |
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+
+| switchEnum              | -Wno-switch-enum               |                   |        | Not every filter type needs every        |
+|                         |                                |                   |        |  casehandled                             |
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+
+| floatToDoubleConversion | -Wno-implicit-float-conversion | /wd4244           |        | DSP double/float conversions             |
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+
+| macroRedefined          | -Wno-macro-redefined           | /wd4005           |        | Macro redefinition                       |
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+
+| permissiveMinus         |                                | /permissive-      |        | Standards conformance matching clang —   |
+|                         |                                |                   |        | Function::Map identity-cast              |
+|                         |                                |                   |        |  deductionneeds it                       |
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+
+| rvalueCast              |                                | /Zc:rvalueCast    |        | Off by default, not implied by /         |
+|                         |                                |                   |        | permissive- — needed for correct         |
+|                         |                                |                   |        |  Tdeduction                              |
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+
+| warningLevel4           |                                | /W4               |        | Warning level 4                          |
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+
+| fullPathInPdb           |                                | /FC               |        | Full path in PDB, required for           |
+|                         |                                |                   |        |  debuggersource-line resolution          |
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+
+| optimization            | -O0                            | /Od               |        | No optimization                          |
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+
+| debugSymbols            | -g                             | /Zi               |        | Debug symbols                            |
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+
+| mainThreadStackSize     | -Wl,-stack_size,0x10000000     | /STACK:0x10000000 | linker | Main thread stack for deep jq recursion  |
++-------------------------+--------------------------------+-------------------+--------+------------------------------------------+

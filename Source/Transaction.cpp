@@ -41,6 +41,29 @@ juce::Result Transaction::addFile (const juce::File& targetFile,
     return juce::Result::ok();
 }
 
+juce::Result Transaction::addFile (const juce::File& targetFile,
+                                   std::unique_ptr<TextDocument> originalDocument,
+                                   std::unique_ptr<TextDocument> plannedDocument,
+                                   bool isExisting,
+                                   int fileEditCount)
+{
+    assert (originalDocument != nullptr);
+    assert (plannedDocument != nullptr);
+    totalEditCount += fileEditCount;
+
+    if (not isExisting or originalDocument->getBytes().compare (plannedDocument->getBytes()) != 0)
+    {
+        const auto writeStatus { Writer::getWriteStatus (targetFile, originalDocument->getDisplayPath()) };
+
+        if (writeStatus.failed())
+            return writeStatus;
+
+        stagedFiles.add (StagedFile (targetFile, std::move (originalDocument), std::move (plannedDocument), jam::File::isExecutable (targetFile), isExisting, true, stagedFiles.size()));
+    }
+
+    return juce::Result::ok();
+}
+
 Stdio::Output Transaction::run (const Arguments& arguments)
 {
     const bool isApply { arguments.contains (Id::applyOption) };
@@ -93,6 +116,7 @@ juce::Result Transaction::getRollbackFailure (std::string_view failure, std::str
 
 std::tuple<juce::Result, std::string_view, jam::Strings> Transaction::applyToStagedFiles (const jam::Array<StagedFile>& stagedFiles,
                                                                                          std::string_view transactionId,
+                                                                                         const jam::Array<juce::File>& folders,
                                                                                          const std::function<std::pair<juce::Result, bool> (const StagedFile&)>& function)
 {
     for (int index { 0 }; index < stagedFiles.size(); ++index)
@@ -113,6 +137,7 @@ std::tuple<juce::Result, std::string_view, jam::Strings> Transaction::applyToSta
                     unrestoredPaths.add (restoredFile.getDisplayPath());
             }
 
+            removeEmptyFolders (folders);
             return { fileStatus, stagedFile.getDisplayPath(), std::move (unrestoredPaths) };
         }
     }
@@ -188,30 +213,87 @@ Stdio::Output Transaction::runCommit()
     return Stdio::getOutput (Stdio::exitSuccess, std::move (appliedSummary));
 }
 
+static juce::Result createFolders (const jam::Array<juce::File>& folders, std::string_view transactionId)
+{
+    int createdCount { 0 };
+
+    while (createdCount < folders.size() and jam::File::createDirectory (folders.at (createdCount)))
+        ++createdCount;
+
+    if (createdCount == folders.size())
+        return juce::Result::ok();
+
+    Transaction::removeEmptyFolders (folders);
+    UndoCache::removeTransaction (transactionId);
+    return Writer::getWriteFailure (jam::Strings::getView (folders.at (createdCount).getFullPathName()), text::Diagnostics::failOverwriteFailed);
+}
+
+static std::pair<juce::Result, std::string> getCommitFailure (std::string_view transactionId, const juce::Result& commitStatus, std::string_view failedPath, const jam::Strings& unrestoredPaths)
+{
+    if (unrestoredPaths.size() == 0)
+    {
+        UndoCache::removeTransaction (transactionId);
+        return { Writer::getWriteFailure (failedPath, jam::Strings::getView (commitStatus.getErrorMessage())), {} };
+    }
+
+    return { Transaction::getRollbackFailure (text::Diagnostics::failWrite, failedPath, commitStatus, unrestoredPaths), {} };
+}
+
 std::pair<juce::Result, std::string> Transaction::commit()
 {
-    const auto [stageStatus, txId] { UndoCache::addTransaction (commandName, stagedFiles) };
+    const auto folders (getMissingFolders());
+    const auto [stageStatus, txId] { UndoCache::addTransaction (commandName, stagedFiles, folders) };
 
     if (stageStatus.failed())
         return { stageStatus, {} };
 
-    const auto [commitStatus, failedPath, unrestoredPaths] { applyToStagedFiles (stagedFiles, txId, [&transactionId = txId] (const StagedFile& stagedFile)
+    const auto folderStatus { createFolders (folders, txId) };
+
+    if (folderStatus.failed())
+        return { folderStatus, {} };
+
+    const auto [commitStatus, failedPath, unrestoredPaths] { applyToStagedFiles (stagedFiles, txId, folders, [&transactionId = txId] (const StagedFile& stagedFile)
     {
         return stagedFile.commit (transactionId);
     }) };
 
     if (commitStatus.failed())
-    {
-        if (unrestoredPaths.size() == 0)
-        {
-            UndoCache::removeTransaction (txId);
-            return { Writer::getWriteFailure (failedPath, jam::Strings::getView (commitStatus.getErrorMessage())), {} };
-        }
-
-        return { getRollbackFailure (text::Diagnostics::failWrite, failedPath, commitStatus, unrestoredPaths), {} };
-    }
+        return getCommitFailure (txId, commitStatus, failedPath, unrestoredPaths);
 
     const auto publishStatus { UndoCache::publishTransaction (txId) };
     UndoCache::removeOldestTransactions();
     return { publishStatus, txId };
+}
+
+static void addMissingFolders (jam::Array<juce::File>& folders, const juce::File& targetFile)
+{
+    juce::File folder { targetFile.getParentDirectory() };
+
+    while (not folder.exists() and not folders.contains (folder))
+    {
+        folders.add (folder);
+        folder = folder.getParentDirectory();
+    }
+}
+
+jam::Array<juce::File> Transaction::getMissingFolders() const
+{
+    jam::Array<juce::File> folders;
+
+    for (int index { 0 }; index < stagedFiles.size(); ++index)
+    {
+        const auto& stagedFile { stagedFiles.at (index) };
+
+        if (not stagedFile.isExisting())
+            addMissingFolders (folders, stagedFile.getTargetFile());
+    }
+
+    std::sort (folders.begin(), folders.end());
+    return folders;
+}
+
+void Transaction::removeEmptyFolders (const jam::Array<juce::File>& folders)
+{
+    for (int index { folders.size() - 1 }; index >= 0; --index)
+        juce::ignoreUnused (jam::File::deleteFile (folders.at (index)));
 }

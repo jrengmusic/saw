@@ -104,20 +104,20 @@ static bool isSectionHeader (std::string_view trimmed) noexcept
     return not trimmed.empty() and trimmed.at (0) == static_cast<char> (Chars::openBracket);
 }
 
-static bool isCoreSectionHeader (std::string_view trimmed)
+static bool isNamedSectionHeader (std::string_view trimmed, std::string_view sectionName)
 {
     const auto closePos { trimmed.find (static_cast<char> (Chars::closeBracket), 1) };
 
     if (closePos != std::string_view::npos)
     {
-        const auto sectionName { jam::Format::trim (trimmed.substr (1, closePos - 1)) };
-        return jam::Strings::fromView (sectionName).compareIgnoreCase (Id::coreSection.data()) == 0;
+        const auto headerName { jam::Format::trim (trimmed.substr (1, closePos - 1)) };
+        return jam::Strings::fromView (headerName).compareIgnoreCase (jam::Strings::fromView (sectionName)) == 0;
     }
 
     return false;
 }
 
-static std::optional<std::string> getExcludesFileValueFromLine (std::string_view trimmed)
+static std::optional<std::string> getEntryValueFromLine (std::string_view trimmed, std::string_view keyName)
 {
     const auto equalsPos { trimmed.find (static_cast<char> (Chars::equals)) };
 
@@ -125,17 +125,17 @@ static std::optional<std::string> getExcludesFileValueFromLine (std::string_view
     {
         const auto key { jam::Format::trim (trimmed.substr (0, equalsPos)) };
 
-        if (jam::Strings::fromView (key).compareIgnoreCase (Id::excludesFileKey.data()) == 0)
+        if (jam::Strings::fromView (key).compareIgnoreCase (jam::Strings::fromView (keyName)) == 0)
             return getConfigValue (trimmed.substr (equalsPos + 1));
     }
 
     return std::nullopt;
 }
 
-static std::string getExcludesFileValue (const TextDocument& document)
+static std::string getEntryValue (const TextDocument& document, std::string_view sectionName, std::string_view keyName)
 {
     std::string foundValue;
-    bool inCoreSection { false };
+    bool inSection { false };
     std::string logicalLine;
     const auto numLines { document.getNumLines() };
 
@@ -154,9 +154,9 @@ static std::string getExcludesFileValue (const TextDocument& document)
             const auto trimmed { jam::Format::trim (logicalLine) };
 
             if (isSectionHeader (trimmed))
-                inCoreSection = isCoreSectionHeader (trimmed);
-            else if (inCoreSection)
-                foundValue = getExcludesFileValueFromLine (trimmed).value_or (foundValue);
+                inSection = isNamedSectionHeader (trimmed, sectionName);
+            else if (inSection)
+                foundValue = getEntryValueFromLine (trimmed, keyName).value_or (foundValue);
 
             logicalLine.clear();
         }
@@ -582,11 +582,13 @@ juce::File IgnoreRules::getGlobalExcludesFile()
 {
     const juce::File homeDir { juce::File::getSpecialLocation (juce::File::userHomeDirectory) };
     const std::string xdgHome { jam::Strings::getView (juce::SystemStats::getEnvironmentVariable (jam::Strings::fromView (Id::xdgConfigHomeVariable), {})) };
-    auto configured { getExcludesFileFromConfig (getXdgFile (xdgHome,
-                                                             homeDir,
-                                                             Id::gitConfigRelativePath,
-                                                             Id::defaultGitConfigRelativePath)) };
-    const auto userConfigured { getExcludesFileFromConfig (homeDir.getChildFile (Id::userGitConfigFile.data())) };
+    auto configured { getConfigEntry (getXdgFile (xdgHome,
+                                                  homeDir,
+                                                  Id::gitConfigRelativePath,
+                                                  Id::defaultGitConfigRelativePath),
+                                      Id::coreSection,
+                                      Id::excludesFileKey) };
+    const auto userConfigured { getConfigEntry (homeDir.getChildFile (Id::userGitConfigFile.data()), Id::coreSection, Id::excludesFileKey) };
 
     if (not userConfigured.empty())
         configured = userConfigured;
@@ -603,16 +605,16 @@ juce::File IgnoreRules::getGlobalExcludesFile()
                        Id::defaultGitIgnoreRelativePath);
 }
 
-std::string IgnoreRules::getExcludesFileFromConfig (const juce::File& configFile)
+std::string IgnoreRules::getConfigEntry (const juce::File& configFile, std::string_view sectionName, std::string_view keyName)
 {
     std::string foundValue;
 
     if (configFile.existsAsFile())
     {
-        const auto [result, document] { TextDocument::fromFile (configFile, jam::Strings::getView (configFile.getFullPathName()), Input::maxBufferedReadSize) };
+        const auto [result, document] { TextDocument::fromFile (configFile, jam::Strings::getView (configFile.getFullPathName()), Input::maxBufferedReadSize, false) };
 
         if (result.wasOk() and not document->isBinary())
-            foundValue = getExcludesFileValue (*document);
+            foundValue = getEntryValue (*document, sectionName, keyName);
     }
 
     return foundValue;
@@ -700,7 +702,7 @@ void IgnoreRules::addRulesFromFile (const juce::File& file)
 {
     if (file.existsAsFile())
     {
-        const auto [result, document] { TextDocument::fromFile (file, jam::Strings::getView (file.getFullPathName()), Input::maxBufferedReadSize) };
+        const auto [result, document] { TextDocument::fromFile (file, jam::Strings::getView (file.getFullPathName()), Input::maxBufferedReadSize, false) };
 
         if (result.wasOk() and not document->isBinary())
         {

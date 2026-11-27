@@ -21,8 +21,9 @@ public:
      *  @param search              The search options that shape the output.
      *  @param isExplicit          True when the file was named on the command line.
      *  @param isShowingPathPrefix True when each output line carries the display path.
+     *  @param source              The source of the input, passed to the search of the file.
      */
-    void addFile (const juce::File& file, std::string_view displayPath, const Pattern& pattern, const Search& search, bool isExplicit, bool isShowingPathPrefix);
+    void addFile (const juce::File& file, std::string_view displayPath, const Pattern& pattern, const Search& search, bool isExplicit, bool isShowingPathPrefix, const Input::Source& source);
 
     /** @brief Returns the number of matches of the files that searched without a failure.
      *

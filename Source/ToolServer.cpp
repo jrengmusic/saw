@@ -80,33 +80,32 @@ void ToolServer::runTool (const juce::String& requestId, const jam::JsonDocument
 {
     const auto directory { document.getString (document.get (arguments, jam::Strings::getView (Id::directory.toString()))) };
 
-    if (juce::File::isAbsolutePath (directory) and juce::File { jam::Strings::fromView (directory) }.setAsCurrentWorkingDirectory())
+    const auto directoryPath { jam::Strings::fromView (directory) };
+
+    if (juce::File::isAbsolutePath (directoryPath) and juce::File { directoryPath }.setAsCurrentWorkingDirectory())
     {
         const auto& argumentTokens { *document.getChildByToken (arguments, document.get (arguments, mcp::Member::arguments))->get<jam::Document::Tokens> (Id::tokens) };
-        jam::Array<std::string> decodedArguments;
-        decodedArguments.ensureStorageAllocated (argumentTokens.size());
+        jam::Array<std::string_view> commandArguments;
+        commandArguments.ensureStorageAllocated (argumentTokens.size());
 
         for (int index { 0 }; index < argumentTokens.size(); ++index)
-            decodedArguments.add (document.getString (argumentTokens.at (index)));
-
-        jam::Array<std::string_view> commandArguments;
-        commandArguments.ensureStorageAllocated (decodedArguments.size());
-
-        for (int index { 0 }; index < decodedArguments.size(); ++index)
-            commandArguments.add (decodedArguments.at (index));
+            commandArguments.add (document.getString (argumentTokens.at (index)));
 
         const juce::Span<const std::string_view> span { commandArguments.data(), static_cast<size_t> (commandArguments.size()) };
-        const std::optional<std::string> standardInput { document.contains (arguments, Id::standardInput) ? document.getString (document.get (arguments, Id::standardInput)) : std::string {} };
+        const Input::Source standardInput { document.contains (arguments, Id::standardInput) ? Input::Source { document.getString (document.get (arguments, Id::standardInput)) } : Input::Source { Input::NullDevice {} } };
         const auto commandResult { CommandLine::run (span, standardInput) };
 
-        const auto& [exitCode, documents, failures] { commandResult };
+        const auto& [exitCode, documents, failures, errorDocuments] { commandResult };
         const auto applyOutput { [&documents = documents] (const auto& appendText)
         {
             for (const auto& outputDocument : documents)
                 appendText (outputDocument->getBytes());
         } };
-        const auto applyErrors { [&failures = failures] (const auto& appendText)
+        const auto applyErrors { [&failures = failures, &errorDocuments = errorDocuments] (const auto& appendText)
         {
+            for (const auto& errorDocument : errorDocuments)
+                appendText (errorDocument->getBytes());
+
             for (const auto& failure : failures)
                 Stdio::applyToPieces (failure, appendText);
         } };

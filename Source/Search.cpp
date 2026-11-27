@@ -81,6 +81,7 @@ Search::Search (const Arguments& arguments, int newBeforeContext, int newAfterCo
       isFirst (arguments.contains (Id::firstOption)),
       isShowingLineNumber (not arguments.contains (Id::noLineNumberOption)),
       isShowingHash (arguments.contains (Id::hashOption)),
+      isText (arguments.contains (Id::textOption)),
       beforeContext (newBeforeContext),
       afterContext (newAfterContext),
       afterLine (newAfterLine),
@@ -103,7 +104,7 @@ std::tuple<juce::Result, int, Stdio::Documents> Search::run (std::string_view by
     auto [searchResult, searchCount, searchOutput, searchedSize] { runLines (rangeBytes, displayPath, pattern, automaton, isShowingPathPrefix, initialLineNumber) };
     const bool isBinaryRelevant { isExplicit or isCount or searchResult.failed() or searchCount > 0 };
 
-    if (isBinaryRelevant and TextDocument::isBinary (rangeBytes.substr (0, searchedSize)))
+    if (isBinaryRelevant and not isText and TextDocument::isBinary (rangeBytes.substr (0, searchedSize)))
         return { TextDocument::getBinaryStatus (displayPath, isExplicit), 0, Stdio::Documents {} };
 
     if (searchResult.failed())
@@ -120,12 +121,13 @@ std::tuple<juce::Result, int, Stdio::Documents> Search::runFile (const juce::Fil
                                                                  const Pattern& pattern,
                                                                  jam::RegExpAutomaton& automaton,
                                                                  bool isExplicit,
-                                                                 bool isShowingPathPrefix) const
+                                                                 bool isShowingPathPrefix,
+                                                                 const Input::Source& source) const
 {
-    const auto input { Input::fromFile (file, Input::maxBufferedReadSize) };
+    const auto [inputStatus, input] { TextDocument::getInput (file, displayPath, Input::maxBufferedReadSize, source) };
 
-    if (input == nullptr)
-        return { TextDocument::getReadFailure (file, displayPath), 0, Stdio::Documents {} };
+    if (inputStatus.failed())
+        return { inputStatus, 0, Stdio::Documents {} };
 
     if (input->getBytes().empty())
         return getEmptyFileOutcome (displayPath, isExplicit, isShowingPathPrefix);
@@ -167,7 +169,7 @@ std::tuple<juce::Result, int, Stdio::Documents, size_t> Search::runStream (const
             const std::string_view rangeChunk { lineRange.getEnd() == Arguments::openRangeEnd ? chunk : TextDocument::getLeadingLines (chunk, lineRange.getEnd() - lineNumber) };
             auto [chunkStatus, chunkMatches, chunkOutput, searchedSize] { runLines (rangeChunk, Id::stdinPath, pattern, automaton, false, lineNumber) };
 
-            if (TextDocument::isBinary (rangeChunk.substr (0, searchedSize)))
+            if (not isText and TextDocument::isBinary (rangeChunk.substr (0, searchedSize)))
             {
                 return { TextDocument::getBinaryStatus (Id::stdinPath, true), 0, Stdio::Documents {}, readSize };
             }
@@ -309,11 +311,11 @@ std::tuple<juce::Result, int, Stdio::Documents> Search::runChunks (std::string_v
     jam::Array<bool> nulFlags;
     nulFlags.resize (chunkCount);
 
-    Jobs::run (chunkCount, [bytes, &chunkEnds, &newlineCounts, &nulFlags] (int index)
+    Jobs::run (chunkCount, [this, bytes, &chunkEnds, &newlineCounts, &nulFlags] (int index)
     {
         const std::string_view chunk { getChunk (bytes, chunkEnds, index) };
         newlineCounts.at (index) = jam::simd::countByte (chunk.data(), chunk.size(), static_cast<char> (Chars::newline));
-        nulFlags.at (index) = TextDocument::isBinary (chunk);
+        nulFlags.at (index) = not isText and TextDocument::isBinary (chunk);
     });
 
     bool hasNul { false };

@@ -1,6 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "Arguments.h"
+#include "Input.h"
 #include "Stdio.h"
 
 /** @brief Implements the `saw find` subcommand for searching files and standard input.
@@ -17,16 +18,15 @@ struct Find
 
     /** @brief Runs find on parsed arguments.
      *
-     *  A failed parse is returned as a failure. With `--files`, the command lists the files
-     *  instead of searching them. Without paths, standard input is searched when it is not a terminal.
-     *  Otherwise the current folder is searched.
+     *  A failed parse is returned as a failure. With `--files`, the command lists the files instead of searching them.
+     *  Without paths, standard input is searched when it holds data, see Input::hasData. Otherwise the current folder is searched.
      *
      *  @param arguments The parsed arguments from getArguments.
-     *  @param input     The supplied input text, or nullopt for the process standard input.
+     *  @param source    The standard input, the null device, or a supplied text.
      *
-     *  @return The exit code, the output text, and the diagnostics. The exit code is 2 when a failure
-     *          is recorded, except that --quiet with a match gives 0. Otherwise it is 0 when a match
-     *          is found, and 1 when none is found.
+     *  @return The exit code, the output documents, and the failures. For a file search, the exit code is Stdio::exitError when a failure
+     *          is recorded, except that --quiet with a match gives Stdio::exitSuccess. Otherwise it is Stdio::exitSuccess when a match
+     *          is found, and Stdio::exitMismatch when none is found.
      */
-    static Stdio::Output run (const Arguments& arguments, const std::optional<std::string>& input);
+    static Stdio::Output run (const Arguments& arguments, const Input::Source& source);
 };

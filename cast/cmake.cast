@@ -255,6 +255,7 @@ foreach(CAST_BINARY_FILE ${CAST_BINARY_FILES})
         get_filename_component(CAST_DOCUMENT_NAME "${CAST_BINARY_FILE}" NAME)
         get_filename_component(CAST_DOCUMENT_STEM "${CAST_BINARY_FILE}" NAME_WLE)
         list(APPEND CAST_DOCUMENT_NAMES "${CAST_DOCUMENT_NAME}")
+        list(APPEND CAST_DOCUMENT_FILES "${CAST_BINARY_FILE}")
         list(APPEND CAST_FRAME_FILES "${CAST_FRAME_DIRECTORY}/${CAST_DOCUMENT_STEM}.frame")
     endif()
 endforeach()
@@ -271,6 +272,7 @@ juce_add_binary_data(${PROJECT_NAME}_BinaryData
     NAMESPACE ":::binaryDataNamespace:::"
     SOURCES
         ${CAST_FRAME_FILES}
+        ${CAST_DOCUMENT_FILES}
         "${CMAKE_CURRENT_SOURCE_DIR}/Source/tools.json"
 )
 

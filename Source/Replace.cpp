@@ -101,7 +101,7 @@ static juce::Result getCaptureValidationStatus (const jam::Array<std::pair<int, 
     return juce::Result::ok();
 }
 
-static std::tuple<juce::Result, std::unique_ptr<TextDocument>, std::unique_ptr<Input>, std::string_view> getReplacementText (const Arguments& arguments, const std::optional<std::string>& input)
+static std::tuple<juce::Result, std::unique_ptr<TextDocument>, std::unique_ptr<Input>, std::string_view> getReplacementText (const Arguments& arguments, const Input::Source& input)
 {
     if (arguments.contains (Id::withStdinOption))
     {
@@ -238,15 +238,18 @@ std::tuple<juce::Result, LineDiff, int> Replace::getDocumentDiff (const TextDocu
 
 std::pair<juce::Result, std::optional<Replace::Replacement>> Replace::getReplacedFile (const juce::File& targetFile,
                                                                                        std::string_view displayPath,
-                                                                                       bool isExplicit) const
+                                                                                       bool isExplicit,
+                                                                                       const Input::Source& source) const
 {
-    auto [loadStatus, document] { TextDocument::fromFile (targetFile, displayPath, Input::allBytes) };
+    auto [inputStatus, input] { TextDocument::getInput (targetFile, displayPath, Input::allBytes, source) };
 
-    if (loadStatus.failed())
-        return { loadStatus, std::nullopt };
+    if (inputStatus.failed())
+        return { inputStatus, std::nullopt };
+
+    auto document { TextDocument::fromInput (std::move (input), displayPath) };
 
     if (document->isBinary())
-        return { TextDocument::getBinaryStatus (displayPath, isExplicit), std::nullopt };
+        return { isExplicit ? TextDocument::getBinaryFailure (displayPath) : juce::Result::ok(), std::nullopt };
 
     jam::RegExpAutomaton automaton;
 
@@ -263,7 +266,7 @@ std::pair<juce::Result, std::optional<Replace::Replacement>> Replace::getReplace
     return { juce::Result::ok(), Replace::Replacement { std::move (document), std::move (diff), editCount } };
 }
 
-Stdio::Output Replace::runStandardInput (const Arguments& arguments, const std::optional<std::string>& input) const
+Stdio::Output Replace::runStandardInput (const Arguments& arguments, const Input::Source& input) const
 {
     if (arguments.contains (Id::applyOption))
         return Stdio::getFailure (text::Diagnostics::failApplyStandardInput);
@@ -272,6 +275,9 @@ Stdio::Output Replace::runStandardInput (const Arguments& arguments, const std::
 
     if (inputStatus.failed())
         return Stdio::getFailure (inputStatus);
+
+    if (standardInput->getBytes().empty())
+        return Stdio::getOutput (Stdio::exitSuccess);
 
     auto document { TextDocument::fromInput (std::move (standardInput), Id::stdinPath) };
 
@@ -294,7 +300,7 @@ Stdio::Output Replace::runStandardInput (const Arguments& arguments, const std::
     return transaction.run (arguments);
 }
 
-Stdio::Output Replace::runFiles (const Arguments& arguments, juce::Span<const std::string_view> rawPaths) const
+Stdio::Output Replace::runFiles (const Arguments& arguments, juce::Span<const std::string_view> rawPaths, const Input::Source& source) const
 {
     const auto [readStatus, files] { Paths::getReadableFiles (rawPaths,
                                                               arguments.getValues (Id::includeOption),
@@ -311,11 +317,24 @@ Stdio::Output Replace::runFiles (const Arguments& arguments, juce::Span<const st
     jam::Array<std::optional<Replacement>> replacements;
     replacements.resize (fileCount);
 
+    const bool isStandardInputNamed { std::any_of (files.begin(), files.end(), [] (const Paths::Entry& entry)
+    {
+        const auto& [displayPath, file, isExplicit] { entry };
+        juce::ignoreUnused (displayPath, isExplicit);
+        return file == juce::File {};
+    }) };
+
+    if (isStandardInputNamed and arguments.contains (Id::applyOption))
+        return Stdio::getFailure (text::Diagnostics::failApplyStandardInput);
+
+    if (isStandardInputNamed and arguments.contains (Id::withStdinOption))
+        return Stdio::getFailure (text::Diagnostics::failMissingPath);
+
     Jobs::run (fileCount,
-               [this, &pathEntries = files, &statuses, &replacements] (int index)
+               [this, &pathEntries = files, &source, &statuses, &replacements] (int index)
                {
                    const auto& [displayPath, targetFile, isExplicit] { pathEntries.at (index) };
-                   auto [fileStatus, replacement] { getReplacedFile (targetFile, displayPath, isExplicit) };
+                   auto [fileStatus, replacement] { getReplacedFile (targetFile, displayPath, isExplicit, source) };
                    statuses.at (index) = std::move (fileStatus);
                    replacements.at (index) = std::move (replacement);
                });
@@ -329,11 +348,11 @@ Stdio::Output Replace::runFiles (const Arguments& arguments, juce::Span<const st
 
     for (int index { 0 }; index < fileCount; ++index)
     {
+        const auto& [displayPath, targetFile, isExplicit] { files.at (index) };
+        juce::ignoreUnused (displayPath, isExplicit);
+
         if (replacements.at (index).has_value())
         {
-            const auto& [displayPath, targetFile, isExplicit] { files.at (index) };
-            juce::ignoreUnused (displayPath, isExplicit);
-
             if (transaction.addTarget (targetFile))
             {
                 auto& [document, diff, editCount] { *replacements.at (index) };
@@ -356,7 +375,7 @@ Arguments Replace::getArguments (juce::Span<const std::string_view> argumentList
                        {} };
 }
 
-Stdio::Output Replace::run (const Arguments& arguments, const std::optional<std::string>& input)
+Stdio::Output Replace::run (const Arguments& arguments, const Input::Source& input)
 {
     if (arguments.getStatus().failed())
         return Stdio::getFailure (arguments.getStatus());
@@ -409,5 +428,5 @@ Stdio::Output Replace::run (const Arguments& arguments, const std::optional<std:
     if (rawPaths.empty())
         return replace.runStandardInput (arguments, input);
 
-    return replace.runFiles (arguments, rawPaths);
+    return replace.runFiles (arguments, rawPaths, input);
 }

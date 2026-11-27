@@ -15,7 +15,7 @@ getCount()
 {
     case "$1" in
         1K|10K|50K|100K) printf '40' ;;
-        1M) printf '20' ;;
+        1M|1M-crlf) printf '20' ;;
         10M) printf '8' ;;
         100M) printf '4' ;;
         tree) printf '6' ;;
@@ -27,7 +27,7 @@ getServerCount()
 {
     case "$1-$2" in
         findList-*|findQuiet-*|findFirst-*|linesHead-*|fieldsHead-*) printf '1000' ;;
-        *-1M) printf '300' ;;
+        *-1M|*-1M-crlf) printf '300' ;;
         *-10M) printf '60' ;;
         *-100M|*-tree) printf '20' ;;
         *) printf '1000' ;;
@@ -158,8 +158,8 @@ checkEqualLines()
     local label="$1"
     shift
 
-    "$@" < /dev/null 2> /dev/null | LC_ALL=C tr -d '\r' | LC_ALL=C sort > "$rows/reference-output"
-    LC_ALL=C tr -d '\r' < "$rows/saw-output" | LC_ALL=C sort | cmp -s - "$rows/reference-output" || fail "$label differs"
+    "$@" < /dev/null 2> /dev/null | LC_ALL=C sort > "$rows/reference-output"
+    LC_ALL=C sort "$rows/saw-output" | cmp -s - "$rows/reference-output" || fail "$label differs"
 }
 
 searchNames="findLiteral findNoMatch findIgnoreCase findWord findRegex findDigits findBoundary findAlternation findContext findCount findList findQuiet findFirst"
@@ -232,17 +232,19 @@ runLines()
         runCommand linesHead "$size" saw 0 "$saw" lines 1:20 "$size.txt"
         runServer linesHead "$size" 0 lines 1:20 "$size.txt"
 
-        "$saw" fields 1,-1 -d , "$size.csv" > "$rows/saw-output"
-        checkEqual "fields $size awk" 0 awk -F, '{print $1 "," $NF}' "$size.csv"
-        runCommand fields "$size" awk 0 awk -F, '{print $1 "," $NF}' "$size.csv"
-        runCommand fields "$size" saw 0 "$saw" fields 1,-1 -d , "$size.csv"
-        runServer fields "$size" 0 fields 1,-1 -d , "$size.csv"
+        if [ -f "$size.csv" ]; then
+            "$saw" fields 1,-1 -d , "$size.csv" > "$rows/saw-output"
+            checkEqual "fields $size awk" 0 awk -F, '{print $1 "," $NF}' "$size.csv"
+            runCommand fields "$size" awk 0 awk -F, '{print $1 "," $NF}' "$size.csv"
+            runCommand fields "$size" saw 0 "$saw" fields 1,-1 -d , "$size.csv"
+            runServer fields "$size" 0 fields 1,-1 -d , "$size.csv"
 
-        "$saw" fields 1,-1 -d , --lines 1:20 "$size.csv" > "$rows/saw-output"
-        checkEqual "fieldsHead $size awk" 0 awk -F, '{print $1 "," $NF} NR==20{exit}' "$size.csv"
-        runCommand fieldsHead "$size" awk 0 awk -F, '{print $1 "," $NF} NR==20{exit}' "$size.csv"
-        runCommand fieldsHead "$size" saw 0 "$saw" fields 1,-1 -d , --lines 1:20 "$size.csv"
-        runServer fieldsHead "$size" 0 fields 1,-1 -d , --lines 1:20 "$size.csv"
+            "$saw" fields 1,-1 -d , --lines 1:20 "$size.csv" > "$rows/saw-output"
+            checkEqual "fieldsHead $size awk" 0 awk -F, '{print $1 "," $NF} NR==20{exit}' "$size.csv"
+            runCommand fieldsHead "$size" awk 0 awk -F, '{print $1 "," $NF} NR==20{exit}' "$size.csv"
+            runCommand fieldsHead "$size" saw 0 "$saw" fields 1,-1 -d , --lines 1:20 "$size.csv"
+            runServer fieldsHead "$size" 0 fields 1,-1 -d , --lines 1:20 "$size.csv"
+        fi
 
         runCommand replacePreview "$size" sed 0 sed s/JUCE/JUCX/g "$size.txt"
         runCommand replacePreview "$size" saw 0 "$saw" replace JUCE JUCX "$size.txt"
@@ -399,18 +401,86 @@ runIgnoredTree()
     runCommand filesIgnored tree saw 0 "$saw" find --files "$ignoredCorpus"
 }
 
+runPage()
+{
+    local size total first last
+
+    for size in 1K 10K 100K 1M 10M; do
+        total="$(wc -l < "$size.txt")"
+        first=$((total / 3))
+        last=$((first + 1000))
+
+        "$saw" page "$size.txt" < /dev/null > "$rows/saw-output" 2> /dev/null
+        checkEqual "concat $size bat" 0 bat --no-config -pp "$size.txt"
+        runCommand concat "$size" cat 0 cat "$size.txt"
+        runCommand concat "$size" bat 0 bat --no-config -pp "$size.txt"
+        runCommand concat "$size" saw 0 "$saw" page "$size.txt"
+        runServer concat "$size" 0 page "$size.txt"
+
+        "$saw" page -r "$first:$last" "$size.txt" < /dev/null > "$rows/saw-output" 2> /dev/null
+        checkEqual "pageRange $size bat" 0 bat --no-config -pp -r "$first:$last" "$size.txt"
+        runCommand pageRange "$size" bat 0 bat --no-config -pp -r "$first:$last" "$size.txt"
+        runCommand pageRange "$size" saw 0 "$saw" page -r "$first:$last" "$size.txt"
+        runServer pageRange "$size" 0 page -r "$first:$last" "$size.txt"
+
+        "$saw" page --decorations=always -n "$size.txt" < /dev/null > "$rows/saw-output" 2> /dev/null
+        checkEqual "pageNumbered $size bat" 0 bat --no-config --decorations=always -n "$size.txt"
+        runCommand pageNumbered "$size" bat 0 bat --no-config --decorations=always -n "$size.txt"
+        runCommand pageNumbered "$size" saw 0 "$saw" page --decorations=always -n "$size.txt"
+        runServer pageNumbered "$size" 0 page --decorations=always -n "$size.txt"
+
+        "$saw" page --decorations=always --style=full "$size.txt" < /dev/null > "$rows/saw-output" 2> /dev/null
+        checkEqual "decorated $size bat" 0 bat --no-config --decorations=always --style=full "$size.txt"
+        runCommand decorated "$size" bat 0 bat --no-config --decorations=always --style=full "$size.txt"
+        runCommand decorated "$size" saw 0 "$saw" page --decorations=always --style=full "$size.txt"
+        runServer decorated "$size" 0 page --decorations=always --style=full "$size.txt"
+
+        runCommand highlight "$size" bat 0 bat --no-config --color=always -pp "$size.txt"
+        runCommand highlight "$size" saw 0 "$saw" page --color=always "$size.txt"
+    done
+}
+
+runJson()
+{
+    local size file
+
+    for size in 1K 10K 100K 1M 10M; do
+        file="$size.json"
+
+        "$saw" json . "$file" < /dev/null > "$rows/saw-output" 2> /dev/null
+        checkEqual "jsonIdentity $size jq" 0 jq . "$file"
+        runCommand jsonParse "$size" jq 0 jq empty "$file"
+        runCommand jsonParse "$size" saw 0 "$saw" json empty "$file"
+        runServer jsonParse "$size" 0 json empty "$file"
+        runCommand jsonIdentity "$size" jq 0 jq . "$file"
+        runCommand jsonIdentity "$size" saw 0 "$saw" json . "$file"
+        runServer jsonIdentity "$size" 0 json . "$file"
+        runCommand jsonCompact "$size" jq 0 jq -c . "$file"
+        runCommand jsonCompact "$size" saw 0 "$saw" json -c . "$file"
+        runServer jsonCompact "$size" 0 json -c . "$file"
+        runCommand jsonIds "$size" jq 0 jq ".[].id" "$file"
+        runCommand jsonIds "$size" saw 0 "$saw" json ".[].id" "$file"
+        runServer jsonIds "$size" 0 json ".[].id" "$file"
+        runCommand jsonSelect "$size" jq 0 jq "map(select(.active)|.value)|add" "$file"
+        runCommand jsonSelect "$size" saw 0 "$saw" json "map(select(.active)|.value)|add" "$file"
+        runServer jsonSelect "$size" 0 json "map(select(.active)|.value)|add" "$file"
+    done
+}
+
 cat > "$table" << 'HEADER'
 | case | size | tool | microseconds | errorPercent |
 | :--- | :--- | :--- | ---: | ---: |
 HEADER
 
 case "$setName" in
-    small) runSearches 1K 10K 50K 100K 1M; runLines 1K 10K 50K 100K 1M ;;
+    small) runSearches 1K 10K 50K 100K 1M 1M-crlf; runLines 1K 10K 50K 100K 1M 1M-crlf ;;
     large) runSearches 10M 100M ;;
     lines) runLines 10M 100M ;;
     tree)  runTree ;;
     input) runInputs 1K 10K 50K 100K 1M 10M 100M ;;
     apply) . "$benchmark/undo-cache.sh"; runApply 1K 10K 50K 100K 1M 10M; runExcerpt ;;
+    page) runPage ;;
+    json) runJson ;;
 esac
 
 if [ "$failures" -gt 0 ]; then exit 1; fi

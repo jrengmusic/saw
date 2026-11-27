@@ -28,20 +28,20 @@ struct Paths
      *  @param isIncludingHidden True to include dot-prefixed entries.
      *  @param isIgnoringRules   True to bypass `.gitignore` and global exclude rules.
      *
-     *  @return Pair of: the failures, each with its failure result, in the order found: first the failures of the
-     *          raw paths, in the order given, then the failures of the folder walk, by worker index; and the entries, one per
+     *  @return Tuple of: the failures, each with its failure result, in the order found: first the failures of the
+     *          raw paths, in the order given, then the failures of the folder walk, by worker index; the entries, one per
      *          file, sorted by display path, each with its display path, its resolved file, and its explicit
-     *          flag, true when the file was named on the command line.
+     *          flag, true when the file was named on the command line; and the count of entries that the walk did not search.
      *
      *  A file named on the command line wins over the same file found by the walk. The sort puts the explicit
      *  entry first among entries with the same display path, and the duplicate removal keeps the first entry.
      *  The duplicate removal runs only when more than one raw path is given.
      */
-    static std::pair<Failures, jam::Array<Entry>> getFiles (juce::Span<const std::string_view> rawPaths,
-                                                            juce::Span<const std::string_view> includeGlobs,
-                                                            juce::Span<const std::string_view> excludeGlobs,
-                                                            bool isIncludingHidden,
-                                                            bool isIgnoringRules);
+    static std::tuple<Failures, jam::Array<Entry>, int> getFiles (juce::Span<const std::string_view> rawPaths,
+                                                                  juce::Span<const std::string_view> includeGlobs,
+                                                                  juce::Span<const std::string_view> excludeGlobs,
+                                                                  bool isIncludingHidden,
+                                                                  bool isIgnoringRules);
 
     /** @brief Expands the paths like getFiles, and stops at the first failure.
      *
@@ -64,6 +64,7 @@ struct Paths
      *
      *  A path that does not exist is a failure. A file is an explicit entry, because the user named it.
      *  A folder keeps its raw path, which becomes the prefix of the display paths of the files under it.
+     *  A standard input argument gives one entry with an empty file, and it is added once.
      *
      *  @param rawPaths The paths as the user gave them.
      *
@@ -94,6 +95,28 @@ struct Paths
      *  @return The physical target, or the raw path against the working folder when it cannot be resolved.
      */
     static juce::File getLinkedTarget (std::string_view rawPath);
+
+    /** @brief Tests whether a text matches a wildcard pattern, where `*` matches any run of characters and `?` matches one character.
+     *
+     *  The whole text must match.
+     *
+     *  @param wildcard The wildcard pattern.
+     *  @param text     The text to test.
+     *
+     *  @return True when the whole text matches the pattern.
+     */
+    static bool isWildcardMatch (std::string_view wildcard, std::string_view text) noexcept;
+
+    /** @brief Returns the file of a carried library build, from the configured folder or from the cache.
+     *
+     *  The configured folder is searched first. When it holds no such file, the cache folder of each language is searched.
+     *
+     *  @param libraryName The name of the library.
+     *  @param fileName    The name of the file.
+     *
+     *  @return The file that exists, or an empty File when no folder holds it.
+     */
+    static juce::File getCarriedFile (std::string_view libraryName, std::string_view fileName);
 
     /** @brief Calls a function with the name of each regular file in one folder. The walk does not recurse.
      *
@@ -132,15 +155,15 @@ struct Paths
      *  @param onFile            Callback invoked per matching file with `(workerIndex, fullPath, displayPath)`.
      *  @param shouldStop        Atomic cancellation flag polled during the walk.
      *
-     *  @return The unreadable folders, each with its display path and its read failure. The order depends on
-     *          the walk, so it is not defined.
+     *  @return The unreadable folders, each with its display path and its read failure, and the count of entries that the walk skipped.
+     *          The order of the folders depends on the walk, so it is not defined.
      */
-    static Failures applyToDirectories (const jam::Array<std::pair<std::string_view, juce::File>>& roots,
-                                        juce::Span<const std::string_view> includeGlobs,
-                                        juce::Span<const std::string_view> excludeGlobs,
-                                        bool isIncludingHidden,
-                                        bool isIgnoringRules,
-                                        const std::function<void (int)>& onWorkerCount,
-                                        const std::function<void (int, const std::string&, std::string_view)>& onFile,
-                                        const std::atomic<bool>& shouldStop);
+    static std::pair<Failures, int> applyToDirectories (const jam::Array<std::pair<std::string_view, juce::File>>& roots,
+                                                        juce::Span<const std::string_view> includeGlobs,
+                                                        juce::Span<const std::string_view> excludeGlobs,
+                                                        bool isIncludingHidden,
+                                                        bool isIgnoringRules,
+                                                        const std::function<void (int)>& onWorkerCount,
+                                                        const std::function<void (int, const std::string&, std::string_view)>& onFile,
+                                                        const std::atomic<bool>& shouldStop);
 };

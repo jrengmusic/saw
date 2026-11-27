@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['—_20delete_20first_20done_0',['Stage 1 — Delete first (done)',['../md__p_l_a_n-one-tool.html#autotoc_md92',1,'']]],
+  ['—_20gitdocument_20done_1',['Stage 5 — GitDocument (done)',['../md__p_l_a_n-one-tool.html#autotoc_md96',1,'']]],
+  ['—_20json_3a_20one_20job_20one_20function_20done_20superseded_20in_20part_20by_20ruling_2025_2',['Stage 7 — JSON: one job, one function (done; superseded in part by Ruling 25)',['../md__p_l_a_n-one-tool.html#autotoc_md98',1,'']]],
+  ['—_20jsondocument_20follows_20the_20document_20pattern_20ruling_2027_3',['Stage 7D — JsonDocument follows the Document pattern (Ruling 27)',['../md__p_l_a_n-one-tool.html#autotoc_md101',1,'']]],
+  ['—_20jsondocument_20is_20the_20complete_20ast_20nothing_20else_20holds_20a_20json_20value_4',['Stage 7C — JsonDocument is the complete AST; nothing else holds a JSON value',['../md__p_l_a_n-one-tool.html#autotoc_md100',1,'']]],
+  ['—_20ling_20owns_20the_20seam_20done_5',['Stage 4 — ling owns the seam (done)',['../md__p_l_a_n-one-tool.html#autotoc_md95',1,'']]],
+  ['—_20ode_20to_20joy_6',['/ode — ODE to Joy',['../md__a_g_e_n_t_s.html#autotoc_md38',1,'']]],
+  ['—_20one_20build_20profile_7',['Stage 8 — One build, profile',['../md__p_l_a_n-one-tool.html#autotoc_md102',1,'']]],
+  ['—_20one_20line_20at_20the_20document_20base_20done_8',['Stage 2 — One line at the Document base (done)',['../md__p_l_a_n-one-tool.html#autotoc_md93',1,'']]],
+  ['—_20one_20role_20per_20session_20calling_20is_20assignment_9',['Primaries — one role per session; calling is assignment',['../md__a_g_e_n_t_s.html#autotoc_md11',1,'']]],
+  ['—_20outside_20saw_20binary_10',['7. CAROL Integration Contract (Downstream — Outside SAW Binary)',['../md__s_p_e_c.html#autotoc_md235',1,'']]],
+  ['—_20reliability_20defects_20the_20result_20is_20wrong_20or_20missing_11',['R — Reliability defects (the result is wrong or missing)',['../md__r_f_c-live-to-premise.html#autotoc_md142',1,'']]],
+  ['—_20runtime_20audit_20close_12',['Stage 9 — Runtime, audit, close',['../md__p_l_a_n-one-tool.html#autotoc_md103',1,'']]],
+  ['—_20safety_20defects_20data_20is_20changed_20or_20lost_13',['D — Safety defects (data is changed or lost)',['../md__r_f_c-live-to-premise.html#autotoc_md141',1,'']]],
+  ['—_20saw_20is_20cat_20done_14',['Stage 6 — saw is cat (done)',['../md__p_l_a_n-one-tool.html#autotoc_md97',1,'']]],
+  ['—_20saw_20must_20live_20to_20its_20premise_15',['RFC — SAW must live to its premise',['../md__r_f_c-live-to-premise.html',1,'']]],
+  ['—_20speed_16',['S — Speed',['../md__r_f_c-live-to-premise.html#autotoc_md134',1,'']]],
+  ['—_20the_20jq_20program_20is_20a_20registered_20jsondocument_20family_20done_17',['Stage 7B — The jq program is a registered JsonDocument family (done)',['../md__p_l_a_n-one-tool.html#autotoc_md99',1,'']]],
+  ['—_20the_20page_20is_20a_20component_20done_18',['Stage 3 — The page is a Component (done)',['../md__p_l_a_n-one-tool.html#autotoc_md94',1,'']]],
+  ['—_20what_20saw_20cannot_20do_19',['N — What saw cannot do',['../md__r_f_c-live-to-premise.html#autotoc_md144',1,'']]],
+  ['—_20what_20saw_20lacks_20the_20tool_20it_20replaces_20has_20it_20',['L — What saw lacks (the tool it replaces has it)',['../md__r_f_c-live-to-premise.html#autotoc_md143',1,'']]],
+  ['—_20what_20the_20tests_20do_20not_20cover_21',['T — What the tests do not cover',['../md__r_f_c-live-to-premise.html#autotoc_md145',1,'']]]
+];

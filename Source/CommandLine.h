@@ -15,9 +15,9 @@ struct CommandLine
      *  The global options `--help` and `--version` are handled before a verb is matched.
      *
      *  @param arguments The argument list, with the verb at index 0.
-     *  @param input     The text of the input, or nullopt when the process standard input is read.
+     *  @param input     The standard input, the null device, or a supplied text.
      *
      *  @return The exit code, the output documents, and the failures.
      */
-    static Stdio::Output run (juce::Span<const std::string_view> arguments, const std::optional<std::string>& input);
+    static Stdio::Output run (juce::Span<const std::string_view> arguments, const Input::Source& input);
 };

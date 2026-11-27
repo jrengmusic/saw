@@ -1,3 +1,6 @@
+/** @file Main.cpp
+ *  @brief The program entry point. The single argument `--mcp` starts the tool server. Any other argument list runs one command line, with the standard input as its input.
+ */
 #include <JuceHeader.h>
 #include "Arguments.h"
 #include "CommandLine.h"
@@ -67,5 +70,5 @@ int main (int argc, char* argv[])
     if (isMcp (argumentSpan))
         return runToolServer (argv[0]);
 
-    return Stdio::write (CommandLine::run (argumentSpan, std::nullopt));
+    return Stdio::write (CommandLine::run (argumentSpan, Input::Source { Input::StandardInput {} }));
 }

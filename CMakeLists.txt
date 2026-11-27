@@ -79,7 +79,7 @@ if(APPLE)
 -Wno-shadow;-Wno-unused-parameter;-Wno-float-equal;-Wno-sign-conversion;-Wno-switch-enum;-Wno-implicit-float-conversion;-Wno-macro-redefined;-O3;-flto
     )
     set(CAST_RELEASE_LINK_FLAGS
--dead_strip;-Wl,-dead_strip_dylibs;-Wl,-exported_symbol,_main
+-dead_strip;-Wl,-dead_strip_dylibs;-Wl,-exported_symbol,_main;-Wl,-stack_size,0x10000000
     )
     set(CAST_DEBUG_COMPILE_FLAGS
 -Wno-shadow;-Wno-unused-parameter;-Wno-float-equal;-Wno-sign-conversion;-Wno-switch-enum;-Wno-implicit-float-conversion;-Wno-macro-redefined;-O0;-g
@@ -90,7 +90,7 @@ elseif(WIN32)
 /wd4456;/wd4100;/wd4244;/wd4005;/permissive-;/Zc:rvalueCast;/W4;/FC;/O2;/GL
         )
         set(CAST_RELEASE_LINK_FLAGS
-/LTCG;/OPT:REF;/OPT:ICF
+/LTCG;/OPT:REF;/OPT:ICF;/STACK:0x10000000
         )
         set(CAST_DEBUG_COMPILE_FLAGS
 /wd4456;/wd4100;/wd4244;/wd4005;/permissive-;/Zc:rvalueCast;/W4;/FC;/Od;/Zi
@@ -102,7 +102,7 @@ elseif(WIN32)
         list(REMOVE_ITEM CAST_RELEASE_COMPILE_FLAGS "-O3")
         list(APPEND CAST_RELEASE_COMPILE_FLAGS "/clang:-O3")
         set(CAST_RELEASE_LINK_FLAGS
-/LTCG;/OPT:REF;/OPT:ICF
+/LTCG;/OPT:REF;/OPT:ICF;/STACK:0x10000000
         )
         set(CAST_DEBUG_COMPILE_FLAGS
 -Wno-shadow;-Wno-unused-parameter;-Wno-float-equal;-Wno-sign-conversion;-Wno-switch-enum;-Wno-implicit-float-conversion;-Wno-macro-redefined;-O0;-g
@@ -242,7 +242,9 @@ juce_add_module("${CMAKE_CURRENT_SOURCE_DIR}/../jam/jam_markdown_graphics")# Mar
 juce_add_module("${CMAKE_CURRENT_SOURCE_DIR}/../jam/jam_terminal")         # VT read-side engine, TTY, protocol vocabulary, keyboard encoding
 juce_add_module("${CMAKE_CURRENT_SOURCE_DIR}/../jam/jam_tui")              # Terminal user interface components, painted through the terminal graphics context
 
+juce_add_module("${CMAKE_CURRENT_SOURCE_DIR}/../jam/jam_git")                   # Git index and object reader over jam::Document
 juce_add_module("${CMAKE_CURRENT_SOURCE_DIR}/../jam/jam_model_context_protocol")# Model Context Protocol server over stdio
+juce_add_module("${CMAKE_CURRENT_SOURCE_DIR}/../jam/jam_syntax_tree")           # Programming-language tokenizers and parsers over jam::Document
 
 message(STATUS "CAST: user modules added from ${CMAKE_CURRENT_SOURCE_DIR}/../jam")
 
@@ -313,6 +315,7 @@ JUCE_USE_RESILIENT_MAPPING=1
 "$<$<PLATFORM_ID:Windows>:JUCE_CORE_INCLUDE_COM_SMART_PTR=1>"
 HAVE_FREETYPE
 "$<$<NOT:$<PLATFORM_ID:Windows>>:HAVE_UNISTD_H>"
+JAM_USING_JSON_FILTER=1
 )
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${CAST_COMPILE_DEFINITIONS})
@@ -357,6 +360,8 @@ juce_data_structures
 juce_events
 jam_core
 jam_data_structures
+jam_git
+jam_syntax_tree
 jam_terminal
 jam_model_context_protocol
     PUBLIC
@@ -392,8 +397,11 @@ Source/help/replace.md
 Source/help/lines.md
 Source/help/fields.md
 Source/help/patch.md
+Source/help/write.md
+Source/help/page.md
 Source/help/undo.md
 Source/help/excerpt.md
+Source/help/json.md
 ../jam/jam_tui/page/style.css
 )
 
@@ -441,6 +449,7 @@ foreach(CAST_BINARY_FILE ${CAST_BINARY_FILES})
         get_filename_component(CAST_DOCUMENT_NAME "${CAST_BINARY_FILE}" NAME)
         get_filename_component(CAST_DOCUMENT_STEM "${CAST_BINARY_FILE}" NAME_WLE)
         list(APPEND CAST_DOCUMENT_NAMES "${CAST_DOCUMENT_NAME}")
+        list(APPEND CAST_DOCUMENT_FILES "${CAST_BINARY_FILE}")
         list(APPEND CAST_FRAME_FILES "${CAST_FRAME_DIRECTORY}/${CAST_DOCUMENT_STEM}.frame")
     endif()
 endforeach()
@@ -457,6 +466,7 @@ juce_add_binary_data(${PROJECT_NAME}_BinaryData
     NAMESPACE "BinaryData"
     SOURCES
         ${CAST_FRAME_FILES}
+        ${CAST_DOCUMENT_FILES}
         "${CMAKE_CURRENT_SOURCE_DIR}/Source/tools.json"
 )
 

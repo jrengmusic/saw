@@ -23,19 +23,17 @@ public:
      */
     StagedFile (const juce::File& newTargetFile, std::unique_ptr<TextDocument> newOriginalDocument, LineDiff newDiff, int newBlobIndex);
 
-    /** @brief Stages an undo entry. The planned document is the content that the undo writes.
+    /** @brief Stages a file whose planned content is a document, not a diff, as an undo entry does.
      *
-     *  The original document is the content that the undo replaces. An undo entry has no diff, so the planned
-     *  document is stored. Both documents must not be null.
-     *
-     *  @param newTargetFile       The file that the undo writes.
-     *  @param newOriginalDocument The content of the file before the undo.
-     *  @param newPlannedDocument  The content that the undo writes.
-     *  @param newIsExecutable     The executable bit that the undo entry recorded.
-     *  @param newIsExisting       True when the target exists before the write. False when the undo creates it.
-     *  @param newBlobIndex        The index of this file in the transaction. It names the blob file.
+     *  @param newTargetFile        The file that the transaction writes.
+     *  @param newOriginalDocument  The document before the write. Must not be null.
+     *  @param newPlannedDocument   The document of the planned bytes. Must not be null.
+     *  @param newIsExecutable      The executable bit that a created target gets.
+     *  @param newIsExisting        True when the target exists before the write.
+     *  @param newIsPlannedExisting True when the target exists after the write.
+     *  @param newBlobIndex         The index of this file in the transaction. It names the blob file.
      */
-    StagedFile (const juce::File& newTargetFile, std::unique_ptr<TextDocument> newOriginalDocument, std::unique_ptr<TextDocument> newPlannedDocument, bool newIsExecutable, bool newIsExisting, int newBlobIndex);
+    StagedFile (const juce::File& newTargetFile, std::unique_ptr<TextDocument> newOriginalDocument, std::unique_ptr<TextDocument> newPlannedDocument, bool newIsExecutable, bool newIsExisting, bool newIsPlannedExisting, int newBlobIndex);
 
     /** @brief Returns the file that the transaction writes.
      *
@@ -69,6 +67,12 @@ public:
      */
     bool isExecutable() const noexcept;
 
+    /** @brief Reports whether the target exists before the transaction writes it.
+     *
+     *  @return True when the target exists before the write.
+     */
+    bool isExisting() const noexcept;
+
     /** @brief Appends the unified diff from the original bytes to the planned bytes.
      *
      *  An undo entry has no diff, so the diff is computed here with Myers.
@@ -88,9 +92,9 @@ public:
      */
     std::pair<juce::Result, bool> commit (std::string_view transactionId) const;
 
-    /** @brief Writes the bytes that the file had before the transaction.
+    /** @brief Writes the planned bytes of an undo entry, with a swap of the target and its blob when the target can be swapped.
      *
-     *  An existing target that can be swapped is exchanged with its blob. Before the exchange, the blob takes
+     *  A planned absence removes the target. An existing target that can be swapped is exchanged with its blob. Before the exchange, the blob takes
      *  the metadata of the target and the current time. Otherwise the planned bytes are written to the target.
      *
      *  @param transactionId The transaction whose blob file is used.
@@ -99,7 +103,7 @@ public:
      */
     std::pair<juce::Result, bool> undo (std::string_view transactionId) const;
 
-    /** @brief Returns the target to its original bytes after a commit or an undo changed it.
+    /** @brief Returns the target to its original bytes after a commit or an undo changed it. A target that the transaction removed is restored by restoreRemoved.
      *
      *  A file that the transaction created is deleted, once its planned bytes are checked.
      *  A blob that holds the original bytes is exchanged with the target. A blob that holds neither the planned
@@ -144,6 +148,30 @@ private:
      */
     std::pair<juce::Result, bool> replace() const;
 
+    /** @brief Deletes the target, once it is checked to hold the original bytes.
+     *
+     *  @return Status result paired with false.
+     */
+    std::pair<juce::Result, bool> remove() const;
+
+    /** @brief Restores a target that the transaction removed. An existing file is checked against the original bytes, and a missing file is written with them.
+     *
+     *  @return Ok when the target holds the original bytes, otherwise the failure.
+     */
+    juce::Result restoreRemoved() const;
+
+    /** @brief Restores a target that existed before the transaction.
+     *
+     *  When the blob does not hold the planned bytes, the blob must hold the original bytes, and the blob and the target are exchanged.
+     *  The exchange is reverted when the blob then does not hold the planned bytes. Otherwise the target must hold the planned bytes,
+     *  and the original bytes are written to it.
+     *
+     *  @param transactionId The transaction whose blob file is used.
+     *
+     *  @return Ok when the target holds the original bytes, otherwise the failure.
+     */
+    juce::Result restoreReplaced (std::string_view transactionId) const;
+
     /** @brief The file that the transaction writes. */
     juce::File targetFile;
 
@@ -158,6 +186,9 @@ private:
 
     /** @brief True when the target exists before the write. Restore deletes a target that did not exist. */
     bool existing { true };
+
+    /** @brief True when the target exists after the write. A planned removal sets it to false. */
+    bool plannedExisting { true };
 
     /** @brief The index of this file in the transaction. It names the blob file. */
     int blobIndex { 0 };

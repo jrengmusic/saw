@@ -36,11 +36,16 @@ struct Diagnostics
     static constexpr const char* const failNotFound                 { "not found: "                                                                 };///< Target file or directory does not exist.
     static constexpr const char* const failRead                     { "cannot read "                                                                };///< Target file or directory exists but cannot be read.
     static constexpr const char* const failBinaryFile               { "binary file: "                                                               };///< Target file contains binary bytes.
+    static constexpr const char* const entriesNotSearched           { " ignored or hidden entries not searched (pass --no-ignore or --hidden)"      };///< Suffix that names the entries a walk skipped.
     static constexpr const char* const failHardLinkedFile           { "hard-linked file: "                                                          };///< Target file has more than one hard link.
     static constexpr const char* const failReadOnlyFile             { "read-only file: "                                                            };///< Target file cannot be written.
     static constexpr const char* const failStandardInput            { "cannot read stdin"                                                           };///< Standard input stream could not be read.
     static constexpr const char* const failStandardOutput           { "cannot write stdout"                                                         };///< Standard output stream could not be written.
     static constexpr const char* const failIntegerInvalid           { "invalid integer for "                                                        };///< Flag value is not a valid integer.
+    static constexpr const char* const failPathQuote                { "'"                                                                           };///< Opens and closes the path of a directory failure.
+    static constexpr const char* const failIsDirectory              { "' is a directory."                                                           };///< Closes the path of a folder named by a page.
+    static constexpr const char* const failChoiceInvalid            { "invalid value for "                                                          };///< Flag value is not one of the allowed values.
+    static constexpr const char* const failThemeUnknown             { "unknown theme: "                                                             };///< Theme name that no style sheet has.
     static constexpr const char* const failFindRequiresPattern      { "find requires <pattern>"                                                     };///< Find verb invoked without a pattern argument.
     static constexpr const char* const failReplaceRequiresArguments { "replace requires <find> and <with>"                                          };///< Replace verb invoked without required arguments.
     static constexpr const char* const failWithSourcesConflict      { "specify at most one of --with-stdin, --with-file"                            };///< Mutually exclusive replacement input flags supplied together.
@@ -59,6 +64,42 @@ struct Diagnostics
     static constexpr const char* const failRegexInvalid             { "invalid regex: "                                                             };///< Regular expression failed to compile.
     static constexpr const char* const failRegexSteps               { "regex exceeded its step limit: "                                             };///< Regular expression matching stopped at the step limit.
     static constexpr const char* const failApplyRequiresExpect      { "--apply requires --expect <N>"                                               };///< Apply flag supplied without expected edit count.
+    static constexpr const char* const failJsonFilterRequired       { "json requires <filter>"                                                      };///< Json verb invoked without a filter.
+    static constexpr const char* const failJsonIndentRange          { "invalid value for --indent: maximum is "                                     };///< Indent value is above the largest accepted indentation.
+    static constexpr const char* const failJsonParse                { "parse error: "                                                               };///< Input or argument text is not one valid JSON value.
+    static constexpr const char* const jsonRecordSkipped            { "skipped JSON text: "                                                         };///< A --seq record that is not one valid JSON value.
+    static constexpr const char* const jsonRecordTruncated          { "skipped truncated JSON text at line "                                        };///< A --seq record ends in a number, boolean or null with no whitespace.
+    static constexpr const char* const jsonRecordOutside            { "skipped text before the first record separator at line "                     };///< Bytes of --seq input before the first record separator.
+    static constexpr const char* const failJsonArgumentJson         { "invalid JSON text passed to --argjson"                                       };///< Argument text of --argjson holds no single JSON value.
+    static constexpr const char* const failJsonArgumentsJson        { "invalid JSON text passed to --jsonargs"                                      };///< Positional text of --jsonargs holds no single JSON value.
+    static constexpr const char* const failJsonSlurpBad             { "Bad JSON in --slurpfile "                                                    };///< Opens the failure of a --slurpfile file that holds bad JSON.
+    static constexpr const char* const slurpNameSeparator           { " "                                                                           };///< Connector between the name and the path of a --slurpfile failure.
+    static constexpr const char* const slurpPathSeparator           { ": "                                                                          };///< Connector between the path and the message of a --slurpfile failure.
+    static constexpr const char* const failJsonErrorPrefix          { "error (at "                                                                  };///< Start of the runtime error text.
+    static constexpr const char* const failJsonErrorSeparator       { "): "                                                                         };///< Separator before the message of a string error.
+    static constexpr const char* const failJsonNotString            { ") (not a string): "                                                          };///< Separator before the JSON text of a non-string error.
+    static constexpr const char* const failJsonUnknownLocation      { "<unknown>"                                                                   };///< Location of a runtime error before any input is read.
+    static constexpr const char* const failJsonStandardInputName    { "<stdin>"                                                                     };///< Location name of the standard input.
+    static constexpr const char* const jsonVersion                  { "jq-1.8.2"                                                                    };///< Version line of the json verb.
+    static constexpr const char* const jsonBuildConfiguration       { "JAM_USING_JSON_FILTER=1"                                                     };///< Build configuration line of the json verb.
+    static constexpr const char* const jsonDebugLabel               { "DEBUG:"                                                                      };///< Label of the debug line on standard error.
+    static constexpr const char* const jsonTestHeader               { "Test #"                                                                      };///< Start of the header of one test.
+    static constexpr const char* const jsonTestProgramOpen          { ": '"                                                                         };///< Opens the program text of a test header.
+    static constexpr const char* const jsonTestProgramClose         { "' at line number "                                                           };///< Closes the program text of a test header.
+    static constexpr const char* const jsonTestProgramSeparator     { ": "                                                                          };///< Separator before the program of a test message.
+    static constexpr const char* const jsonTestOf                   { "of"                                                                          };///< Separates the passed and the run counts of the summary.
+    static constexpr const char* const jsonTestSummary              { " tests passed ("                                                             };///< Opens the malformed count of the summary.
+    static constexpr const char* const jsonTestMalformed            { "malformed,"                                                                  };///< Separates the malformed and the skipped counts of the summary.
+    static constexpr const char* const jsonTestSkipped              { " skipped)"                                                                   };///< Closes the summary.
+    static constexpr const char* const jsonTestErroneous            { "*** Erroneous program failed with extra message '"                           };///< Start of a message of a program that fails to compile.
+    static constexpr const char* const jsonTestErroneousEnd         { "' at line "                                                                  };///< Closes the message text, before the line number.
+    static constexpr const char* const jsonTestInputInvalid         { "*** Input is invalid on line "                                               };///< Start of a message of an input that is not one value.
+    static constexpr const char* const jsonTestExpectedInvalid      { "*** Expected result is invalid on line "                                     };///< Start of a message of an expected result that is not one value.
+    static constexpr const char* const jsonTestInsufficient         { "*** Insufficient results for test at line number "                           };///< Start of a message of a test with fewer results than expected.
+    static constexpr const char* const jsonTestWrong                { "*** Wrong result for test at line number "                                   };///< Start of a message of a test with a different result.
+    static constexpr const char* const jsonTestExtra                { "*** Extra results for test at line number "                                  };///< Start of a message of a test with more results than expected.
+    static constexpr const char* const jsonTestUnexpectedCompile    { "*** Program compiled, but a compile error was expected at line "             };///< Start of a message of a fail test whose program compiled.
+    static constexpr const char* const jsonTestFailMarker           { "%%FAIL"                                                                      };///< Marker that starts a block that expects a compile error.
     static constexpr const char* const failApplyStandardInput       { "cannot --apply on stdin; specify file paths"                                 };///< Apply flag combined with standard input target.
     static constexpr const char* const failExpectMismatch           { "expected "                                                                   };///< Planned edit count does not match --expect value.
     static constexpr const char* const foundEdits                   { " edit(s), found "                                                            };///< Connector before the number of edits found.
@@ -86,6 +127,7 @@ struct Diagnostics
     static constexpr const char* const failFieldBounds              { "field "                                                                      };///< Requested field index exceeds line field count under --strict.
     static constexpr const char* const outOfRangeAt                 { " out of range at "                                                           };///< Connector before the position of the field.
     static constexpr const char* const failPatchRequiresInput       { "patch requires stdin or --file <path>"                                       };///< Patch verb invoked with neither stdin nor --file input.
+    static constexpr const char* const failWriteRequiresInput       { "write requires stdin"                                                        };///< Write verb invoked with a terminal on standard input.
     static constexpr const char* const failPatchJsonInvalid         { "invalid patch JSON: "                                                        };///< Patch payload failed JSON parsing.
     static constexpr const char* const failPatchRootNotArray        { "root must be an array"                                                       };///< Patch JSON root value is not an array.
     static constexpr const char* const failPatchEntryInvalid        { "invalid patch entry "                                                        };///< Patch entry at index failed validation.
@@ -127,19 +169,28 @@ struct Diagnostics
 /** @brief saw format strings — excerpt blocks and diff headers. */
 struct Formats
 {
-    static constexpr const char* const excerptReceipt { "# "           };///< Opens the receipt line for excerpt.
-    static constexpr const char* const excerptTargets { " targets, "   };///< Connector after the target count in the receipt line.
-    static constexpr const char* const excerptFound   { " found, "     };///< Connector after the found count in the receipt line.
-    static constexpr const char* const excerptMissing { " missing\n"   };///< Closes the receipt line with the missing count and a newline.
-    static constexpr const char* const excerptHeader  { "## "          };///< Opens the block header for excerpt.
-    static constexpr const char* const excerptOf      { " of "         };///< Connector between the line range and the line count.
-    static constexpr const char* const excerptHash    { " sha256:"     };///< Connector before the block hash.
-    static constexpr const char* const diffOldHeader  { "--- "         };///< Unified diff old-file header prefix.
-    static constexpr const char* const diffNewHeader  { "+++ "         };///< Unified diff planned new-file header prefix.
-    static constexpr const char* const diffPlanned    { " (planned)\n" };///< Closes the planned new-file header with a newline.
-    static constexpr const char* const diffHunkOpen   { "@@ -"         };///< Opens a unified diff hunk header.
-    static constexpr const char* const diffHunkNew    { " +"           };///< Starts the planned range of a unified diff hunk header.
-    static constexpr const char* const diffHunkClose  { " @@\n"        };///< Closes a unified diff hunk header with a newline.
+    static constexpr const char* const excerptReceipt { "# "                                               };///< Opens the receipt line for excerpt.
+    static constexpr const char* const excerptTargets { " targets, "                                       };///< Connector after the target count in the receipt line.
+    static constexpr const char* const excerptFound   { " found, "                                         };///< Connector after the found count in the receipt line.
+    static constexpr const char* const excerptMissing { " missing\n"                                       };///< Closes the receipt line with the missing count and a newline.
+    static constexpr const char* const excerptHeader  { "## "                                              };///< Opens the block header for excerpt.
+    static constexpr const char* const excerptOf      { " of "                                             };///< Connector between the line range and the line count.
+    static constexpr const char* const excerptHash    { " sha256:"                                         };///< Connector before the block hash.
+    static constexpr const char* const diffOldHeader  { "--- "                                             };///< Unified diff old-file header prefix.
+    static constexpr const char* const diffNewHeader  { "+++ "                                             };///< Unified diff planned new-file header prefix.
+    static constexpr const char* const diffPlanned    { " (planned)\n"                                     };///< Closes the planned new-file header with a newline.
+    static constexpr const char* const diffHunkOpen   { "@@ -"                                             };///< Opens a unified diff hunk header.
+    static constexpr const char* const diffHunkNew    { " +"                                               };///< Starts the planned range of a unified diff hunk header.
+    static constexpr const char* const diffHunkClose  { " @@\n"                                            };///< Closes a unified diff hunk header with a newline.
+    static constexpr const char* const tabFillOne     { "\xe2\x86\xb9"                                     };///< Tab fill of width 1 in show-all output.
+    static constexpr const char* const tabFillTwo     { "\xe2\x94\x9c\xe2\x94\xa4"                         };///< Tab fill of width 2 in show-all output.
+    static constexpr const char* const tabFillThree   { "\xe2\x94\x9c\xe2\x94\x80\xe2\x94\xa4"             };///< Tab fill of width 3 in show-all output.
+    static constexpr const char* const tabFillFour    { "\xe2\x94\x9c\xe2\x94\x80\xe2\x94\x80\xe2\x94\xa4" };///< Tab fill of width 4 in show-all output.
+    static constexpr const char* const spaceNotation  { "\xc2\xb7"                                         };///< Notation of a space in show-all output.
+    static constexpr const char* const fileLabel      { "File"                                             };///< Name of the file property of the header.
+    static constexpr const char* const emptyMark      { "   <EMPTY>"                                       };///< Mark of an empty file, after its name in the header.
+    static constexpr const char* const sizeLabel      { "Size"                                             };///< Name of the size property of the header.
+    static constexpr const char* const stdinLabel     { "STDIN"                                            };///< Label of standard input in the file header.
 };
 
 /**______________________________END OF NAMESPACE______________________________*/

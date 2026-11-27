@@ -2,18 +2,36 @@
 #include "Stdio.h"
 #include "generated/Generated.h"
 
+static constexpr std::array<int, 5> valueCounts { 0, 1, 1, 2, 0 };
+
 Arguments::Arguments (juce::Span<const std::string_view> arguments,
                       std::initializer_list<std::string_view> flagOptions,
                       std::initializer_list<std::string_view> valueOptions,
                       std::initializer_list<std::string_view> optionalValueOptions)
 {
-    int index { firstOptionIndex };
+    const std::array<std::pair<std::initializer_list<std::string_view>, OptionType>, 3> optionGroups {{
+        { flagOptions, OptionType::flag },
+        { valueOptions, OptionType::value },
+        { optionalValueOptions, OptionType::optionalValue }
+    }};
+    jam::Array<std::pair<std::string_view, OptionType>> optionList;
 
-    while (index < static_cast<int> (arguments.size()) and arguments[static_cast<size_t> (index)].compare (Chars::doubleDash) != 0)
-        index = addToken (arguments, index, arguments[static_cast<size_t> (index)], flagOptions, valueOptions, optionalValueOptions);
+    for (const auto& [optionTexts, optionType] : optionGroups)
+        for (const auto optionText : optionTexts)
+            optionList.add (std::pair<std::string_view, OptionType> { optionText, optionType });
 
-    for (int positionalIndex { index + 1 }; positionalIndex < static_cast<int> (arguments.size()); ++positionalIndex)
-        positionals.add (arguments[static_cast<size_t> (positionalIndex)]);
+    setParsedArguments (arguments,
+                        juce::Span<const std::pair<std::string_view, OptionType>> { optionList.data(), static_cast<size_t> (optionList.size()) },
+                        Grammar::separated);
+}
+
+Arguments::Arguments (juce::Span<const std::string_view> arguments,
+                      std::initializer_list<std::pair<std::string_view, OptionType>> options,
+                      Grammar grammar)
+{
+    setParsedArguments (arguments,
+                        juce::Span<const std::pair<std::string_view, OptionType>> { options.begin(), options.size() },
+                        grammar);
 }
 
 bool Arguments::matchesOption (std::string_view argument, std::string_view option)
@@ -78,6 +96,27 @@ bool Arguments::contains (std::string_view option) const
     return containsOption (matchedFlags, option) or not getValues (option).empty();
 }
 
+int Arguments::getCount (std::string_view option) const
+{
+    return getOptionCount (matchedFlags, option);
+}
+
+std::string_view Arguments::getLastFlag (std::initializer_list<std::string_view> options) const
+{
+    for (int flagIndex { matchedFlags.size() - 1 }; flagIndex >= 0; --flagIndex)
+    {
+        const auto matchedFlag { matchedFlags.at (flagIndex) };
+        const bool isListed { std::any_of (options.begin(),
+                                           options.end(),
+                                           [matchedFlag] (std::string_view option) { return option.compare (matchedFlag) == 0; }) };
+
+        if (isListed)
+            return matchedFlag;
+    }
+
+    return {};
+}
+
 std::string_view Arguments::getValueView (std::string_view option) const
 {
     const auto values { getValues (option) };
@@ -108,6 +147,12 @@ juce::Span<const std::string_view> Arguments::getPositionals (int firstIndex) co
     jassert (firstIndex >= 0 and firstIndex <= positionals.size());
     return juce::Span<const std::string_view> { positionals.data() + firstIndex,
                                                 static_cast<size_t> (positionals.size() - firstIndex) };
+}
+
+std::string_view Arguments::getPositionalMode (int positionalIndex) const
+{
+    jassert (positionalIndex >= 0 and positionalIndex < positionalModes.size());
+    return positionalModes.at (positionalIndex);
 }
 
 std::optional<int> Arguments::getInteger (std::string_view text)
@@ -149,21 +194,31 @@ std::pair<juce::Result, juce::Range<int>> Arguments::getLineRangeFilter() const
 
 bool Arguments::containsOption (const jam::Array<std::string_view>& matchedOptions, std::string_view option)
 {
-    return std::any_of (matchedOptions.begin(),
-                        matchedOptions.end(),
-                        [option] (std::string_view matchedOption) { return matchedOption.compare (option) == 0; });
+    return getOptionCount (matchedOptions, option) > 0;
 }
 
-int Arguments::getMatchingOptionIndex (std::string_view argument,
-                                       std::initializer_list<std::string_view> optionList)
+int Arguments::getOptionCount (const jam::Array<std::string_view>& matchedOptions, std::string_view option)
 {
-    for (int index { 0 }; index < static_cast<int> (optionList.size()); ++index)
+    return static_cast<int> (std::count_if (matchedOptions.begin(),
+                                            matchedOptions.end(),
+                                            [option] (std::string_view matchedOption) { return matchedOption.compare (option) == 0; }));
+}
+
+std::optional<std::pair<std::string_view, Arguments::OptionType>> Arguments::getMatchingOption (std::string_view argument,
+                                                                                     juce::Span<const std::pair<std::string_view, OptionType>> options)
+{
+    for (size_t optionIndex { 0 }; optionIndex < options.size(); ++optionIndex)
     {
-        if (matchesOption (argument, *(optionList.begin() + index)))
-            return index;
+        const auto& [optionText, optionType] { options[optionIndex] };
+
+        if (matchesOption (argument, optionText))
+            return options[optionIndex];
     }
 
-    return -1;
+    if (matchesOption (argument, Id::helpOption))
+        return std::pair<std::string_view, OptionType> { Id::helpOption, OptionType::flag };
+
+    return std::nullopt;
 }
 
 bool Arguments::isOptionArgument (std::string_view argument) noexcept
@@ -181,100 +236,189 @@ std::pair<bool, int> Arguments::getParsedLineNumber (std::string_view token, int
     return { isValid, isValid ? *value : 0 };
 }
 
+std::pair<std::string_view, std::optional<std::string_view>> Arguments::getSplitToken (std::string_view token, Grammar grammar)
+{
+    const auto separatorIndex { token.find (static_cast<char> (Chars::equals)) };
+    const bool isAttached { grammar == Grammar::attached and separatorIndex != std::string_view::npos };
+
+    if (isAttached)
+        return { token.substr (0, separatorIndex), token.substr (separatorIndex + 1) };
+
+    return { token, std::nullopt };
+}
+
+int Arguments::getValueCount (OptionType optionType)
+{
+    return valueCounts.at (static_cast<size_t> (optionType));
+}
+
+void Arguments::setParsedArguments (juce::Span<const std::string_view> arguments,
+                                    juce::Span<const std::pair<std::string_view, OptionType>> options,
+                                    Grammar grammar)
+{
+    int index { firstOptionIndex };
+
+    while (index < static_cast<int> (arguments.size()) and arguments[static_cast<size_t> (index)].compare (Chars::doubleDash) != 0)
+        index = addToken (arguments, index, arguments[static_cast<size_t> (index)], options, grammar);
+
+    for (int positionalIndex { index + 1 }; positionalIndex < static_cast<int> (arguments.size()); ++positionalIndex)
+        addPositional (arguments[static_cast<size_t> (positionalIndex)]);
+}
+
 int Arguments::addToken (juce::Span<const std::string_view> arguments,
                          int index,
                          std::string_view token,
-                         std::initializer_list<std::string_view> flagOptions,
-                         std::initializer_list<std::string_view> valueOptions,
-                         std::initializer_list<std::string_view> optionalValueOptions)
+                         juce::Span<const std::pair<std::string_view, OptionType>> options,
+                         Grammar grammar)
 {
-    const auto flagIndex { getMatchingOptionIndex (token, flagOptions) };
-    const auto valueIndex { getMatchingOptionIndex (token, valueOptions) };
-    const auto optionalValueIndex { getMatchingOptionIndex (token, optionalValueOptions) };
+    const auto [optionText, attachedValue] { getSplitToken (token, grammar) };
+    const auto option { getMatchingOption (optionText, options) };
 
-    if (flagIndex >= 0 or matchesOption (token, Id::helpOption))
-    {
-        matchedFlags.add (flagIndex >= 0 ? *(flagOptions.begin() + flagIndex) : Id::helpOption);
-        return index + 1;
-    }
+    if (option.has_value())
+        return addOption (arguments, index, *option, token, attachedValue, grammar);
 
-    if (valueIndex >= 0)
-        return addValue (arguments, index, *(valueOptions.begin() + valueIndex), token);
+    return addUnmatchedToken (arguments, index, token, options, grammar);
+}
 
-    if (optionalValueIndex >= 0)
-    {
-        const bool isNextStdin { index + 1 < static_cast<int> (arguments.size())
-                                 and matchesOption (arguments[static_cast<size_t> (index + 1)], Id::stdinOption) };
-
-        if (isNextStdin or contains (Id::stdinOption))
-        {
-            matchedFlags.add (*(optionalValueOptions.begin() + optionalValueIndex));
-            return index + 1;
-        }
-
-        return addValue (arguments, index, *(optionalValueOptions.begin() + optionalValueIndex), token);
-    }
-
+int Arguments::addUnmatchedToken (juce::Span<const std::string_view> arguments,
+                                  int index,
+                                  std::string_view token,
+                                  juce::Span<const std::pair<std::string_view, OptionType>> options,
+                                  Grammar grammar)
+{
     const bool isShortFlagGroup { token.size() > 2
                                   and token.at (1) != static_cast<char> (Chars::dash)
                                   and isOptionArgument (token) };
 
     if (isShortFlagGroup)
-        return addShortFlags (arguments, index, flagOptions, valueOptions, optionalValueOptions);
+        return addShortLetter (arguments, index, token, 1, options, grammar);
 
     if (isOptionArgument (token))
         return addFailure (text::Diagnostics::failFlagUnknown, token, index + 1);
 
-    positionals.add (token);
+    addPositional (token);
     return index + 1;
 }
 
-int Arguments::addShortFlags (juce::Span<const std::string_view> arguments,
-                              int index,
-                              std::initializer_list<std::string_view> flagOptions,
-                              std::initializer_list<std::string_view> valueOptions,
-                              std::initializer_list<std::string_view> optionalValueOptions)
+int Arguments::addShortLetter (juce::Span<const std::string_view> arguments,
+                               int index,
+                               std::string_view argument,
+                               size_t letterIndex,
+                               juce::Span<const std::pair<std::string_view, OptionType>> options,
+                               Grammar grammar)
 {
-    const auto argument { arguments[static_cast<size_t> (index)] };
+    const std::array<char, 2> letterToken { static_cast<char> (Chars::dash), argument.at (letterIndex) };
+    const std::string_view letterView { letterToken.data(), letterToken.size() };
+    const auto letterOption { getMatchingOption (letterView, options) };
+    const bool isLastLetter { letterIndex + 1 == argument.size() };
 
-    for (size_t letterIndex { 1 }; letterIndex < argument.size(); ++letterIndex)
+    if (not letterOption.has_value())
+        return addFailure (text::Diagnostics::failFlagUnknown, argument, index + 1);
+
+    const auto& [letterText, letterType] { *letterOption };
+
+    if (getValueCount (letterType) == 0 and not isLastLetter)
     {
-        const std::array<char, 2> letterToken { static_cast<char> (Chars::dash), argument.at (letterIndex) };
-        const std::string_view letterView { letterToken.data(), letterToken.size() };
-        const bool isFlagLetter { getMatchingOptionIndex (letterView, flagOptions) >= 0
-                                  or matchesOption (letterView, Id::helpOption) };
-        const bool isValueLetter { letterIndex + 1 == argument.size()
-                                   and (getMatchingOptionIndex (letterView, valueOptions) >= 0
-                                        or getMatchingOptionIndex (letterView, optionalValueOptions) >= 0) };
-
-        if (isValueLetter)
-            return addToken (arguments, index, letterView, flagOptions, valueOptions, optionalValueOptions);
-
-        if (not isFlagLetter)
-            return addFailure (text::Diagnostics::failFlagUnknown, argument, index + 1);
-
-        addToken (arguments, index, letterView, flagOptions, valueOptions, optionalValueOptions);
+        addFlag (*letterOption);
+        return addShortLetter (arguments, index, argument, letterIndex + 1, options, grammar);
     }
 
-    return index + 1;
+    if (isLastLetter)
+        return addOption (arguments, index, *letterOption, letterView, std::nullopt, grammar);
+
+    return addOption (arguments, index, *letterOption, argument, argument.substr (letterIndex + 1), grammar);
 }
 
-int Arguments::addValue (juce::Span<const std::string_view> arguments,
-                         int index,
-                         std::string_view option,
-                         std::string_view token)
+int Arguments::addOption (juce::Span<const std::string_view> arguments,
+                          int index,
+                          std::pair<std::string_view, OptionType> option,
+                          std::string_view token,
+                          std::optional<std::string_view> attachedValue,
+                          Grammar grammar)
 {
-    if (index + 1 < static_cast<int> (arguments.size()))
+    if (attachedValue.has_value())
+        return addAttachedValue (option, token, *attachedValue, grammar, index + 1);
+
+    if (isWithoutValue (option, arguments, index, grammar))
     {
-        const auto value { arguments[static_cast<size_t> (index + 1)] };
-        auto [valueEntry, isInserted] { matchedValues.try_emplace (option) };
-        auto& [entryOption, entryValues] { *valueEntry };
-        juce::ignoreUnused (entryOption, isInserted);
-        entryValues.add (value);
-        return index + 2;
+        addFlag (option);
+        return index + 1;
+    }
+
+    const auto& [optionText, optionType] { option };
+    return addValues (arguments, index, optionText, token, getValueCount (optionType));
+}
+
+bool Arguments::isWithoutValue (std::pair<std::string_view, OptionType> option,
+                                juce::Span<const std::string_view> arguments,
+                                int index,
+                                Grammar grammar) const
+{
+    const auto& [optionText, optionType] { option };
+    const bool isNextStdin { index + 1 < static_cast<int> (arguments.size())
+                             and matchesOption (arguments[static_cast<size_t> (index + 1)], Id::stdinOption) };
+    const bool isOptionalFlag { optionType == OptionType::optionalValue
+                                and (grammar == Grammar::attached or isNextStdin or contains (Id::stdinOption)) };
+
+    return getValueCount (optionType) == 0 or isOptionalFlag;
+}
+
+int Arguments::addAttachedValue (std::pair<std::string_view, OptionType> option,
+                                 std::string_view token,
+                                 std::string_view attachedValue,
+                                 Grammar grammar,
+                                 int nextIndex)
+{
+    const auto& [optionText, optionType] { option };
+    const bool isValueOption { optionType == OptionType::value or optionType == OptionType::optionalValue };
+
+    if (grammar == Grammar::attached and isValueOption)
+    {
+        addMatchedValue (optionText, attachedValue);
+        return nextIndex;
+    }
+
+    return addFailure (text::Diagnostics::failFlagUnknown, token, nextIndex);
+}
+
+int Arguments::addValues (juce::Span<const std::string_view> arguments,
+                          int index,
+                          std::string_view option,
+                          std::string_view token,
+                          int valueCount)
+{
+    if (index + valueCount < static_cast<int> (arguments.size()))
+    {
+        for (int valueOffset { 1 }; valueOffset <= valueCount; ++valueOffset)
+            addMatchedValue (option, arguments[static_cast<size_t> (index + valueOffset)]);
+
+        return index + valueCount + 1;
     }
 
     return addFailure (text::Diagnostics::failFlagValueMissing, token, index + 1);
+}
+
+void Arguments::addMatchedValue (std::string_view option, std::string_view value)
+{
+    auto [valueEntry, isInserted] { matchedValues.try_emplace (option) };
+    auto& [entryOption, entryValues] { *valueEntry };
+    juce::ignoreUnused (entryOption, isInserted);
+    entryValues.add (value);
+}
+
+void Arguments::addFlag (std::pair<std::string_view, OptionType> option)
+{
+    const auto& [optionText, optionType] { option };
+    matchedFlags.add (optionText);
+
+    if (optionType == OptionType::mode)
+        positionalMode = optionText;
+}
+
+void Arguments::addPositional (std::string_view token)
+{
+    positionals.add (token);
+    positionalModes.add (positionalMode);
 }
 
 int Arguments::addFailure (std::string_view failure, std::string_view token, int nextIndex)

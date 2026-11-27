@@ -40,7 +40,7 @@ juce::Result TextDocument::getBinaryFailure (std::string_view displayPath)
 juce::Result TextDocument::getBinaryStatus (std::string_view displayPath, bool isExplicit)
 {
     if (isExplicit)
-        return getBinaryFailure (displayPath);
+        return Stdio::fail (text::Diagnostics::failBinaryFile, displayPath);
 
     return juce::Result::ok();
 }
@@ -95,22 +95,26 @@ std::pair<juce::Result, std::unique_ptr<Input>> TextDocument::getInput (const ju
     return { juce::Result::ok(), std::move (fileInput) };
 }
 
-std::pair<juce::Result, std::unique_ptr<Input>> TextDocument::getInput (const std::optional<std::string>& source, int numLines)
+std::pair<juce::Result, std::unique_ptr<Input>> TextDocument::getInput (const juce::File& file,
+                                                                        std::string_view displayPath,
+                                                                        size_t maxReadSize,
+                                                                        const Input::Source& source)
 {
-    auto [inputStatus, standardInput] { Input::create (source, numLines) };
+    if (file == juce::File {})
+        return Input::create (source, Input::allLines);
 
-    if (inputStatus.failed())
-        return { inputStatus, nullptr };
+    return getInput (file, displayPath, maxReadSize);
+}
 
-    if (standardInput->getBytes().empty())
-        return { Stdio::fail (text::Diagnostics::failMissingPath), nullptr };
-
-    return { juce::Result::ok(), std::move (standardInput) };
+std::pair<juce::Result, std::unique_ptr<Input>> TextDocument::getInput (const Input::Source& source, int numLines)
+{
+    return Input::create (source, numLines);
 }
 
 std::pair<juce::Result, std::unique_ptr<TextDocument>> TextDocument::fromFile (const juce::File& file,
                                                                                 std::string_view displayPath,
-                                                                                size_t maxReadSize)
+                                                                                size_t maxReadSize,
+                                                                                bool isText)
 {
     auto [inputStatus, fileInput] { getInput (file, displayPath, maxReadSize) };
 
@@ -119,7 +123,7 @@ std::pair<juce::Result, std::unique_ptr<TextDocument>> TextDocument::fromFile (c
 
     auto document { std::make_unique<TextDocument> (Access {}, std::move (fileInput), displayPath) };
     document->setSource (document->input->getBytes());
-    document->setLineIndex();
+    document->setLineIndex (isText);
     return { juce::Result::ok(), std::move (document) };
 }
 
@@ -127,7 +131,7 @@ std::pair<juce::Result, std::unique_ptr<TextDocument>> TextDocument::fromTextFil
                                                                                     std::string_view displayPath,
                                                                                     size_t maxReadSize)
 {
-    auto [documentStatus, document] { fromFile (file, displayPath, maxReadSize) };
+    auto [documentStatus, document] { fromFile (file, displayPath, maxReadSize, false) };
 
     if (documentStatus.failed())
         return { documentStatus, nullptr };
@@ -143,7 +147,7 @@ std::unique_ptr<TextDocument> TextDocument::fromInput (std::unique_ptr<Input> ne
 {
     auto document { std::make_unique<TextDocument> (Access {}, std::move (newInput), displayPath) };
     document->setSource (document->input != nullptr ? document->input->getBytes() : std::string_view {});
-    document->setLineIndex();
+    document->setLineIndex (false);
     return document;
 }
 
@@ -200,9 +204,9 @@ void TextDocument::setSource (std::string_view text)
     Document::parse();
 }
 
-void TextDocument::setLineIndex()
+void TextDocument::setLineIndex (bool isText)
 {
-    binary = isBinary (source);
+    binary = not isText and isBinary (source);
 
     if (not binary)
     {
@@ -219,6 +223,20 @@ std::string_view TextDocument::getLine (std::string_view bytes, size_t lineStart
         return bytes.substr (lineStart, newlinePos - 1 - lineStart);
 
     return bytes.substr (lineStart, newlinePos - lineStart);
+}
+
+std::string_view TextDocument::getLineEnding (std::string_view bytes, std::string_view line)
+{
+    const size_t tailStart { static_cast<size_t> (line.data() - bytes.data()) + line.size() };
+    const std::string_view tail { bytes.substr (tailStart, windowsLineEnding.size()) };
+
+    if (not tail.empty() and tail.at (0) == static_cast<char> (Chars::newline))
+        return tail.substr (0, unixLineEnding.size());
+
+    if (tail.compare (windowsLineEnding) == 0)
+        return tail;
+
+    return {};
 }
 
 std::string_view TextDocument::getLeadingLines (std::string_view bytes, int numLines)

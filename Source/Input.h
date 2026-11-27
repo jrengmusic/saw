@@ -9,9 +9,19 @@
  */
 class Input
 {
+    /** @brief Tag type that only the members of Input can name, so that only they construct an Input. */
     struct Access {};
 
 public:
+    /** @brief Source that selects the process standard input. */
+    struct StandardInput {};
+
+    /** @brief Source that selects the null device, which holds no data. */
+    struct NullDevice {};
+
+    /** @brief The source of the bytes of a command: the process standard input, the null device, or a supplied text. */
+    using Source = std::variant<StandardInput, NullDevice, std::string_view>;
+
     /** @brief Line count that reads the whole input. */
     static constexpr int allLines { std::numeric_limits<int>::max() };
 
@@ -27,7 +37,7 @@ public:
      */
     static constexpr size_t maxBufferedReadSize { 256 * 1024 };
 
-    /** @brief Creates an empty Input. Only the static factories can name Access, so only they construct one. */
+    /** @brief Creates an empty Input. Only the members of Input can name Access, so only they construct one. */
     explicit Input (Access);
 
     /** @brief Destroys the Input. The members release the mappings and the buffer.
@@ -38,28 +48,36 @@ public:
 
     /** @brief Creates the input of a command from its source.
      *
-     *  A supplied source is used as it is, and the Input holds a view on it, so the source
-     *  must outlive the Input. Without a supplied source, a regular standard input is mapped from
-     *  its current offset. An offset at or past the end gives an empty input. When the map fails, or
-     *  standard input is not a regular file, standard input is read instead. Standard input that is
-     *  read stops at numLines newlines or the end. A mapped standard input is not limited by numLines.
+     *  A supplied text is used as it is. The Input holds a view on it, so the text must outlive the Input.
+     *  For the null device, or for standard input that holds no data and is not a terminal, the Input is empty and nothing is read.
+     *  Otherwise a regular standard input is mapped from its current offset. An offset at or past the end gives an empty input.
+     *  When the map fails, or standard input is not a regular file, standard input is read instead. Standard input that is read
+     *  stops at numLines newlines or the end. A mapped standard input is not limited by numLines.
      *
-     *  @param source   The supplied text, or nullopt for the process standard input.
+     *  @param source   The standard input, the null device, or a supplied text.
      *  @param numLines The number of newlines to read from standard input that is read. allLines reads to the end.
      *
      *  @return Status result paired with the Input, or nullptr when standard input cannot be read.
      */
-    static std::pair<juce::Result, std::unique_ptr<Input>> create (const std::optional<std::string>& source, int numLines);
+    static std::pair<juce::Result, std::unique_ptr<Input>> create (const Source& source, int numLines);
+
+    /** @brief Tests whether a source can hold data.
+     *
+     *  A supplied text always holds data, and the null device never does. Standard input holds data when it is a disk file, a pipe,
+     *  or a socket on POSIX, or a disk file or a pipe on Windows.
+     *
+     *  @param source The standard input, the null device, or a supplied text.
+     *
+     *  @return True when the source can hold data.
+     */
+    static bool hasData (const Source& source);
 
     /** @brief Opens a file as an Input.
      *
-     *  The size comes from std::filesystem::file_size. That call fails for a named pipe, a socket,
-     *  a device, and a folder on macOS, so none of those is opened. The null device is the one
-     *  exception: it gives an empty Input. A file larger than maxReadSize is mapped. When the map
-     *  fails, the file is read into an owned buffer. A smaller file is read into an owned buffer,
-     *  and a read that returns fewer bytes than the size gives nullptr. Passing allBytes always reads
-     *  into an owned buffer, so a later write to the file cannot change the bytes. On macOS, a mapped
-     *  file that another process makes shorter gives no fault: a missing byte reads as NUL.
+     *  The size comes from std::filesystem::file_size. When that call fails, the null device gives an empty Input. A named pipe is read
+     *  through a stream when maxReadSize is not allBytes. Any other path that fails the size call, such as a socket, a device, or a folder, gives nullptr.
+     *  A file larger than maxReadSize is mapped. When the map fails, the file is read into an owned buffer. A smaller file is read into an owned buffer,
+     *  and a read that returns fewer bytes than the size gives nullptr. Passing allBytes always reads into an owned buffer, so a later write to the file cannot change the bytes.
      *
      *  @param file        The file to open.
      *  @param maxReadSize The largest file size that is read into a buffer.
@@ -70,15 +88,14 @@ public:
 
     /** @brief Checks whether the input of a command is a stream, not a regular file.
      *
-     *  On Windows, every standard input without a supplied text is a stream. On other platforms,
-     *  standard input is a stream when no text is supplied and its status is not a regular file,
-     *  or when its status cannot be read.
+     *  On Windows, the process standard input is a stream. On other platforms, the process standard input is a stream when its status
+     *  is not a regular file, or when its status cannot be read. A supplied text and the null device are never a stream.
      *
-     *  @param source The supplied text, or nullopt for the process standard input.
+     *  @param source The standard input, the null device, or a supplied text.
      *
      *  @return True when the input is a stream.
      */
-    static bool isStream (const std::optional<std::string>& source);
+    static bool isStream (const Source& source);
 
     /** @brief Returns the bytes of the input.
      *
@@ -105,11 +122,12 @@ private:
 
     /** @brief Reads standard input into the buffer, until numLines newlines are read or the end is reached.
      *
+     *  @param read      The function that fills the destination with up to the given size of bytes. It returns the count read, zero at the end, or a negative value on failure.
      *  @param numLines The number of newlines that ends the read. allLines reads to the end.
      *
      *  @return True when the read ends at the end of the input or at numLines, false when a read fails.
      */
-    bool setReadBytes (int numLines);
+    bool setReadBytes (const std::function<juce::int64 (char*, size_t)>& read, int numLines);
 
     /** @brief Holds the bytes read into memory, for a file that is read and for standard input that is read. */
     juce::HeapBlock<char> buffer;

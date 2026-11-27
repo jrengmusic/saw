@@ -192,11 +192,12 @@ std::optional<std::string_view> Fields::getSelectedField (int requested,
 juce::Result Fields::appendFormattedLine (std::string& output,
                                           const jam::Array<std::string_view>& tokens,
                                           std::string_view displayPath,
-                                          int lineNumber) const
+                                          int lineNumber,
+                                          std::string_view ending) const
 {
     if (tokens.isEmpty() and not isStrict)
     {
-        jam::Format::appendUtf8 (output, Chars::newline);
+        jam::Format::appendBytes (output, ending);
         return juce::Result::ok();
     }
 
@@ -218,12 +219,13 @@ juce::Result Fields::appendFormattedLine (std::string& output,
         jam::Format::appendBytes (output, *field);
     }
 
-    jam::Format::appendUtf8 (output, Chars::newline);
+    jam::Format::appendBytes (output, ending);
     return juce::Result::ok();
 }
 
 std::pair<juce::Result, bool> Fields::appendFields (std::string& output,
                                                     jam::Array<std::string_view>& tokens,
+                                                    std::string_view bytes,
                                                     std::string_view line,
                                                     int lineNumber,
                                                     std::string_view displayPath,
@@ -239,7 +241,8 @@ std::pair<juce::Result, bool> Fields::appendFields (std::string& output,
     if (isMatched)
     {
         setLineTokens (tokens, line);
-        const auto status { appendFormattedLine (output, tokens, displayPath, lineNumber) };
+        const std::string_view lineEnding { TextDocument::getLineEnding (bytes, line) };
+        const auto status { appendFormattedLine (output, tokens, displayPath, lineNumber, lineEnding.empty() ? Stdio::newline : lineEnding) };
         return { status, status.wasOk() };
     }
 
@@ -261,11 +264,11 @@ std::tuple<juce::Result, bool, Stdio::Documents> Fields::getBytesOutput (std::st
 
     const size_t readSize { TextDocument::applyToLines (bytes,
                                                         lineRange,
-                                                        [this, displayPath, &output, &tokens, &automaton, &anyLineMatched, &status] (int lineNumber, std::string_view line)
+                                                        [this, displayPath, bytes, &output, &tokens, &automaton, &anyLineMatched, &status] (int lineNumber, std::string_view line)
                                                         {
                                                             if (lineNumber > afterLine)
                                                             {
-                                                                const auto [lineStatus, isMatched] { appendFields (output, tokens, line, lineNumber, displayPath, automaton) };
+                                                                const auto [lineStatus, isMatched] { appendFields (output, tokens, bytes, line, lineNumber, displayPath, automaton) };
                                                                 status = lineStatus;
                                                                 anyLineMatched = anyLineMatched or isMatched;
                                                                 return lineStatus.wasOk() and not (isMatched and isFirstOnly);
@@ -274,7 +277,7 @@ std::tuple<juce::Result, bool, Stdio::Documents> Fields::getBytesOutput (std::st
                                                             return true;
                                                         }) };
 
-    if (TextDocument::isBinary (bytes.substr (0, readSize)))
+    if (not isText and TextDocument::isBinary (bytes.substr (0, readSize)))
         return { TextDocument::getBinaryStatus (displayPath, isExplicit), false, Stdio::Documents {} };
 
     return { std::move (status), anyLineMatched, Stdio::getDocuments (std::move (output), displayPath) };
@@ -282,9 +285,10 @@ std::tuple<juce::Result, bool, Stdio::Documents> Fields::getBytesOutput (std::st
 
 std::tuple<juce::Result, bool, Stdio::Documents> Fields::getFileOutput (const juce::File& file,
                                                                         std::string_view displayPath,
-                                                                        bool isExplicit) const
+                                                                        bool isExplicit,
+                                                                        const Input::Source& source) const
 {
-    const auto [inputStatus, input] { TextDocument::getInput (file, displayPath, Input::maxBufferedReadSize) };
+    const auto [inputStatus, input] { TextDocument::getInput (file, displayPath, Input::maxBufferedReadSize, source) };
 
     if (inputStatus.failed())
         return { inputStatus, false, Stdio::Documents {} };
@@ -295,7 +299,7 @@ std::tuple<juce::Result, bool, Stdio::Documents> Fields::getFileOutput (const ju
     return getBytesOutput (input->getBytes(), displayPath, isExplicit);
 }
 
-Stdio::Output Fields::runStandardInput (const std::optional<std::string>& input) const
+Stdio::Output Fields::runStandardInput (const Input::Source& input) const
 {
     if (Stdio::isTerminalInput (input))
         return Stdio::getFailure (text::Diagnostics::failMissingPath);
@@ -307,11 +311,14 @@ Stdio::Output Fields::runStandardInput (const std::optional<std::string>& input)
 
     const auto inputText { standardInput->getBytes() };
 
+    if (inputText.empty())
+        return getDocumentsOutput (juce::Result::ok(), false, matchPattern != nullptr, Stdio::Documents {});
+
     auto [formatStatus, anyLineMatched, documents] { getBytesOutput (inputText, Id::stdinPath, true) };
     return getDocumentsOutput (formatStatus, anyLineMatched, matchPattern != nullptr, std::move (documents));
 }
 
-Stdio::Output Fields::runFiles (juce::Span<const std::string_view> rawPaths) const
+Stdio::Output Fields::runFiles (juce::Span<const std::string_view> rawPaths, const Input::Source& source) const
 {
     const auto [readStatus, files] { Paths::getReadableFiles (rawPaths, {}, {}, false, false) };
 
@@ -327,10 +334,10 @@ Stdio::Output Fields::runFiles (juce::Span<const std::string_view> rawPaths) con
     results.resize (fileCount);
 
     Jobs::run (fileCount,
-               [this, &pathEntries = files, &statuses, &matchedFlags, &results] (int index)
+               [this, &pathEntries = files, &source, &statuses, &matchedFlags, &results] (int index)
                {
                    const auto& [displayPath, targetFile, isExplicit] { pathEntries.at (index) };
-                   auto [fileStatus, isMatched, fileDocuments] { getFileOutput (targetFile, displayPath, isExplicit) };
+                   auto [fileStatus, isMatched, fileDocuments] { getFileOutput (targetFile, displayPath, isExplicit, source) };
                    statuses.at (index) = std::move (fileStatus);
                    matchedFlags.at (index) = isMatched;
                    results.at (index) = std::move (fileDocuments);
@@ -359,19 +366,20 @@ Fields::Fields (const Arguments& arguments,
       afterLine (newAfterLine),
       matchPattern (std::move (newMatchPattern)),
       isFirstOnly (arguments.contains (Id::firstOption)),
-      isStrict (arguments.contains (Id::strictOption))
+      isStrict (arguments.contains (Id::strictOption)),
+      isText (arguments.contains (Id::textOption))
 {
 }
 
 Arguments Fields::getArguments (juce::Span<const std::string_view> argumentList)
 {
     return Arguments { argumentList,
-                       { Id::regexOption, Id::firstOption, Id::strictOption },
+                       { Id::regexOption, Id::firstOption, Id::strictOption, Id::textOption },
                        { Id::delimiterOption, Id::outputDelimiterOption, Id::matchOption, Id::linesOption, Id::afterOption },
                        {} };
 }
 
-Stdio::Output Fields::run (const Arguments& arguments, const std::optional<std::string>& input)
+Stdio::Output Fields::run (const Arguments& arguments, const Input::Source& input)
 {
     if (arguments.getStatus().failed())
         return Stdio::getFailure (arguments.getStatus());
@@ -399,5 +407,5 @@ Stdio::Output Fields::run (const Arguments& arguments, const std::optional<std::
     if (arguments.getPositionals (1).empty())
         return fields.runStandardInput (input);
 
-    return fields.runFiles (arguments.getPositionals (1));
+    return fields.runFiles (arguments.getPositionals (1), input);
 }

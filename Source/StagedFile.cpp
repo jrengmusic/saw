@@ -14,12 +14,13 @@ StagedFile::StagedFile (const juce::File& newTargetFile, std::unique_ptr<TextDoc
     assert (originalDocument != nullptr);
 }
 
-StagedFile::StagedFile (const juce::File& newTargetFile, std::unique_ptr<TextDocument> newOriginalDocument, std::unique_ptr<TextDocument> newPlannedDocument, bool newIsExecutable, bool newIsExisting, int newBlobIndex)
+StagedFile::StagedFile (const juce::File& newTargetFile, std::unique_ptr<TextDocument> newOriginalDocument, std::unique_ptr<TextDocument> newPlannedDocument, bool newIsExecutable, bool newIsExisting, bool newIsPlannedExisting, int newBlobIndex)
     : targetFile (newTargetFile),
       originalDocument (std::move (newOriginalDocument)),
       plannedContent (std::move (newPlannedDocument)),
       executable (newIsExecutable),
       existing (newIsExisting),
+      plannedExisting (newIsPlannedExisting),
       blobIndex (newBlobIndex)
 {
     const auto* plannedDocument { std::get_if<std::unique_ptr<TextDocument>> (&plannedContent) };
@@ -56,16 +57,21 @@ bool StagedFile::isExecutable() const noexcept
     return executable;
 }
 
+bool StagedFile::isExisting() const noexcept
+{
+    return existing;
+}
+
 void StagedFile::appendUnifiedDiff (std::string& output) const
 {
     if (const auto* plannedDiff { std::get_if<LineDiff> (&plannedContent) })
     {
-        plannedDiff->appendUnifiedDiff (output, *originalDocument, plannedDiff->getPlannedBytes());
+        plannedDiff->appendUnifiedDiff (output, *originalDocument, plannedDiff->getPlannedBytes(), existing, plannedExisting);
     }
     else
     {
         const auto& plannedDocument { std::get<std::unique_ptr<TextDocument>> (plannedContent) };
-        LineDiff (*originalDocument, *plannedDocument).appendUnifiedDiff (output, *originalDocument, plannedDocument->getBytes());
+        LineDiff (*originalDocument, *plannedDocument).appendUnifiedDiff (output, *originalDocument, plannedDocument->getBytes(), existing, plannedExisting);
     }
 }
 
@@ -89,6 +95,9 @@ std::pair<juce::Result, bool> StagedFile::commit (std::string_view transactionId
 
 std::pair<juce::Result, bool> StagedFile::undo (std::string_view transactionId) const
 {
+    if (not plannedExisting)
+        return remove();
+
     const auto blobFile { UndoCache::getBlobFile (transactionId, blobIndex) };
     const bool isSwappable { existing
                              and jam::File::isSwappable (targetFile, blobFile)
@@ -106,6 +115,9 @@ std::pair<juce::Result, bool> StagedFile::undo (std::string_view transactionId) 
 
 juce::Result StagedFile::restore (std::string_view transactionId) const
 {
+    if (not plannedExisting)
+        return restoreRemoved();
+
     if (not existing)
     {
         const auto plannedStatus { getBytesStatus (targetFile, getPlannedBytes()) };
@@ -116,6 +128,11 @@ juce::Result StagedFile::restore (std::string_view transactionId) const
         return targetFile.deleteFile() ? juce::Result::ok() : Stdio::fail (text::Diagnostics::failOverwriteFailed);
     }
 
+    return restoreReplaced (transactionId);
+}
+
+juce::Result StagedFile::restoreReplaced (std::string_view transactionId) const
+{
     const auto blobFile { UndoCache::getBlobFile (transactionId, blobIndex) };
 
     if (getBytesStatus (blobFile, getPlannedBytes()).failed())
@@ -221,4 +238,36 @@ std::pair<juce::Result, bool> StagedFile::replace() const
         return { plannedStatus, true };
 
     return { juce::Result::ok(), false };
+}
+
+std::pair<juce::Result, bool> StagedFile::remove() const
+{
+    const auto originalStatus { getBytesStatus (targetFile, getOriginalBytes()) };
+
+    if (originalStatus.failed())
+        return { originalStatus, false };
+
+    if (not jam::File::deleteFile (targetFile))
+        return { Stdio::fail (text::Diagnostics::failOverwriteFailed), false };
+
+    return { juce::Result::ok(), false };
+}
+
+juce::Result StagedFile::restoreRemoved() const
+{
+    if (targetFile.existsAsFile())
+        return getBytesStatus (targetFile, getOriginalBytes());
+
+    const auto writeStatus { Writer::toFile (targetFile, getOriginalBytes()) };
+
+    if (writeStatus.failed())
+        return writeStatus;
+
+    if (jam::File::isExecutable (targetFile) != executable)
+    {
+        if (not targetFile.setExecutePermission (executable))
+            return Stdio::fail (text::Diagnostics::failOverwriteFailed);
+    }
+
+    return getBytesStatus (targetFile, getOriginalBytes());
 }

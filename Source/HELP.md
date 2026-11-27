@@ -9,7 +9,7 @@ SAW replaces `sed`, `grep`, and file-oriented `awk` with one deterministic CLI t
 ## Core Principles
 
 1. **Dry-run by default:** Mutating verbs preview changes. They write zero bytes unless you pass `--apply`.
-2. **Explicit two-gate write:** `--apply` requires `--expect N` on `replace`, `lines`, and `patch`.
+2. **Explicit two-gate write:** `--apply` requires `--expect N` on `replace`, `lines`, `patch`, and `write`.
 3. **Literal by default:** Search and replacement match exact bytes. Pass `-r` to enable regex.
 4. **Atomic transactions:** Every write exchanges a complete new file with the target in one step. When file `k + 1` fails, SAW restores files `0..k` at once.
 5. **Verified undo:** Every `--apply` keeps the pre-edit file and the SHA-256 hashes before and after the edit. The rolling cache holds 32 transactions.
@@ -25,9 +25,9 @@ SAW replaces `sed`, `grep`, and file-oriented `awk` with one deterministic CLI t
 | `saw <verb> --help` | Prints the help guide for `<verb>`. | `0` |
 | `saw --version`, `saw -V` | Prints `saw 0.0.1 (<commit>)`. | `0` |
 | `saw --mcp` | Serves the commands as Model Context Protocol over stdin and stdout. Ends when stdin closes. | `0` |
-| `saw <verb> ...` | Runs one of the seven verbs below. | `0`, `1`, or `2` |
+| `saw <verb> ...` | Runs one of the ten verbs below. | `0`, `1`, or `2` |
 
-When stdout is a terminal, `saw`, `saw --help`, and `saw <verb> --help` erase the screen first. The seven verbs and `--version` never erase the screen.
+When stdout is a terminal, `saw`, `saw --help`, and `saw <verb> --help` erase the screen first. The ten verbs and `--version` never erase the screen.
 
 `--` ends option parsing. SAW treats every token after `--` as a positional argument.
 
@@ -47,6 +47,9 @@ When stdout is a terminal, `saw`, `saw --help`, and `saw <verb> --help` erase th
 | `patch` | `saw patch [options]` | Apply a JSON batch of edits in one atomic transaction. |
 | `undo` | `saw undo <tx-id> [options]` | Inspect and reverse applied SAW transactions. |
 | `excerpt` | `saw excerpt [target...] [options]` | Return exact line blocks from files, with a receipt and a hash for each block. |
+| `json` | `saw json [options] <filter> [file...]` | Run a jq 1.8.2 filter over JSON input, with the output bytes of jq. |
+| `page` | `saw page [path...] [options]` | Print the bytes of files or standard input. With the libraries of ling, render them as a page. |
+| `write` | `saw write <path> [--apply --expect 1]` | Write the complete text from standard input to one file, verbatim. |
 
 ## Exit Codes and Diagnostics
 
@@ -55,8 +58,11 @@ When stdout is a terminal, `saw`, `saw --help`, and `saw <verb> --help` erase th
 | `0` | Success: `find` or `fields` matched, dry-run completed, `--apply` succeeded, or `undo` succeeded. |
 | `1` | No match on `find` or `fields --match`, an empty `find --files` list, or `--expect N` mismatch on a mutating verb. |
 | `2` | Usage error, bad flag, bad regex, bad JSON, missing or binary file, hard-linked or read-only target, conflict, drift, or I/O error. |
+| `3` | `json`: compile error of the filter. |
+| `4` | `json -e`: no output. |
+| `5` | `json`: parse or runtime error, or `halt_error`. |
 
-SAW writes all errors to `stderr` with the prefix `saw: <message>`. Each error writes one concise line and exits with `1` or `2`.
+SAW writes all errors to `stderr` with the prefix `saw: <message>`. Each error writes one concise line and exits with `1` or `2`, or with `3` to `5` for `json`.
 
 SAW writes command data, dry-run diffs, and summary lines to `stdout`. Summary lines follow these forms: `saw: dry-run …`, `saw: applied …`, `saw: undone …`, `saw: dry-run undo …`, and `saw: no content changed; nothing written`.
 
@@ -66,7 +72,7 @@ SAW writes command data, dry-run diffs, and summary lines to `stdout`. Summary l
 - **Explicit directory paths:** SAW walks directories in parallel, one job for each folder. Walks skip symbolic links.
 - **Walk filters:** Directory walks skip `.git` always. Walks skip ignored paths unless you pass `--no-ignore`. Walks skip dot-prefixed entries unless you pass `--hidden`.
 - **Sort order:** SAW sorts collected paths in ascending byte-lexicographic UTF-8 order.
-- **Piped stdin:** When you pass no path and stdin is not a TTY, verbs read stdin as `<stdin>`. This applies to `find`, `lines` (read mode), `fields`, and `replace` (dry-run). Passing `--apply` with stdin exits `2`. Empty stdin exits `2` with `saw: missing path argument`.
+- **Piped stdin:** When you pass no path and stdin is not a TTY, verbs read stdin as `<stdin>`. This applies to `find`, `lines` (read mode), `fields`, and `replace` (dry-run). Passing `--apply` with stdin exits `2`. Empty stdin is an empty text. `find` and `fields --match` exit `1`. `lines`, `fields`, and `replace` exit `0` and print nothing.
 - **No path on a TTY:** `find` walks `.`. `replace`, `lines`, and `fields` exit `2`. `patch` requires `--file <path>`.
 - **Unreadable entries:** `find` reports each missing or unreadable path, searches the rest, and exits `2`. Other verbs fail on the first one, before any output or write.
 
@@ -168,3 +174,6 @@ No lock exists. One exclusive creation gives each transaction its owner, so para
 | `undo` of a pending transaction without `--force` | `saw: transaction <tx-id> is pending (pass --force to restore it)` | `2` |
 | Write or verify failure | `saw: write failed for <path>: <reason>; rolled back` | `2` |
 | Rollback failure | `saw: write failed for <path>: <reason>; rollback failed for <paths>; backup kept in <folder>` | `2` |
+| `write` on terminal stdin | `saw: write requires stdin` | `2` |
+| `write` with a NUL byte in stdin | `saw: binary file: <path>` | `2` |
+| `write` with an extra argument | `saw: unexpected argument: <arg>` | `2` |
