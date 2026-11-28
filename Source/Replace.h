@@ -32,7 +32,7 @@ public:
     static Stdio::Output run (const Arguments& arguments, const Input::Source& input);
 
 private:
-    /** @brief The document of one file, its diff, and its number of replacements. */
+    /** @brief The target file, its document, its diff, and its number of replacements. */
     using Replacement = std::tuple<juce::File, std::unique_ptr<TextDocument>, LineDiff, int>;
 
     /** @brief Binds the pattern, the replacement source, and the line range of one replace command.

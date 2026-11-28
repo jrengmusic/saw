@@ -1,5 +1,5 @@
 /** @file Main.cpp
- *  @brief The program entry point. The single argument `--mcp` starts the tool server. Any other argument list runs one command line, with the standard input as its input.
+ *  @brief The program entry point. `--mcp` starts the tool server, `page --follow` starts PageFollow, and any other argument list runs one command line.
  */
 #include <JuceHeader.h>
 #include "Arguments.h"

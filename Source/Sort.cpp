@@ -133,12 +133,15 @@ static void appendEachLine (Stdio::Documents& documents, const jam::Array<std::s
 static std::string getCountPrefix (size_t count)
 {
     static constexpr int countWidth { 7 };
+    static constexpr size_t maxCountDigits { 24 };
 
-    const auto digits { std::to_string (count) };
+    std::array<char, maxCountDigits> digits {};
+    [[maybe_unused]] const auto [end, error] { std::to_chars (digits.data(), std::next (digits.data(), static_cast<std::ptrdiff_t> (digits.size())), count) };
+    const std::string_view digitView { digits.data(), static_cast<size_t> (end - digits.data()) };
     std::string prefix;
 
-    prefix.append (static_cast<size_t> (std::max (countWidth - static_cast<int> (digits.size()), 0)), static_cast<char> (Chars::space));
-    prefix += digits;
+    prefix.append (static_cast<size_t> (std::max (countWidth - static_cast<int> (digitView.size()), 0)), static_cast<char> (Chars::space));
+    jam::Format::appendBytes (prefix, digitView);
     jam::Format::appendUtf8 (prefix, Chars::space);
     return prefix;
 }

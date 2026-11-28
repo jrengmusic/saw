@@ -93,8 +93,19 @@ static std::pair<juce::Result, jam::Array<Paths::EntryType>> getEntryTypes (cons
     return { juce::Result::ok(), std::move (entryTypes) };
 }
 
+static std::string_view getLoweredAscii (std::string_view text, juce::Span<char> buffer)
+{
+    const size_t length { std::min (text.size(), buffer.size()) };
+
+    for (size_t index { 0 }; index < length; ++index)
+        buffer[index] = static_cast<char> (juce::CharacterFunctions::toLowerCase (text.at (index)));
+
+    return std::string_view { buffer.data(), length };
+}
+
 static juce::int64 getSizeMultiplier (std::string_view unitText)
 {
+    static constexpr size_t maxUnitLength { 8 };
     static constexpr std::array<std::pair<std::string_view, juce::int64>, 9> sizeUnits {
         std::pair<std::string_view, juce::int64> { Id::byteUnit, byteMultiplier },
         std::pair<std::string_view, juce::int64> { Id::kiloUnit, decimalUnitBase },
@@ -106,8 +117,12 @@ static juce::int64 getSizeMultiplier (std::string_view unitText)
         std::pair<std::string_view, juce::int64> { Id::gibiUnit, binaryUnitBase * binaryUnitBase * binaryUnitBase },
         std::pair<std::string_view, juce::int64> { Id::tebiUnit, binaryUnitBase * binaryUnitBase * binaryUnitBase * binaryUnitBase }
     };
-    const juce::String lowered { jam::Strings::fromView (unitText).toLowerCase() };
-    return getKeyOfValue (jam::Strings::getView (lowered), sizeUnits).value_or (0);
+
+    if (unitText.size() > maxUnitLength)
+        return 0;
+
+    std::array<char, maxUnitLength> lowered {};
+    return getKeyOfValue (getLoweredAscii (unitText, lowered), sizeUnits).value_or (0);
 }
 
 static std::optional<juce::int64> getSizeBytes (std::string_view digitsText)
@@ -192,7 +207,7 @@ static std::optional<std::tuple<int, int, int>> getDateParts (std::string_view t
     const auto year { getDateField (text, 0, yearWidth) };
     const auto month { getDateField (text, monthOffset, pairWidth) };
     const auto day { getDateField (text, dayOffset, pairWidth) };
-    const bool isSeparated { text.at (4) == static_cast<char> (Chars::dash) and text.at (7) == static_cast<char> (Chars::dash) };
+    const bool isSeparated { text.at (yearWidth) == static_cast<char> (Chars::dash) and text.at (dayOffset - 1) == static_cast<char> (Chars::dash) };
 
     if (not (year.has_value() and month.has_value() and day.has_value() and isSeparated))
         return std::nullopt;
@@ -208,7 +223,7 @@ static std::optional<std::tuple<int, int, int>> getTimeParts (std::string_view t
     const auto hours { getDateField (text, timeOffset, pairWidth) };
     const auto minutes { getDateField (text, minuteOffset, pairWidth) };
     const auto seconds { getDateField (text, secondOffset, pairWidth) };
-    const bool isSeparated { text.at (10) == static_cast<char> (Chars::space) and text.at (13) == static_cast<char> (Chars::colon) and text.at (16) == static_cast<char> (Chars::colon) };
+    const bool isSeparated { text.at (dateSize) == static_cast<char> (Chars::space) and text.at (minuteOffset - 1) == static_cast<char> (Chars::colon) and text.at (secondOffset - 1) == static_cast<char> (Chars::colon) };
 
     if (not (hours.has_value() and minutes.has_value() and seconds.has_value() and isSeparated))
         return std::nullopt;
@@ -273,11 +288,18 @@ static std::optional<std::tuple<juce::int64, int, const char*>> getDurationTerm 
     {
         return juce::CharacterFunctions::isDigit (character);
     }) };
-    const juce::String lowered { jam::Strings::fromView (std::string_view { amountEnd, static_cast<size_t> (unitEnd - amountEnd) }).toLowerCase() };
+    static constexpr size_t maxDurationUnitLength { 16 };
+    const std::string_view unitSlice { amountEnd, static_cast<size_t> (unitEnd - amountEnd) };
+
+    if (unitSlice.size() > maxDurationUnitLength)
+        return std::nullopt;
+
+    std::array<char, maxDurationUnitLength> lowered {};
+    const auto loweredUnit { getLoweredAscii (unitSlice, lowered) };
 
     for (const auto& [unitText, unitSeconds, unitMonths] : durationUnits)
     {
-        if (Arguments::matchesOption (jam::Strings::getView (lowered), unitText))
+        if (Arguments::matchesOption (loweredUnit, unitText))
             return std::tuple<juce::int64, int, const char*> { static_cast<juce::int64> (amount) * unitSeconds, static_cast<int> (amount) * unitMonths, unitEnd };
     }
 
@@ -400,6 +422,22 @@ bool EntryFilter::isMatching (const Paths::ListedEntry& listedEntry) const
     return isTypeMatch and isSizeMatch and isWithinMatch and isBeforeMatch;
 }
 
+bool EntryFilter::isIncludingNonFiles() const noexcept
+{
+    return std::any_of (entryTypes.begin(), entryTypes.end(), [] (Paths::EntryType entryType)
+    {
+        return entryType != Paths::EntryType::file;
+    });
+}
+
+bool EntryFilter::isFiltering() const noexcept
+{
+    return isIncludingNonFiles()
+        or not sizeRanges.isEmpty()
+        or changedWithinMilliseconds.has_value()
+        or changedBeforeMilliseconds.has_value();
+}
+
 static Paths::ListedEntry getVerifiedListedEntry (const Paths::Entry& entry)
 {
     const auto [listResult, listedEntry] { Paths::getListedEntry (entry) };
@@ -454,10 +492,13 @@ static std::pair<juce::Result, jam::Array<Paths::Entry>> getMatchingEntries (con
 
 static void sortEntries (jam::Array<Paths::Entry>& entries, SortKey sortKey, bool isReversed)
 {
-    std::sort (entries.begin(), entries.end(), [sortKey] (const Paths::Entry& firstEntry, const Paths::Entry& secondEntry)
+    if (sortKey != SortKey::name)
     {
-        return isOrderedBefore (firstEntry, secondEntry, sortKey);
-    });
+        std::sort (entries.begin(), entries.end(), [sortKey] (const Paths::Entry& firstEntry, const Paths::Entry& secondEntry)
+        {
+            return isOrderedBefore (firstEntry, secondEntry, sortKey);
+        });
+    }
 
     if (isReversed)
         std::reverse (entries.begin(), entries.end());
@@ -483,16 +524,16 @@ static std::string_view getEntryTypeName (Paths::EntryType entryType)
     return {};
 }
 
-static std::string getModeText (int permissions)
+static void appendModeString (std::string& members, int permissions)
 {
-    std::string modeText;
     std::array<char, maxIntegerDigits> digits {};
     [[maybe_unused]] const auto [end, error] { std::to_chars (digits.data(), std::next (digits.data(), static_cast<std::ptrdiff_t> (digits.size())), permissions, octalRadix) };
     const int digitCount { static_cast<int> (end - digits.data()) };
 
-    jam::Format::appendZeros (modeText, permissionDigits - digitCount);
-    jam::Format::appendBytes (modeText, std::string_view { digits.data(), static_cast<size_t> (digitCount) });
-    return modeText;
+    jam::JsonWriter::appendQuote (members, 1);
+    jam::Format::appendZeros (members, permissionDigits - digitCount);
+    jam::Format::appendBytes (members, std::string_view { digits.data(), static_cast<size_t> (digitCount) });
+    jam::JsonWriter::appendQuote (members, 1);
 }
 
 static std::string getLinkTarget (const Paths::Entry& entry, Paths::EntryType entryType)
@@ -512,17 +553,17 @@ static void appendEntryMembers (std::string& members, const Paths::Entry& entry,
     const auto& [start, length, entryType, metadata] { listedEntry };
     const auto& [size, modifiedMilliseconds, permissions] { metadata };
     juce::ignoreUnused (start, length);
-    jam::JsonWriter::appendKey (members, jam::Strings::getView (Id::path.toString()), 0);
+    jam::JsonWriter::appendKey (members, Id::path);
     jam::JsonWriter::appendString (members, Paths::getDisplayPath (entry), juce::JSON::Encoding::utf8);
-    jam::JsonWriter::appendKey (members, jam::Strings::getView (Id::type.toString()), 1);
+    jam::JsonWriter::appendKey (members, Id::type);
     jam::JsonWriter::appendString (members, getEntryTypeName (entryType), juce::JSON::Encoding::utf8);
-    jam::JsonWriter::appendKey (members, Id::sizeValue, 2);
+    jam::JsonWriter::appendKey (members, Id::sizeValue);
     appendInteger (members, size, decimalRadix);
-    jam::JsonWriter::appendKey (members, Id::mtimeValue, 3);
+    jam::JsonWriter::appendKey (members, Id::mtimeValue);
     jam::JsonWriter::appendString (members, jam::Strings::getView (juce::Time (modifiedMilliseconds).toISO8601 (true)), juce::JSON::Encoding::utf8);
-    jam::JsonWriter::appendKey (members, jam::Strings::getView (Id::mode.toString()), 4);
-    jam::JsonWriter::appendString (members, getModeText (permissions), juce::JSON::Encoding::utf8);
-    jam::JsonWriter::appendKey (members, Id::target, 5);
+    jam::JsonWriter::appendKey (members, Id::mode);
+    appendModeString (members, permissions);
+    jam::JsonWriter::appendKey (members, Id::target);
     jam::JsonWriter::appendString (members, getLinkTarget (entry, entryType), juce::JSON::Encoding::utf8);
 }
 
@@ -559,22 +600,27 @@ Stdio::Output FindFiles::run (const Arguments& arguments)
 
     const auto positionals (arguments.getPositionals (0));
     const auto rawPaths (positionals.empty() ? juce::Span<const std::string_view> { Paths::defaultPaths } : positionals);
+    const bool isListingEntries { filter->isIncludingNonFiles() };
+    const bool isReadingMetadata { arguments.contains (Id::sizeOption)
+                                or arguments.contains (Id::changedWithinOption)
+                                or arguments.contains (Id::changedBeforeOption)
+                                or sortKey != SortKey::name
+                                or arguments.contains (Id::jsonOption) };
     auto [pathFailures, files, skippedCount] { Paths::getFiles (rawPaths,
                                                   arguments.getValues (Id::includeOption),
                                                   arguments.getValues (Id::excludeOption),
                                                   arguments.contains (Id::hiddenOption),
                                                   arguments.contains (Id::noIgnoreOption),
                                                   maxDepth,
-                                                  true) };
+                                                  isListingEntries,
+                                                  isReadingMetadata) };
     auto& [failurePaths, failureResults] { pathFailures };
     juce::ignoreUnused (failurePaths);
     const bool hasFailures { not failureResults.isEmpty() };
-    auto [matchResult, matchingEntries] { getMatchingEntries (files, *filter) };
+    auto [matchResult, selected] { filter->isFiltering() ? getMatchingEntries (files, *filter) : std::pair<juce::Result, jam::Array<Paths::Entry>> { juce::Result::ok(), std::move (files) } };
 
     if (matchResult.failed())
         return Stdio::getFailure (matchResult);
-
-    auto selected (std::move (matchingEntries));
     sortEntries (selected, sortKey, arguments.contains (Id::reverseOption));
     std::string output;
 

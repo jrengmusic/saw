@@ -146,8 +146,13 @@ static std::optional<Paths::EntryType> getEntryType (const std::filesystem::dire
     if (entry.is_symlink (entryError))
         return Paths::EntryType::symlink;
 
+#if JUCE_WINDOWS
     if (entry.is_directory (entryError) and std::filesystem::is_directory (entry.symlink_status (entryError)))
         return Paths::EntryType::directory;
+#else
+    if (entry.is_directory (entryError))
+        return Paths::EntryType::directory;
+#endif
 
     if (entry.is_regular_file (entryError))
         return Paths::EntryType::file;
@@ -208,9 +213,9 @@ static std::optional<Paths::Metadata> getMetadata (const std::filesystem::direct
     return Paths::Metadata { size, modifiedMilliseconds, permissions };
 }
 
-static std::optional<Paths::Metadata> getListedMetadata (const std::filesystem::directory_entry& entry, Paths::EntryType entryType, bool isListingEntries)
+static std::optional<Paths::Metadata> getListedMetadata (const std::filesystem::directory_entry& entry, Paths::EntryType entryType, bool isReadingMetadata)
 {
-    if (isListingEntries)
+    if (isReadingMetadata)
         return getMetadata (entry, entryType);
 
     return Paths::Metadata {};
@@ -231,7 +236,7 @@ static void addListedEntry (std::string& displayPaths,
 static bool isRecursable (std::string_view displayView, size_t displayPrefixSize, std::optional<int> maxDepth)
 {
     const auto relativePath { displayView.substr (displayPrefixSize) };
-    const int depth { static_cast<int> (std::count (relativePath.begin(), relativePath.end(), static_cast<char> (Chars::slash))) + 1 };
+    const int depth { static_cast<int> (jam::simd::countByte (relativePath.data(), relativePath.size(), static_cast<char> (Chars::slash))) + 1 };
     return not maxDepth.has_value() or depth < *maxDepth;
 }
 
@@ -241,6 +246,7 @@ static std::optional<Paths::Listing> getDirectoryListing (const std::string& ful
                                                           std::string_view gitignoreName,
                                                           bool isIncludingHidden,
                                                           bool isListingEntries,
+                                                          bool isReadingMetadata,
                                                           const std::atomic<bool>& shouldStop)
 {
     std::error_code listingError;
@@ -262,7 +268,7 @@ static std::optional<Paths::Listing> getDirectoryListing (const std::string& ful
 
         if (isListedEntry (entryType, isListingEntries) and shouldVisitEntry (*name, gitDirectoryName, isIncludingHidden))
         {
-            const auto metadata { getListedMetadata (*entry, *entryType, isListingEntries) };
+            const auto metadata { getListedMetadata (*entry, *entryType, isReadingMetadata) };
 
             if (not metadata.has_value())
                 return std::nullopt;
@@ -596,7 +602,7 @@ void Paths::applyToFileNames (const juce::File& directory, const std::function<v
     const std::atomic<bool> shouldStop { false };
     std::string fullPath { jam::Strings::getView (directory.getFullPathName()) };
 
-    if (const auto listing { getDirectoryListing (fullPath, {}, {}, {}, false, false, shouldStop) })
+    if (const auto listing { getDirectoryListing (fullPath, {}, {}, {}, false, false, false, shouldStop) })
     {
         const auto& [displayPaths, entries, hasGitignore, skippedCount] { *listing };
         juce::ignoreUnused (hasGitignore, skippedCount);
@@ -634,7 +640,8 @@ std::pair<Paths::Failures, int> Paths::applyToDirectories (const jam::Array<std:
                                                            const std::function<void (int, const ListedFile&)>& onFile,
                                                            const std::atomic<bool>& shouldStop,
                                                            std::optional<int> maxDepth,
-                                                           bool isListingEntries)
+                                                           bool isListingEntries,
+                                                           bool isReadingMetadata)
 {
     const std::string_view gitDirectoryName { Id::gitDirectory };
     const std::string_view gitignoreName { Id::gitignoreFile };
@@ -647,7 +654,7 @@ std::pair<Paths::Failures, int> Paths::applyToDirectories (const jam::Array<std:
     jam::Array<int> workerSkippedCounts;
     workerSkippedCounts.resize (workerCount);
 
-    const auto walkFolder { [&includeGlobs, &excludeGlobs, gitDirectoryName, gitignoreName, isIncludingHidden, &workingDirectory, &workerFailures, &workerSkippedCounts, &onFile, &shouldStop, maxDepth, isListingEntries]
+    const auto walkFolder { [&includeGlobs, &excludeGlobs, gitDirectoryName, gitignoreName, isIncludingHidden, &workingDirectory, &workerFailures, &workerSkippedCounts, &onFile, &shouldStop, maxDepth, isListingEntries, isReadingMetadata]
                             (int workerIndex, WalkItem& walkItem, auto& addItem)
     {
         if (auto* folderRange { std::get_if<FolderRange> (&walkItem) })
@@ -663,7 +670,7 @@ std::pair<Paths::Failures, int> Paths::applyToDirectories (const jam::Array<std:
             {
                 const auto& [folderFull, folderDisplay, folderRel, displayPrefixSize, folderRules] { folder };
                 juce::ignoreUnused (folderRel, displayPrefixSize, folderRules);
-                auto listing { getDirectoryListing (folderFull, folderDisplay, gitDirectoryName, gitignoreName, isIncludingHidden, isListingEntries, shouldStop) };
+                auto listing { getDirectoryListing (folderFull, folderDisplay, gitDirectoryName, gitignoreName, isIncludingHidden, isListingEntries, isReadingMetadata, shouldStop) };
 
                 if (listing.has_value())
                 {
@@ -751,7 +758,8 @@ std::tuple<Paths::Failures, jam::Array<Paths::Entry>, int> Paths::getFiles (juce
                                                                             bool isIncludingHidden,
                                                                             bool isIgnoringRules,
                                                                             std::optional<int> maxDepth,
-                                                                            bool isListingEntries)
+                                                                            bool isListingEntries,
+                                                                            bool isReadingMetadata)
 {
     auto [failures, entries, roots] { getClassifiedPaths (rawPaths) };
     int skippedCount { 0 };
@@ -774,7 +782,7 @@ std::tuple<Paths::Failures, jam::Array<Paths::Entry>, int> Paths::getFiles (juce
                                                    workerEntries.at (workerIndex).add (Entry { listedFile });
                                                },
                                                shouldStop,
-                                               maxDepth, isListingEntries) };
+                                               maxDepth, isListingEntries, isReadingMetadata) };
 
         int totalCount { 0 };
 

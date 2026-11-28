@@ -19,13 +19,10 @@ static std::unique_ptr<TextDocument> getPlannedDocument (bool isAppending, const
 {
     if (isAppending)
     {
-        const auto originalBytes { originalDocument.getBytes() };
-        const auto appendedBytes { standardInput->getBytes() };
-        std::string plannedText;
-        plannedText.reserve (originalBytes.size() + appendedBytes.size());
-        jam::Format::appendBytes (plannedText, originalBytes);
-        jam::Format::appendBytes (plannedText, appendedBytes);
-        return TextDocument::fromText (std::move (plannedText), path);
+        auto document { TextDocument::fromInput (nullptr, path) };
+        document->addSource (originalDocument.getBytes());
+        document->addSource (standardInput->getBytes());
+        return document;
     }
 
     return TextDocument::fromInput (std::move (standardInput), path);

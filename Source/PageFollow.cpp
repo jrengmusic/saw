@@ -117,21 +117,26 @@ void PageFollow::fileChanged (const juce::File& file, jam::File::Watcher::Event 
     {
         const bool isReopening { isFollowingName and (event == jam::File::Watcher::fileCreated or event == jam::File::Watcher::fileRenamedNewName) };
 
-        if (isReopening)
-            reopen();
+        if (isReopening and not reopen())
+            return;
 
-        if (isReopening or event == jam::File::Watcher::fileUpdated)
+        if ((isReopening or event == jam::File::Watcher::fileUpdated) and stream != nullptr and stream->openedOk())
             writeAppended();
     }
 }
 
-void PageFollow::reopen()
+bool PageFollow::reopen()
 {
     stream = std::make_unique<juce::FileInputStream> (target);
     offset = 0;
 
     if (not stream->openedOk())
+    {
         writeOutput (Stdio::getFailure (stream->getStatus()));
+        return false;
+    }
+
+    return true;
 }
 
 void PageFollow::writeAppended()
@@ -149,8 +154,8 @@ std::string PageFollow::readAppendedBytes()
     bytes.resize (static_cast<size_t> (stream->getTotalLength() - offset));
     stream->setPosition (offset);
     const int count { stream->read (bytes.data(), static_cast<int> (bytes.size())) };
-    bytes.resize (static_cast<size_t> (count));
-    offset += count;
+    bytes.resize (count > 0 ? static_cast<size_t> (count) : size_t { 0 });
+    offset += count > 0 ? count : 0;
     return bytes;
 }
 

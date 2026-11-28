@@ -70,17 +70,13 @@ static std::string getUnquoted (std::string_view optionText)
     return unquoted;
 }
 
-static std::deque<std::string> getOptionTextsOf (const jam::Strings& strings)
+static void addOptionTextsOf (jam::Strings& optionTexts, const jam::Strings& strings)
 {
-    std::deque<std::string> optionTexts;
-
     for (int index { 0 }; index < strings.size(); ++index)
     {
         const auto optionText { strings.getView (index) };
-        optionTexts.push_back (isQuotedValue (getOptionValue (optionText)) ? getUnquoted (optionText) : std::string { optionText });
+        optionTexts.add (isQuotedValue (getOptionValue (optionText)) ? std::string_view { getUnquoted (optionText) } : optionText);
     }
-
-    return optionTexts;
 }
 
 template <typename Function>
@@ -99,17 +95,13 @@ static void applyToFileOptions (std::string_view configText, const Function& fun
     });
 }
 
-static std::deque<std::string> getFileOptionTexts (std::string_view configText)
+static void addFileOptionTexts (jam::Strings& optionTexts, std::string_view configText)
 {
-    std::deque<std::string> optionTexts;
-
     applyToFileOptions (configText, [&optionTexts] (std::string_view trimmed)
     {
         if (isQuotedValue (getOptionValue (trimmed)))
-            optionTexts.push_back (getUnquoted (trimmed));
+            optionTexts.add (std::string_view { getUnquoted (trimmed) });
     });
-
-    return optionTexts;
 }
 
 static std::string getOptionPair (std::string_view optionName, const juce::String& valueText)
@@ -121,7 +113,7 @@ static std::string getOptionPair (std::string_view optionName, const juce::Strin
     return optionText;
 }
 
-static std::deque<std::string> getEnvironmentVariableTexts()
+static void addEnvironmentVariableTexts (jam::Strings& optionTexts)
 {
     static constexpr std::array<std::pair<std::string_view, std::string_view>, 7> environmentOptions {{
         { Id::batThemeVariable, Id::themeOption },
@@ -132,67 +124,47 @@ static std::deque<std::string> getEnvironmentVariableTexts()
         { Id::batPagingVariable, Id::pagingOption },
         { Id::batWidthVariable, Id::terminalWidthOption }
     }};
-    std::deque<std::string> optionTexts;
 
     for (const auto& [variableName, optionName] : environmentOptions)
     {
         const auto valueText { getEnvironment (variableName) };
 
         if (valueText.isNotEmpty())
-            optionTexts.push_back (getOptionPair (optionName, valueText));
+            optionTexts.add (std::string_view { getOptionPair (optionName, valueText) });
     }
+}
 
+static jam::Strings getOptionTexts (std::string_view configText)
+{
+    jam::Strings optionTexts;
+    addFileOptionTexts (optionTexts, configText);
+    addEnvironmentVariableTexts (optionTexts);
+    addOptionTextsOf (optionTexts, jam::Strings::fromTokens (getEnvironment (Id::batOptionsVariable), Id::wordBreakCharacters.data(), Chars::quotes));
     return optionTexts;
 }
 
-static std::deque<std::string> getBatOptionTexts()
+static jam::Array<std::string_view> getArgumentList (std::string_view configText, const jam::Strings& optionTexts)
 {
-    const auto words (jam::Strings::fromTokens (getEnvironment (Id::batOptionsVariable), Id::wordBreakCharacters.data(), Chars::quotes));
-    return getOptionTextsOf (words);
-}
-
-static std::deque<std::string> getEnvironmentOptionTexts()
-{
-    auto optionTexts (getEnvironmentVariableTexts());
-
-    for (auto& optionText : getBatOptionTexts())
-        optionTexts.push_back (std::move (optionText));
-
-    return optionTexts;
-}
-
-static std::deque<std::string> getOptionTexts (std::string_view configText)
-{
-    auto optionTexts (getFileOptionTexts (configText));
-
-    for (auto& optionText : getEnvironmentOptionTexts())
-        optionTexts.push_back (std::move (optionText));
-
-    return optionTexts;
-}
-
-static std::vector<std::string_view> getArgumentList (std::string_view configText, const std::deque<std::string>& optionTexts)
-{
-    std::vector<std::string_view> argumentList { jam::Strings::getView (Id::page.toString()) };
-    size_t ownedIndex { 0 };
+    jam::Array<std::string_view> argumentList;
+    argumentList.add (jam::Strings::getView (Id::page.toString()));
+    int ownedIndex { 0 };
 
     applyToFileOptions (configText, [&argumentList, &optionTexts, &ownedIndex] (std::string_view trimmed)
     {
         if (isQuotedValue (getOptionValue (trimmed)))
         {
-            argumentList.push_back (optionTexts.at (ownedIndex));
+            argumentList.add (optionTexts.getView (ownedIndex));
             ++ownedIndex;
         }
         else
-            argumentList.push_back (trimmed);
+            argumentList.add (trimmed);
     });
 
-    for (auto index { ownedIndex }; index < optionTexts.size(); ++index)
-        argumentList.push_back (optionTexts.at (index));
+    for (int index { ownedIndex }; index < optionTexts.size(); ++index)
+        argumentList.add (optionTexts.getView (index));
 
     return argumentList;
 }
-
 juce::File PageConfiguration::getPageLibraryFile()
 {
 #if JUCE_WINDOWS

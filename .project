@@ -96,7 +96,7 @@ return {
     default = {
       database = "/Users/jreng/Documents/Poems/dev/saw/Builds/Release/compile_commands.json",
       flags = {
-        "-DCAST_COMMIT=\\\"b8ea281\\\"",
+        "-DCAST_COMMIT=\\\"a49b3f5\\\"",
         "-DDONT_SET_USING_JUCE_NAMESPACE=1",
         "-DHAVE_FREETYPE",
         "-DHAVE_UNISTD_H",
@@ -127,8 +127,8 @@ return {
         "-I/Users/jreng/Documents/Poems/dev/saw/../jam",
         "-I/Users/jreng/Documents/Poems/dev/saw/Source/generated",
         "-I/Users/jreng/Documents/Poems/dev/saw/../jam/jam_freetype/freetype/include",
-        "-I/Users/jreng/.cache/cast/juce/e9d280272927bbcf8053f8e5d725179eef7ace655706a1625afe051548aa376c/modules/juce_graphics/fonts/harfbuzz",
-        "-I/Users/jreng/.cache/cast/juce/e9d280272927bbcf8053f8e5d725179eef7ace655706a1625afe051548aa376c/modules",
+        "-I/Users/jreng/.cache/cast/juce/9cfa8caec6f94782a49af58784f0dee66125cba7e1591c971b9e9f4de8b0a0f6/modules/juce_graphics/fonts/harfbuzz",
+        "-I/Users/jreng/.cache/cast/juce/9cfa8caec6f94782a49af58784f0dee66125cba7e1591c971b9e9f4de8b0a0f6/modules",
         "-I/Users/jreng/Documents/Poems/dev/saw/Builds/Release/juce_binarydata_saw_BinaryData/JuceLibraryCode",
         "-std=c++17",
         "-flto=thin",
@@ -160,7 +160,7 @@ return {
     ["no-sign"] = {
       database = "/Users/jreng/Documents/Poems/dev/saw/Builds/Release/compile_commands.json",
       flags = {
-        "-DCAST_COMMIT=\\\"b8ea281\\\"",
+        "-DCAST_COMMIT=\\\"a49b3f5\\\"",
         "-DDONT_SET_USING_JUCE_NAMESPACE=1",
         "-DHAVE_FREETYPE",
         "-DHAVE_UNISTD_H",
@@ -191,8 +191,8 @@ return {
         "-I/Users/jreng/Documents/Poems/dev/saw/../jam",
         "-I/Users/jreng/Documents/Poems/dev/saw/Source/generated",
         "-I/Users/jreng/Documents/Poems/dev/saw/../jam/jam_freetype/freetype/include",
-        "-I/Users/jreng/.cache/cast/juce/e9d280272927bbcf8053f8e5d725179eef7ace655706a1625afe051548aa376c/modules/juce_graphics/fonts/harfbuzz",
-        "-I/Users/jreng/.cache/cast/juce/e9d280272927bbcf8053f8e5d725179eef7ace655706a1625afe051548aa376c/modules",
+        "-I/Users/jreng/.cache/cast/juce/9cfa8caec6f94782a49af58784f0dee66125cba7e1591c971b9e9f4de8b0a0f6/modules/juce_graphics/fonts/harfbuzz",
+        "-I/Users/jreng/.cache/cast/juce/9cfa8caec6f94782a49af58784f0dee66125cba7e1591c971b9e9f4de8b0a0f6/modules",
         "-I/Users/jreng/Documents/Poems/dev/saw/Builds/Release/juce_binarydata_saw_BinaryData/JuceLibraryCode",
         "-std=c++17",
         "-flto=thin",

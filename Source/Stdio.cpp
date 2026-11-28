@@ -57,7 +57,7 @@ std::tuple<Stdio::Output, size_t, int, int> Stdio::getLimitedOutput (Output outp
         omittedLines += PageRanges::getLineCount (bytes.substr (keptLength));
         remainingBytes = keptLength == bytes.size() ? remainingBytes - keptLength : 0;
 
-        if (keptLength > 0)
+        if (bytes.empty() or keptLength > 0)
             limitedDocuments.add (keptLength == bytes.size() ? std::move (document) : TextDocument::fromDocument (std::move (document), bytes.substr (0, keptLength)));
     }
 

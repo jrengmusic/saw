@@ -5,8 +5,8 @@
 /** @brief The text of one file, of standard input, or of one piece of output, as a jam::Document.
  *
  *  One document type holds the input and the output, so that no text is copied between a verb and its
- *  writer. The path is stored as Id::path of the root. The bytes are owned by the Input, owned by the
- *  arena of jam::Document, or viewed. The line index is jam::Document::lineOffsets. Only fromFile,
+ *  writer. The display path is stored as a non-owning std::string_view member. The bytes are owned by the
+ *  Input, owned by the MemoryBlock, owned by a viewedDocument, owned by the arena of jam::Document, or viewed.
  *  fromTextFile, and fromInput without an output build it, because output is not read by line. Plain
  *  text has no structure, so getToken takes the whole text as one token. Each line is a view into the bytes.
  */
@@ -22,7 +22,7 @@ public:
     /** @brief Stores the input and the display path. The factory that calls this sets the bytes.
      *
      *  @param newInput       Input that holds the bytes, or nullptr when the bytes are supplied by the factory.
-     *  @param newDisplayPath Path string stored as Id::path of the root, for diagnostics and diff headers.
+     *  @param newDisplayPath Non-owning display path view for diagnostics and diff headers.
      */
     TextDocument (Access,
                   std::unique_ptr<Input> newInput,
@@ -77,19 +77,37 @@ public:
      */
     static std::unique_ptr<TextDocument> fromText (std::string&& text, std::string_view displayPath);
 
-    /** @brief Creates a document that views text with static storage.
+    /** @brief Creates a document that views bytes owned elsewhere.
      *
      *  The document does not own the bytes. The line index is not built, because the text is output only.
      *
-     *  @param text        The bytes, with static storage. They must outlive the document.
-     *  @param displayPath Path string stored on the document for diagnostics and output.
+     *  @param text        The bytes to view. They must outlive the document.
+     *  @param displayPath Non-owning display path view for diagnostics and output.
      *
      *  @return Newly constructed document.
      */
     static std::unique_ptr<TextDocument> fromView (std::string_view text, std::string_view displayPath);
 
+    /** @brief Creates a document that owns a juce::MemoryBlock, moved in without copying.
+     *
+     *  The line index is not built, because the block is output only.
+     *
+     *  @param newBlock    Memory block holding the UTF-8 output bytes.
+     *  @param displayPath Non-owning display path view for diagnostics and output.
+     *
+     *  @return Newly constructed document.
+     */
     static std::unique_ptr<TextDocument> fromBlock (juce::MemoryBlock&& newBlock, std::string_view displayPath);
 
+    /** @brief Creates a document that owns another TextDocument and views a subrange of its bytes.
+     *
+     *  Used by output limiting to slice a document without copying its bytes.
+     *
+     *  @param newViewedDocument The owning document whose storage outlives the view.
+     *  @param output            Subrange view into newViewedDocument's bytes.
+     *
+     *  @return Newly constructed document.
+     */
     static std::unique_ptr<TextDocument> fromDocument (std::unique_ptr<TextDocument> newViewedDocument, std::string_view output);
 
     /** @brief Creates a document that owns an Input, and views a range of its bytes as the output.
@@ -412,13 +430,16 @@ private:
     /** @brief Input that owns the bytes, or nullptr when a factory owns them. Kept so the bytes outlive the document. */
     std::unique_ptr<Input> input;
 
+    /** @brief Owned memory block when constructed via fromBlock. */
     juce::MemoryBlock block;
 
+    /** @brief Owned backing document when constructed via fromDocument. */
     std::unique_ptr<TextDocument> viewedDocument;
 
     /** @brief True when the document is not text and its bytes hold a NUL byte, so the document has no lines. */
     bool binary { false };
 
+    /** @brief Non-owning display path view for diagnostics and diff headers. */
     std::string_view displayPath;
 
     /** @brief The line ending of the first line, returned by getLineEnding. */

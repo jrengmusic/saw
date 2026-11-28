@@ -8,16 +8,26 @@
  */
 struct Paths
 {
+    /** @brief Walked folder state: full path, display prefix, relative path, root display prefix length, and active ignore rules. */
     using Folder = std::tuple<std::string, std::string, std::string, size_t, std::shared_ptr<const IgnoreRules>>;
+    /** @brief Kind of directory entry reported during a walk. */
     enum class EntryType { file, directory, symlink };
+    /** @brief Entry metadata: byte size, modification time in Unix milliseconds, and POSIX permission bits. */
     using Metadata = std::tuple<juce::int64, juce::int64, int>;
+    /** @brief One entry slot in a folder listing: display path offset, display path length, entry type, and metadata. */
     using ListedEntry = std::tuple<size_t, size_t, EntryType, Metadata>;
+    /** @brief Directory listing: contiguous display-path buffer, entry slots, gitignore presence, and skipped count. */
     using Listing = std::tuple<std::string, jam::Array<ListedEntry>, bool, int>;
+    /** @brief A walked folder paired with its listing, shared by every ListedFile slot in that folder. */
     using ListedFolder = std::pair<Folder, Listing>;
+    /** @brief Handle to one entry inside a shared ListedFolder, by slot index. */
     using ListedFile = std::pair<std::shared_ptr<const ListedFolder>, int>;
+    /** @brief Explicit command-line file: display path paired with its resolved juce::File. */
     using NamedFile = std::pair<std::string, juce::File>;
+    /** @brief One resolved input entry: a walked listing slot, an explicit named file, or standard input. */
     using Entry = std::variant<ListedFile, NamedFile, Input::StandardInput>;
 
+    /** @brief Default root path list (`"."`) used when a verb receives no positional path. */
     static constexpr std::array<std::string_view, 1> defaultPaths { Id::currentDirectory };
 
     /** @brief Paths that could not be read, each with the result that describes the failure.
@@ -36,6 +46,9 @@ struct Paths
      *  @param excludeGlobs      Wildcard patterns that exclude matching files.
      *  @param isIncludingHidden True to include dot-prefixed entries.
      *  @param isIgnoringRules   True to bypass `.gitignore` and global exclude rules.
+     *  @param maxDepth          Optional maximum recursion depth below each root.
+     *  @param isListingEntries  True to report directories and symbolic links in addition to regular files.
+     *  @param isReadingMetadata True to populate size, modification time, and permissions on each listed entry.
      *
      *  @return Tuple of: the failures, each with its failure result, in the order found: first the failures of the
      *          raw paths, in the order given, then the failures of the folder walk, by worker index; the entries, one per
@@ -52,7 +65,8 @@ struct Paths
                                                                   bool isIncludingHidden,
                                                                   bool isIgnoringRules,
                                                                   std::optional<int> maxDepth = std::nullopt,
-                                                                  bool isListingEntries = false);
+                                                                  bool isListingEntries = false,
+                                                                  bool isReadingMetadata = false);
 
     /** @brief Expands the paths like getFiles, and stops at the first failure.
      *
@@ -94,16 +108,54 @@ struct Paths
      */
     static std::string getDisplayPath (std::string_view rawPath);
 
+    /** @brief Returns the display path view owned by a ListedFile's shared listing.
+     *
+     *  @param listedFile The listing handle.
+     *
+     *  @return Display path view valid while the shared listing lives.
+     */
     static std::string_view getDisplayPath (const ListedFile& listedFile);
 
+    /** @brief Returns the display path view of any Entry.
+     *
+     *  @param entry The entry.
+     *
+     *  @return Display path view, or the stdin path marker for standard input.
+     */
     static std::string_view getDisplayPath (const Entry& entry);
 
+    /** @brief Resolves a ListedFile handle to its juce::File on disk.
+     *
+     *  @param listedFile The listing handle.
+     *
+     *  @return Resolved juce::File.
+     */
     static juce::File getFile (const ListedFile& listedFile);
 
+    /** @brief Resolves any Entry to its juce::File on disk, or an empty File for standard input.
+     *
+     *  @param entry The entry.
+     *
+     *  @return Resolved juce::File, or empty File for standard input.
+     */
     static juce::File getFile (const Entry& entry);
 
+    /** @brief Returns the ListedEntry slot (entry type and metadata) for any Entry.
+     *
+     *  For a NamedFile, reads metadata from disk on demand.
+     *
+     *  @param entry The entry.
+     *
+     *  @return Ok paired with the ListedEntry, or a read failure paired with a default slot.
+     */
     static std::pair<juce::Result, ListedEntry> getListedEntry (const Entry& entry);
 
+    /** @brief Tells whether an Entry was named explicitly on the command line rather than discovered by walking.
+     *
+     *  @param entry The entry.
+     *
+     *  @return True for NamedFile and StandardInput, false for ListedFile.
+     */
     static bool isExplicit (const Entry& entry);
 
     /** @brief Resolves a raw path to its physical target, following symbolic links.
@@ -177,8 +229,11 @@ struct Paths
      *  @param isIncludingHidden True to include dot-prefixed entries.
      *  @param isIgnoringRules   True to bypass `.gitignore` and global exclude rules.
      *  @param onWorkerCount     Callback invoked once before the walk, with the number of workers.
-     *  @param onFile            Callback invoked per matching file with `(workerIndex, fullPath, displayPath)`.
+     *  @param onFile            Callback invoked per matching entry with `(workerIndex, listedFile)`.
      *  @param shouldStop        Atomic cancellation flag polled during the walk.
+     *  @param maxDepth          Optional maximum recursion depth below each root.
+     *  @param isListingEntries  True to report directories and symbolic links in addition to regular files.
+     *  @param isReadingMetadata True to populate size, modification time, and permissions on each listed entry.
      *
      *  @return The unreadable folders, each with its display path and its read failure, and the count of entries that the walk skipped.
      *          The order of the folders depends on the walk, so it is not defined.
@@ -192,5 +247,6 @@ struct Paths
                                                         const std::function<void (int, const ListedFile&)>& onFile,
                                                         const std::atomic<bool>& shouldStop,
                                                         std::optional<int> maxDepth = std::nullopt,
-                                                        bool isListingEntries = false);
+                                                        bool isListingEntries = false,
+                                                        bool isReadingMetadata = false);
 };

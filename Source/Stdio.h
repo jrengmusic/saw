@@ -19,6 +19,7 @@ struct Stdio
     /** @brief Exit code when argument parsing, validation, I/O, or a transaction fails. */
     static constexpr int exitError { 2 };
 
+    /** @brief Default maximum stdout byte budget before output limiting truncates and appends a trailer. */
     static constexpr size_t outputLimitBytes { 32 * 1024 };
 
     /** @brief Line feed that ends each line of a diagnostic and each summary line. */
@@ -49,13 +50,18 @@ struct Stdio
 
     /** @brief Wraps text in one document, or returns no document when the text is empty.
      *
-     *  @param text        The text, moved into the document.
-     *  @param displayPath The path of the document, or empty for standard output.
+     *  @param text The text, moved into the document.
      *
      *  @return One document holding the text, or no document.
      */
     static Documents getDocuments (std::string&& text);
 
+    /** @brief Wraps a MemoryBlock in one document, or returns no document when the block is empty.
+     *
+     *  @param block The memory block, moved into the document.
+     *
+     *  @return One document holding the block, or no document.
+     */
     static Documents getDocuments (juce::MemoryBlock&& block);
 
     /** @brief Appends documents to a list, moving each of them, so that no document is copied.
@@ -164,6 +170,16 @@ struct Stdio
      */
     static int write (const Output& output);
 
+    /** @brief Truncates output documents to a byte budget on a line boundary and appends a limit trailer.
+     *
+     *  Empty owner documents (such as zero-byte backing inputs held for views) are preserved.
+     *
+     *  @param output         The command output to bound.
+     *  @param remainingBytes Maximum bytes still allowed.
+     *  @param printedLines   Lines already printed prior to this call.
+     *
+     *  @return Tuple of the bounded output, remaining bytes, updated printed line count, and omitted line count.
+     */
     static std::tuple<Output, size_t, int, int> getLimitedOutput (Output output, size_t remainingBytes, int printedLines);
 
     /** @brief Passes the pieces of the diagnostic line of a failure to a function, in order, without building the line.

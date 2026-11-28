@@ -18,9 +18,11 @@ static size_t getWordCount (std::string_view bytes)
     return wordCount;
 }
 
-static std::tuple<size_t, size_t, size_t> getCounts (std::string_view bytes)
+static std::tuple<size_t, size_t, size_t> getCounts (std::string_view bytes, const std::tuple<bool, bool, bool>& selection)
 {
-    return { jam::simd::countByte (bytes.data(), bytes.size(), static_cast<char> (Chars::newline)), getWordCount (bytes), bytes.size() };
+    const auto& [isLines, isWords, isBytes] { selection };
+    juce::ignoreUnused (isBytes);
+    return { isLines ? jam::simd::countByte (bytes.data(), bytes.size(), static_cast<char> (Chars::newline)) : size_t { 0 }, isWords ? getWordCount (bytes) : size_t { 0 }, bytes.size() };
 }
 
 static std::tuple<bool, bool, bool> getSelection (const Arguments& arguments)
@@ -35,6 +37,8 @@ static bool isSingleCount (const std::tuple<bool, bool, bool>& selection)
     return static_cast<int> (isLines) + static_cast<int> (isWords) + static_cast<int> (isBytes) == 1;
 }
 
+static constexpr size_t maxCountDigits { 24 };
+
 static int getNumberWidth (size_t regularBytes, bool isStream, bool isSingleOutput)
 {
     static constexpr int nonRegularMinimumWidth { 7 };
@@ -42,41 +46,43 @@ static int getNumberWidth (size_t regularBytes, bool isStream, bool isSingleOutp
     if (isSingleOutput)
         return 1;
 
-    const int digitCount { static_cast<int> (std::to_string (regularBytes).size()) };
+    std::array<char, maxCountDigits> digits {};
+    [[maybe_unused]] const auto [end, error] { std::to_chars (digits.data(), std::next (digits.data(), static_cast<std::ptrdiff_t> (digits.size())), regularBytes) };
+    const int digitCount { static_cast<int> (end - digits.data()) };
     return isStream ? std::max (digitCount, nonRegularMinimumWidth) : digitCount;
 }
 
-static void appendCount (std::string& line, size_t count, int width, bool isSelected)
-{
-    if (isSelected)
-    {
-        const auto digits { std::to_string (count) };
-
-        if (not line.empty())
-            jam::Format::appendUtf8 (line, Chars::space);
-
-        line.append (static_cast<size_t> (std::max (width - static_cast<int> (digits.size()), 0)), static_cast<char> (Chars::space));
-        line += digits;
-    }
-}
-
-static std::string getCountLine (const std::tuple<size_t, size_t, size_t>& counts, const std::tuple<bool, bool, bool>& selection, int width, std::string_view name)
+static void appendCountLine (std::string& output, const std::tuple<size_t, size_t, size_t>& counts, const std::tuple<bool, bool, bool>& selection, int width, std::string_view name)
 {
     const auto& [lineCount, wordCount, byteCount] { counts };
     const auto& [isLines, isWords, isBytes] { selection };
-    std::string line;
-    appendCount (line, lineCount, width, isLines);
-    appendCount (line, wordCount, width, isWords);
-    appendCount (line, byteCount, width, isBytes);
+    const size_t lineStart { output.size() };
+    const auto appendField { [&output, lineStart, width] (size_t count, bool isSelected)
+    {
+        if (isSelected)
+        {
+            std::array<char, maxCountDigits> digits {};
+            [[maybe_unused]] const auto [end, error] { std::to_chars (digits.data(), std::next (digits.data(), static_cast<std::ptrdiff_t> (digits.size())), count) };
+            const std::string_view digitView { digits.data(), static_cast<size_t> (end - digits.data()) };
+
+            if (output.size() > lineStart)
+                jam::Format::appendUtf8 (output, Chars::space);
+
+            output.append (static_cast<size_t> (std::max (width - static_cast<int> (digitView.size()), 0)), static_cast<char> (Chars::space));
+            jam::Format::appendBytes (output, digitView);
+        }
+    } };
+    appendField (lineCount, isLines);
+    appendField (wordCount, isWords);
+    appendField (byteCount, isBytes);
 
     if (not name.empty())
     {
-        jam::Format::appendUtf8 (line, Chars::space);
-        line.append (name);
+        jam::Format::appendUtf8 (output, Chars::space);
+        jam::Format::appendBytes (output, name);
     }
 
-    line.append (Stdio::newline);
-    return line;
+    jam::Format::appendBytes (output, Stdio::newline);
 }
 
 static Stdio::Output runStandardInput (const Arguments& arguments, const Input::Source& input)
@@ -91,19 +97,9 @@ static Stdio::Output runStandardInput (const Arguments& arguments, const Input::
 
     const auto selection { getSelection (arguments) };
     const auto width { getNumberWidth (0, true, isSingleCount (selection)) };
-    return Stdio::getOutput (Stdio::exitSuccess, Stdio::getDocuments (getCountLine (getCounts (standardInput->getBytes()), selection, width, {})));
-}
-
-static size_t getRegularBytes (const jam::Array<Paths::Entry>& files)
-{
-    size_t regularBytes { 0 };
-
-    for (const auto& entry : files)
-    {
-        regularBytes += static_cast<size_t> (Paths::getFile (entry).getSize());
-    }
-
-    return regularBytes;
+    std::string output;
+    appendCountLine (output, getCounts (standardInput->getBytes(), selection), selection, width, {});
+    return Stdio::getOutput (Stdio::exitSuccess, Stdio::getDocuments (std::move (output)));
 }
 
 static Stdio::Output runFiles (const Arguments& arguments, juce::Span<const std::string_view> rawPaths)
@@ -114,8 +110,8 @@ static Stdio::Output runFiles (const Arguments& arguments, juce::Span<const std:
         return Stdio::getFailure (readStatus);
 
     const auto selection { getSelection (arguments) };
-    const auto width { getNumberWidth (getRegularBytes (files), false, files.size() == 1 and isSingleCount (selection)) };
-    Stdio::Documents documents;
+    jam::Array<std::tuple<size_t, size_t, size_t>> fileCounts;
+    fileCounts.ensureStorageAllocated (files.size());
     std::tuple<size_t, size_t, size_t> totals { 0, 0, 0 };
     auto& [totalLines, totalWords, totalBytes] { totals };
 
@@ -126,18 +122,24 @@ static Stdio::Output runFiles (const Arguments& arguments, juce::Span<const std:
         if (inputStatus.failed())
             return Stdio::getFailure (inputStatus);
 
-        const auto counts { getCounts (input->getBytes()) };
+        const auto counts { getCounts (input->getBytes(), selection) };
         const auto& [lineCount, wordCount, byteCount] { counts };
         totalLines += lineCount;
         totalWords += wordCount;
         totalBytes += byteCount;
-        documents.add (TextDocument::fromText (getCountLine (counts, selection, width, Paths::getDisplayPath (entry)), {}));
+        fileCounts.add (counts);
     }
 
-    if (files.size() > 1)
-        documents.add (TextDocument::fromText (getCountLine (totals, selection, width, Id::totalValue), {}));
+    const auto width { getNumberWidth (totalBytes, false, files.size() == 1 and isSingleCount (selection)) };
+    std::string output;
 
-    return Stdio::getOutput (Stdio::exitSuccess, std::move (documents));
+    for (int index { 0 }; index < files.size(); ++index)
+        appendCountLine (output, fileCounts.at (index), selection, width, Paths::getDisplayPath (files.at (index)));
+
+    if (files.size() > 1)
+        appendCountLine (output, totals, selection, width, Id::totalValue);
+
+    return Stdio::getOutput (Stdio::exitSuccess, Stdio::getDocuments (std::move (output)));
 }
 
 Arguments Count::getArguments (juce::Span<const std::string_view> argumentList)

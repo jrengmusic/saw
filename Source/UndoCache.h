@@ -62,6 +62,10 @@ struct UndoCache
                                                                 const jam::Array<StagedFile>& stagedFiles,
                                                                 const jam::Array<juce::File>& folders);
 
+    /** @brief Iterates stored transaction records, parsing each record once and invoking function.
+     *
+     *  @param function Callback receiving `(transactionId, parseStatus, parsedDocument)`.
+     */
     static void applyToTransactions (const std::function<void (std::string_view, const juce::Result&, const jam::JsonDocument*)>& function);
 
     /** @brief Loads and validates the record of a transaction, and checks that its blob files exist.

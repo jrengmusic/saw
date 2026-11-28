@@ -13,13 +13,11 @@
 class FindOutcome
 {
 public:
-    /** @brief Searches one file, and records its documents, its match count, or its failure.
+    /** @brief Searches one file entry, and records its documents, its match count, or its failure.
      *
-     *  @param file                The file to search.
-     *  @param displayPath         The path of the file, as the user sees it.
+     *  @param entry               The resolved file entry to search.
      *  @param pattern             The pattern that the lines are matched against.
      *  @param search              The search options that shape the output.
-     *  @param isExplicit          True when the file was named on the command line.
      *  @param isShowingPathPrefix True when each output line carries the display path.
      *  @param source              The source of the input, passed to the search of the file.
      */

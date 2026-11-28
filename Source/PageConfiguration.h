@@ -50,7 +50,7 @@ public:
      *
      *  @param themeName The name of the theme.
      *
-     *  @return The style sheet text, or an empty optional when neither folder holds the style sheet.
+     *  @return The Input owning the style sheet bytes, or nullptr when neither folder holds the style sheet.
      */
     std::unique_ptr<Input> getStyleSheet (std::string_view themeName) const;
 
@@ -65,11 +65,12 @@ private:
     const juce::File configDirectory;
     /** @brief The config file. */
     const juce::File configFile;
+    /** @brief Input owning the bytes of the config file so unquoted option views remain valid. */
     const std::unique_ptr<Input> configInput;
     /** @brief The option texts of the config file and of the environment. They own the strings that argumentList views. */
-    const std::deque<std::string> optionTexts;
+    const jam::Strings optionTexts;
     /** @brief The page verb, followed by the views of the option texts. */
-    const std::vector<std::string_view> argumentList;
+    const jam::Array<std::string_view> argumentList;
     /** @brief The parsed options of argumentList. */
     const Arguments arguments;
 };

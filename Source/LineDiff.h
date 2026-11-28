@@ -94,6 +94,8 @@ public:
      *  @param output             The text that receives the unified diff.
      *  @param original           The document before the changes.
      *  @param plannedBytes       The planned bytes that the inserted lines index.
+     *  @param plannedPath        The path written in the `+++` header when the planned file exists.
+     *  @param plannedHeaderEnd   The suffix written after plannedPath in the `+++` header.
      *  @param isOriginalExisting True when the original file exists.
      *  @param isPlannedExisting  True when the planned file exists.
      */

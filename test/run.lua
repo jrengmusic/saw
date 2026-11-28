@@ -426,6 +426,7 @@ local platformPredicates = {
     [""] = function () return true end,
     posix = function () return vim.fn.has ("win32") == 0 end,
     mac = function () return vim.fn.has ("mac") == 1 end,
+    cli = function () return not isMcpLane end,
 }
 
 local function isPlatformApplicable (platformName)

@@ -115,6 +115,48 @@
 <!-- Sprint entries go here, written by PRIMARY agents -->
 
 
+## Sprint 5: Exclusive SAW — output bound, new verbs, page follow, zero-copy owners, and slim linkage ✅
+
+**Date:** 2026-11-28
+**Duration:** multi-session (`PLAN-exclusive-saw.md` Parts 0, J, A–F)
+
+### Agents Participated
+- Primary: COUNSELOR (Claude Code + OpenCode) — drove `PLAN-exclusive-saw.md` Parts 0, J, A–E, and initial V1.
+- Solo Primary: TELECASTER — resolved all V1 defects, eliminated `find-files` and `replace` benchmark regressions, removed `CFNetwork` and `libobjc` linkage under `JUCE_USE_FOUNDATION=0`, completed F1 audit and root-docs sync, and completed F2 doxygen pass.
+
+### Files Modified (saw working tree: 30 tracked + 5 new baseline dirs; jam working tree: 4 tracked)
+- `saw/Source/Write.cpp:18-29` — switched `write --append` planned document from `TextDocument::fromText` to `TextDocument::fromInput (nullptr, path)` + `jam::Document::addSource` so `lineOffsets` exist for `LineDiff`.
+- `saw/Source/Stdio.cpp:61` — preserved empty owner documents (`bytes.empty() or keptLength > 0`) in `Stdio::getLimitedOutput`, fixing the `sort` use-after-free (`BINARY`/NUL output).
+- `saw/Source/Paths.{h,cpp}`, `saw/Source/FindFiles.{h,cpp}` — gated directory-entry metadata reads behind `isReadingMetadata`, guarded `entry.symlink_status` behind `#if JUCE_WINDOWS`, skipped redundant `getMatchingEntries` / `std::sort` on default `find --files`, replaced `std::count` with `jam::simd::countByte`, replaced `juce::String::toLowerCase()` with stack `getLoweredAscii`, and wrote JSON mode/keys directly via `jam::JsonWriter::appendKey`.
+- `saw/Source/PageConfiguration.{h,cpp}` — replaced `std::deque<std::string>` and `std::vector<std::string_view>` with `jam::Strings` and `jam::Array<std::string_view>`.
+- `saw/Source/Count.cpp`, `saw/Source/Sort.cpp` — replaced `std::to_string` with stack `std::to_chars`; removed double file `stat` (`getRegularBytes`), skipped unselected line/word scans, and formatted count output into one `TextDocument`.
+- `saw/Source/PageFollow.{h,cpp}` — checked `reopen()` return and guarded non-positive read counts in `readAppendedBytes`.
+- `saw/test/run.lua:425-429`, `saw/test/cases.md:648-650`, `saw/test/baseline/{cli-help-no-limit,count-missing,diff-missing,page-rendered-file,page-rendered-stdin}/1/*` — added `cli` lane predicate for rendered `page` cases (per `SPEC.md:43,851`) and added the 5 missing baselines.
+- `saw/Source/{Count,Sort,Diff,FindFiles,PageFollow,LineDiff,Replace,Paths,TextDocument,Stdio,FindOutcome,PageConfiguration,UndoCache}.h`, `saw/Source/Main.cpp`, `saw/docs/xml/*` — post-audit doxygen pass (0 warnings).
+- `saw/CLAUDE.md`, `saw/PLAN-exclusive-saw.md` (deleted), `saw/PLAN-one-tool.md` (deleted) — synced project docs and removed completed plans.
+- `jam/patch/juce-posix-file-hook.patch`, `jam/user-modules-info.md:1422` — guarded remaining Objective-C / `NSURLSession` bodies in `juce_Files_mac.mm`, `juce_Network_mac.mm`, `juce_SystemStats_mac.mm`, and `juce_Threads_mac.mm` under `#if JUCE_USE_FOUNDATION` so `saw` links only `CoreFoundation`, `CoreServices`, `libc++`, and `libSystem`.
+- `jam/jam_core/document/jam_Document.h`, `jam/jam_core/json/jam_JsonLanguageDocument.h` — documented `readElement` and `setFlatTokens` (0 warnings).
+
+### Alignment Check
+- [x] BLESSED principles followed
+- [x] NAMES.md adhered
+- [x] MANIFESTO.md principles applied
+
+### Problems Solved
+- Fixed `write --append` dry-run diff (`@@ -1 +0,0 @@` instead of appended lines) by indexing planned bytes through `addSource`.
+- Fixed `sort` `BINARY` / NUL output caused by `Stdio::getLimitedOutput` dropping zero-byte `TextDocument` input owners.
+- Fixed MCP lane mismatch on `page-rendered-{file,stdin}` by marking rendered-only cases `cli`.
+- Eliminated `exclusive-find-files` (+17.6% sys) and `exclusive-replace` (+4.2% sys) regressions (`exclusive-find-files` epoch -1.28%, user -37.77%; `exclusive-replace` epoch -4.58%, user -4.56%, system -3.50%).
+- Eliminated unwanted `CFNetwork` and `libobjc` dynamic library loads from `saw` on both `x86_64` and `arm64`.
+
+### State for Continuation
+None — sprint fully closed, nothing open. Verified: `cast cast/spell.md --no-sign` exit 0, 0 warnings; `otool -L ~/.local/bin/saw` lists only `CoreFoundation`, `CoreServices`, `libc++.1.dylib`, `libSystem.B.dylib`; CLI lane 476/476 PASS; MCP lane 474 PASS / 2 SKIP (`cli`) / 0 FAIL; V1 run checks PASS; doxygen XML regenerated with 0 warnings. Optional manual check: live `saw page --follow <file>` (append, rename, recreate).
+
+### Debts Paid
+None
+
+### Debts Deferred
+None
 ## Sprint 4: jq 1.8.2 and cat/bat feature parity (one tool) ✅
 
 **Date:** 2026-11-27
