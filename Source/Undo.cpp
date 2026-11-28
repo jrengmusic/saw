@@ -76,19 +76,16 @@ static Stdio::Output runList (const Arguments& arguments)
     if (listStatus.failed())
         return Stdio::getFailure (listStatus);
 
-    const auto transactionIds { UndoCache::getTransactionIds() };
     jam::Array<juce::Result> diagnostics;
     std::string output;
 
-    for (int index { transactionIds.size() - 1 }; index >= 0; --index)
+    UndoCache::applyToTransactions ([&diagnostics, &output] (std::string_view transactionId, const juce::Result& status, const jam::JsonDocument* document)
     {
-        const auto [docStatus, metaDoc] { UndoCache::getTransactionDocument (transactionIds.getView (index)) };
-
-        if (docStatus.failed())
-            diagnostics.add (docStatus);
+        if (status.failed())
+            diagnostics.add (status);
         else
-            appendTransactionSummary (output, transactionIds.getView (index), *metaDoc);
-    }
+            appendTransactionSummary (output, transactionId, *document);
+    });
 
     const int exitCode { diagnostics.isEmpty() ? Stdio::exitSuccess : Stdio::exitError };
     return Stdio::getOutput (exitCode, Stdio::getDocuments (std::move (output)), std::move (diagnostics));

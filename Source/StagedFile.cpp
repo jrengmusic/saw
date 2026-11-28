@@ -66,12 +66,12 @@ void StagedFile::appendUnifiedDiff (std::string& output) const
 {
     if (const auto* plannedDiff { std::get_if<LineDiff> (&plannedContent) })
     {
-        plannedDiff->appendUnifiedDiff (output, *originalDocument, plannedDiff->getPlannedBytes(), existing, plannedExisting);
+        plannedDiff->appendUnifiedDiff (output, *originalDocument, plannedDiff->getPlannedBytes(), originalDocument->getDisplayPath(), text::Formats::diffPlanned, existing, plannedExisting);
     }
     else
     {
         const auto& plannedDocument { std::get<std::unique_ptr<TextDocument>> (plannedContent) };
-        LineDiff (*originalDocument, *plannedDocument).appendUnifiedDiff (output, *originalDocument, plannedDocument->getBytes(), existing, plannedExisting);
+        LineDiff (*originalDocument, *plannedDocument).appendUnifiedDiff (output, *originalDocument, plannedDocument->getBytes(), originalDocument->getDisplayPath(), text::Formats::diffPlanned, existing, plannedExisting);
     }
 }
 

@@ -49,6 +49,12 @@ static constexpr std::string_view undoDocument         { "undo.md"         };///
 static constexpr std::string_view excerptDocument      { "excerpt.md"      };///< Excerpt verb help document.
 static constexpr std::string_view jsonHelp             { "json.frame"      };///< Rendered json verb help text.
 static constexpr std::string_view jsonDocument         { "json.md"         };///< Json verb help document.
+static constexpr std::string_view countHelp            { "count.frame"     };///< Rendered count verb help text.
+static constexpr std::string_view countDocument        { "count.md"        };///< Count verb help document.
+static constexpr std::string_view sortHelp             { "sort.frame"      };///< Rendered sort verb help text.
+static constexpr std::string_view sortDocument         { "sort.md"         };///< Sort verb help document.
+static constexpr std::string_view diffHelp             { "diff.frame"      };///< Rendered diff verb help text.
+static constexpr std::string_view diffDocument         { "diff.md"         };///< Diff verb help document.
 static constexpr std::string_view screenErase          { "erase.frame"     };///< Screen erase sequence.
 static constexpr std::string_view serverTools          { "tools.json"      };///< MCP tool definitions.
 static constexpr std::string_view lingConfig           { ".config/ling"    };///< Ling configuration folder, under home.

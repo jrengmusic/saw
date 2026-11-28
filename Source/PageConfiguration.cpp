@@ -2,9 +2,12 @@
 #include "PageOptions.h"
 #include "Input.h"
 #include "Paths.h"
+#include "TextDocument.h"
 #include "generated/Generated.h"
 
 static constexpr size_t quotePairLength { 2 };
+static constexpr size_t singleLength { 1 };
+static constexpr int firstLine { 1 };
 
 static juce::String getEnvironment (std::string_view name)
 {
@@ -47,24 +50,24 @@ static bool isQuotedValue (std::string_view value)
     return value.size() >= quotePairLength and (value.front() == doubleQuote or value.front() == singleQuote) and value.back() == value.front();
 }
 
-static std::string getUnquoted (std::string_view optionText)
+static std::string_view getOptionValue (std::string_view optionText)
 {
     static constexpr char optionValueSign { '=' };
-    static constexpr size_t singleLength { 1 };
     static constexpr size_t noNameLength { 0 };
     const auto separator { jam::simd::findByte (optionText.data(), optionText.size(), 0, optionValueSign) };
     const size_t valueStart { separator < optionText.size() ? separator + singleLength : noNameLength };
-    const auto value { optionText.substr (valueStart) };
+    return optionText.substr (valueStart);
+}
 
-    if (isQuotedValue (value))
-    {
-        std::string unquoted;
-        jam::Format::appendBytes (unquoted, optionText.substr (0, valueStart));
-        jam::Format::appendBytes (unquoted, value.substr (singleLength, value.size() - quotePairLength));
-        return unquoted;
-    }
-
-    return std::string { optionText };
+static std::string getUnquoted (std::string_view optionText)
+{
+    const auto value { getOptionValue (optionText) };
+    const size_t valueStart { optionText.size() - value.size() };
+    jassert (isQuotedValue (value));
+    std::string unquoted;
+    jam::Format::appendBytes (unquoted, optionText.substr (0, valueStart));
+    jam::Format::appendBytes (unquoted, value.substr (singleLength, value.size() - quotePairLength));
+    return unquoted;
 }
 
 static std::deque<std::string> getOptionTextsOf (const jam::Strings& strings)
@@ -72,25 +75,39 @@ static std::deque<std::string> getOptionTextsOf (const jam::Strings& strings)
     std::deque<std::string> optionTexts;
 
     for (int index { 0 }; index < strings.size(); ++index)
-        optionTexts.push_back (getUnquoted (strings.getView (index)));
+    {
+        const auto optionText { strings.getView (index) };
+        optionTexts.push_back (isQuotedValue (getOptionValue (optionText)) ? getUnquoted (optionText) : std::string { optionText });
+    }
 
     return optionTexts;
 }
 
-static std::deque<std::string> getFileOptionTexts (const juce::File& configFile)
+template <typename Function>
+static void applyToFileOptions (std::string_view configText, const Function& function)
 {
     static constexpr char commentChar { '#' };
-    const auto fileText { configFile.loadFileAsString() };
-    const auto lines (jam::Strings::fromLines (fileText));
-    std::deque<std::string> optionTexts;
 
-    for (int index { 0 }; index < lines.size(); ++index)
+    TextDocument::applyToLines (configText, juce::Range<int> { firstLine, Arguments::openRangeEnd }, [&function] (int, std::string_view line)
     {
-        const auto trimmed { jam::Format::trim (lines.getView (index)) };
+        const auto trimmed { jam::Format::trim (line) };
 
         if (not trimmed.empty() and trimmed.front() != commentChar)
+            function (trimmed);
+
+        return true;
+    });
+}
+
+static std::deque<std::string> getFileOptionTexts (std::string_view configText)
+{
+    std::deque<std::string> optionTexts;
+
+    applyToFileOptions (configText, [&optionTexts] (std::string_view trimmed)
+    {
+        if (isQuotedValue (getOptionValue (trimmed)))
             optionTexts.push_back (getUnquoted (trimmed));
-    }
+    });
 
     return optionTexts;
 }
@@ -144,9 +161,9 @@ static std::deque<std::string> getEnvironmentOptionTexts()
     return optionTexts;
 }
 
-static std::deque<std::string> getOptionTexts (const juce::File& configFile)
+static std::deque<std::string> getOptionTexts (std::string_view configText)
 {
-    auto optionTexts (getFileOptionTexts (configFile));
+    auto optionTexts (getFileOptionTexts (configText));
 
     for (auto& optionText : getEnvironmentOptionTexts())
         optionTexts.push_back (std::move (optionText));
@@ -154,12 +171,24 @@ static std::deque<std::string> getOptionTexts (const juce::File& configFile)
     return optionTexts;
 }
 
-static std::vector<std::string_view> getArgumentList (const std::deque<std::string>& optionTexts)
+static std::vector<std::string_view> getArgumentList (std::string_view configText, const std::deque<std::string>& optionTexts)
 {
     std::vector<std::string_view> argumentList { jam::Strings::getView (Id::page.toString()) };
+    size_t ownedIndex { 0 };
 
-    for (const auto& optionText : optionTexts)
-        argumentList.push_back (optionText);
+    applyToFileOptions (configText, [&argumentList, &optionTexts, &ownedIndex] (std::string_view trimmed)
+    {
+        if (isQuotedValue (getOptionValue (trimmed)))
+        {
+            argumentList.push_back (optionTexts.at (ownedIndex));
+            ++ownedIndex;
+        }
+        else
+            argumentList.push_back (trimmed);
+    });
+
+    for (auto index { ownedIndex }; index < optionTexts.size(); ++index)
+        argumentList.push_back (optionTexts.at (index));
 
     return argumentList;
 }
@@ -199,16 +228,11 @@ static juce::String getStyleSheetPattern()
     return jam::Strings::fromView (pattern);
 }
 
-static std::optional<std::string> getStyleSheetText (const juce::File& folder, std::string_view themeName)
+static std::unique_ptr<Input> getStyleSheetText (const juce::File& folder, std::string_view themeName)
 {
     const auto fileName { getStyleSheetFileName (themeName) };
     const auto styleSheetFile { folder.getChildFile (jam::Strings::fromView (fileName)) };
-    const auto input { Input::fromFile (styleSheetFile, Input::allBytes) };
-
-    if (input != nullptr)
-        return std::string { input->getBytes() };
-
-    return std::nullopt;
+    return Input::fromFile (styleSheetFile, Input::allBytes);
 }
 
 static bool isNonTheme (std::string_view baseName)
@@ -232,11 +256,20 @@ static void addThemeNames (jam::Strings& themeNames, const juce::File& folder)
     }
 }
 
+static std::string_view getConfigText (const std::unique_ptr<Input>& configInput)
+{
+    if (configInput != nullptr)
+        return configInput->getBytes();
+
+    return {};
+}
+
 PageConfiguration::PageConfiguration()
     : configDirectory { getConfigDirectoryFromEnvironment() },
       configFile { getConfigFileFromEnvironment (configDirectory) },
-      optionTexts { getOptionTexts (configFile) },
-      argumentList { getArgumentList (optionTexts) },
+      configInput { Input::fromFile (configFile, Input::allBytes) },
+      optionTexts { getOptionTexts (getConfigText (configInput)) },
+      argumentList { getArgumentList (getConfigText (configInput), optionTexts) },
       arguments { PageOptions::getArguments (argumentList) }
 {
 }
@@ -261,11 +294,11 @@ juce::File PageConfiguration::getThemeFolder() const
     return configDirectory.getChildFile (jam::Strings::fromView (Id::themeFolderName));
 }
 
-std::optional<std::string> PageConfiguration::getStyleSheet (std::string_view themeName) const
+std::unique_ptr<Input> PageConfiguration::getStyleSheet (std::string_view themeName) const
 {
-    const auto themeStyleSheet { getStyleSheetText (getThemeFolder(), themeName) };
+    auto themeStyleSheet { getStyleSheetText (getThemeFolder(), themeName) };
 
-    if (themeStyleSheet.has_value())
+    if (themeStyleSheet != nullptr)
         return themeStyleSheet;
 
     return getStyleSheetText (getPageLibraryFolder(), themeName);

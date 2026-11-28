@@ -1,5 +1,8 @@
 #include "CommandLine.h"
 #include "Arguments.h"
+#include "Count.h"
+#include "Diff.h"
+#include "Sort.h"
 #include "Excerpt.h"
 #include "Fields.h"
 #include "Find.h"
@@ -65,15 +68,29 @@ static Stdio::Output getBannerAndHelp()
     return Stdio::getOutput (Stdio::exitSuccess, getHelpDocuments (files::sawHelp, files::sawDocument));
 }
 
+static Stdio::Output getLimitedOutput (Stdio::Output output, bool isLimited)
+{
+    if (not isLimited)
+        return output;
+
+    auto [limitedOutput, remainingBytes, printedLines, omittedLines] { Stdio::getLimitedOutput (std::move (output), Stdio::outputLimitBytes, 0) };
+    juce::ignoreUnused (remainingBytes, printedLines, omittedLines);
+    return std::move (limitedOutput);
+}
+
 static Stdio::Output runGlobalOption (juce::Span<const std::string_view> arguments)
 {
-    if (static_cast<int> (arguments.size()) > Arguments::firstOptionIndex)
-        return Stdio::getFailure (text::Diagnostics::failFlagUnknown, arguments[static_cast<size_t> (Arguments::firstOptionIndex)]);
+    const auto argumentCount { static_cast<int> (arguments.size()) };
+    const auto isLimitLifted { argumentCount == Arguments::firstOptionIndex + 1
+                               and Arguments::matchesOption (arguments[static_cast<size_t> (Arguments::firstOptionIndex)], Id::noLimitOption) };
+
+    if (argumentCount > Arguments::firstOptionIndex + (isLimitLifted ? 1 : 0))
+        return getLimitedOutput (Stdio::getFailure (text::Diagnostics::failFlagUnknown, arguments[static_cast<size_t> (Arguments::firstOptionIndex)]), true);
 
     if (Arguments::matchesOption (arguments[static_cast<size_t> (verbArgumentIndex)], Id::versionOption))
-        return Stdio::getOutput (Stdio::exitSuccess, Stdio::getDocuments (Stdio::getVersionLine()));
+        return getLimitedOutput (Stdio::getOutput (Stdio::exitSuccess, Stdio::getDocuments (Stdio::getVersionLine())), not isLimitLifted);
 
-    return getBannerAndHelp();
+    return getLimitedOutput (getBannerAndHelp(), not isLimitLifted);
 }
 
 static Stdio::Output runVerb (juce::Span<const std::string_view> arguments, const Input::Source& input)
@@ -90,7 +107,10 @@ static Stdio::Output runVerb (juce::Span<const std::string_view> arguments, cons
         std::make_tuple (Id::json, files::jsonHelp, files::jsonDocument, &Json::getArguments, &Json::run),
         std::make_tuple (jam::Strings::getView (Id::page.toString()), files::pageHelp, files::pageDocument, &Page::getArguments, &Page::run),
         std::make_tuple (Id::undo, files::undoHelp, files::undoDocument, &Undo::getArguments, &Undo::run),
-        std::make_tuple (Id::excerpt, files::excerptHelp, files::excerptDocument, &Excerpt::getArguments, &Excerpt::run)
+        std::make_tuple (Id::excerpt, files::excerptHelp, files::excerptDocument, &Excerpt::getArguments, &Excerpt::run),
+        std::make_tuple (Id::count, files::countHelp, files::countDocument, &Count::getArguments, &Count::run),
+        std::make_tuple (Id::sort, files::sortHelp, files::sortDocument, &Sort::getArguments, &Sort::run),
+        std::make_tuple (Id::diff, files::diffHelp, files::diffDocument, &Diff::getArguments, &Diff::run)
     };
 
     const auto verb { std::find_if (verbs.begin(), verbs.end(),
@@ -105,7 +125,7 @@ static Stdio::Output runVerb (juce::Span<const std::string_view> arguments, cons
     {
         const auto isFlag { not verbArgument.empty() and verbArgument.at (0) == static_cast<char> (Chars::dash) };
         const auto* failure { isFlag ? text::Diagnostics::failFlagUnknown : text::Diagnostics::failCommandUnknown };
-        return Stdio::getFailure (failure, verbArgument);
+        return getLimitedOutput (Stdio::getFailure (failure, verbArgument), true);
     }
 
     const auto& [verbName, helpFileName, documentFileName, getVerbArguments, runVerbArguments] { *verb };
@@ -113,15 +133,15 @@ static Stdio::Output runVerb (juce::Span<const std::string_view> arguments, cons
     const auto verbArguments { getVerbArguments (arguments) };
 
     if (verbArguments.contains (Id::helpOption))
-        return Stdio::getOutput (Stdio::exitSuccess, getHelpDocuments (helpFileName, documentFileName));
+        return getLimitedOutput (Stdio::getOutput (Stdio::exitSuccess, getHelpDocuments (helpFileName, documentFileName)), not verbArguments.contains (Id::noLimitOption));
 
-    return runVerbArguments (verbArguments, input);
+    return getLimitedOutput (runVerbArguments (verbArguments, input), not verbArguments.contains (Id::noLimitOption));
 }
 
 Stdio::Output CommandLine::run (juce::Span<const std::string_view> arguments, const Input::Source& input)
 {
     if (static_cast<int> (arguments.size()) <= verbArgumentIndex)
-        return getBannerAndHelp();
+        return getLimitedOutput (getBannerAndHelp(), true);
 
     const auto firstArgument { arguments[static_cast<size_t> (verbArgumentIndex)] };
 

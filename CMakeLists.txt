@@ -402,6 +402,9 @@ Source/help/page.md
 Source/help/undo.md
 Source/help/excerpt.md
 Source/help/json.md
+Source/help/count.md
+Source/help/sort.md
+Source/help/diff.md
 ../jam/jam_tui/page/style.css
 )
 

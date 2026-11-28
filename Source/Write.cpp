@@ -15,6 +15,22 @@ static std::pair<juce::Result, std::unique_ptr<TextDocument>> getOriginalDocumen
     return { juce::Result::ok(), TextDocument::fromInput (nullptr, path) };
 }
 
+static std::unique_ptr<TextDocument> getPlannedDocument (bool isAppending, const TextDocument& originalDocument, std::unique_ptr<Input> standardInput, std::string_view path)
+{
+    if (isAppending)
+    {
+        const auto originalBytes { originalDocument.getBytes() };
+        const auto appendedBytes { standardInput->getBytes() };
+        std::string plannedText;
+        plannedText.reserve (originalBytes.size() + appendedBytes.size());
+        jam::Format::appendBytes (plannedText, originalBytes);
+        jam::Format::appendBytes (plannedText, appendedBytes);
+        return TextDocument::fromText (std::move (plannedText), path);
+    }
+
+    return TextDocument::fromInput (std::move (standardInput), path);
+}
+
 static Stdio::Output runWrite (const Arguments& arguments, std::string_view path, const Input::Source& input)
 {
     auto [inputStatus, standardInput] { Input::create (input, Input::allLines) };
@@ -32,9 +48,12 @@ static Stdio::Output runWrite (const Arguments& arguments, std::string_view path
     if (originalStatus.failed())
         return Stdio::getFailure (originalStatus);
 
+    const bool isAppending { isExisting and arguments.contains (Id::appendOption) };
+    auto plannedDocument { getPlannedDocument (isAppending, *originalDocument, std::move (standardInput), path) };
+
     Transaction transaction { Id::write };
     transaction.addTarget (targetFile);
-    const auto addStatus { transaction.addFile (targetFile, std::move (originalDocument), TextDocument::fromInput (std::move (standardInput), path), isExisting, 1) };
+    const auto addStatus { transaction.addFile (targetFile, std::move (originalDocument), std::move (plannedDocument), isExisting, 1) };
 
     if (addStatus.failed())
         return Stdio::getFailure (addStatus);
@@ -44,7 +63,7 @@ static Stdio::Output runWrite (const Arguments& arguments, std::string_view path
 
 Arguments Write::getArguments (juce::Span<const std::string_view> argumentList)
 {
-    return Arguments { argumentList, { Id::applyOption }, { Id::expectOption }, {} };
+    return Arguments { argumentList, { Id::applyOption, Id::appendOption }, { Id::expectOption }, {} };
 }
 
 Stdio::Output Write::run (const Arguments& arguments, const Input::Source& input)

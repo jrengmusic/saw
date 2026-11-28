@@ -1,0 +1,10 @@
+pear
+apple
+Banana
+apple
+10
+9
+-3
++5
+007
+1,000

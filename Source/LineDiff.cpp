@@ -542,7 +542,7 @@ void LineDiff::appendHunkBody (std::string& output,
     appendContextLines (output, original, originalLine, oldEnd);
 }
 
-void LineDiff::appendUnifiedDiff (std::string& output, const TextDocument& original, std::string_view plannedBytes, bool isOriginalExisting, bool isPlannedExisting) const
+void LineDiff::appendUnifiedDiff (std::string& output, const TextDocument& original, std::string_view plannedBytes, std::string_view plannedPath, std::string_view plannedHeaderEnd, bool isOriginalExisting, bool isPlannedExisting) const
 {
     if (not changes.isEmpty())
     {
@@ -551,10 +551,10 @@ void LineDiff::appendUnifiedDiff (std::string& output, const TextDocument& origi
         jam::Format::appendBytes (output, isOriginalExisting ? original.getDisplayPath() : Id::nullDevice);
         jam::Format::appendUtf8 (output, Chars::newline);
         jam::Format::appendBytes (output, text::Formats::diffNewHeader);
-        jam::Format::appendBytes (output, isPlannedExisting ? original.getDisplayPath() : Id::nullDevice);
+        jam::Format::appendBytes (output, isPlannedExisting ? plannedPath : Id::nullDevice);
 
         if (isPlannedExisting)
-            jam::Format::appendBytes (output, text::Formats::diffPlanned);
+            jam::Format::appendBytes (output, plannedHeaderEnd);
         else
             jam::Format::appendUtf8 (output, Chars::newline);
         int cumulativeDelta { 0 };

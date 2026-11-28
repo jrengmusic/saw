@@ -220,6 +220,9 @@ Every field is a complete literal; nothing downstream derives, concatenates, or 
 | undoHelp    | Source/help/undo.md           | Undo verb help document            |
 | excerptHelp | Source/help/excerpt.md        | Excerpt verb help document         |
 | jsonHelp    | Source/help/json.md           | Json verb help document            |
+| countHelp   | Source/help/count.md          | Count verb help document           |
+| sortHelp    | Source/help/sort.md           | Sort verb help document            |
+| diffHelp    | Source/help/diff.md           | Diff verb help document            |
 | styleSheet  | ../jam/jam_tui/page/style.css | Stylesheet, embedded as BinaryData |
 +-------------+-------------------------------+------------------------------------+
 

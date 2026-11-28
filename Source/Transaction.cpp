@@ -156,7 +156,7 @@ Stdio::Documents Transaction::getDiffDocuments (const jam::Array<StagedFile>& st
         stagedFile.appendUnifiedDiff (diffText);
 
         if (not diffText.empty())
-            documents.add (TextDocument::fromText (std::move (diffText), stagedFile.getDisplayPath()));
+            documents.add (TextDocument::fromText (std::move (diffText), {}));
     }
 
     return documents;

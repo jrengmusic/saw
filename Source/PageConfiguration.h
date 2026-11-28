@@ -1,6 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "Arguments.h"
+#include "Input.h"
 
 /** @brief The configuration of the page verb: the config folder and file, the environment options, and the theme folders, read one time. */
 class PageConfiguration
@@ -51,7 +52,7 @@ public:
      *
      *  @return The style sheet text, or an empty optional when neither folder holds the style sheet.
      */
-    std::optional<std::string> getStyleSheet (std::string_view themeName) const;
+    std::unique_ptr<Input> getStyleSheet (std::string_view themeName) const;
 
     /** @brief Returns the names of the themes that the theme folder and the page library folder hold, sorted and without duplicates.
      *
@@ -64,6 +65,7 @@ private:
     const juce::File configDirectory;
     /** @brief The config file. */
     const juce::File configFile;
+    const std::unique_ptr<Input> configInput;
     /** @brief The option texts of the config file and of the environment. They own the strings that argumentList views. */
     const std::deque<std::string> optionTexts;
     /** @brief The page verb, followed by the views of the option texts. */

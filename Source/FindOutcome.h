@@ -23,7 +23,7 @@ public:
      *  @param isShowingPathPrefix True when each output line carries the display path.
      *  @param source              The source of the input, passed to the search of the file.
      */
-    void addFile (const juce::File& file, std::string_view displayPath, const Pattern& pattern, const Search& search, bool isExplicit, bool isShowingPathPrefix, const Input::Source& source);
+    void addFile (Paths::Entry entry, const Pattern& pattern, const Search& search, bool isShowingPathPrefix, const Input::Source& source);
 
     /** @brief Returns the number of matches of the files that searched without a failure.
      *
@@ -53,7 +53,7 @@ private:
     int numMatches { 0 };
 
     /** @brief Documents of each file that has matching output. */
-    jam::Array<Stdio::Documents> files;
+    jam::Array<std::pair<Paths::Entry, Stdio::Documents>> files;
 
     /** @brief Display paths and results of the files that failed. */
     Paths::Failures failures;

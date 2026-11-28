@@ -41,6 +41,8 @@ saw page [<path>...] [options]
 | `--file-name <name>` | File name shown in the header instead of the path. |
 | `-s`, `--squeeze-blank` | Squeeze consecutive empty lines into one. The kept line keeps its line number. |
 | `--squeeze-limit <n>` | Most consecutive empty lines kept when `-s` is given. `1` by default. |
+| `--follow` | Print the page output of the file, then each byte appended to it. Needs exactly one named file. Exit `0` at the output limit unless `--no-limit` is given. |
+| `--follow-name`, `-F` | Like `--follow`, and reopen the file by name when it is created or renamed to, or restart at offset 0 when it shrinks. |
 | `--strip-ansi <when>` | Remove ANSI escape sequences: `always`, or `never` (default). `auto` does not strip. |
 | `--sanitize <when>` | Replace terminal-active bytes and bidi or zero-width characters with U+FFFD: `auto`, `always`, or `never` (default). Escape sequences stay. |
 | `-V`, `--version` | Print the version line and exit. |

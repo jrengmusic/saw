@@ -96,6 +96,8 @@ void ToolServer::runTool (const juce::String& requestId, const jam::JsonDocument
         const auto commandResult { CommandLine::run (span, standardInput) };
 
         const auto& [exitCode, documents, failures, errorDocuments] { commandResult };
+        static constexpr std::array<std::string_view, 3> statusValues { Id::okValue, Id::mismatchValue, Id::errorValue };
+        const auto statusText { statusValues.at (static_cast<size_t> (juce::jlimit (Stdio::exitSuccess, Stdio::exitError, exitCode))) };
         const auto applyOutput { [&documents = documents] (const auto& appendText)
         {
             for (const auto& outputDocument : documents)
@@ -112,9 +114,9 @@ void ToolServer::runTool (const juce::String& requestId, const jam::JsonDocument
         const bool isOutputValid { isValidText (applyOutput) };
         const bool areErrorsValid { isValidText (applyErrors) };
 
-        server.sendResponse (requestId, [exitCode = exitCode, &applyOutput, &applyErrors, isOutputValid, areErrorsValid] (jam::ModelContextServer::Content& content)
+        server.sendResponse (requestId, [statusText, &applyOutput, &applyErrors, isOutputValid, areErrorsValid] (jam::ModelContextServer::Content& content)
         {
-            content.setMember (Id::exitCode, exitCode);
+            content.setText (Id::status, [statusText] (const auto& appendText) { appendText (statusText); });
             setText (content, Id::output, Id::outputBase64, applyOutput, isOutputValid);
             setText (content, Id::errors, Id::errorsBase64, applyErrors, areErrorsValid);
         });

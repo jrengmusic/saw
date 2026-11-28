@@ -8,7 +8,6 @@
 #include "PageOptions.h"
 #include "PageRanges.h"
 #include "Paths.h"
-#include "StandardStream.h"
 #include "Stdio.h"
 #include "TextDocument.h"
 #include "generated/Generated.h"
@@ -104,14 +103,13 @@ static Stdio::Documents getDocumentList (std::unique_ptr<TextDocument> document)
 
 static juce::Span<const std::string_view> getRawPaths (juce::Span<const std::string_view> positionals, const Input::Source& input)
 {
-    static constexpr std::array defaultPaths { Id::currentDirectory };
     static constexpr std::array stdinPaths { Id::stdinArgument };
 
     if (positionals.empty() and Input::hasData (input))
         return juce::Span<const std::string_view> { stdinPaths };
 
     if (positionals.empty())
-        return juce::Span<const std::string_view> { defaultPaths };
+        return juce::Span<const std::string_view> { Paths::defaultPaths };
 
     return positionals;
 }
@@ -217,17 +215,17 @@ static bool isNoTheme (std::string_view themeName)
     return themeName.empty() or themeName.compare (Id::autoValue) == 0 or themeName.compare (Id::defaultValue) == 0;
 }
 
-static std::optional<std::string> getThemeSheet (const PageConfiguration& configuration, std::string_view themeName)
+static std::unique_ptr<Input> getThemeSheet (const PageConfiguration& configuration, std::string_view themeName)
 {
     if (isNoTheme (themeName))
-        return std::nullopt;
+        return nullptr;
 
     return configuration.getStyleSheet (themeName);
 }
 
-static bool isUnknownTheme (std::string_view themeName, const std::optional<std::string>& themeSheet)
+static bool isUnknownTheme (std::string_view themeName, const std::unique_ptr<Input>& themeSheet)
 {
-    return not isNoTheme (themeName) and not themeSheet.has_value();
+    return not isNoTheme (themeName) and themeSheet == nullptr;
 }
 
 static bool hasTextTransform (const PageOptions& options)
@@ -322,21 +320,21 @@ static std::string_view getSingleRangeBytes (std::string_view bytes, const jam::
     return PageRanges::getRangeBytes (bytes, lineRanges.at (firstIndex));
 }
 
-static std::unique_ptr<TextDocument> getSelectedDocument (std::unique_ptr<Input> pageInput, std::string_view displayPath,
+static std::unique_ptr<TextDocument> getSelectedDocument (std::unique_ptr<Input> pageInput,
                                                           const jam::Array<juce::Range<int>>& lineRanges, const PageOptions& options)
 {
     const auto bytes { pageInput->getBytes() };
 
     if (hasTextTransform (options) or options.isSqueezing)
-        return TextDocument::fromText (getSelectedText (bytes, lineRanges, options), displayPath);
+        return TextDocument::fromText (getSelectedText (bytes, lineRanges, options), {});
 
     if (lineRanges.size() > 1)
-        return TextDocument::fromText (PageRanges::getJoinedBytes (bytes, lineRanges), displayPath);
+        return TextDocument::fromText (PageRanges::getJoinedBytes (bytes, lineRanges), {});
 
-    return TextDocument::fromInput (std::move (pageInput), displayPath, getSingleRangeBytes (bytes, lineRanges));
+    return TextDocument::fromInput (std::move (pageInput), {}, getSingleRangeBytes (bytes, lineRanges));
 }
 
-static Stdio::Output getSelectedOutput (std::unique_ptr<Input> pageInput, std::string_view displayPath, const PageOptions& options)
+static Stdio::Output getSelectedOutput (std::unique_ptr<Input> pageInput, const PageOptions& options)
 {
     const auto bytes { pageInput->getBytes() };
     const auto [rangeStatus, lineRanges] { PageRanges::getRanges (options.lineRangeTexts, PageRanges::getLineCount (bytes)) };
@@ -344,16 +342,16 @@ static Stdio::Output getSelectedOutput (std::unique_ptr<Input> pageInput, std::s
     if (rangeStatus.failed())
         return Stdio::getOutput (Stdio::exitMismatch, {}, getFailureList (rangeStatus));
 
-    return Stdio::getOutput (Stdio::exitSuccess, getDocumentList (getSelectedDocument (std::move (pageInput), displayPath, lineRanges, options)));
+    return Stdio::getOutput (Stdio::exitSuccess, getDocumentList (getSelectedDocument (std::move (pageInput), lineRanges, options)));
 }
 
-static Stdio::Output getPlainOutput (std::unique_ptr<Input> pageInput, std::string_view displayPath, const PageOptions& options)
+static Stdio::Output getPlainOutput (std::unique_ptr<Input> pageInput, const PageOptions& options)
 {
     if (hasTextTransform (options) or options.isSqueezing or not options.lineRangeTexts.empty())
-        return getSelectedOutput (std::move (pageInput), displayPath, options);
+        return getSelectedOutput (std::move (pageInput), options);
 
     const auto bytes { pageInput->getBytes() };
-    return Stdio::getOutput (Stdio::exitSuccess, getDocumentList (TextDocument::fromInput (std::move (pageInput), displayPath, bytes)));
+    return Stdio::getOutput (Stdio::exitSuccess, getDocumentList (TextDocument::fromInput (std::move (pageInput), {}, bytes)));
 }
 
 static size_t getLastColon (std::string_view text)
@@ -465,22 +463,12 @@ static std::string getLanguageListText()
     return text;
 }
 
-static jam::Array<int> getLineNumbers (int lineCount)
-{
-    jam::Array<int> numbers;
-
-    for (int line { firstLine }; line < lineCount + firstLine; ++line)
-        numbers.add (line);
-
-    return numbers;
-}
-
 static jam::Array<int> getOriginalNumbers (std::string_view text, const PageOptions& options)
 {
     if (options.isSqueezing)
         return NonPrintable::getSqueezedLines (text, options.squeezeLimit);
 
-    return getLineNumbers (PageRanges::getLineCount (text));
+    return {};
 }
 
 static std::string getSqueezedText (std::string_view text, const jam::Array<int>& squeezedNumbers, const PageOptions& options)
@@ -559,28 +547,31 @@ static Stdio::Output getPageOutput (std::string_view text, const jam::Document::
     if (isPagingOn (options) and invoke (runFunction, options.pagingMode == PageOptions::Choice::always) == pagerShown)
         return Stdio::getOutput (Stdio::exitSuccess);
 
+    juce::MemoryBlock page;
+    juce::MemoryOutputStream output { page, false };
+    invoke (writeFunction, output);
+    output.flush();
+
     if (isColourOn (options))
     {
-        StandardStream output { StandardStream::output };
-        invoke (writeFunction, output);
-        return Stdio::getOutput (Stdio::exitSuccess);
+        auto pageDocuments (Stdio::getDocuments (std::move (page)));
+        output.reset();
+        return Stdio::getOutput (Stdio::exitSuccess, std::move (pageDocuments));
     }
 
-    juce::MemoryOutputStream output;
-    invoke (writeFunction, output);
-    const std::string_view page { static_cast<const char*> (output.getData()), output.getDataSize() };
-    return Stdio::getOutput (Stdio::exitSuccess, Stdio::getDocuments (NonPrintable::getWithoutSequences (page)));
+    return Stdio::getOutput (Stdio::exitSuccess, Stdio::getDocuments (NonPrintable::getWithoutSequences (jam::Strings::getView (page))));
 }
 
 static Stdio::Output getLayoutOutput (std::string_view text, const jam::Document::Tokens& tokens, const TextDocument& document,
                                       const juce::File& file, std::string_view displayPath, const jam::Array<int>& originalNumbers,
-                                      const PageOptions& options, const std::optional<std::string>& themeSheet,
+                                      const PageOptions& options, std::string_view themeSheet,
                                       juce::DynamicLibrary& pageLibrary)
 {
     const int lineCount { PageRanges::getLineCount (text) };
     const bool isChangesShown { hasComponent (options, PageOptions::Component::changes) };
-    const jam::Array<int> documentChanges (isChangesShown or options.isDiff ? getDocumentChanges (file, document) : jam::Array<int> {});
-    const jam::Array<int> shownChanges (PageRanges::getShownChanges (documentChanges, originalNumbers, lineCount));
+    jam::Array<int> documentChanges (isChangesShown or options.isDiff ? getDocumentChanges (file, document) : jam::Array<int> {});
+    const bool isChangesPassedThrough { originalNumbers.isEmpty() and documentChanges.size() == lineCount };
+    const jam::Array<int> shownChanges (isChangesPassedThrough ? std::move (documentChanges) : PageRanges::getShownChanges (documentChanges, originalNumbers, lineCount));
     const auto [lineStatus, lineRanges] { getLineRanges (options, shownChanges, lineCount) };
     const auto [highlightStatus, highlightRanges] { getHighlightRanges (options.highlightRangeTexts, lineCount) };
 
@@ -599,11 +590,11 @@ static Stdio::Output getLayoutOutput (std::string_view text, const jam::Document
     const bool isStandardInput { file.getFullPathName().isEmpty() };
     const auto properties (getProperties (displayPath, document.getBytes().size(), isStandardInput, text.empty(), options));
 
-    return getPageOutput (text, tokens, properties, themeSheet.has_value() ? std::string_view { *themeSheet } : std::string_view {}, hasComponent (options, PageOptions::Component::grid) ? std::string_view {} : Id::noGridStyleSheet, lineRanges, highlightRanges, numbers, changes, options, pageLibrary);
+    return getPageOutput (text, tokens, properties, themeSheet, hasComponent (options, PageOptions::Component::grid) ? std::string_view {} : Id::noGridStyleSheet, lineRanges, highlightRanges, numbers, changes, options, pageLibrary);
 }
 
 static Stdio::Output getRenderedOutput (std::unique_ptr<TextDocument> document, const juce::File& file, std::string_view displayPath,
-                                        const PageOptions& options, const std::optional<std::string>& themeSheet,
+                                        const PageOptions& options, std::string_view themeSheet,
                                         juce::DynamicLibrary& pageLibrary)
 {
     const auto documentBytes { document->getBytes() };
@@ -628,7 +619,7 @@ static Stdio::Output getRenderedOutput (std::unique_ptr<TextDocument> document, 
 }
 
 static Stdio::Output getPathOutput (std::string_view path, const Input::Source& input, const PageOptions& options,
-                                    const std::optional<std::string>& themeSheet, juce::DynamicLibrary& pageLibrary)
+                                    std::string_view themeSheet, juce::DynamicLibrary& pageLibrary)
 {
     auto [inputStatus, pageInput] { getPathInput (path, input) };
 
@@ -645,7 +636,7 @@ static Stdio::Output getPathOutput (std::string_view path, const Input::Source& 
     if (isRenderedPage (input, options) and isPageLibraryReady (pageLibrary))
         return getRenderedOutput (TextDocument::fromInput (std::move (pageInput), displayPath), file, displayPath, options, themeSheet, pageLibrary);
 
-    return getPlainOutput (std::move (pageInput), displayPath, options);
+    return getPlainOutput (std::move (pageInput), options);
 }
 
 static Stdio::Output getCombinedOutput (jam::Array<Stdio::Output> outputs)
@@ -679,6 +670,7 @@ static Stdio::Output getPagesOutput (const Arguments& arguments, const PageOptio
         pageLibrary.open (PageConfiguration::getPageLibraryFile().getFullPathName());
 
     const auto themeSheet { getThemeSheet (configuration, options.themeName) };
+    const std::string_view themeSheetText { themeSheet != nullptr ? themeSheet->getBytes() : std::string_view {} };
     jam::Array<Stdio::Output> outputs;
 
     if (isRendering and isPageLibraryReady (pageLibrary) and isUnknownTheme (options.themeName, themeSheet))
@@ -686,7 +678,7 @@ static Stdio::Output getPagesOutput (const Arguments& arguments, const PageOptio
 
     for (const auto path : rawPaths)
     {
-        outputs.add (getPathOutput (path, input, options, themeSheet, pageLibrary));
+        outputs.add (getPathOutput (path, input, options, themeSheetText, pageLibrary));
     }
 
     return getCombinedOutput (std::move (outputs));
@@ -766,6 +758,11 @@ Stdio::Output Page::run (const Arguments& arguments, const Input::Source& input)
 
     if (options.getStatus().failed())
         return Stdio::getFailure (options.getStatus());
+
+    const bool isFollowing { arguments.contains (Id::followOption) or arguments.contains (Id::followNameOption) };
+
+    if (isFollowing and not std::holds_alternative<Input::StandardInput> (input))
+        return Stdio::getFailure (text::Diagnostics::failFollowUnavailable, Arguments::getOptionName (Id::followOption));
 
     return getPagesOutput (arguments, options, input, configuration);
 }

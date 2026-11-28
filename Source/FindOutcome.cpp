@@ -1,9 +1,11 @@
 #include "FindOutcome.h"
 #include "Stdio.h"
 
-void FindOutcome::addFile (const juce::File& file, std::string_view displayPath, const Pattern& pattern, const Search& search, bool isExplicit, bool isShowingPathPrefix, const Input::Source& source)
+void FindOutcome::addFile (Paths::Entry entry, const Pattern& pattern, const Search& search, bool isShowingPathPrefix, const Input::Source& source)
 {
-    auto [status, matchCount, documents] { search.runFile (file, displayPath, pattern, automaton, isExplicit, isShowingPathPrefix, source) };
+    const auto displayPath { Paths::getDisplayPath (entry) };
+    const bool isExplicit { Paths::isExplicit (entry) };
+    auto [status, matchCount, documents] { search.runFile (Paths::getFile (entry), displayPath, pattern, automaton, isExplicit, isShowingPathPrefix, source) };
 
     if (status.failed())
     {
@@ -16,7 +18,7 @@ void FindOutcome::addFile (const juce::File& file, std::string_view displayPath,
         numMatches += matchCount;
 
         if (not documents.isEmpty())
-            files.add (std::move (documents));
+            files.add (std::pair<Paths::Entry, Stdio::Documents> { std::move (entry), std::move (documents) });
     }
 }
 
@@ -32,7 +34,7 @@ Paths::Failures FindOutcome::removeFailures()
 
 Stdio::Documents FindOutcome::getSortedDocuments (jam::Array<FindOutcome> outcomes)
 {
-    jam::Array<Stdio::Documents> allFiles;
+    jam::Array<std::pair<Paths::Entry, Stdio::Documents>> allFiles;
 
     for (auto& outcome : outcomes)
     {
@@ -42,13 +44,17 @@ Stdio::Documents FindOutcome::getSortedDocuments (jam::Array<FindOutcome> outcom
 
     if (allFiles.size() > 1)
     {
-        std::stable_sort (allFiles.begin(), allFiles.end(), [] (const Stdio::Documents& firstFile, const Stdio::Documents& secondFile)
+        std::stable_sort (allFiles.begin(), allFiles.end(), [] (const auto& firstFile, const auto& secondFile)
         {
-            return firstFile.first()->getDisplayPath() < secondFile.first()->getDisplayPath();
+            const auto& [firstEntry, firstDocuments] { firstFile };
+            const auto& [secondEntry, secondDocuments] { secondFile };
+            return Paths::getDisplayPath (firstEntry) < Paths::getDisplayPath (secondEntry);
         });
-        const auto uniqueEnd { std::unique (allFiles.begin(), allFiles.end(), [] (const Stdio::Documents& firstFile, const Stdio::Documents& secondFile)
+        const auto uniqueEnd { std::unique (allFiles.begin(), allFiles.end(), [] (const auto& firstFile, const auto& secondFile)
         {
-            return firstFile.first()->getDisplayPath().compare (secondFile.first()->getDisplayPath()) == 0;
+            const auto& [firstEntry, firstDocuments] { firstFile };
+            const auto& [secondEntry, secondDocuments] { secondFile };
+            return Paths::getDisplayPath (firstEntry).compare (Paths::getDisplayPath (secondEntry)) == 0;
         }) };
         const int uniqueCount { static_cast<int> (std::distance (allFiles.begin(), uniqueEnd)) };
         allFiles.removeRange (uniqueCount, allFiles.size() - uniqueCount);
@@ -57,7 +63,10 @@ Stdio::Documents FindOutcome::getSortedDocuments (jam::Array<FindOutcome> outcom
     Stdio::Documents documents;
 
     for (auto& file : allFiles)
-        Stdio::addDocuments (documents, std::move (file));
+    {
+        auto& [fileEntry, fileDocuments] { file };
+        Stdio::addDocuments (documents, std::move (fileDocuments));
+    }
 
     return documents;
 }

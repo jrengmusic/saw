@@ -24,30 +24,59 @@ static std::pair<juce::Result, int> getParsedFieldIndex (std::string_view tokenV
     return { juce::Result::ok(), *value };
 }
 
-static std::pair<juce::Result, jam::Array<int>> getFieldIndices (std::string_view specText)
+static std::pair<juce::Result, jam::Union<int, int>> getParsedFieldRange (std::string_view tokenView, std::string_view specText)
+{
+    constexpr auto dash { static_cast<char> (Chars::dash) };
+    const auto dashIndex { tokenView.find (dash, 1) };
+
+    if (dashIndex == std::string_view::npos)
+    {
+        const auto [status, indexValue] { getParsedFieldIndex (tokenView, specText) };
+        return { status, jam::Union<int, int>::pack (indexValue, indexValue) };
+    }
+
+    const auto [firstStatus, firstIndex] { getParsedFieldIndex (tokenView.substr (0, dashIndex), specText) };
+
+    if (firstStatus.failed() or firstIndex < 0)
+        return { firstStatus.failed() ? firstStatus : Stdio::fail (text::Diagnostics::failFieldSpecInvalid, specText), jam::Union<int, int> {} };
+
+    const auto tailView { tokenView.substr (dashIndex + 1) };
+
+    if (tailView.empty())
+        return { juce::Result::ok(), jam::Union<int, int>::pack (firstIndex, Arguments::openRangeEnd) };
+
+    const auto [lastStatus, lastIndex] { getParsedFieldIndex (tailView, specText) };
+
+    if (lastStatus.failed() or lastIndex < 0)
+        return { lastStatus.failed() ? lastStatus : Stdio::fail (text::Diagnostics::failFieldSpecInvalid, specText), jam::Union<int, int> {} };
+
+    return { juce::Result::ok(), jam::Union<int, int>::pack (firstIndex, lastIndex) };
+}
+
+static std::pair<juce::Result, jam::Array<jam::Union<int, int>>> getFieldRanges (std::string_view specText)
 {
     constexpr auto comma { static_cast<char> (Chars::comma) };
 
     if (specText.empty() or specText.at (0) == comma or specText.at (specText.size() - 1) == comma)
-        return { Stdio::fail (text::Diagnostics::failFieldSpecInvalid, specText), jam::Array<int> {} };
+        return { Stdio::fail (text::Diagnostics::failFieldSpecInvalid, specText), jam::Array<jam::Union<int, int>> {} };
 
-    jam::Array<int> indices;
+    jam::Array<jam::Union<int, int>> ranges;
     size_t cursor { 0 };
 
     while (cursor < specText.size())
     {
         const auto commaIndex { specText.find (comma, cursor) };
         const auto tokenEnd { commaIndex == std::string_view::npos ? specText.size() : commaIndex };
-        const auto [status, indexValue] { getParsedFieldIndex (specText.substr (cursor, tokenEnd - cursor), specText) };
+        const auto [status, rangeValue] { getParsedFieldRange (specText.substr (cursor, tokenEnd - cursor), specText) };
 
         if (status.failed())
-            return { status, jam::Array<int> {} };
+            return { status, jam::Array<jam::Union<int, int>> {} };
 
-        indices.add (indexValue);
+        ranges.add (rangeValue);
         cursor = tokenEnd + 1;
     }
 
-    return { juce::Result::ok(), std::move (indices) };
+    return { juce::Result::ok(), std::move (ranges) };
 }
 
 static std::string_view getOutputDelimiter (const Arguments& arguments)
@@ -201,22 +230,35 @@ juce::Result Fields::appendFormattedLine (std::string& output,
         return juce::Result::ok();
     }
 
-    for (int index { 0 }; index < fieldIndices.size(); ++index)
+    int numWrittenFields { 0 };
+
+    for (const auto& fieldRange : fieldRanges)
     {
-        if (index > 0)
-            jam::Format::appendBytes (output, outputDelimiter);
+        const auto [firstIndex, lastIndex] { fieldRange };
+        const int step { lastIndex < firstIndex ? -1 : 1 };
+        const int endIndex { lastIndex == Arguments::openRangeEnd ? tokens.size() : lastIndex };
+        const int numRangeFields { (endIndex - firstIndex) * step + 1 };
 
-        const auto field { getSelectedField (fieldIndices.at (index), tokens) };
+        for (int offset { 0 }; offset < numRangeFields; ++offset)
+        {
+            const int fieldIndex { firstIndex + offset * step };
 
-        if (not field.has_value())
-            return Stdio::fail (text::Diagnostics::failFieldBounds,
-                                fieldIndices.at (index),
-                                text::Diagnostics::outOfRangeAt,
-                                displayPath,
-                                Chars::colon,
-                                lineNumber);
+            if (numWrittenFields > 0)
+                jam::Format::appendBytes (output, outputDelimiter);
 
-        jam::Format::appendBytes (output, *field);
+            const auto field { getSelectedField (fieldIndex, tokens) };
+
+            if (not field.has_value())
+                return Stdio::fail (text::Diagnostics::failFieldBounds,
+                                    fieldIndex,
+                                    text::Diagnostics::outOfRangeAt,
+                                    displayPath,
+                                    Chars::colon,
+                                    lineNumber);
+
+            jam::Format::appendBytes (output, *field);
+            ++numWrittenFields;
+        }
     }
 
     jam::Format::appendBytes (output, ending);
@@ -280,7 +322,7 @@ std::tuple<juce::Result, bool, Stdio::Documents> Fields::getBytesOutput (std::st
     if (not isText and TextDocument::isBinary (bytes.substr (0, readSize)))
         return { TextDocument::getBinaryStatus (displayPath, isExplicit), false, Stdio::Documents {} };
 
-    return { std::move (status), anyLineMatched, Stdio::getDocuments (std::move (output), displayPath) };
+    return { std::move (status), anyLineMatched, Stdio::getDocuments (std::move (output)) };
 }
 
 std::tuple<juce::Result, bool, Stdio::Documents> Fields::getFileOutput (const juce::File& file,
@@ -336,8 +378,8 @@ Stdio::Output Fields::runFiles (juce::Span<const std::string_view> rawPaths, con
     Jobs::run (fileCount,
                [this, &pathEntries = files, &source, &statuses, &matchedFlags, &results] (int index)
                {
-                   const auto& [displayPath, targetFile, isExplicit] { pathEntries.at (index) };
-                   auto [fileStatus, isMatched, fileDocuments] { getFileOutput (targetFile, displayPath, isExplicit, source) };
+                   const auto& entry { pathEntries.at (index) };
+                   auto [fileStatus, isMatched, fileDocuments] { getFileOutput (Paths::getFile (entry), Paths::getDisplayPath (entry), Paths::isExplicit (entry), source) };
                    statuses.at (index) = std::move (fileStatus);
                    matchedFlags.at (index) = isMatched;
                    results.at (index) = std::move (fileDocuments);
@@ -355,11 +397,11 @@ Stdio::Output Fields::runFiles (juce::Span<const std::string_view> rawPaths, con
 }
 
 Fields::Fields (const Arguments& arguments,
-                jam::Array<int> newFieldIndices,
+                jam::Array<jam::Union<int, int>> newFieldRanges,
                 juce::Range<int> newLineRange,
                 int newAfterLine,
                 std::unique_ptr<Pattern> newMatchPattern)
-    : fieldIndices (std::move (newFieldIndices)),
+    : fieldRanges (std::move (newFieldRanges)),
       delimiter (arguments.contains (Id::delimiterOption) ? std::optional<std::string_view> { arguments.getValueView (Id::delimiterOption) } : std::nullopt),
       outputDelimiter (getOutputDelimiter (arguments)),
       lineRange (newLineRange),
@@ -389,10 +431,10 @@ Stdio::Output Fields::run (const Arguments& arguments, const Input::Source& inpu
     if (positionals.isEmpty())
         return Stdio::getFailure (text::Diagnostics::failFieldsRequiresSpec);
 
-    auto [indexStatus, fieldIndices] { getFieldIndices (positionals.at (0)) };
+    auto [rangeStatus, fieldRanges] { getFieldRanges (positionals.at (0)) };
 
-    if (indexStatus.failed())
-        return Stdio::getFailure (indexStatus);
+    if (rangeStatus.failed())
+        return Stdio::getFailure (rangeStatus);
 
     if (arguments.contains (Id::delimiterOption) and arguments.getValueView (Id::delimiterOption).empty())
         return Stdio::getFailure (text::Diagnostics::failDelimiterEmpty);
@@ -402,7 +444,7 @@ Stdio::Output Fields::run (const Arguments& arguments, const Input::Source& inpu
     if (filterStatus.failed())
         return Stdio::getFailure (filterStatus);
 
-    const Fields fields { arguments, std::move (fieldIndices), lineRange, afterLine, std::move (matchPattern) };
+    const Fields fields { arguments, std::move (fieldRanges), lineRange, afterLine, std::move (matchPattern) };
 
     if (arguments.getPositionals (1).empty())
         return fields.runStandardInput (input);

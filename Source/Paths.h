@@ -1,15 +1,24 @@
 #pragma once
 #include <JuceHeader.h>
+#include "IgnoreRules.h"
+#include "Input.h"
+#include "generated/Generated.h"
 
 /** @brief Resolves file and directory inputs with glob, hidden, and ignore filtering.
  */
 struct Paths
 {
-    /** @brief One file to read: its display path, the file it resolves to, and its explicit flag.
-     *
-     *  The explicit flag is true when the user named the file on the command line. A file found by a walk has false.
-     */
-    using Entry = std::tuple<std::string, juce::File, bool>;
+    using Folder = std::tuple<std::string, std::string, std::string, size_t, std::shared_ptr<const IgnoreRules>>;
+    enum class EntryType { file, directory, symlink };
+    using Metadata = std::tuple<juce::int64, juce::int64, int>;
+    using ListedEntry = std::tuple<size_t, size_t, EntryType, Metadata>;
+    using Listing = std::tuple<std::string, jam::Array<ListedEntry>, bool, int>;
+    using ListedFolder = std::pair<Folder, Listing>;
+    using ListedFile = std::pair<std::shared_ptr<const ListedFolder>, int>;
+    using NamedFile = std::pair<std::string, juce::File>;
+    using Entry = std::variant<ListedFile, NamedFile, Input::StandardInput>;
+
+    static constexpr std::array<std::string_view, 1> defaultPaths { Id::currentDirectory };
 
     /** @brief Paths that could not be read, each with the result that describes the failure.
      *
@@ -41,7 +50,9 @@ struct Paths
                                                                   juce::Span<const std::string_view> includeGlobs,
                                                                   juce::Span<const std::string_view> excludeGlobs,
                                                                   bool isIncludingHidden,
-                                                                  bool isIgnoringRules);
+                                                                  bool isIgnoringRules,
+                                                                  std::optional<int> maxDepth = std::nullopt,
+                                                                  bool isListingEntries = false);
 
     /** @brief Expands the paths like getFiles, and stops at the first failure.
      *
@@ -82,6 +93,18 @@ struct Paths
      *  @return The display path.
      */
     static std::string getDisplayPath (std::string_view rawPath);
+
+    static std::string_view getDisplayPath (const ListedFile& listedFile);
+
+    static std::string_view getDisplayPath (const Entry& entry);
+
+    static juce::File getFile (const ListedFile& listedFile);
+
+    static juce::File getFile (const Entry& entry);
+
+    static std::pair<juce::Result, ListedEntry> getListedEntry (const Entry& entry);
+
+    static bool isExplicit (const Entry& entry);
 
     /** @brief Resolves a raw path to its physical target, following symbolic links.
      *
@@ -135,6 +158,8 @@ struct Paths
      */
     static void addFailures (Failures& failures, Failures&& addedFailures);
 
+    static jam::Array<juce::Result> getFailureResults (const Failures& failures);
+
     /** @brief Walks each root and reports each included file. Returns each unreadable folder.
      *
      *  Each root is one item of one walk, so that many small roots do not each start and join threads.
@@ -164,6 +189,8 @@ struct Paths
                                                         bool isIncludingHidden,
                                                         bool isIgnoringRules,
                                                         const std::function<void (int)>& onWorkerCount,
-                                                        const std::function<void (int, const std::string&, std::string_view)>& onFile,
-                                                        const std::atomic<bool>& shouldStop);
+                                                        const std::function<void (int, const ListedFile&)>& onFile,
+                                                        const std::atomic<bool>& shouldStop,
+                                                        std::optional<int> maxDepth = std::nullopt,
+                                                        bool isListingEntries = false);
 };

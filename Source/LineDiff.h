@@ -100,6 +100,8 @@ public:
     void appendUnifiedDiff (std::string& output,
                             const TextDocument& original,
                             std::string_view plannedBytes,
+                            std::string_view plannedPath,
+                            std::string_view plannedHeaderEnd,
                             bool isOriginalExisting = true,
                             bool isPlannedExisting = true) const;
 

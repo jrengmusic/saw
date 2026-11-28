@@ -5,13 +5,14 @@ Write the complete text from standard input to one file, verbatim.
 ## Invocation
 
 ```
-saw write <path> [--apply --expect 1]
+saw write <path> [--append] [--apply --expect 1]
 ```
 
 ## Options
 
 | Option | Effect |
 | :--- | :--- |
+| `-a`, `--append` | Add standard input after the bytes of an existing file. Without a file, write as without `--append`. |
 | `--apply` | Write the file. Requires `--expect 1`. |
 | `--expect <N>` | Exact number of edits. One write is one edit, so `N` is `1`. |
 
@@ -19,6 +20,7 @@ saw write <path> [--apply --expect 1]
 
 - **Input source:** SAW reads the complete text from standard input. Standard input must not be a terminal.
 - **Verbatim:** SAW writes the bytes of standard input as they are. It adds no line ending.
+- **Append (`--append`):** SAW writes the bytes of the existing file, then the bytes of standard input. It adds no line ending between them.
 - **Dry run (default):** SAW prints the unified diff and writes nothing.
 - **Apply (`--apply --expect 1`):** SAW creates the file, or replaces it.
 - **Missing folders:** SAW creates the missing parent folders at apply.

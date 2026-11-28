@@ -19,6 +19,8 @@ struct Stdio
     /** @brief Exit code when argument parsing, validation, I/O, or a transaction fails. */
     static constexpr int exitError { 2 };
 
+    static constexpr size_t outputLimitBytes { 32 * 1024 };
+
     /** @brief Line feed that ends each line of a diagnostic and each summary line. */
     static constexpr std::string_view newline { "\n" };
 
@@ -52,7 +54,9 @@ struct Stdio
      *
      *  @return One document holding the text, or no document.
      */
-    static Documents getDocuments (std::string&& text, std::string_view displayPath = {});
+    static Documents getDocuments (std::string&& text);
+
+    static Documents getDocuments (juce::MemoryBlock&& block);
 
     /** @brief Appends documents to a list, moving each of them, so that no document is copied.
      *
@@ -159,6 +163,8 @@ struct Stdio
      *  @return The exit code of the command, or exitError when the standard output write fails.
      */
     static int write (const Output& output);
+
+    static std::tuple<Output, size_t, int, int> getLimitedOutput (Output output, size_t remainingBytes, int printedLines);
 
     /** @brief Passes the pieces of the diagnostic line of a failure to a function, in order, without building the line.
      *

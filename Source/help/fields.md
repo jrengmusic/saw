@@ -8,7 +8,7 @@ Extract and format delimited columns from lines. This command is read-only.
 saw fields <spec> [path...] [options]
 ```
 
-`<spec>` is a comma-separated list of 1-based field indices. Negative indices count from the end (`-1` is last field, `-2` is second-to-last). Example: `1,3,-1`.
+`<spec>` is a comma-separated list of 1-based field indices and inclusive ranges. `A-B` selects fields `A` through `B` in either order (`3-1` selects fields 3, 2, 1). `A-` selects field `A` through the last field on the line. Negative indices count from the end (`-1` is last field, `-2` is second-to-last). Example: `1,3,-1` or `1-3,5-`.
 
 ## Options
 

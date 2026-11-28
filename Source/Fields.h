@@ -33,12 +33,12 @@ private:
     /** @brief Binds the parsed field settings and filter settings of one fields command.
      *
      *  @param arguments       The parsed arguments. The delimiter, the output delimiter, and the flags are read here.
-     *  @param newFieldIndices The one-based field indexes that the output selects, in output order. A negative index counts from the end.
+     *  @param newFieldRanges  The one-based inclusive field ranges that the output selects, in output order. A negative single index counts from the end.
      *  @param newLineRange    One-based half-open range of lines that the command covers.
      *  @param newAfterLine    Lines up to and including this line are not matched or printed.
      *  @param newMatchPattern The pattern that a line must match, or nullptr when every line is printed.
      */
-    Fields (const Arguments& arguments, jam::Array<int> newFieldIndices, juce::Range<int> newLineRange, int newAfterLine, std::unique_ptr<Pattern> newMatchPattern);
+    Fields (const Arguments& arguments, jam::Array<jam::Union<int, int>> newFieldRanges, juce::Range<int> newLineRange, int newAfterLine, std::unique_ptr<Pattern> newMatchPattern);
 
     /** @brief Reads standard input as one text, and refuses a terminal.
      *
@@ -131,8 +131,8 @@ private:
      */
     std::optional<std::string_view> getSelectedField (int requested, const jam::Array<std::string_view>& tokens) const;
 
-    /** @brief One-based field indexes that the output selects, in output order. */
-    jam::Array<int> fieldIndices;
+    /** @brief One-based inclusive field ranges that the output selects, in output order. */
+    jam::Array<jam::Union<int, int>> fieldRanges;
 
     /** @brief The delimiter of the input. Nullopt selects splitting on runs of whitespace. */
     std::optional<std::string_view> delimiter;

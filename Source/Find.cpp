@@ -1,6 +1,7 @@
 #include "Find.h"
 #include "FindOutcome.h"
 #include "Arguments.h"
+#include "FindFiles.h"
 #include "Input.h"
 #include "Jobs.h"
 #include "Paths.h"
@@ -9,51 +10,6 @@
 #include "Stdio.h"
 #include "TextDocument.h"
 #include "generated/Generated.h"
-
-static constexpr std::array defaultPaths { Id::currentDirectory };
-
-static jam::Array<juce::Result> getFailureResults (const Paths::Failures& failures)
-{
-    const auto& [failurePaths, failureResults] { failures };
-    jam::Array<int> failureOrder;
-    failureOrder.ensureStorageAllocated (failurePaths.size());
-
-    for (int index { 0 }; index < failurePaths.size(); ++index)
-        failureOrder.add (index);
-
-    const auto getMessageOrder { [&results = failureResults] (int firstIndex, int secondIndex)
-    {
-        return jam::Strings::getView (results.at (firstIndex).getErrorMessage()).compare (jam::Strings::getView (results.at (secondIndex).getErrorMessage()));
-    } };
-    const auto getPathOrder { [&paths = failurePaths] (int firstIndex, int secondIndex)
-    {
-        return paths.getView (firstIndex).compare (paths.getView (secondIndex));
-    } };
-
-    std::sort (failureOrder.begin(), failureOrder.end(), [&getMessageOrder, &getPathOrder] (int firstIndex, int secondIndex)
-    {
-        const int messageOrder { getMessageOrder (firstIndex, secondIndex) };
-        return messageOrder < 0 or (messageOrder == 0 and getPathOrder (firstIndex, secondIndex) < 0);
-    });
-
-    const auto uniqueEnd { std::unique (failureOrder.begin(), failureOrder.end(), [&getMessageOrder] (int firstIndex, int secondIndex)
-    {
-        return getMessageOrder (firstIndex, secondIndex) == 0;
-    }) };
-
-    std::sort (failureOrder.begin(), uniqueEnd, [&getMessageOrder, &getPathOrder] (int firstIndex, int secondIndex)
-    {
-        const int pathOrder { getPathOrder (firstIndex, secondIndex) };
-        return pathOrder < 0 or (pathOrder == 0 and getMessageOrder (firstIndex, secondIndex) < 0);
-    });
-
-    jam::Array<juce::Result> results;
-
-    for (auto position { failureOrder.begin() }; position != uniqueEnd; ++position)
-        results.add (failureResults.at (*position));
-
-    return results;
-}
 
 static std::tuple<jam::Array<FindOutcome>, Paths::Failures, int> getDirectoriesOutcome (const jam::Array<std::pair<std::string_view, juce::File>>& roots,
                                                                                          const Pattern& pattern,
@@ -80,10 +36,10 @@ static std::tuple<jam::Array<FindOutcome>, Paths::Failures, int> getDirectoriesO
                                                                                        {
                                                                                            workerOutcomes.resize (workerCount);
                                                                                        },
-                                                                                       [&workerOutcomes, isQuiet, &pattern, &search, &source, &shouldStop] (int workerIndex, const std::string& fullPath, std::string_view displayPath)
+                                                                                       [&workerOutcomes, isQuiet, &pattern, &search, &source, &shouldStop] (int workerIndex, const Paths::ListedFile& listedFile)
                                                                                        {
                                                                                            auto& workerOutcome { workerOutcomes.at (workerIndex) };
-                                                                                           workerOutcome.addFile (juce::File { jam::Strings::fromView (fullPath) }, displayPath, pattern, search, false, true, source);
+                                                                                           workerOutcome.addFile (Paths::Entry { listedFile }, pattern, search, true, source);
 
                                                                                            if (isQuiet and workerOutcome.getNumMatches() > 0)
                                                                                                shouldStop.store (true, std::memory_order_relaxed);
@@ -96,7 +52,7 @@ static std::tuple<jam::Array<FindOutcome>, Paths::Failures, int> getDirectoriesO
     return { std::move (workerOutcomes), std::move (walkFailures), skippedCount };
 }
 
-static jam::Array<FindOutcome> getFilesOutcome (const jam::Array<Paths::Entry>& files,
+static jam::Array<FindOutcome> getFilesOutcome (jam::Array<Paths::Entry> files,
                                                 const Pattern& pattern,
                                                 const Search& search,
                                                 bool isShowingPathPrefix,
@@ -108,9 +64,7 @@ static jam::Array<FindOutcome> getFilesOutcome (const jam::Array<Paths::Entry>& 
     Jobs::run (files.size(),
                [&files, &pattern, &search, isShowingPathPrefix, &source, &outcomes] (int index)
                {
-                   const auto& [displayPath, file, isExplicit] { files.at (index) };
-                   juce::ignoreUnused (isExplicit);
-                   outcomes.at (index).addFile (file, displayPath, pattern, search, true, isShowingPathPrefix, source);
+                   outcomes.at (index).addFile (std::move (files.at (index)), pattern, search, isShowingPathPrefix, source);
                });
 
     return outcomes;
@@ -125,7 +79,7 @@ static Stdio::Output runFilesFind (juce::Span<const std::string_view> rawPaths,
     const bool isQuiet { arguments.contains (Id::quietOption) };
     auto [failures, files, roots] { Paths::getClassifiedPaths (rawPaths) };
     const bool isShowingPathPrefix { rawPaths.size() > 1 };
-    auto outcomes (getFilesOutcome (files, pattern, search, isShowingPathPrefix, source));
+    auto outcomes (getFilesOutcome (std::move (files), pattern, search, isShowingPathPrefix, source));
     auto [directoryOutcomes, directoryFailures, skippedCount] { getDirectoriesOutcome (roots, pattern, arguments, search, source) };
 
     for (int index { 0 }; index < directoryOutcomes.size(); ++index)
@@ -148,7 +102,7 @@ static Stdio::Output runFilesFind (juce::Span<const std::string_view> rawPaths,
 
     const bool hasFailures { not failureResults.isEmpty() };
     const int exitCode { hasFailures ? Stdio::exitError : totalMatches > 0 ? Stdio::exitSuccess : Stdio::exitMismatch };
-    auto sortedFailures (getFailureResults (failures));
+    auto sortedFailures (Paths::getFailureResults (failures));
 
     if (exitCode == Stdio::exitMismatch and skippedCount > 0)
         sortedFailures.add (Stdio::fail (skippedCount, text::Diagnostics::entriesNotSearched));
@@ -194,39 +148,6 @@ static Stdio::Output runStdinFind (const Pattern& pattern,
     return Stdio::getOutput (exitCode, std::move (documents));
 }
 
-static Stdio::Output runListFiles (const Arguments& arguments)
-{
-    const auto positionals (arguments.getPositionals (0));
-    const auto rawPaths (positionals.empty() ? juce::Span<const std::string_view> { defaultPaths } : positionals);
-    auto [pathFailures, files, skippedCount] { Paths::getFiles (rawPaths,
-                                                  arguments.getValues (Id::includeOption),
-                                                  arguments.getValues (Id::excludeOption),
-                                                  arguments.contains (Id::hiddenOption),
-                                                  arguments.contains (Id::noIgnoreOption)) };
-    auto& [failurePaths, failureResults] { pathFailures };
-    juce::ignoreUnused (failurePaths);
-    const bool hasFailures { not failureResults.isEmpty() };
-    std::string output;
-
-    if (not arguments.contains (Id::quietOption))
-    {
-        for (const auto& [displayPath, file, isExplicit] : files)
-        {
-            juce::ignoreUnused (file, isExplicit);
-            jam::Format::appendBytes (output, displayPath);
-            jam::Format::appendUtf8 (output, Chars::newline);
-        }
-    }
-
-    const int exitCode { hasFailures ? Stdio::exitError : files.isEmpty() ? Stdio::exitMismatch : Stdio::exitSuccess };
-    auto sortedFailures (getFailureResults (pathFailures));
-
-    if (exitCode == Stdio::exitMismatch and skippedCount > 0)
-        sortedFailures.add (Stdio::fail (skippedCount, text::Diagnostics::entriesNotSearched));
-
-    return Stdio::getOutput (exitCode, Stdio::getDocuments (std::move (output)), std::move (sortedFailures));
-}
-
 static Stdio::Output runWithValidatedOptions (const Arguments& arguments,
                                               const Search& search,
                                               const Input::Source& source)
@@ -250,7 +171,7 @@ static Stdio::Output runWithValidatedOptions (const Arguments& arguments,
     if (rawPaths.empty() and Input::hasData (source))
         return runStdinFind (*pattern, arguments, search, source);
 
-    return runFilesFind (rawPaths.empty() ? juce::Span<const std::string_view> { defaultPaths } : rawPaths, *pattern, arguments, search, source);
+    return runFilesFind (rawPaths.empty() ? juce::Span<const std::string_view> { Paths::defaultPaths } : rawPaths, *pattern, arguments, search, source);
 }
 
 static Stdio::Output runWithValidatedArguments (const Arguments& arguments, const Input::Source& source)
@@ -258,7 +179,12 @@ static Stdio::Output runWithValidatedArguments (const Arguments& arguments, cons
     const auto& positionals { arguments.getPositionals() };
 
     if (arguments.contains (Id::filesOption))
-        return runListFiles (arguments);
+        return FindFiles::run (arguments);
+
+    const auto listOnlyResult { FindFiles::getListOnlyFailure (arguments) };
+
+    if (listOnlyResult.failed())
+        return Stdio::getFailure (listOnlyResult);
 
     if (positionals.size() < 1 and not arguments.contains (Id::patternOption))
         return Stdio::getFailure (text::Diagnostics::failFindRequiresPattern);
@@ -302,9 +228,9 @@ Arguments Find::getArguments (juce::Span<const std::string_view> argumentList)
                        { Id::regexOption, Id::ignoreCaseOption, Id::exactOption, Id::invertOption,
                          Id::countOption, Id::quietOption, Id::lineNumberOption, Id::noLineNumberOption,
                          Id::hashOption, Id::firstOption, Id::hiddenOption, Id::noIgnoreOption,
-                         Id::filesWithMatchesOption, Id::onlyMatchingOption, Id::wordOption, Id::filesOption, Id::textOption },
+                         Id::filesWithMatchesOption, Id::onlyMatchingOption, Id::wordOption, Id::filesOption, Id::textOption, Id::reverseOption, Id::jsonOption },
                        { Id::contextOption, Id::afterOption, Id::linesOption, Id::includeOption, Id::excludeOption,
-                         Id::afterContextOption, Id::beforeContextOption, Id::patternOption },
+                         Id::afterContextOption, Id::beforeContextOption, Id::patternOption, Id::maxDepthOption, Id::typeOption, Id::sizeOption, Id::changedWithinOption, Id::changedBeforeOption, Id::sortOption },
                        {} };
 }
 

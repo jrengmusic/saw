@@ -96,7 +96,7 @@ return {
     default = {
       database = "/Users/jreng/Documents/Poems/dev/saw/Builds/Release/compile_commands.json",
       flags = {
-        "-DCAST_COMMIT=\\\"f5d5192\\\"",
+        "-DCAST_COMMIT=\\\"b8ea281\\\"",
         "-DDONT_SET_USING_JUCE_NAMESPACE=1",
         "-DHAVE_FREETYPE",
         "-DHAVE_UNISTD_H",
@@ -160,7 +160,7 @@ return {
     ["no-sign"] = {
       database = "/Users/jreng/Documents/Poems/dev/saw/Builds/Release/compile_commands.json",
       flags = {
-        "-DCAST_COMMIT=\\\"f5d5192\\\"",
+        "-DCAST_COMMIT=\\\"b8ea281\\\"",
         "-DDONT_SET_USING_JUCE_NAMESPACE=1",
         "-DHAVE_FREETYPE",
         "-DHAVE_UNISTD_H",

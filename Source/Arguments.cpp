@@ -218,6 +218,9 @@ std::optional<std::pair<std::string_view, Arguments::OptionType>> Arguments::get
     if (matchesOption (argument, Id::helpOption))
         return std::pair<std::string_view, OptionType> { Id::helpOption, OptionType::flag };
 
+    if (matchesOption (argument, Id::noLimitOption))
+        return std::pair<std::string_view, OptionType> { Id::noLimitOption, OptionType::flag };
+
     return std::nullopt;
 }
 

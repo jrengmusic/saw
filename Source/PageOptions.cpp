@@ -74,7 +74,7 @@ Arguments PageOptions::getArguments (juce::Span<const std::string_view> argument
                          { Id::configDirOption, Arguments::OptionType::flag }, { Id::generateConfigFileOption, Arguments::OptionType::flag },
                          { Id::pagingOption, Arguments::OptionType::value }, { Id::pagerOption, Arguments::OptionType::value },
                          { Id::noPagingOption, Arguments::OptionType::flag }, { Id::versionOption, Arguments::OptionType::flag },
-                         { Id::acknowledgementsOption, Arguments::OptionType::flag } },
+                         { Id::acknowledgementsOption, Arguments::OptionType::flag }, { Id::followOption, Arguments::OptionType::flag }, { Id::followNameOption, Arguments::OptionType::flag } },
                        Arguments::Grammar::attached };
 }
 

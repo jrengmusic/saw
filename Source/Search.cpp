@@ -32,7 +32,7 @@ static std::tuple<juce::Result, int, Stdio::Documents> getCountOutcome (std::str
                                                                         bool isShowingPathPrefix)
 {
     if (isExplicit or matchCount > 0)
-        return { juce::Result::ok(), matchCount, Stdio::getDocuments (getFormattedCountOutput (displayPath, matchCount, isShowingPathPrefix), displayPath) };
+        return { juce::Result::ok(), matchCount, Stdio::getDocuments (getFormattedCountOutput (displayPath, matchCount, isShowingPathPrefix)) };
 
     return { juce::Result::ok(), 0, Stdio::Documents {} };
 }
@@ -113,7 +113,7 @@ std::tuple<juce::Result, int, Stdio::Documents> Search::run (std::string_view by
     if (isCount and not isQuiet and not isFilesWithMatches)
         return getCountOutcome (displayPath, searchCount, isExplicit, isShowingPathPrefix);
 
-    return { std::move (searchResult), searchCount, Stdio::getDocuments (std::move (searchOutput), displayPath) };
+    return { std::move (searchResult), searchCount, Stdio::getDocuments (std::move (searchOutput)) };
 }
 
 std::tuple<juce::Result, int, Stdio::Documents> Search::runFile (const juce::File& file,
@@ -180,7 +180,7 @@ std::tuple<juce::Result, int, Stdio::Documents, size_t> Search::runStream (const
             matchCount += chunkMatches;
 
             if (not chunkOutput.empty())
-                documents.add (TextDocument::fromText (std::move (chunkOutput), Id::stdinPath));
+                documents.add (TextDocument::fromText (std::move (chunkOutput), {}));
 
             if (isNumbered)
                 lineNumber += static_cast<int> (jam::simd::countByte (chunk.data(), chunk.size(), static_cast<char> (Chars::newline)));
@@ -196,7 +196,7 @@ std::tuple<juce::Result, int, Stdio::Documents, size_t> Search::runStream (const
     }
 
     if (isCount and not isQuiet and not isFilesWithMatches)
-        return { juce::Result::ok(), matchCount, Stdio::getDocuments (getFormattedCountOutput (Id::stdinPath, matchCount, false), Id::stdinPath), readSize };
+        return { juce::Result::ok(), matchCount, Stdio::getDocuments (getFormattedCountOutput (Id::stdinPath, matchCount, false)), readSize };
 
     return { juce::Result::ok(), matchCount, std::move (documents), readSize };
 }
@@ -378,7 +378,7 @@ std::tuple<juce::Result, int, Stdio::Documents> Search::runChunks (std::string_v
         juce::ignoreUnused (chunkStatus, chunkMatches, chunkSearchedSize);
 
         if (not chunkOutput.empty())
-            documents.add (TextDocument::fromText (std::move (chunkOutput), displayPath));
+            documents.add (TextDocument::fromText (std::move (chunkOutput), {}));
     }
 
     return { juce::Result::ok(), totalMatches, std::move (documents) };

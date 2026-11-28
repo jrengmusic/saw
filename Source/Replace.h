@@ -33,7 +33,7 @@ public:
 
 private:
     /** @brief The document of one file, its diff, and its number of replacements. */
-    using Replacement = std::tuple<std::unique_ptr<TextDocument>, LineDiff, int>;
+    using Replacement = std::tuple<juce::File, std::unique_ptr<TextDocument>, LineDiff, int>;
 
     /** @brief Binds the pattern, the replacement source, and the line range of one replace command.
      *
@@ -81,7 +81,7 @@ private:
      *
      *  @return The result, and the replacement when the file has one.
      */
-    std::pair<juce::Result, std::optional<Replacement>> getReplacedFile (const juce::File& targetFile, std::string_view displayPath, bool isExplicit, const Input::Source& source) const;
+    std::pair<juce::Result, std::optional<Replacement>> getReplacedFile (juce::File targetFile, std::string_view displayPath, bool isExplicit, const Input::Source& source) const;
 
     /** @brief Builds one change for each line that has a match, within the line range.
      *

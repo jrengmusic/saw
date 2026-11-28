@@ -458,23 +458,22 @@ std::pair<juce::Result, std::string> UndoCache::addTransaction (std::string_view
     return { juce::Result::ok(), addedId };
 }
 
-jam::Strings UndoCache::getTransactionIds()
+void UndoCache::applyToTransactions (const std::function<void (std::string_view, const juce::Result&, const jam::JsonDocument*)>& function)
 {
-    const auto pendingIds (getSortedIds (getPendingDirectory()));
-    auto ids (getSortedIds (getDirectory()));
-
-    for (int index { 0 }; index < pendingIds.size(); ++index)
-    {
-        const auto [pendingStatus, pendingDocument] { getTransactionDocument (pendingIds.getView (index)) };
-        juce::ignoreUnused (pendingDocument);
-
-        if (pendingStatus.wasOk())
-            ids.add (pendingIds.getView (index));
-    }
-
+    const auto publishedIds (getSortedIds (getDirectory()));
+    auto ids (getSortedIds (getPendingDirectory()));
+    ids.addArray (publishedIds, 0, -1);
     ids.sort (false);
     ids.removeDuplicates (false);
-    return ids;
+
+    for (int index { ids.size() - 1 }; index >= 0; --index)
+    {
+        const auto transactionId { ids.getView (index) };
+        const auto [status, document] { getTransactionDocument (transactionId) };
+
+        if (status.wasOk() or getDirectory().getChildFile (getRecordName (transactionId)).existsAsFile())
+            function (transactionId, status, document.get());
+    }
 }
 
 std::pair<juce::Result, std::unique_ptr<jam::JsonDocument>> UndoCache::getTransactionDocument (std::string_view transactionId)

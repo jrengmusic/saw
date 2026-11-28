@@ -22,6 +22,14 @@ saw find <pattern> [path...] [options]
 | `-w`, `--word` | Match only where no word byte (`A`–`Z`, `a`–`z`, `0`–`9`, `_`) is directly before or after the match. |
 | `-e <pattern>`, `--pattern <pattern>` | Add a pattern. Repeatable. With `-e`, every positional is a path. A line matches when one pattern matches. |
 | `--files` | Print the files that the walk reads, sorted. Takes paths only. With `-q`, print nothing. Exit `1` when the list is empty. |
+| `--max-depth <N>`, `-d <N>` | With `--files`: list entries up to depth `N`. The children of the walk root are depth 1. |
+| `--type <t>`, `-t <t>` | With `--files`: list `file`, `dir`, or `symlink` entries (`f`, `d`, `l`). Repeatable. Default `file`. |
+| `--size <spec>`, `-S <spec>` | With `--files`: `+N<unit>` at least, `-N<unit>` at most, `N<unit>` exact. Units `b`, `k`, `m`, `g`, `t`, `ki`, `mi`, `gi`, `ti`. A unit is required. Repeatable. |
+| `--changed-within <time>` | With `--files`: keep entries modified after a duration (`2h30m`), a date (`YYYY-MM-DD`), or `@<epoch seconds>`. |
+| `--changed-before <time>` | With `--files`: keep entries modified before `<time>`. Same forms. |
+| `--sort <name\|mtime\|size>` | With `--files`: order of the entries. Default `name`. |
+| `--reverse` | With `--files`: reverse the order. |
+| `--json` | With `--files`: one JSON object per entry with `path`, `type`, `size`, `mtime`, `mode`, `target`. A link whose target is missing reports the Unix epoch (time 0) as `mtime`, in the local time zone, and size 0. |
 | `-q`, `--quiet` | Emit nothing to stdout; exit `0` on first match or `1` on no match. |
 | `-n`, `--line-number` | Prefix output with 1-based line numbers (default: on). |
 | `--no-line-number` | Omit line numbers from output. |

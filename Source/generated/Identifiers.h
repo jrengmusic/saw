@@ -47,12 +47,48 @@ namespace Id
     static constexpr std::string_view excludeOption                  { "--exclude"                                                 };///< Exclude paths matching glob pattern.
     static constexpr std::string_view hiddenOption                   { "--hidden"                                                  };///< Include hidden files and directories.
     static constexpr std::string_view noIgnoreOption                 { "--no-ignore"                                               };///< Disable ignore file filtering.
+    static constexpr std::string_view noLimitOption                  { "--no-limit"                                                };///< Print the whole output, without the output limit.
     static constexpr std::string_view filesOption                    { "--files"                                                   };///< List the files that a search reads.
+    static constexpr std::string_view followOption                   { "--follow"                                                  };///< Print the bytes appended to the file as it grows.
+    static constexpr std::string_view followNameOption               { "--follow-name|-F"                                          };///< Follow the file name, and reopen the file when it is replaced.
+    static constexpr std::string_view maxDepthOption                 { "--max-depth|-d"                                            };///< Depth limit of the --files walk; children of the root are depth 1.
+    static constexpr std::string_view typeOption                     { "--type|-t"                                                 };///< Entry type that --files lists: file, dir, symlink. Repeatable.
+    static constexpr std::string_view sizeOption                     { "--size|-S"                                                 };///< Size filter of --files: +N at least, -N at most, N exact. Repeatable.
+    static constexpr std::string_view changedWithinOption            { "--changed-within"                                          };///< Keep --files entries modified after a date or duration.
+    static constexpr std::string_view changedBeforeOption            { "--changed-before"                                          };///< Keep --files entries modified before a date or duration.
+    static constexpr std::string_view sortOption                     { "--sort"                                                    };///< Order of --files: name, mtime, size.
+    static constexpr std::string_view reverseOption                  { "--reverse"                                                 };///< Reverse the order of --files.
+    static constexpr std::string_view jsonOption                     { "--json"                                                    };///< Print one JSON object per --files entry.
+    static constexpr std::string_view fileValue                      { "file|f"                                                    };///< Entry type: regular file.
+    static constexpr std::string_view dirValue                       { "dir|d"                                                     };///< Entry type: folder.
+    static constexpr std::string_view symlinkValue                   { "symlink|l"                                                 };///< Entry type: symbolic link.
+    static constexpr std::string_view nameValue                      { "name"                                                      };///< Sort key: display path.
+    static constexpr std::string_view mtimeValue                     { "mtime"                                                     };///< Sort key and JSON key: modification time.
+    static constexpr std::string_view sizeValue                      { "size"                                                      };///< Sort key and JSON key: size in bytes.
+    static constexpr std::string_view target                         { "target"                                                    };///< JSON key of the link target, empty for a non-link.
+    static constexpr std::string_view epochPrefix                    { "@"                                                         };///< Prefix of a time given as seconds since the Unix epoch.
+    static constexpr std::string_view byteUnit                       { "b"                                                         };///< Size unit: bytes.
+    static constexpr std::string_view kiloUnit                       { "k|kb"                                                      };///< Size unit: 1000 bytes.
+    static constexpr std::string_view megaUnit                       { "m|mb"                                                      };///< Size unit: 1000 kilo.
+    static constexpr std::string_view gigaUnit                       { "g|gb"                                                      };///< Size unit: 1000 mega.
+    static constexpr std::string_view teraUnit                       { "t|tb"                                                      };///< Size unit: 1000 giga.
+    static constexpr std::string_view kibiUnit                       { "ki|kib"                                                    };///< Size unit: 1024 bytes.
+    static constexpr std::string_view mebiUnit                       { "mi|mib"                                                    };///< Size unit: 1024 kibi.
+    static constexpr std::string_view gibiUnit                       { "gi|gib"                                                    };///< Size unit: 1024 mebi.
+    static constexpr std::string_view tebiUnit                       { "ti|tib"                                                    };///< Size unit: 1024 gibi.
+    static constexpr std::string_view secondUnit                     { "s|sec|secs|second|seconds"                                 };///< Duration unit: seconds.
+    static constexpr std::string_view minuteUnit                     { "m|min|mins|minute|minutes"                                 };///< Duration unit: minutes.
+    static constexpr std::string_view hourUnit                       { "h|hr|hrs|hour|hours"                                       };///< Duration unit: hours.
+    static constexpr std::string_view dayUnit                        { "d|day|days"                                                };///< Duration unit: days.
+    static constexpr std::string_view weekUnit                       { "w|wk|wks|week|weeks"                                       };///< Duration unit: weeks.
+    static constexpr std::string_view monthUnit                      { "mo|mos|month|months"                                       };///< Duration unit: calendar months.
+    static constexpr std::string_view yearUnit                       { "y|yr|yrs|year|years"                                       };///< Duration unit: calendar years.
     static constexpr std::string_view textOption                     { "--text|-a"                                                 };///< Read a binary file as text.
     static constexpr std::string_view withStdinOption                { "--with-stdin"                                              };///< Read replacement text from stdin.
     static constexpr std::string_view withFileOption                 { "--with-file"                                               };///< Read replacement text from a file.
     static constexpr std::string_view applyOption                    { "--apply"                                                   };///< Write planned changes to disk.
     static constexpr std::string_view expectOption                   { "--expect"                                                  };///< Expected edit count guard for apply.
+    static constexpr std::string_view appendOption                   { "--append|-a"                                               };///< Append standard input to an existing file.
     static constexpr std::string_view deleteOption                   { "--delete"                                                  };///< Delete selected lines.
     static constexpr std::string_view replaceOption                  { "--replace"                                                 };///< Replace selected lines with text.
     static constexpr std::string_view insertBeforeOption             { "--insert-before"                                           };///< Insert text before selected line.
@@ -112,6 +148,10 @@ namespace Id
     static constexpr std::string_view autoValue                      { "auto"                                                      };///< Automatic choice of a mode.
     static constexpr std::string_view neverValue                     { "never"                                                     };///< Mode that turns a choice off.
     static constexpr std::string_view alwaysValue                    { "always"                                                    };///< Mode that turns a choice on.
+    static constexpr std::string_view okValue                        { "ok"                                                        };///< Status of a command that succeeded.
+    static constexpr std::string_view totalValue                     { "total"                                                     };///< Name of the line of summed counts.
+    static constexpr std::string_view mismatchValue                  { "mismatch"                                                  };///< Status of a command that found no match.
+    static constexpr std::string_view errorValue                     { "error"                                                     };///< Status of a command that failed.
     static constexpr std::string_view darkValue                      { "dark"                                                      };///< Use the dark theme, from theme-dark.
     static constexpr std::string_view lightValue                     { "light"                                                     };///< Use the light theme, from theme-light.
     static constexpr std::string_view characterValue                 { "character"                                                 };///< Wrap at the width, by character.
@@ -195,6 +235,13 @@ namespace Id
     static constexpr std::string_view jsonRunTestsOption             { "--run-tests"                                               };///< Run the tests of a jq test file.
     static constexpr std::string_view jsonSkipOption                 { "--skip"                                                    };///< Skip the first n tests.
     static constexpr std::string_view jsonTakeOption                 { "--take"                                                    };///< Run n tests after the skipped ones.
+    static constexpr std::string_view countLinesOption               { "--lines|-l"                                                };///< Print the line count.
+    static constexpr std::string_view countWordsOption               { "--words|-w"                                                };///< Print the word count.
+    static constexpr std::string_view countBytesOption               { "--bytes|-c"                                                };///< Print the byte count.
+    static constexpr std::string_view sortNumericOption              { "--numeric-sort|-n"                                         };///< Compare by numeric value.
+    static constexpr std::string_view sortReverseOption              { "--reverse|-r"                                              };///< Reverse the order.
+    static constexpr std::string_view sortUniqueOption               { "--unique|-u"                                               };///< Print one line of each run of equal lines.
+    static constexpr std::string_view sortCountOption                { "--count|-c"                                                };///< Prefix each distinct line with its count, as uniq -c.
     static constexpr std::string_view jsonPositionalKey              { "positional"                                                };///< Key of the positional arguments in $ARGS.
     static constexpr std::string_view jsonNamedKey                   { "named"                                                     };///< Key of the named arguments in $ARGS.
     static constexpr std::string_view unicodeNotation                { "unicode"                                                   };///< Unicode control pictures for non-printable bytes.
@@ -202,6 +249,9 @@ namespace Id
     static constexpr std::string_view asTextBinary                   { "as-text"                                                   };///< Print a binary file as text.
     static constexpr std::string_view noPrintingBinary               { "no-printing"                                               };///< Do not print the bytes of a binary file.
     static constexpr std::string_view excerpt                        { "excerpt"                                                   };///< Excerpt command verb.
+    static constexpr std::string_view count                          { "count"                                                     };///< Count command verb.
+    static constexpr std::string_view sort                           { "sort"                                                      };///< Sort command verb.
+    static constexpr std::string_view diff                           { "diff"                                                      };///< Diff command verb.
     static constexpr std::string_view startCol                       { "startCol"                                                  };///< Match start column key.
     static constexpr std::string_view endCol                         { "endCol"                                                    };///< Match end column key.
     static constexpr std::string_view startLine                      { "startLine"                                                 };///< Operation start line key.
@@ -219,7 +269,7 @@ namespace Id
     static constexpr std::string_view postHash                       { "postHash"                                                  };///< File hash after apply.
     static constexpr std::string_view executable                     { "executable"                                                };///< Executable bit flag key.
     static constexpr std::string_view run                            { "run"                                                       };///< Name of the MCP tool that runs a saw command line.
-    static constexpr std::string_view exitCode                       { "exitCode"                                                  };///< MCP result key for the exit code.
+    static constexpr std::string_view status                         { "status"                                                    };///< MCP result key for the status of the command.
     static constexpr std::string_view output                         { "output"                                                    };///< MCP result key for the standard output text.
     static constexpr std::string_view outputBase64                   { "outputBase64"                                              };///< MCP result key for the standard output in base64.
     static constexpr std::string_view errors                         { "errors"                                                    };///< MCP result key for the standard error text.

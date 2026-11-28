@@ -5,6 +5,7 @@
 #include "Arguments.h"
 #include "CommandLine.h"
 #include "Stdio.h"
+#include "PageFollow.h"
 #include "ToolServer.h"
 #include "generated/Generated.h"
 #if JUCE_WINDOWS
@@ -45,6 +46,23 @@ static int runToolServer (const char* programPath)
     return juce::JUCEApplicationBase::main (static_cast<int> (std::size (toolArguments)), toolArguments);
 }
 
+static juce::JUCEApplicationBase* createPageFollow()
+{
+    return new PageFollow();
+}
+
+static int runPageFollow (int argc, char* argv[])
+{
+    jam::Array<const char*> programArguments;
+    programArguments.ensureStorageAllocated (argc);
+
+    for (int index { 0 }; index < argc; ++index)
+        programArguments.add (argv[index]);
+
+    juce::JUCEApplicationBase::createInstance = &createPageFollow;
+    return juce::JUCEApplicationBase::main (argc, programArguments.data());
+}
+
 int main (int argc, char* argv[])
 {
 #if JUCE_WINDOWS
@@ -69,6 +87,9 @@ int main (int argc, char* argv[])
 
     if (isMcp (argumentSpan))
         return runToolServer (argv[0]);
+
+    if (PageFollow::isRequested (argumentSpan))
+        return runPageFollow (argc, argv);
 
     return Stdio::write (CommandLine::run (argumentSpan, Input::Source { Input::StandardInput {} }));
 }

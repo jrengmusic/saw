@@ -47,6 +47,9 @@ struct Diagnostics
     static constexpr const char* const failChoiceInvalid            { "invalid value for "                                                          };///< Flag value is not one of the allowed values.
     static constexpr const char* const failThemeUnknown             { "unknown theme: "                                                             };///< Theme name that no style sheet has.
     static constexpr const char* const failFindRequiresPattern      { "find requires <pattern>"                                                     };///< Find verb invoked without a pattern argument.
+    static constexpr const char* const failSizeInvalid              { "invalid size: "                                                              };///< Size filter value does not parse as a size.
+    static constexpr const char* const failTimeInvalid              { "invalid time: "                                                              };///< Modification time filter value does not parse as a time.
+    static constexpr const char* const failFollowUnavailable        { "follow needs one file on the command line: "                                 };///< Follow lane needs exactly one named file, and is not available over MCP.
     static constexpr const char* const failReplaceRequiresArguments { "replace requires <find> and <with>"                                          };///< Replace verb invoked without required arguments.
     static constexpr const char* const failWithSourcesConflict      { "specify at most one of --with-stdin, --with-file"                            };///< Mutually exclusive replacement input flags supplied together.
     static constexpr const char* const failLinesRequiresRange       { "lines requires <range>"                                                      };///< Lines verb invoked without a line range argument.
@@ -152,6 +155,9 @@ struct Diagnostics
     static constexpr const char* const editsIn                      { " edit(s) in "                                                                };///< Connector between the edit count and the file count.
     static constexpr const char* const expectToWrite                { " file(s); nothing written. Pass --apply --expect "                           };///< Suffix of a dry-run summary, before the expected edit count.
     static constexpr const char* const toWrite                      { " to write."                                                                  };///< Closes a dry-run summary.
+    static constexpr const char* const summaryOutputLimit           { "output limit \xe2\x80\x94 "                                                  };///< Opens the trailer of an output that the output limit cut.
+    static constexpr const char* const linesPrinted                 { " line(s) printed, "                                                          };///< Connector between the printed and the omitted line counts.
+    static constexpr const char* const omittedToPrintAll            { " line(s) omitted. Pass --no-limit to print all."                             };///< Closes the trailer of an output that the output limit cut.
     static constexpr const char* const summaryDryRunZero            { "dry-run \xe2\x80\x94 0 edits; nothing written."                              };///< Summary emitted when dry-run produces zero edits.
     static constexpr const char* const summaryApplied               { "applied "                                                                    };///< Opens the summary emitted after edits are written and recorded.
     static constexpr const char* const transactionOpen              { " file(s) (tx: "                                                              };///< Connector before the transaction id.

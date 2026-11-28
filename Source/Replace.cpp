@@ -236,7 +236,7 @@ std::tuple<juce::Result, LineDiff, int> Replace::getDocumentDiff (const TextDocu
     return { status, std::move (diff), totalEdits };
 }
 
-std::pair<juce::Result, std::optional<Replace::Replacement>> Replace::getReplacedFile (const juce::File& targetFile,
+std::pair<juce::Result, std::optional<Replace::Replacement>> Replace::getReplacedFile (juce::File targetFile,
                                                                                        std::string_view displayPath,
                                                                                        bool isExplicit,
                                                                                        const Input::Source& source) const
@@ -263,7 +263,7 @@ std::pair<juce::Result, std::optional<Replace::Replacement>> Replace::getReplace
     if (diffStatus.failed())
         return { diffStatus, std::nullopt };
 
-    return { juce::Result::ok(), Replace::Replacement { std::move (document), std::move (diff), editCount } };
+    return { juce::Result::ok(), Replace::Replacement { std::move (targetFile), std::move (document), std::move (diff), editCount } };
 }
 
 Stdio::Output Replace::runStandardInput (const Arguments& arguments, const Input::Source& input) const
@@ -319,9 +319,7 @@ Stdio::Output Replace::runFiles (const Arguments& arguments, juce::Span<const st
 
     const bool isStandardInputNamed { std::any_of (files.begin(), files.end(), [] (const Paths::Entry& entry)
     {
-        const auto& [displayPath, file, isExplicit] { entry };
-        juce::ignoreUnused (displayPath, isExplicit);
-        return file == juce::File {};
+        return std::holds_alternative<Input::StandardInput> (entry);
     }) };
 
     if (isStandardInputNamed and arguments.contains (Id::applyOption))
@@ -333,8 +331,8 @@ Stdio::Output Replace::runFiles (const Arguments& arguments, juce::Span<const st
     Jobs::run (fileCount,
                [this, &pathEntries = files, &source, &statuses, &replacements] (int index)
                {
-                   const auto& [displayPath, targetFile, isExplicit] { pathEntries.at (index) };
-                   auto [fileStatus, replacement] { getReplacedFile (targetFile, displayPath, isExplicit, source) };
+                   const auto& entry { pathEntries.at (index) };
+                   auto [fileStatus, replacement] { getReplacedFile (Paths::getFile (entry), Paths::getDisplayPath (entry), Paths::isExplicit (entry), source) };
                    statuses.at (index) = std::move (fileStatus);
                    replacements.at (index) = std::move (replacement);
                });
@@ -348,14 +346,12 @@ Stdio::Output Replace::runFiles (const Arguments& arguments, juce::Span<const st
 
     for (int index { 0 }; index < fileCount; ++index)
     {
-        const auto& [displayPath, targetFile, isExplicit] { files.at (index) };
-        juce::ignoreUnused (displayPath, isExplicit);
-
         if (replacements.at (index).has_value())
         {
+            auto& [targetFile, document, diff, editCount] { *replacements.at (index) };
+
             if (transaction.addTarget (targetFile))
             {
-                auto& [document, diff, editCount] { *replacements.at (index) };
                 const auto addStatus { transaction.addFile (targetFile, std::move (document), std::move (diff), editCount) };
 
                 if (addStatus.failed())

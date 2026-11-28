@@ -95,7 +95,7 @@ static std::pair<bool, Stdio::Documents> getStateBlock (int targetNumber, std::s
     jam::Format::appendUtf8 (output, Chars::space);
     jam::Format::appendBytes (output, state);
     jam::Format::appendUtf8 (output, Chars::newline);
-    return { false, Stdio::getDocuments (std::move (output), path) };
+    return { false, Stdio::getDocuments (std::move (output)) };
 }
 
 static std::pair<std::string_view, std::unique_ptr<TextDocument>> getLoadedDocument (std::string_view path, bool isText)
@@ -176,7 +176,7 @@ static std::pair<bool, Stdio::Documents> getLiteralBlock (int targetNumber,
         return getStateBlock (targetNumber, path, text::Diagnostics::excerptNoMatch);
 
     appendBlock (output, document, path, targetNumber, pendingStart, pendingEnd);
-    return { true, Stdio::getDocuments (std::move (output), path) };
+    return { true, Stdio::getDocuments (std::move (output)) };
 }
 
 static bool isDigits (std::string_view text)
@@ -240,7 +240,7 @@ static std::pair<bool, Stdio::Documents> getRangeBlock (int targetNumber, std::s
 
     std::string output;
     appendBlock (output, document, path, targetNumber, firstLine, std::min (lastLine, numLines));
-    return { true, Stdio::getDocuments (std::move (output), path) };
+    return { true, Stdio::getDocuments (std::move (output)) };
 }
 
 static std::pair<bool, Stdio::Documents> getTargetBlock (int targetNumber, std::string_view target, int contextLines, bool isText)

@@ -25,9 +25,9 @@ SAW replaces `sed`, `grep`, and file-oriented `awk` with one deterministic CLI t
 | `saw <verb> --help` | Prints the help guide for `<verb>`. | `0` |
 | `saw --version`, `saw -V` | Prints `saw 0.0.1 (<commit>)`. | `0` |
 | `saw --mcp` | Serves the commands as Model Context Protocol over stdin and stdout. Ends when stdin closes. | `0` |
-| `saw <verb> ...` | Runs one of the ten verbs below. | `0`, `1`, or `2` |
+| `saw <verb> ...` | Runs one of the thirteen verbs below. | `0`, `1`, or `2` |
 
-When stdout is a terminal, `saw`, `saw --help`, and `saw <verb> --help` erase the screen first. The ten verbs and `--version` never erase the screen.
+When stdout is a terminal, `saw`, `saw --help`, and `saw <verb> --help` erase the screen first. The thirteen verbs and `--version` never erase the screen.
 
 `--` ends option parsing. SAW treats every token after `--` as a positional argument.
 
@@ -50,6 +50,9 @@ When stdout is a terminal, `saw`, `saw --help`, and `saw <verb> --help` erase th
 | `json` | `saw json [options] <filter> [file...]` | Run a jq 1.8.2 filter over JSON input, with the output bytes of jq. |
 | `page` | `saw page [path...] [options]` | Print the bytes of files or standard input. With the libraries of ling, render them as a page. |
 | `write` | `saw write <path> [--apply --expect 1]` | Write the complete text from standard input to one file, verbatim. |
+| `count` | `saw count [path...] [options]` | Count the lines, words, and bytes of files, or of standard input. |
+| `sort` | `saw sort [path...] [options]` | Sort the lines of files, or of standard input, as one line set. |
+| `diff` | `saw diff [options] <file> <file\|->` | Compare two files, or a file and standard input, and print the unified diff. |
 
 ## Exit Codes and Diagnostics
 

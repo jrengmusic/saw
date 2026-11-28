@@ -5,9 +5,8 @@
 TextDocument::TextDocument (Access,
                             std::unique_ptr<Input> newInput,
                             std::string_view newDisplayPath)
-    : input (std::move (newInput))
+    : input (std::move (newInput)), displayPath (newDisplayPath)
 {
-    getRoot()->add<juce::String> (Id::path, jam::Strings::fromView (newDisplayPath));
 }
 
 const jam::Document::Vocabulary& TextDocument::getVocabulary() const
@@ -166,6 +165,22 @@ std::unique_ptr<TextDocument> TextDocument::fromView (std::string_view text, std
     return document;
 }
 
+std::unique_ptr<TextDocument> TextDocument::fromBlock (juce::MemoryBlock&& newBlock, std::string_view displayPath)
+{
+    auto document { std::make_unique<TextDocument> (Access {}, nullptr, displayPath) };
+    document->block = std::move (newBlock);
+    document->setSource (jam::Strings::getView (document->block));
+    return document;
+}
+
+std::unique_ptr<TextDocument> TextDocument::fromDocument (std::unique_ptr<TextDocument> newViewedDocument, std::string_view output)
+{
+    auto document { std::make_unique<TextDocument> (Access {}, nullptr, std::string_view {}) };
+    document->viewedDocument = std::move (newViewedDocument);
+    document->setSource (output);
+    return document;
+}
+
 std::unique_ptr<TextDocument> TextDocument::fromInput (std::unique_ptr<Input> newInput,
                                                        std::string_view displayPath,
                                                        std::string_view output)
@@ -177,7 +192,7 @@ std::unique_ptr<TextDocument> TextDocument::fromInput (std::unique_ptr<Input> ne
 
 std::string_view TextDocument::getDisplayPath() const noexcept
 {
-    return jam::Strings::getView (*getRoot()->get<juce::String> (Id::path));
+    return displayPath;
 }
 
 std::string_view TextDocument::getBytes() const noexcept

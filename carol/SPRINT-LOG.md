@@ -570,3 +570,273 @@ None.
 
 ### Next Steps
 - Start at Remaining item 1 when ARCHITECT resumes the session. Item 2 and item 3 follow, then the duplicate-key fix in `setKeyOrder` (`jam_JsonDocument.cpp:1146-1160`, last key wins), per ARCHITECT's ruling "a".
+
+---
+
+## Handoff to COUNSELOR: exclusive-saw (PLAN-exclusive-saw.md)
+
+**From:** COUNSELOR
+**Date:** 2026-11-28
+**Status:** In Progress
+
+### Read First
+- `PLAN-exclusive-saw.md` — the locked plan. §0.2 is the tracker (lines 22-40). §0.4 holds Part J. §7 holds steps A-F. §10 holds the A2 rulings.
+- `RFC-exclusive-saw.md` — scaffold items, handoff rulings 1-11, and corrections 1-6 (section "Corrections (2026-11-28, plan session)").
+- `~/.carol/MANIFESTO.md`, `~/.carol/CODING.md`, `~/.carol/NAMES.md` — the CONTRACT for every step prompt.
+
+### Context
+ARCHITECT runs `/go @PLAN-exclusive-saw.md`. ARCHITECT approved the plan update (`/goplan update the plan comprehensively`). That approval is the `/go`. Part J removed the O(n²) child lookup of `JsonDocument`, which hung step 0.3. The session then ran 0.3 and A1. ARCHITECT stopped the session for usage limits during the A2 prompt preparation.
+
+### Completed
+- J1: each JSON container holds `Document::Elements` under `Id::children`, one entry per token. `getChildByToken` reads `->at (memberPosition)` (`jam/jam_core/json/jam_JsonDocument.cpp:157-171`). Each token add adds its entry, and `setKeyOrder`, `closePartialContainers` and `rollBack` keep the list aligned.
+- J1 corrections:
+  - `addParsedValue` moves the parsed root list into the holder (`jam_JsonDocument.cpp:5061`).
+  - `parseImport` takes its pointers with `get` after both `add` calls (`:2039-2042`). The old order left a dangling pointer, because `Element::add` can reallocate `properties` (`jam_Array.h:401`, `:826-827`).
+  - `@id children` row in `jam/cast/core.md:59`.
+- `SwapReader::readElement` is the one `Element*` decode for both readers (`jam/jam_core/document/jam_Document.cpp:1123-1134`, `:1415-1420`; `jam_Document.h:1078`). ARCHITECT: "design by /contract".
+- J2: `JsonLanguageDocument::setFlatTokens` replaces `getFlatTokens`. It writes the root tokens and the aligned root children through one sort order (`jam/jam_core/json/jam_JsonLanguageDocument.cpp:63-110`; `.h:58`).
+- J3, Engineer run:
+  - `cast cast/spell.md --no-sign` gives exit 0 and 0 warnings.
+  - jq files: jq 592/607 (12 malformed), man 238/240, manonig 19/19, onig 50/50, optional 3/3, base64 10/10, uri 20/20. Each equals the baseline.
+  - The CLI lane and the MCP lane both exit 0.
+  - Timings: `[range(0; 16000)]` 0.09 s, `[range(0; 200000)]` 1.37 s, the 200000 object filter 5.11 s.
+- 0.3: five scout baselines are written to `benchmark/exclusive-*-before-report.md`. Medians: find-walk 1.02 s, find-files 0.158 s, replace 1.34 s, page 8.94 ms, json 0.417 s.
+- A1: the MCP `status` member.
+  - `Source/ToolServer.cpp:99-100` looks up `statusValues` with `jlimit` (exit 0 → `ok`, 1 → `mismatch`, 2 or more → `error`). `:119` writes it with `content.setText (Id::status, …)`.
+  - `cast/identifiers.md`: rows `okValue`, `mismatchValue`, `errorValue` at `:202-206`, and `status` at `:422` (it replaces `exitCode`).
+  - `SPEC.md:802` describes `status`.
+  - `test/run.lua`: `:458` decodes `status`. `:540-557` adds `getExpectedStatus` and `isExpectedExit`, and `compareExitCodes` uses them.
+  - Verified: build exit 0 with 0 warnings, and both lanes exit 0 with no FAIL line.
+- Tracker updated: `PLAN-exclusive-saw.md:29-33` (tx `20261128T002236-0b8034`, `20261128T002518-0d1dd2`, `20261128T003116-0b6555`).
+
+### Remaining
+1. A2, `saw fields` ranges (COUNSELOR writes the prompt, Engineer implements). The reads are done. The design follows `PLAN-exclusive-saw.md:300-311` and §10 item 3.
+   - Parse: add `getParsedFieldRange (tokenView, specText)`. It finds `static_cast<char> (Chars::dash)` from position 1 (`Chars::dash` in `jam_Format.h:530`).
+     - No dash: give `jam::Union<int, int>::pack (N, N)` (`jam_Union.h:88`).
+     - An empty part after the dash: give `pack (A, Arguments::openRangeEnd)` (`Arguments.h:11`).
+     - Reject a negative bound with `failFieldSpecInvalid`.
+     - `getParsedFieldIndex` (`Fields.cpp:11-25`) parses each bound.
+     - `getFieldIndices` (`:27-51`) becomes `getFieldRanges`, which returns `jam::Array<jam::Union<int, int>>`.
+   - Member: `Fields.h` `jam::Array<int> fieldIndices` becomes `jam::Array<jam::Union<int, int>> fieldRanges`. The constructor parameter and its doxygen line change with it.
+   - Format: `appendFormattedLine` (`Fields.cpp:178-213`) runs `const auto [firstIndex, lastIndex] { fieldRange };` for each range.
+     - `step` is -1 when `lastIndex < firstIndex`, else 1.
+     - `endIndex` is `tokens.size()` for `openRangeEnd`, else `lastIndex`.
+     - `numRangeFields` is `(endIndex - firstIndex) * step + 1`.
+     - A written-field counter places `outputDelimiter`.
+     - `getSelectedField` and the `failFieldBounds` failure stay as they are, with the failing `fieldIndex`.
+   - Docs: `Source/help/fields.md:11` and `SPEC.md:568` describe `A-B`, `A-`, and either order.
+   - Cases: insert after `test/cases.md:121`, with the width of `:118-121`.
+     - `fields-range-ascending`: `fields 1-2 -d ":" colon.txt`, reference `cut -d: -f1-2 colon.txt`, compare `stdout`.
+     - `fields-range-open`: `fields 2- -d ":" colon.txt`, reference `cut -d: -f2- colon.txt`, compare `stdout`.
+     - `fields-range-descending`: `fields 3-1 -d ":" colon.txt`, reference `awk -F: "{print $3 FS $2 FS $1}" colon.txt`, compare `stdout`.
+     - `fields-range-zero`: `fields 0-2 colon.txt`, exit 2.
+     - `fields-range-invalid`: `fields 1-x colon.txt`, exit 2.
+     - A case with no reference reads `test/baseline/<name>/1/stderr` (`run.lua:701-702`). Example: `test/baseline/fields-index-zero/1/stderr` holds `saw: invalid field spec: 0 (1-based or negative)`. The two exit-2 cases therefore need `test/baseline/fields-range-zero/1/stderr` and `test/baseline/fields-range-invalid/1/stderr`. Each holds the `failFieldSpecInvalid` text for its spec.
+   - Verify: `cd /Users/jreng/Documents/Poems/dev/saw && cast cast/spell.md --no-sign`, then `nvim --headless -l test/run.lua ~/.local/bin/saw` and `nvim --headless -l test/run.lua ~/.local/bin/saw mcp`.
+2. A3, `saw write --append` (`PLAN-exclusive-saw.md:313-321`).
+3. Then the tracker order of `PLAN-exclusive-saw.md:34-40`: C6, C1, C2, C3, C4, C5, C7, C8; C9; A4; B1-B4; D1-D5; E1; F1-F3.
+4. F1: Auditor once, after all steps. F2: doxygen pass. These cover the new `readElement` (`jam_Document.h:1078`), `setFlatTokens` (`jam_JsonLanguageDocument.h:58`), and the stale `addLanguageElements` doxygen (`jam_JsonLanguageDocument.h:44-49`, "The flat token list then replaces the root tokens").
+
+### Key Decisions
+- "design by /contract, especially 0 rules, no new pattern, no new semantics allowed"
+- "Union it is"
+- "why is it matter ascending or descending, it's just fucking 2 integers why overcomplicate"
+- "Keep 0.3, trace json first"
+- "it's always /contract violations that cause slowness"
+- "delete dead codes. and the correct question, how to implement JsonDocument consistently to adhere to to /contract and achieve direct lookup O(1) for whatever we need to implement now?"
+- "design by /contract" (the reply to the `SwapReader` list-reader defect at `jam_Document.cpp:1134`)
+
+### Files Modified
+- `jam/cast/core.md` — `@id children` row (`:59`).
+- `jam/jam_core/document/jam_Document.h` — `Token::elementIndex` and `noElement` deleted; `Element* readElement ();` (`:1078`).
+- `jam/jam_core/document/jam_Document.cpp` — `readElement`; both `Element*` readers call it.
+- `jam/jam_core/json/jam_JsonDocument.cpp` — `Id::children` at every creation site and every token add; alignment in `setKeyOrder`, `closePartialContainers` and `rollBack`; O(1) `getChildByToken`; `parseImport` pointer order; `addParsedValue` move.
+- `jam/jam_core/json/jam_JsonDocument.h` — `getDocument` templates add `Id::children` (`:465`, `:476`).
+- `jam/jam_core/json/jam_JsonLanguageDocument.cpp` / `.h` — `setFlatTokens`; the `elementIndex` write deleted.
+- `saw/cast/identifiers.md` — `status`, `okValue`, `mismatchValue`, `errorValue`; `exitCode` row removed.
+- `saw/Source/ToolServer.cpp` — `status` member.
+- `saw/SPEC.md` — `:802`.
+- `saw/test/run.lua` — `status` decode and comparison.
+- `saw/benchmark/` — `prepare-exclusive.sh`, the `exclusive-*.sh` scripts, the `exclusive-*.md` manifests, `exclusive-json-collect-sample.md`, and the five `exclusive-*-before-report.md` reports.
+- `saw/RFC-exclusive-saw.md` — corrections 1-6.
+- `saw/PLAN-exclusive-saw.md` — §0 update and the tracker.
+
+### Open Questions
+- No saw command or test exercises `Document::write` with `JsonDocument::read (sourceText, stored)` (Engineer J3 report). The `readElement` fix is therefore not exercised by a test. Decider: ARCHITECT.
+
+### Next Steps
+- When ARCHITECT resumes, start at Remaining item 1 (A2). Write the Engineer prompt from that item, with the PLAN §5 inventory rows for A2 pasted verbatim.
+
+---
+
+## Handoff to COUNSELOR: exclusive-saw (PLAN-exclusive-saw.md), after C9 and E1
+
+**From:** COUNSELOR
+**Date:** 2026-11-28
+**Status:** In Progress
+
+### Read First
+1. `PLAN-exclusive-saw.md` — the locked plan. §0.2 tracker (lines 22-41). §4 build rule (line 163). §6 validation gate (line 267). Part F holds V1.
+2. `RFC-exclusive-saw.md` — scaffold items and rulings.
+3. `~/.carol/MANIFESTO.md`, `~/.carol/CODING.md`, `~/.carol/NAMES.md` — the CONTRACT for every step prompt.
+4. The handoff above this one (A2 state), for the earlier context.
+
+### Context
+ARCHITECT runs `/go @PLAN-exclusive-saw.md`. This session verified A2, then did A3, C1-C8, C9, and E1. ARCHITECT ruled that no implementation step builds: a build runs only in C9 (profile) and in V1 (final validation). The OpenCode harness gained the `scout_run` and `whatdbg_*` tools during the session (CAROL.md Debugging and Profiling: "All agents can call").
+
+### Completed
+- A2: build exit 0, 0 warnings; both lanes exit 0 with no FAIL line; the 5 range cases PASS (Pathfinder run). Code at `Source/Fields.cpp:27-80`, `:233-262`; `Source/Fields.h:41`, `:135`.
+- A3 `write --append` (code only): `Source/Write.cpp:18-32` (`getPlannedDocument`), `:51-52`, `:66`; `cast/identifiers.md:84` (`appendOption` `--append\|-a`); `Source/help/write.md:8`, `:15`, `:23`; `SPEC.md:855`, `:860`; cases `test/cases.md:510-521`; baselines `test/baseline/write-append-dry-run/1/stdout`, `test/baseline/write-append-undo/{1,2}/stdout`.
+- C6: `TextDocument::fromBlock (juce::MemoryBlock&& newBlock, …)` (`Source/TextDocument.h:91`, member `:413`; `.cpp:169-175`).
+- C1: `Paths::Entry` is `std::variant<ListedFile, NamedFile, Input::StandardInput>` (`Source/Paths.h:10-15`). The listing writes each slot's display path at creation (`Paths.cpp:142-185`). `Paths::getDisplayPath`, `getFile`, `isExplicit` (`Paths.cpp:311-381`). Consumers: `Find.cpp`, `Replace.cpp`, `Fields.cpp`, `Lines.cpp`.
+- C2: `TextDocument` holds its path as a `std::string_view` member (`TextDocument.h:418`, `.cpp:5-10`, `:185-188`). Output documents carry no path (`Stdio.cpp:33-41`, `Transaction.cpp:159`, `Search.cpp:183`, `:381`, `Lines.cpp:82`). `FindOutcome` sorts by `Paths::Entry` (`FindOutcome.cpp:4-70`). Patch groups outlive the transaction (`Patch.cpp:309-316`). Dead `displayPath` parameters deleted from three Page functions (`Page.cpp:325-357`).
+- C3: canonical-path key is `jam::HashMap<std::string_view, int>` (`Patch.cpp:37`, `:50-61`).
+- C4: `Json.cpp:944-945`, `:993-996` stream into an owned `juce::MemoryBlock`; `Stdio::getDocuments (juce::MemoryBlock&&)` (`Stdio.h:57`, `Stdio.cpp:43-51`).
+- C5: `getLineNumbers` deleted; `getOriginalNumbers` returns `{}` when not squeezing (`Page.cpp:468-474`); changes move through on equal length (`Page.cpp:572-574`). Plan C5 item 3 corrected with the UTF-16 length condition.
+- C7: item 1 needs no change (plan corrected with the read). Item 2: `UndoCache::applyToTransactions` (`UndoCache.h:65`, `.cpp:461-475`) parses each record once; `runList` uses it (`Undo.cpp:79-88`); `getTransactionIds` deleted.
+- C8: theme sheet is `std::unique_ptr<Input>` (`Page.cpp:220-230`, `:672-681`; `PageConfiguration.cpp:200-210`). The config bytes (`configInput`) own the unquoted option views (`PageConfiguration.cpp:87-114`, `:175-195`, `:259-273`). File-scope `singleLength`, `firstLine` (`:8-10`).
+- C9: scout after-measure, build 0 errors. Epoch medians against `benchmark/exclusive-*-before-report.md`: find-walk −6.8% (p 0.62), find-files +0.05% (p 0.20), replace +5.4% (p 0.0009), page −1.0% (p 0.77), json −7.0% (p 0.45). Reports `benchmark/exclusive-*-after-report.md`.
+- Replace regression fixed: `Replace::runFiles` built each `juce::File` twice. `Replacement` now carries the one file (`Replace.h:36`, `Replace.cpp:266`, `:351-355`). Re-measure: epoch +0.94% inside error 1.28% (p 0.023), user −2.0% (p 0.003) (`benchmark/exclusive-replace-fix-report.md`).
+- E1 root cause by whatdbg and read: the crashing row has `propertyType` `text` (0). The fault is `jam::Xml::getOrCreate (icons.at (type))` returning nullptr, dereferenced at `jam_MarkdownGraphics.cpp:192`. `getOrCreate` returns nullptr when the resource is missing (`jam_Xml.h:21`); `BinaryData::Raw` finds nothing in libpage (`jam_Raw.cpp:20-33`), because libpage embedded only `style.css` and `page.css`. Fix: `ling/language/page/page.cast:62-63` adds `file (GLOB CAST_JAM_SVG "${CAST_USER_MODULE_PATH}/resources/svg/*.svg")` to the `pageData` sources (form of `end/project-info.md:429`).
+- Plan updated: build rule (§4, §6, V1 row, Part F V1), C1 item 6, C1 validation, C5 item 3, C7 item 1, tracker rows.
+
+### Remaining
+1. ARCHITECT: rebuild ling, so libpage carries the SVGs.
+2. COUNSELOR then Engineer: A4 (`Source/Page.cpp:543-573`): delete the `StandardStream` write (`Page.cpp:562-567`); both branches write through `juce::MemoryOutputStream (MemoryBlock&, false)`; the colour branch wraps the block with `TextDocument::fromBlock`.
+3. Then B1-B4, D1-D5 in tracker order (`PLAN-exclusive-saw.md:36-38`).
+4. V1 (COUNSELOR via Pathfinder or scout): `cd /Users/jreng/Documents/Poems/dev/saw && cast cast/spell.md --no-sign`, then `nvim --headless -l test/run.lua ~/.local/bin/saw` and `nvim --headless -l test/run.lua ~/.local/bin/saw mcp`, sequentially. Rendered `page` with a file and with standard input (`--color=always`, `--decorations=always`) must exit 0. Add the E1 regression rows (PLAN E1 Action 3). All run checks of A3, C1-C8 run here.
+5. F1 Auditor once; F2 doxygen pass; F3 log on ARCHITECT's word.
+
+### Key Decisions
+- "can we not abuse build for each implementation? only build for final validation/profile"
+- "update the plan so no conflicting understanding"
+- "use jam::Format, only use juce::String for juce native API (args)"
+- "go" (approval of `page.cast` as E1's fix site)
+- "we'll continue after i rebuild ling."
+
+### Files Modified
+- `saw/Source/Write.cpp`, `cast/identifiers.md`, `Source/help/write.md`, `SPEC.md`, `test/cases.md`, `test/baseline/write-append-*` — A3.
+- `saw/Source/TextDocument.{h,cpp}` — C6, C2.
+- `saw/Source/Paths.{h,cpp}`, `Find.cpp`, `Fields.cpp`, `Lines.cpp` — C1.
+- `saw/Source/Stdio.{h,cpp}`, `Search.cpp`, `Transaction.cpp`, `Excerpt.cpp`, `FindOutcome.{h,cpp}`, `Patch.cpp`, `Page.cpp` — C2, C3, C5, C8.
+- `saw/Source/Json.cpp` — C4.
+- `saw/Source/UndoCache.{h,cpp}`, `Undo.cpp` — C7.
+- `saw/Source/PageConfiguration.{h,cpp}` — C8.
+- `saw/Source/Replace.{h,cpp}` — C1, replace fix.
+- `ling/language/page/page.cast` — E1.
+- `saw/benchmark/exclusive-*-after.md`, `exclusive-replace-fix.md`, and their reports — C9.
+- `saw/PLAN-exclusive-saw.md` — rulings, corrections, tracker.
+
+### Open Questions
+- Replace system time +4.2% (p 0.0003) and find-files system time +17.6% (p 0.0009) are unexplained. A `## sample` scout run on each is the next read. Decider: ARCHITECT, whether it blocks A4.
+- No saw command exercises `Document::write` with `JsonDocument::read (sourceText, stored)` (carried from the previous handoff). Decider: ARCHITECT.
+- Stale doxygen to rewrite in F2: `Paths.h` (`getFiles`, `getClassifiedPaths`, `applyToDirectories` `onFile`), `TextDocument.h:8`, `:25`, `Stdio.h` `getDocuments`, `FindOutcome.h` `addFile` and `files`, `PageConfiguration.h` `getStyleSheet` and `argumentList`, `UndoCache.h` `applyToTransactions` (none), `TextDocument.h` `fromBlock`, `block`, `displayPath` (none).
+- ling build layout. ARCHITECT: "the structure is garbage. languages should not be at Builds/". Fact: the tracked language sources are under `ling/language/<name>/` (for example `ling/language/page/page.cast`), and the build copies sit under `ling/Builds/languages/<name>/`, which `ling/.gitignore:35` ignores. An edit to the build copy is invisible to git and is lost at rebuild (this session edited `ling/Builds/languages/page/page.cast` first). Mechanism (read): the `language-bundle` block of `ling/cast/cmake.cast:504-553` copies each tracked language folder into `Builds/languages/<name>` with `file (COPY …)` (`:534`, `:539`, `:545`, `:550`), runs `cast spell.md` inside the copy (`:536`, `:542`, `:547`, `:552`), and packs the library into `Source/languages/<platform>/<name>.zip` (`:537`, `:543`, `:548`, `:553`). Each rebuild overwrites the copy. The tracked `ling/language/page/page.cast:36-37` sets `CAST_JUCE_PATH` and `CAST_USER_MODULE_PATH` as `${CMAKE_CURRENT_SOURCE_DIR}/../../../../…`, which resolves to `dev/jam` only from `ling/Builds/languages/page`; from `ling/language/page` it resolves to `Poems/jam`. So the tracked source builds only as a copy under `Builds/`. The new layout is not decided. Owner: ARCHITECT (ling is outside this plan's scope).
+
+### Next Steps
+- When ARCHITECT says ling is rebuilt, start A4 (Remaining item 2).
+
+## Handoff to COUNSELOR: exclusive-saw V1 (final validation)
+
+**From:** COUNSELOR (OpenCode session, takeover of Claude Code session `f634e507-b914-4f88-ba58-1bbec4a9b467`)
+**Date:** 2026-11-28
+**Status:** In Progress
+
+### Read First
+1. `PLAN-exclusive-saw.md` — the locked plan. §0.2 tracker (lines 22-41). §6 validation gate (lines 263-268). Part E E1 (lines 473-479). Part F V1 (line 483).
+2. This entry, then the handoff above it (the state after C9 and E1).
+3. `~/.carol/MANIFESTO.md`, `~/.carol/CODING.md`, `~/.carol/NAMES.md` — the CONTRACT for every step prompt.
+4. `Source/TextDocument.h:60-100` and `Source/TextDocument.cpp:140-233` — the factory contracts behind the open V1 defects.
+
+### Context
+ARCHITECT ran `/go @PLAN-exclusive-saw.md`. The Claude Code session `f634e507` stopped at the weekly usage limit (transcript line 3736) during the 5th V1 build. That build failed at the link (transcript line 3703). This OpenCode session took over with `/takeover`. It fixed the link, ran V1 through Pathfinder, and found the defects listed under Remaining. A Pathfinder hex read of the sort outputs was interrupted when the session was frozen.
+
+The Claude session had already done the code for A4, B1-B4 and D1-D5, the ling language producer layout, and four V1 build fixes:
+- The `Id` name collision: the `path`, `type` and `mode` rows were deleted from `cast/identifiers.md`.
+- The `jam::Array` copies in `FindFiles.cpp` became moves.
+- `PageFollow` gained the three `JUCEApplicationBase` overrides.
+- `PageFollow() = default;` was added (`Source/PageFollow.h:10`, tx `20261128T103334-06e43f`).
+
+### Completed
+- Link fix:
+  - The macOS `jam::File::Watcher` uses FSEvents (`jam/jam_core/file/jam_FileWatcher.cpp:2-4`), so saw must link CoreFoundation and CoreServices.
+  - The source of the `jam_core` module declaration is `jam/user-modules-info.md`. Row 50 now holds `CoreFoundation,` and a new line 51 holds `CoreServices`, in the form of `jam_graphics` (`:79-83`) (tx `20261128T114106-0199c8`).
+  - The cast build writes `jam/jam_core/jam_core.h` again from that row. It now reads `OSXFrameworks: CoreFoundation,` / `CoreServices` (`jam_core.h:11-12`).
+  - A direct edit of `jam_core.h:11` (tx `20261128T113506-033b82`) was overwritten by that build. The edit of the Claude session (tx `20261128T103431-0808b5`) was lost the same way.
+  - `juce_add_module` links each `OSXFrameworks` entry as an INTERFACE item (`JUCE/extras/Build/CMake/JUCEModuleSupport.cmake:591-597`, `:326`). saw links `jam_core` directly (`CMakeLists.txt:361`). So saw's cast template needs no change.
+- `SPEC.md:82` amended (tx `20261128T113514-06ad64`). It says that saw loads only CoreFoundation and CoreServices on macOS, besides the C and C++ system libraries, and no GUI framework. It quotes the ruling.
+- E1 Action 3 (`PLAN:478`): two rows `page-rendered-file` and `page-rendered-stdin` in `test/cases.md:648-651` (Engineer, tx `20261128T113804-0e793e`). COUNSELOR read them.
+- Malformed grid rows broke the lane parser (`test/run.lua:211`). Two fixes:
+  - `test/cases.md:408` (`page-follow-two-files`): the fixture cell had one space too few (tx `20261128T114546-0c893c`).
+  - `test/cases.md:410` (`find-missing-non-ascii`): the reference cell was 40 spaces short (tx `20261128T114547-0c1fcb`).
+  - Every `|` row is now 448 bytes. Row 410 has `ñ` and row 546 has `—`, so their character counts are lower, and their byte counts are correct.
+- V1 run (Pathfinder). Logs are in `/private/var/folders/k6/ms2vt1_n6dq7_rf7jlmhc6_00000gn/T/opencode/v1/`.
+  - `cast cast/spell.md --no-sign` exit 0.
+  - CLI lane exit 1, with 13 FAIL lines. MCP lane exit 1, with 12 FAIL lines (`sort-stdin` passes on MCP). The failing cases are `write-append-dry-run`, `cli-help-no-limit`, `count-missing`, `sort-default`, `sort-numeric`, `sort-reverse`, `sort-unique`, `sort-count`, `sort-stdin`, `sort-no-newline`, `diff-missing`, `page-rendered-file` and `page-rendered-stdin`.
+  - Run checks that exit 0:
+    - rendered `page` with a file and with stdin;
+    - `find --files --json Source`;
+    - `find --files --type f Source`;
+    - `find --files --changed-within 1d Source`;
+    - `count`;
+    - `sort -c` (in saw, `-c` counts repeats; baseline `test/baseline/sort-count/1/stdout`);
+    - `diff` on the same file.
+  - `diff -q` on two different files exits 1.
+  - `--help` and `--help --no-limit` both print 13336 bytes.
+  - `otool -L ~/.local/bin/saw` lists CoreFoundation, CoreServices, libc++, libSystem, CFNetwork and libobjc, for both slices.
+- Facts that the Claude session claimed and that this session verified:
+  - `Main.cpp:88-94` sends `--mcp` to `runToolServer`, `page --follow` to `runPageFollow`, and every other command line to one-shot `CommandLine::run`.
+
+### Remaining
+1. COUNSELOR then Engineer: fix `write --append` (A3).
+   - Symptom: the dry run plans `@@ -1 +0,0 @@ -hello` where `+ax` is expected (`$LOG/cases/write-append-dry-run.out`).
+   - Cause:
+     - `getPlannedDocument` wraps the planned bytes with `TextDocument::fromText` (`Write.cpp:18-29`).
+     - The contract of `fromText` builds no line index: *"The line index is not built, because the text is output only."* (`TextDocument.h:69-71`, `TextDocument.cpp:153-159`).
+     - LineDiff reads `target.getNumLines()` (`LineDiff.cpp:432`), and that reads `lineOffsets` (`TextDocument.cpp:213`).
+   - Correction:
+     - Build the planned document with `TextDocument::fromInput (nullptr, path)`, the sibling at `Write.cpp:15`.
+     - Then call `addSource (originalDocument.getBytes())` and `addSource (standardInput->getBytes())`.
+     - `jam::Document::addSource` is public (`jam_Document.h:36` `struct Document`, `:1205`). It appends into the arena and extends `lineOffsets` (`jam_Document.cpp:266-275`).
+     - This deletes the `plannedText` and `appendBytes` code.
+   - Correct PLAN A3 item 2 (`PLAN:318`, which names `fromText`) with these citations.
+2. COUNSELOR: find why every `sort` output is classed BINARY.
+   - `saw excerpt` reports BINARY for `$LOG/cases/sort-{default,numeric,count,no-newline}.out`.
+   - Next read: `xxd` of those files, by Pathfinder. Then read `Stdio::write` (`Stdio.cpp:54`, `:175`) and the factories that Sort uses: `fromInput (input, {}, {})` (`Sort.cpp:114`), `fromView` (`:119`, `:122`) and `fromText` (`:156`).
+   - The expected outputs are in `test/baseline/sort-*/1/stdout`.
+3. Engineer: add the missing baselines. `run.lua:564-577` compares a row that has no reference with `test/baseline/<case>/1/{stdout,stderr}`, and a missing file counts as empty.
+   - `count-missing` and `diff-missing`: stderr `saw: not found: nope.txt` (captured).
+   - `cli-help-no-limit`: stdout.
+   - `page-rendered-file`, `page-rendered-stdin`: stdout.
+   - Check the established form of these files against `test/baseline/page-list-languages/1/stdout` before writing them.
+4. COUNSELOR: resolve the `otool -L` result (CFNetwork and libobjc) against the new `SPEC.md:82` text (see Open Questions).
+5. V1 again (Pathfinder):
+   1. `cd /Users/jreng/Documents/Poems/dev/saw && cast cast/spell.md --no-sign`
+   2. `nvim --headless -l test/run.lua ~/.local/bin/saw`
+   3. `nvim --headless -l test/run.lua ~/.local/bin/saw mcp`
+   4. The run checks above. The first form of check c, `find --files --json Source -r Page`, exits 2 because the grammar rejects it. Use `find --files --json Source`.
+   - Live follow needs ARCHITECT, because a subagent cannot run a long-lived process: run `saw page --follow <file>`, append to the file, then rename and create it again.
+6. Update the PLAN tracker rows E1, V1 (`PLAN:39-40`).
+7. F1: Auditor once. F2: doxygen pass, which includes the stale doxygen list of the handoff above and the `fromText` / `fromView` contract text if the sort fix changes it. F3: log on ARCHITECT's word.
+8. Not verified this session: the working-tree state of saw, jam and ling. Pathfinder's `git status --short` and `git diff --stat` output did not reach COUNSELOR. Run it again first.
+
+### Key Decisions
+- "Allow CF + CoreServices" (ARCHITECT's answer to the conflict between SPEC.md:82 and PLAN D5).
+- "can we not abuse build for each implementation? only build for final validation/profile" (carried).
+- "use jam::Format, only use juce::String for juce native API (args)" (carried).
+
+### Files Modified
+- `saw/SPEC.md:82` — framework statement, ruling quoted.
+- `saw/test/cases.md` — `:408` and `:410` width fixes; `:648-651` E1 regression rows.
+- `jam/user-modules-info.md:50-51` — `jam_core` `OSXFrameworks` CoreFoundation, CoreServices.
+- `jam/jam_core/jam_core.h:11-12` — generated by cast from the row above.
+- Earlier in this sprint (Claude session `f634e507`): `saw/Source/PageFollow.{h,cpp}`, `FindFiles.{h,cpp}`, `Count.{h,cpp}`, `Sort.{h,cpp}`, `Diff.{h,cpp}`, `Stdio.{h,cpp}`, `CommandLine.cpp`, `Arguments.cpp`, `TextDocument.{h,cpp}`, `Page.cpp`, `Main.cpp`, `cast/identifiers.md`, `cast/text.md`, help documents, `SPEC.md`, `test/cases.md`, fixtures, baselines, `PLAN-exclusive-saw.md`; `ling/language/{core,cLang,page,tokens}/` producer layout, `ling/cast/cmake.cast`, `ling/cast/spell.md`, `ling/cast/files.md`, `ling/project-info.md`.
+
+### Open Questions
+- `SPEC.md:82` now says *"saw loads only CoreFoundation and CoreServices on macOS"*, but `otool -L` also lists CFNetwork and libobjc. Not yet read: whether CoreServices re-exports CFNetwork, and which object needs libobjc (`juce_core.mm`, `jam_core.mm` and `jam_terminal.mm` are on the link line, `$LOG/build.log:90`). Decider: ARCHITECT, after the read.
+- ARCHITECT asked: *"discuss first, if we're using File::Watcher means saw becomes stateful? defer loop? daemon server?"* COUNSELOR answered with citations: `PageFollow` member state for one process; the `JUCEApplicationBase` message loop (PLAN:464, `Main.cpp:91-92`); no daemon (`SPEC.md:68`, `:115`, `:853-854`; RFC:158). ARCHITECT gave no further ruling. Decider: ARCHITECT.
+- Replace system time +4.2% and find-files system time +17.6% (carried from the handoff above). Decider: ARCHITECT.
+- No saw command exercises `Document::write` with `JsonDocument::read (sourceText, stored)` (carried). Decider: ARCHITECT.
+
+### Next Steps
+- Start at Remaining item 8 (`git status`), then item 1 (`write --append`) and item 2 (the sort BINARY read), then V1. The trigger is ARCHITECT's `/go` on `PLAN-exclusive-saw.md`.

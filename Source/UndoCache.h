@@ -62,13 +62,7 @@ struct UndoCache
                                                                 const jam::Array<StagedFile>& stagedFiles,
                                                                 const jam::Array<juce::File>& folders);
 
-    /** @brief Lists the transaction ids in ascending order.
-     *
-     *  A pending id is listed only when its record is valid.
-     *
-     *  @return The ids, in ascending order.
-     */
-    static jam::Strings getTransactionIds();
+    static void applyToTransactions (const std::function<void (std::string_view, const juce::Result&, const jam::JsonDocument*)>& function);
 
     /** @brief Loads and validates the record of a transaction, and checks that its blob files exist.
      *

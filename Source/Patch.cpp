@@ -34,7 +34,7 @@ static std::tuple<jam::Strings, jam::Array<juce::File>, jam::Array<jam::Array<in
     jam::Strings groupDisplayPaths;
     jam::Array<juce::File> groupFiles;
     jam::Array<jam::Array<int>> groupEntryIndices;
-    jam::HashMap<juce::String, int> groupIndexByCanonicalPath;
+    jam::HashMap<std::string_view, int> groupIndexByCanonicalPath;
     jam::HashMap<std::string_view, int> groupIndexByPath;
 
     for (int entryIndex { 0 }; entryIndex < entryTokens.size(); ++entryIndex)
@@ -47,18 +47,17 @@ static std::tuple<jam::Strings, jam::Array<juce::File>, jam::Array<jam::Array<in
 
         if (isPathInserted)
         {
-            const auto targetFile { Paths::getLinkedTarget (filePath) };
-            const auto [groupEntry, isInserted] { groupIndexByCanonicalPath.try_emplace (targetFile.getFullPathName(), groupFiles.size()) };
+            auto targetFile { Paths::getLinkedTarget (filePath) };
+            const auto [groupEntry, isInserted] { groupIndexByCanonicalPath.try_emplace (jam::Strings::getView (targetFile.getFullPathName()), groupFiles.size()) };
 
             if (isInserted)
             {
                 groupDisplayPaths.add (Paths::getDisplayPath (filePath));
-                groupFiles.add (targetFile);
+                groupFiles.add (std::move (targetFile));
                 groupEntryIndices.add (jam::Array<int> {});
             }
 
             auto& [groupCanonicalPath, canonicalGroupIndex] { *groupEntry };
-            juce::ignoreUnused (groupCanonicalPath);
             pathGroupIndex = canonicalGroupIndex;
         }
 
@@ -266,9 +265,11 @@ static juce::Result addTargetFile (Transaction& transaction,
 static juce::Result addGroupedFiles (Transaction& transaction,
                                      const jam::JsonDocument& jsonDoc,
                                      const jam::Document::Element& rootArray,
-                                     const jam::Document::Tokens& entryTokens)
+                                     const jam::Document::Tokens& entryTokens,
+                                     const jam::Strings& groupDisplayPaths,
+                                     const jam::Array<juce::File>& groupFiles,
+                                     const jam::Array<jam::Array<int>>& groupEntryIndices)
 {
-    auto [groupDisplayPaths, groupFiles, groupEntryIndices] { getGroupedEntries (jsonDoc, rootArray, entryTokens) };
     jam::Array<int> groupOrder;
 
     for (int groupIndex { 0 }; groupIndex < groupDisplayPaths.size(); ++groupIndex)
@@ -304,8 +305,9 @@ static Stdio::Output runTransaction (const Arguments& arguments, const jam::Json
     if (arguments.contains (Id::expectOption) and expectedCount != entryTokens.size())
         return Transaction::getExpectMismatch ({}, expectedCount, entryTokens.size());
 
+    const auto [groupDisplayPaths, groupFiles, groupEntryIndices] { getGroupedEntries (jsonDoc, *rootArray, entryTokens) };
     Transaction transaction { Id::patch };
-    const auto addStatus { addGroupedFiles (transaction, jsonDoc, *rootArray, entryTokens) };
+    const auto addStatus { addGroupedFiles (transaction, jsonDoc, *rootArray, entryTokens, groupDisplayPaths, groupFiles, groupEntryIndices) };
 
     if (addStatus.failed())
         return Stdio::getFailure (addStatus);

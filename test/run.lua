@@ -455,7 +455,7 @@ local function decodeToolReply (processResult)
     local structuredContent = reply.result.structuredContent
 
     return {
-        code = structuredContent.exitCode,
+        status = structuredContent.status,
         signal = 0,
         stdout = decodeToolText (structuredContent, "output", "outputBase64"),
         stderr = decodeToolText (structuredContent, "errors", "errorsBase64"),
@@ -537,10 +537,24 @@ local function waitSawProcesses (processes)
     return results
 end
 
+local statusValues = { [0] = "ok", [1] = "mismatch" }
+
+local function getExpectedStatus (exitCode)
+    return statusValues[exitCode] or "error"
+end
+
+local function isExpectedExit (step, result)
+    if result.status ~= nil then
+        return result.status == getExpectedStatus (step.exit)
+    end
+
+    return result.code == step.exit
+end
+
 local function compareExitCodes (step, stepIndex, results)
     for processIndex = 1, #results do
-        if results[processIndex].code ~= step.exit or results[processIndex].signal ~= 0 then
-            return false, "step " .. tostring (stepIndex) .. " process " .. tostring (processIndex) .. " exit: expected " .. tostring (step.exit) .. ", got " .. tostring (results[processIndex].code) .. (results[processIndex].signal ~= 0 and (", signal " .. tostring (results[processIndex].signal)) or "")
+        if not isExpectedExit (step, results[processIndex]) or results[processIndex].signal ~= 0 then
+            return false, "step " .. tostring (stepIndex) .. " process " .. tostring (processIndex) .. " exit: expected " .. tostring (results[processIndex].status ~= nil and getExpectedStatus (step.exit) or step.exit) .. ", got " .. tostring (results[processIndex].status or results[processIndex].code) .. (results[processIndex].signal ~= 0 and (", signal " .. tostring (results[processIndex].signal)) or "")
         end
     end
 

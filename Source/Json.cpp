@@ -941,7 +941,8 @@ static Stdio::Output runCompiled (const JsonOptions& options, const Input::Sourc
     jam::Array<std::string_view> names;
     jam::Array<juce::Result> failures;
     jam::JsonDocument::Registry registry;
-    juce::MemoryOutputStream buffer;
+    juce::MemoryBlock output;
+    juce::MemoryOutputStream buffer { output, false };
     std::string errorText;
     std::unique_ptr<jam::JsonDocument> run { getEmptyDocument() };
     std::optional<bool> isLastValueTruthy;
@@ -989,7 +990,10 @@ static Stdio::Output runCompiled (const JsonOptions& options, const Input::Sourc
     }
 
     const int exitCode { getExitCode (options, haltCode, inputCode, runtimeFailureCount, isLastValueTruthy) };
-    return Stdio::getOutput (exitCode, Stdio::getDocuments (std::string { static_cast<const char*> (buffer.getData()), buffer.getDataSize() }), std::move (failures), Stdio::getDocuments (std::move (errorText)));
+    buffer.flush();
+    auto outputDocuments (Stdio::getDocuments (std::move (output)));
+    buffer.reset();
+    return Stdio::getOutput (exitCode, std::move (outputDocuments), std::move (failures), Stdio::getDocuments (std::move (errorText)));
 }
 
 static Stdio::Output runFilter (const JsonOptions& options, const Input::Source& input)

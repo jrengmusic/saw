@@ -79,7 +79,7 @@ std::pair<juce::Result, Stdio::Documents> Lines::getOutputDocuments (std::unique
         Stdio::Documents documents;
 
         if (not rangeBytes.empty())
-            documents.add (TextDocument::fromInput (std::move (input), displayPath, rangeBytes));
+            documents.add (TextDocument::fromInput (std::move (input), {}, rangeBytes));
 
         return { juce::Result::ok(), std::move (documents) };
     }
@@ -96,7 +96,7 @@ std::pair<juce::Result, Stdio::Documents> Lines::getOutputDocuments (std::unique
     if (not isText and TextDocument::isBinary (bytes.substr (0, readSize)))
         return { TextDocument::getBinaryStatus (displayPath, isExplicit), Stdio::Documents {} };
 
-    return { juce::Result::ok(), Stdio::getDocuments (std::move (output), displayPath) };
+    return { juce::Result::ok(), Stdio::getDocuments (std::move (output)) };
 }
 
 std::pair<juce::Result, Stdio::Documents> Lines::getFileOutput (const juce::File& file,
@@ -146,8 +146,8 @@ Stdio::Output Lines::runFiles (juce::Span<const std::string_view> rawPaths, cons
     Jobs::run (fileCount,
                [this, &pathEntries = files, &source, &statuses, &results] (int index)
                {
-                   const auto& [displayPath, targetFile, isExplicit] { pathEntries.at (index) };
-                   auto [fileStatus, fileDocuments] { getFileOutput (targetFile, displayPath, isExplicit, source) };
+                   const auto& entry { pathEntries.at (index) };
+                   auto [fileStatus, fileDocuments] { getFileOutput (Paths::getFile (entry), Paths::getDisplayPath (entry), Paths::isExplicit (entry), source) };
                    statuses.at (index) = std::move (fileStatus);
                    results.at (index) = std::move (fileDocuments);
                });
@@ -312,16 +312,16 @@ Stdio::Output Lines::runMutation (const Arguments& arguments) const
 
     Transaction transaction { Id::lines };
 
-    for (const auto& [displayPath, targetFile, isExplicit] : files)
+    for (const auto& entry : files)
     {
-        juce::ignoreUnused (isExplicit);
-
-        if (targetFile == juce::File {})
+        if (std::holds_alternative<Input::StandardInput> (entry))
             return Stdio::getFailure (text::Diagnostics::failMissingPath);
+
+        const auto targetFile { Paths::getFile (entry) };
 
         if (transaction.addTarget (targetFile))
         {
-            const auto fileStatus { addFileMutation (transaction, targetFile, displayPath) };
+            const auto fileStatus { addFileMutation (transaction, targetFile, Paths::getDisplayPath (entry)) };
 
             if (fileStatus.failed())
                 return Stdio::getFailure (fileStatus);

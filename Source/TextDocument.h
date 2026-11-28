@@ -88,6 +88,10 @@ public:
      */
     static std::unique_ptr<TextDocument> fromView (std::string_view text, std::string_view displayPath);
 
+    static std::unique_ptr<TextDocument> fromBlock (juce::MemoryBlock&& newBlock, std::string_view displayPath);
+
+    static std::unique_ptr<TextDocument> fromDocument (std::unique_ptr<TextDocument> newViewedDocument, std::string_view output);
+
     /** @brief Creates a document that owns an Input, and views a range of its bytes as the output.
      *
      *  The document owns the Input, so output is a view into the bytes that the Input owns, and
@@ -408,8 +412,14 @@ private:
     /** @brief Input that owns the bytes, or nullptr when a factory owns them. Kept so the bytes outlive the document. */
     std::unique_ptr<Input> input;
 
+    juce::MemoryBlock block;
+
+    std::unique_ptr<TextDocument> viewedDocument;
+
     /** @brief True when the document is not text and its bytes hold a NUL byte, so the document has no lines. */
     bool binary { false };
+
+    std::string_view displayPath;
 
     /** @brief The line ending of the first line, returned by getLineEnding. */
     std::string_view dominantLineEnding { unixLineEnding };
